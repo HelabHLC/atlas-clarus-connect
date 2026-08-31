@@ -1,0 +1,43 @@
+{
+  "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "master_sha256_status": "PASS",
+  "master_rows": 13283,
+  "master_rows_status": "PASS",
+  "reference_match_count": 1,
+  "reference_uniqueness_status": "PASS",
+  "source_atlas_row_id": 4665,
+  "display_row_number": 4666,
+  "master_rgb": [
+    118,
+    205,
+    39
+  ],
+  "master_hex": "#76CD27",
+  "rgb_hex_consistency_status": "PASS",
+  "ase": {
+    "version": "1.0",
+    "block_count": 3,
+    "swatches": [
+      {
+        "name": "ATLAS/H125_L075_C080",
+        "model": "RGB",
+        "rgb_float": [
+          0.4627451002597809,
+          0.8039215803146362,
+          0.15294118225574493
+        ],
+        "rgb_u8_roundtrip": [
+          118,
+          205,
+          39
+        ],
+        "colour_type": 2
+      }
+    ]
+  },
+  "ase_rgb_float_max_abs_error": 1.1687185219599883e-08,
+  "ase_rgb_u8_roundtrip_status": "PASS",
+  "evidence_export_sha256_status": "PASS",
+  "overall_status": "PASS",
+  "claim_boundary": "No application import, persistence, or round-trip claim has been made."
+}
