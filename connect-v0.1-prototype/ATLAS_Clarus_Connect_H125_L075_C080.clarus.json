@@ -1,0 +1,43 @@
+{
+  "format": "ATLAS_CLARUS_CONNECT",
+  "schema_version": "0.1",
+  "workflow_version": "ATLAS_CLARUS_CONNECT_v0.1",
+  "identity": {
+    "pkl_reference": "H125_L075_C080",
+    "source_atlas_row_id": 4665,
+    "source_atlas_row_id_basis": "zero_based_master_row_position",
+    "display_row_number": 4666,
+    "master_rgb": [
+      118,
+      205,
+      39
+    ],
+    "master_hex": "#76CD27",
+    "master_lab_d50": {
+      "L": 75.0,
+      "a": -45.8861,
+      "b": 65.5322
+    },
+    "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+    "master_rows": 13283,
+    "atlas_identity_valid": true
+  },
+  "freeze": {
+    "freeze_status": "FROZEN_REFERENCE_EXPORT",
+    "identity_selection_recomputed": false
+  },
+  "export": {
+    "target": "ASE_RGB",
+    "filename": "ATLAS_Clarus_Connect_H125_L075_C080.ase",
+    "sha256": "06af22580932f13f6b088887efc03236e1a6aff9ae6805e72665dfac181bb1bb",
+    "swatch_name": "ATLAS/H125_L075_C080"
+  },
+  "verification": {
+    "export_generation": "PASS",
+    "ase_structural_readback": "PASS",
+    "application_import": "NOT_TESTED",
+    "application_persistence": "NOT_TESTED",
+    "roundtrip_status": "NOT_ROUNDTRIP_TESTED",
+    "measured_qc_status": "NOT_MEASURED"
+  }
+}

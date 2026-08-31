@@ -1,0 +1,22 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "ATLAS": {
+    "H125_L075_C080": {
+      "$type": "color",
+      "$value": "#76CD27",
+      "$description": "ATLAS frozen reference H125_L075_C080; source_atlas_row_id 4665; master 8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "$extensions": {
+        "org.atlas-clarus.identity": {
+          "source_atlas_row_id": 4665,
+          "master_rgb": [
+            118,
+            205,
+            39
+          ],
+          "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+          "freeze_status": "FROZEN_REFERENCE_EXPORT"
+        }
+      }
+    }
+  }
+}
