@@ -1,0 +1,11 @@
+{
+  "test_id": "HANDOFF_VALID_ROW_4912",
+  "expected_result": "VERIFIED",
+  "query": {
+    "atlas_row_id": "4912",
+    "hlc": "H130_L060_C030",
+    "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+    "source": "hover-library"
+  }
+}
+

@@ -1,0 +1,246 @@
+{
+  "document_type": "ATLAS_CLARUS_CONFORMANCE_LEVELS",
+  "document_version": "0.1.1",
+  "content_model": "CONFORMANCE_CATALOG_NOT_JSON_SCHEMA",
+  "status": "REVIEW_DRAFT_NOT_CERTIFICATION_STANDARD",
+  "workflow_baseline": "ATLAS Clarus Workflow v3.4.0",
+  "identifier_basis": {
+    "atlas_row_id": "ZERO_BASED",
+    "human_display_row": "ONE_BASED_OPTIONAL"
+  },
+  "reference_master": {
+    "file": "atlas_master__active_master__v2_illumext.pkl",
+    "row_count": 13283,
+    "sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4"
+  },
+  "result_vocabulary": [
+    "PASS",
+    "FAIL",
+    "INDETERMINATE",
+    "NOT_APPLICABLE"
+  ],
+  "levels": [
+    {
+      "id": "AC-1",
+      "machine_name": "ATLAS_CLARUS_IDENTITY_BOUND",
+      "public_name": "ATLAS Clarus Identity Bound",
+      "inherits": [],
+      "claim": "The record is bound to an existing ATLAS identity in the declared reference master.",
+      "required_fields": [
+        "specification_version",
+        "atlas_row_id",
+        "hlc_reference",
+        "master_sha256",
+        "identity_binding_method",
+        "source_authority_status",
+        "identity_status",
+        "verified_at"
+      ],
+      "required_checks": [
+        "MASTER_SHA256_MATCH",
+        "MASTER_ROW_COUNT_MATCH",
+        "ATLAS_ROW_ID_IN_RANGE",
+        "ATLAS_ROW_ID_ZERO_BASED",
+        "ROW_HLC_MATCH",
+        "IDENTITY_RECORD_PARSEABLE"
+      ],
+      "permitted_status_on_pass": "IDENTITY_BOUND_VERIFIED",
+      "exclusions": [
+        "DISPLAY_ACCURACY",
+        "PROFILE_CORRECTNESS",
+        "PRODUCTION_FEASIBILITY",
+        "PHYSICAL_COLOUR_MATCH",
+        "PANTONE_IDENTITY_EQUIVALENCE",
+        "MEASURED_QC"
+      ]
+    },
+    {
+      "id": "AC-2",
+      "machine_name": "ATLAS_CLARUS_WORKFLOW_VERIFIED",
+      "public_name": "ATLAS Clarus Workflow Verified",
+      "inherits": [
+        "AC-1"
+      ],
+      "claim": "The bound source identity survived a controlled handoff and remained unchanged through the assessed workflow boundary.",
+      "required_fields": [
+        "source_identity_digest",
+        "handoff_origin",
+        "handoff_destination",
+        "handoff_status",
+        "freeze_status",
+        "verification_events"
+      ],
+      "required_checks": [
+        "AC_1_PASS",
+        "SOURCE_IDENTITY_DIGEST_VALID",
+        "IDENTITY_HANDOFF_VERIFIED",
+        "SOURCE_IDENTITY_FROZEN",
+        "READBACK_UNCHANGED",
+        "MUTATION_DETECTION_PASS"
+      ],
+      "permitted_status_on_pass": "WORKFLOW_VERIFIED",
+      "exclusions": [
+        "PHYSICAL_COLOUR_MATCH",
+        "PRODUCTION_APPROVAL",
+        "INDEPENDENT_CERTIFICATION",
+        "MEASURED_QC"
+      ]
+    },
+    {
+      "id": "AC-3",
+      "machine_name": "ATLAS_CLARUS_PROFILE_BOUND",
+      "public_name": "ATLAS Clarus Profile Bound",
+      "inherits": [
+        "AC-2"
+      ],
+      "claim": "A downstream output profile or production condition is documented without changing the frozen source identity.",
+      "required_fields": [
+        "output_condition_type",
+        "output_condition_identifier",
+        "output_condition_digest_or_version",
+        "rendering_or_mapping_policy",
+        "source_identity_before",
+        "source_identity_after"
+      ],
+      "required_checks": [
+        "AC_2_PASS",
+        "OUTPUT_CONDITION_IDENTIFIED",
+        "OUTPUT_CONDITION_PROVENANCE_PRESENT",
+        "SOURCE_IDENTITY_UNCHANGED",
+        "DEVICE_VALUES_DECLARED_AS_DOWNSTREAM"
+      ],
+      "permitted_status_on_pass": "PROFILE_BOUND_VERIFIED",
+      "exclusions": [
+        "PHYSICAL_OUTPUT_CONFORMITY",
+        "MEASUREMENT_TOLERANCE_PASS",
+        "UNIVERSAL_DEVICE_VALUE_EQUIVALENCE"
+      ]
+    },
+    {
+      "id": "AC-4",
+      "machine_name": "ATLAS_CLARUS_MEASURED_QC",
+      "public_name": "ATLAS Clarus Measured QC",
+      "inherits": [
+        "AC-3"
+      ],
+      "claim": "A physical result was measured under declared conditions and evaluated against a declared target and tolerance.",
+      "required_fields": [
+        "measurement_id",
+        "measurement_timestamp",
+        "instrument",
+        "instrument_calibration_status",
+        "measurement_geometry",
+        "illuminant",
+        "standard_observer",
+        "substrate_or_backing",
+        "target_definition",
+        "tolerance_definition",
+        "measured_values",
+        "evaluation_result",
+        "measured_qc_status"
+      ],
+      "required_checks": [
+        "AC_3_PASS",
+        "MEASUREMENT_PROVENANCE_COMPLETE",
+        "MEASUREMENT_CONDITIONS_COMPLETE",
+        "TARGET_AND_TOLERANCE_DECLARED",
+        "MEASURED_QC_STATUS_IS_MEASURED",
+        "TOLERANCE_EVALUATION_REPRODUCIBLE"
+      ],
+      "permitted_status_on_pass": "MEASURED_QC_PASS",
+      "forbidden_input_statuses": [
+        "NOT_MEASURED",
+        "SIMULATED_ONLY",
+        "SOURCE_AUTHORITY_UNRESOLVED"
+      ],
+      "exclusions": [
+        "ACCREDITED_CERTIFICATION_UNLESS_SEPARATELY_AUTHORISED",
+        "CONFORMITY_OUTSIDE_DECLARED_MEASUREMENT_CONDITIONS"
+      ]
+    }
+  ],
+  "globally_ineligible_sources": [
+    {
+      "source_class": "PANTONE_DERIVED_OBSERVED_VIEW",
+      "reason": "SOURCE_AUTHORITY_UNRESOLVED",
+      "statuses": {
+        "source_authority": "UNRESOLVED",
+        "freeze_status": "NOT_FROZEN_EXPERIMENTAL",
+        "measured_qc_status": "NOT_MEASURED",
+        "pantone_identity_claim": "NONE"
+      }
+    }
+  ],
+  "minimum_conformance_record": {
+    "required": [
+      "label",
+      "level",
+      "specification_version",
+      "assessment_scope",
+      "assessed_object",
+      "atlas_row_id",
+      "hlc_reference",
+      "master_sha256",
+      "identity_binding_method",
+      "source_authority_status",
+      "conformance_result",
+      "checks",
+      "evidence",
+      "verification_class",
+      "verified_at",
+      "verifier"
+    ],
+    "sample": {
+      "label": "ATLAS_CLARUS_IDENTITY_BOUND",
+      "level": "AC-1",
+      "specification_version": "0.1.1",
+      "assessment_scope": "EXAMPLE_SINGLE_IDENTITY_RECORD",
+      "assessed_object": {
+        "type": "IDENTITY_RECORD",
+        "identifier": "EXAMPLE_ONLY"
+      },
+      "atlas_row_id": 4912,
+      "hlc_reference": "H130_L060_C030",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "identity_binding_method": "EXAMPLE_METHOD_AND_VERSION",
+      "source_authority_status": "ATLAS_REFERENCE_MASTER",
+      "conformance_result": "PASS",
+      "checks": [
+        {
+          "id": "MASTER_SHA256_MATCH",
+          "result": "PASS"
+        },
+        {
+          "id": "ROW_HLC_MATCH",
+          "result": "PASS"
+        }
+      ],
+      "evidence": {
+        "type": "EXAMPLE_DIGEST",
+        "sha256": "EXAMPLE_ONLY_NOT_A_VALID_DIGEST"
+      },
+      "verification_class": "SELF_VERIFIED",
+      "verified_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "verifier": {
+        "name": "EXAMPLE_ONLY",
+        "version": "0.0.0"
+      },
+      "measured_qc_status": "NOT_MEASURED"
+    }
+  },
+  "verification_classes": [
+    {
+      "id": "SELF_VERIFIED",
+      "meaning": "The claimant or implementation operator ran the published checks."
+    },
+    {
+      "id": "INDEPENDENTLY_VERIFIED",
+      "meaning": "A competent party organisationally independent of the claimant assessed the declared scope under published rules."
+    },
+    {
+      "id": "AUTHORISED_CERTIFICATION",
+      "meaning": "An authorised certification programme issued the result under its published governance, competence, appeal and revocation rules."
+    }
+  ],
+  "legal_boundary": "This public draft defines technical claim levels only. It does not itself authorise an independent certification mark or accredited conformity claim."
+}

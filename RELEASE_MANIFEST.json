@@ -1,0 +1,61 @@
+{
+  "project": "ATLAS Clarus Connect",
+  "version": "0.1.0",
+  "status": "PUBLIC_GITHUB_SOURCE_RELEASE",
+  "workflow": "ATLAS Clarus Workflow v3.4.0",
+  "master": {
+    "row_count": 13283,
+    "sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+    "atlas_row_id_basis": "ZERO_BASED"
+  },
+  "components": {
+    "hover_library": {
+      "version": "0.1.5",
+      "source_included": true,
+      "data_included": true,
+      "verified_source_archive_sha256": "d26dce8fd0a9681a666722ef1a8a07ea1a8689f295d16a9cee664d8aa43fb155"
+    },
+    "identity_handoff": {
+      "version": "0.1.0",
+      "specification_included": true,
+      "test_vectors_included": true
+    },
+    "colour_identity_wheel": {
+      "wordpress_embed": {
+        "version": "1.0.0",
+        "source_included": true,
+        "verified_source_archive_sha256": "75375d730205bb55c07c83a0d1b699228594bb05d98127792c6136fcd08c5be7",
+        "contains_receiver_application": false,
+        "forwards_parent_query_parameters": false
+      },
+      "public_receiver_exists": true,
+      "receiver_application_source_included": true,
+      "site_version": 22,
+      "source_commit": "32767d209c3f45bdce557856c3850b17dec97757",
+      "source_commit_matches_site_version": true,
+      "release_patch": "MANDATORY_HLC_AND_STRICT_ROW_ID_VALIDATION",
+      "release_patch_deployed": false,
+      "locked_dependency_install": "PASS",
+      "build": "PASS",
+      "tests": "PASS",
+      "strict_handoff_conformance": "PASS"
+    },
+    "open_label": {
+      "version": "0.1.1",
+      "status": "REVIEW_DRAFT_NOT_CERTIFICATION_STANDARD"
+    }
+  },
+  "publication_gates": {
+    "plugin_data_validation": "PASS_PYTHON_EQUIVALENT",
+    "plugin_php_validation": "PENDING_PHP_RUNTIME_UNAVAILABLE",
+    "plugin_javascript_syntax": "PASS",
+    "handoff_vector_validation": "PASS",
+    "wheel_embed_source_complete": "PASS",
+    "wheel_application_source_complete": "PASS",
+    "wheel_source_provenance": "PASS",
+    "wheel_receiver_strict_handoff_conformance": "PASS",
+    "licence_inventory_complete": "PASS",
+    "clean_checkout_reproduction": "PASS_FOR_WHEEL_APPLICATION",
+    "public_wheel_deployment_matches_release": "NO_LIVE_SITE_REMAINS_V22_BASELINE"
+  }
+}

@@ -1,0 +1,3 @@
+.profile-comparison-grid{grid-template-columns:repeat(auto-fit,minmax(205px,1fr))}
+@media(max-width:1050px){.profile-comparison-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.profile-comparison-grid{grid-template-columns:1fr}}

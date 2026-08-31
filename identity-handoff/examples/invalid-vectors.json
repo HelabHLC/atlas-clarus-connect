@@ -1,0 +1,51 @@
+{
+  "protocol_version": "0.1.0",
+  "vectors": [
+    {
+      "test_id": "WRONG_MASTER",
+      "mutation": "master_sha256",
+      "value": "0000000000000000000000000000000000000000000000000000000000000000",
+      "expected_result": "REJECTED"
+    },
+    {
+      "test_id": "ROW_OUT_OF_RANGE",
+      "mutation": "atlas_row_id",
+      "value": "13283",
+      "expected_result": "REJECTED"
+    },
+    {
+      "test_id": "NEGATIVE_ROW",
+      "mutation": "atlas_row_id",
+      "value": "-1",
+      "expected_result": "REJECTED"
+    },
+    {
+      "test_id": "ROW_HLC_MISMATCH",
+      "mutation": "hlc",
+      "value": "H135_L060_C030",
+      "expected_result": "REJECTED"
+    },
+    {
+      "test_id": "NON_INTEGER_ROW",
+      "mutation": "atlas_row_id",
+      "value": "4912.0",
+      "expected_result": "REJECTED"
+    },
+    {
+      "test_id": "MISSING_HLC",
+      "remove": "hlc",
+      "expected_result": "REJECTED"
+    },
+    {
+      "test_id": "MISSING_SOURCE",
+      "remove": "source",
+      "expected_result": "REJECTED"
+    },
+    {
+      "test_id": "DUPLICATE_HLC",
+      "duplicate": "hlc",
+      "value": "H130_L060_C030",
+      "expected_result": "REJECTED"
+    }
+  ]
+}

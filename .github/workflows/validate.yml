@@ -1,0 +1,46 @@
+name: Validate ATLAS Clarus Connect
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  hover-library:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+      - name: PHP syntax
+        run: php -l hover-library/atlas-clarus-hover-library.php
+      - name: Validate Hover Library data
+        run: php hover-library/tests/validate-data.php
+
+  identity-handoff-vectors:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python identity-handoff/tests/validate_vectors.py
+
+  wheel-application:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: colour-identity-wheel/application
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: colour-identity-wheel/application/package-lock.json
+      - run: npm ci
+      - run: npm test
+

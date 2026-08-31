@@ -1,0 +1,8 @@
+{
+  "plugin":"ATLAS Clarus Hover Library","version":"0.1.5","workflow":"ATLAS Clarus Workflow v3.4.0",
+  "master_file":"atlas_master__active_master__v2_illumext.pkl","master_sha256":"8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "core_entry_count":13283,"observed_view_count":16,"source_authority_for_observed_views":"UNRESOLVED",
+  "freeze_status_for_observed_views":"NOT_FROZEN_EXPERIMENTAL","measured_qc_status":"NOT_MEASURED",
+  "pantone_identity_claim":"NONE","production_branches_materialized":false,
+  "ui_update":"verified_identity_handoff_to_colour_identity_wheel"
+}
