@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ATLAS Clarus Appearance Pixel Simulator
  * Description: Open, master-bound appearance preview with APF material identity and evidence binding.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Author: Norbert / ATLAS Clarus
  * License: GPL-2.0-or-later
  * Text Domain: atlas-clarus-appearance-pixel-simulator
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ATLAS_CLARUS_APS_VERSION', '0.3.0' );
+define( 'ATLAS_CLARUS_APS_VERSION', '0.3.1' );
 define( 'ATLAS_CLARUS_APS_URL', plugin_dir_url( __FILE__ ) );
 define( 'ATLAS_CLARUS_APS_MASTER_SHA256', '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4' );
 define( 'ATLAS_CLARUS_APS_PROJECTION_MANIFEST_SHA256', '561adb75debc920a5071e017e9de98abdbd517fb522d2bd4fa60aef2b85dc9ec' );
@@ -220,6 +220,7 @@ function atlas_clarus_aps_shortcode() {
 		data-renderer-url="<?php echo esc_url( rest_url( 'atlas-clarus/v1/appearance/render' ) ); ?>"
 		data-renderer-nonce="<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>"
 		data-renderer-mode="<?php echo esc_attr( get_option( 'atlas_clarus_aps_renderer_mode', 'mock' ) ); ?>"
+		data-three-module-url="<?php echo esc_url( ATLAS_CLARUS_APS_URL . 'assets/vendor/three/three.module.min.js' ); ?>"
 	>
 		<header class="atlas-clarus-aps__header">
 			<div>
@@ -296,6 +297,21 @@ function atlas_clarus_aps_shortcode() {
 					<button type="button" data-export="pixels"><?php esc_html_e( 'Export pixel data', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
 					<button type="button" data-export="png"><?php esc_html_e( 'Export PNG', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
 				</div>
+				<details class="atlas-clarus-aps__objects" open>
+					<summary><strong><?php esc_html_e( 'Open Appearance Object Preview', 'atlas-clarus-appearance-pixel-simulator' ); ?></strong> <span data-object-output="status">LOADING THREE.JS</span></summary>
+					<div class="atlas-clarus-aps__object-grid">
+						<div class="atlas-clarus-aps__object-controls">
+							<label><?php esc_html_e( 'Object', 'atlas-clarus-appearance-pixel-simulator' ); ?><select data-object-control="template"><option value="sphere"><?php esc_html_e( 'Material sphere', 'atlas-clarus-appearance-pixel-simulator' ); ?></option><option value="package" selected><?php esc_html_e( 'Folding carton', 'atlas-clarus-appearance-pixel-simulator' ); ?></option><option value="bottle"><?php esc_html_e( 'Bottle with label', 'atlas-clarus-appearance-pixel-simulator' ); ?></option><option value="can"><?php esc_html_e( 'Beverage can', 'atlas-clarus-appearance-pixel-simulator' ); ?></option><option value="plate"><?php esc_html_e( 'Material plate', 'atlas-clarus-appearance-pixel-simulator' ); ?></option><option value="fabric"><?php esc_html_e( 'Fabric swatch', 'atlas-clarus-appearance-pixel-simulator' ); ?></option></select></label>
+							<label><?php esc_html_e( 'Object rotation', 'atlas-clarus-appearance-pixel-simulator' ); ?>: <output data-object-output="rotation">25°</output><input data-object-control="rotation" type="range" min="-180" max="180" value="25"></label>
+							<label class="atlas-clarus-aps__check"><input data-object-control="auto-rotate" type="checkbox"> <?php esc_html_e( 'Auto-rotate preview', 'atlas-clarus-appearance-pixel-simulator' ); ?></label>
+							<button type="button" data-object-action="png" disabled><?php esc_html_e( 'Export object preview', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
+						</div>
+						<div class="atlas-clarus-aps__object-stage">
+							<canvas width="720" height="480" aria-label="<?php esc_attr_e( 'Interactive simulated appearance object', 'atlas-clarus-appearance-pixel-simulator' ); ?>"></canvas>
+							<code data-object-output="evidence">GEOMETRY BUILT_IN · MATERIAL SIMULATED · QC NOT_MEASURED</code>
+						</div>
+					</div>
+				</details>
 				<details class="atlas-clarus-aps__bridge">
 					<summary><strong><?php esc_html_e( 'APF Material Bridge v0.1', 'atlas-clarus-appearance-pixel-simulator' ); ?></strong> <span data-bridge-output="summary">NOT LOADED</span></summary>
 					<p><?php esc_html_e( 'Bind an external appearance material to the selected ATLAS identity, validate its record and export the evidence envelope. Material formats remain interchangeable adapters.', 'atlas-clarus-appearance-pixel-simulator' ); ?></p>
