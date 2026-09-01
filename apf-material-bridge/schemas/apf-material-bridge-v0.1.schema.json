@@ -14,6 +14,7 @@
     "assets": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/asset"}},
     "material_selector": {"$ref": "#/$defs/selector"},
     "identity_binding": {"$ref": "#/$defs/binding"},
+    "geometry": {"$ref": "#/$defs/geometry"},
     "measurement_provenance": {"$ref": "#/$defs/provenance"},
     "render_results": {"type": "array", "items": {"$ref": "#/$defs/render"}},
     "physical_comparison": {"$ref": "#/$defs/physical"},
@@ -58,6 +59,18 @@
       "properties": {
         "binding_id": {"type": "string"}, "identity_ref": {"type": "string"}, "asset_ref": {"type": "string"}, "selector_ref": {"type": "string"},
         "status": {"enum": ["REFERENCE_BOUND", "VERIFIED", "INVALID"]}
+      }
+    },
+    "geometry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["geometry_id", "template", "source_type", "status", "implementation", "zone_ids"],
+      "properties": {
+        "geometry_id": {"type": "string", "minLength": 1},
+        "template": {"type": "string", "minLength": 1},
+        "source_type": {"enum": ["BUILT_IN", "EXTERNAL_ASSET"]},
+        "status": {"enum": ["BUILT_IN", "SOURCE_DECLARED", "VERIFIED", "INVALID"]},
+        "implementation": {"type": "string", "minLength": 1},
+        "zone_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
       }
     },
     "provenance": {
