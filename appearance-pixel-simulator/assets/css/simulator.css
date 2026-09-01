@@ -118,6 +118,9 @@
 .atlas-clarus-aps__bridge-report { margin-bottom: 0; }
 .atlas-clarus-aps__bridge--valid { border-left: 4px solid #16803c; }
 .atlas-clarus-aps__bridge--invalid { border-left: 4px solid #b42318; }
+.atlas-clarus-aps__renderer-preview { margin-top: .75rem; border: 1px solid var(--acaps-border); border-radius: .35rem; overflow: hidden; }
+.atlas-clarus-aps__renderer-preview img { display: block; width: 100%; height: auto; background: #101820; }
+.atlas-clarus-aps__renderer-preview code { display: block; padding: .55rem; overflow-wrap: anywhere; }
 .atlas-clarus-aps--error { border-color: #b42318; }
 .atlas-clarus-aps--error .atlas-clarus-aps__status { color: #b42318; }
 @media (max-width: 760px) {
