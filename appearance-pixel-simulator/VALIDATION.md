@@ -1,7 +1,21 @@
-# ATLAS Clarus Appearance Pixel Simulator v0.2.1 — Validation
+# ATLAS Clarus Appearance Pixel Simulator v0.2.2 — Validation
 
 Result: **PASS with stated runtime limitation**  
-Release: **v0.2.1 — SPECTRAL D50/D65/A + APF–AxF BRIDGE**
+Release: **v0.2.2 — APF–AxF BRIDGE + RENDERER CONNECTOR**
+
+## Renderer connector checks
+
+| Check | Result |
+|---|---:|
+| Manufacturer-neutral request/response contract | IMPLEMENTED |
+| Mock evidence class | `MOCK_SIMULATION` |
+| Mock AxF decoding | NOT EXECUTED |
+| External bearer token exposure to browser | BLOCKED — server-side only |
+| External AxF byte/digest comparison | IMPLEMENTED |
+| External maximum input/output size | 10 MiB |
+| Accepted result status | CALCULATED / SIMULATED only |
+| Result SHA-256 calculated by connector | IMPLEMENTED |
+| Physical QC promotion | BLOCKED |
 
 ## APF–AxF Bridge checks
 
