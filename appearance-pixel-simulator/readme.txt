@@ -3,7 +3,7 @@ Contributors: atlasclarus
 Tags: colour, color, appearance, pixel, simulation, PKL
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.2.0
+Stable tag: 0.4.0
 License: GPLv2 or later
 
 Master-bound, pixel-addressable appearance engineering simulator for WordPress.
@@ -32,6 +32,11 @@ Master reference fields and spectra are source evidence. Appearance pixels are
 an engineering simulation. They are not BRDF/BSDF measurements, a physical
 proof, measured QC or certification.
 
+ATLAS Clarus does not operate a hosted MaterialX rendering service. The local
+colour-aware mock works without a server. Administrators may optionally connect
+a compatible renderer operated by themselves, their organization or a chosen
+service provider.
+
 For CIE D50, D65 and A, the base colour stimulus is calculated from the master
 reflectance, the CIE illuminant SPD and the CIE 1931 2 degree observer on the
 native 380–730 nm, 10 nm master grid. XYZ is Bradford-adapted to the calculated
@@ -40,6 +45,40 @@ reported in the UI and APF evidence. ALS LED and STR scenarios remain disabled
 until their authoritative spectral power distributions are available.
 
 == Changelog ==
+
+= 0.4.0 =
+* Adds compatibility with the external ATLAS Clarus MaterialX Render Service.
+* Sends the verified master display proxy, material bytes, geometry and scene evidence through the existing neutral connector contract.
+* Keeps genuine MaterialX output CALCULATED and physical QC NOT_MEASURED.
+
+= 0.3.2 =
+* Makes the generic mock preview use the bound ATLAS master display colour.
+* Labels mock output prominently as GENERIC MOCK PREVIEW.
+* Keeps gloss explicitly illustrative and performs no MaterialX decoding.
+* Renames bridge JSON validation to clarify that it imports an existing record.
+
+= 0.3.1 =
+* Adds a locally bundled Three.js interactive object preview without CDN requests.
+* Adds sphere, folding-carton, bottle, can, material-plate and fabric templates.
+* Adds built-in geometry and material-zone evidence records.
+* Keeps every interactive object preview SIMULATED and physical QC NOT_MEASURED.
+
+= 0.3.0 =
+* Renames the integration layer to APF Material Bridge and removes AxF from the product core.
+* Supports neutral material declarations for MaterialX, OpenPBR JSON, glTF/GLB and PBR texture sets.
+* Keeps AxF only as an explicitly optional external adapter.
+* Preserves identity, digest, renderer and evidence controls across material formats.
+
+= 0.2.2 =
+* Adds a manufacturer-neutral renderer connector contract.
+* Adds a clearly labelled deterministic mock renderer for end-to-end workflow testing.
+* Adds an optional server-side external JSON adapter with protected bearer token.
+* Binds verified renderer output hashes and SIMULATED/CALCULATED status into APF.
+
+= 0.2.1 =
+* Adds APF–AxF Bridge v0.1 import, identity binding, validation, status display and JSON export.
+* Computes the selected AxF file SHA-256 in the browser without uploading the file.
+* Keeps AxF decoding/rendering and physical measurement outside the WordPress runtime.
 
 = 0.2.0 =
 * Replaced RGB light multipliers for D50, D65 and A with spectral integration.
