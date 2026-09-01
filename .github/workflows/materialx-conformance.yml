@@ -1,0 +1,44 @@
+name: MaterialX Render Conformance
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "materialx-render-service/**"
+
+permissions:
+  contents: read
+
+jobs:
+  render-conformance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build MaterialX render service
+        working-directory: materialx-render-service
+        run: docker build --build-arg MATERIALX_VERSION=1.39.4 -t atlas-clarus-materialx:0.4.0 .
+      - name: Start renderer
+        run: docker run -d --name atlas-materialx -p 127.0.0.1:8080:8080 -e RENDERER_BEARER_TOKEN=ci-conformance-token atlas-clarus-materialx:0.4.0
+      - name: Confirm MaterialXView availability
+        run: |
+          for attempt in $(seq 1 60); do
+            health="$(curl --fail --silent http://127.0.0.1:8080/healthz || true)"
+            if echo "$health" | grep -q '"renderer_available":true'; then echo "$health"; exit 0; fi
+            sleep 2
+          done
+          docker logs atlas-materialx
+          exit 1
+      - name: Render Standard Surface
+        run: python3 materialx-render-service/scripts/run_conformance.py materialx-render-service/examples/ATLAS_H125_L075_C080_StandardSurface.mtlx ATLAS_H125_L075_C080_StandardSurface conformance-output/standard-surface.png
+      - name: Render OpenPBR Surface
+        run: python3 materialx-render-service/scripts/run_conformance.py materialx-render-service/examples/ATLAS_H125_L075_C080_OpenPBR.mtlx ATLAS_H125_L075_C080_OpenPBR conformance-output/openpbr-surface.png
+      - name: Record container logs
+        if: always()
+        run: mkdir -p conformance-output && docker logs atlas-materialx > conformance-output/container.log 2>&1 || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: materialx-conformance-v0.4.0
+          path: conformance-output/
+          if-no-files-found: error

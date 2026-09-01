@@ -1,4 +1,13 @@
-# Third-Party Data Notices
+# Third-Party Data and Software Notices
+
+## Three.js
+
+- Project: Three.js
+- Version: r180
+- Source: https://github.com/mrdoob/three.js
+- License: MIT
+- Bundled files: `assets/vendor/three/three.module.min.js` and `three.core.min.js`
+- Local license copy: `assets/vendor/three/LICENSE`
 
 ## CIE colourimetric data
 
