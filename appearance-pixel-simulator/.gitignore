@@ -1,0 +1,7 @@
+assets/master/master-index.json
+assets/master/master-numeric.f64
+assets/master/master-illuminant.f64
+assets/master/master-spectral.f32
+*.zip
+__pycache__/
+*.pyc
