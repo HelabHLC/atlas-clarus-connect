@@ -36,6 +36,14 @@
     "selector_ref": "selector-01",
     "status": "REFERENCE_BOUND"
   },
+  "geometry": {
+    "geometry_id": "builtin-package",
+    "template": "PACKAGE",
+    "source_type": "BUILT_IN",
+    "status": "BUILT_IN",
+    "implementation": "ATLAS Clarus Open Appearance Object Library v0.1",
+    "zone_ids": ["BOX_BASE", "PRINT_AREA"]
+  },
   "measurement_provenance": {"status": "UNKNOWN", "evidence_refs": []},
   "render_results": [],
   "physical_comparison": {"status": "NOT_MEASURED", "evidence_refs": []},
