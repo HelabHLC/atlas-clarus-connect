@@ -81,12 +81,20 @@
     root.querySelectorAll('[data-control]').forEach((node) => { controls[node.dataset.control] = node; });
     root.querySelectorAll('[data-output]').forEach((node) => { outputs[node.dataset.output] = node; });
     const buttons = Array.from(root.querySelectorAll('[data-export]'));
+    const bridgePanel = root.querySelector('.atlas-clarus-aps__bridge');
+    const bridgeControls = {};
+    const bridgeOutputs = {};
+    root.querySelectorAll('[data-bridge-control]').forEach((node) => { bridgeControls[node.dataset.bridgeControl] = node; });
+    root.querySelectorAll('[data-bridge-output]').forEach((node) => { bridgeOutputs[node.dataset.bridgeOutput] = node; });
+    const bridgeActions = {};
+    root.querySelectorAll('[data-bridge-action]').forEach((node) => { bridgeActions[node.dataset.bridgeAction] = node; });
     buttons.forEach((button) => { button.disabled = true; });
     const state = {
       ready: false, selectedX: 20, selectedY: 12, cells: [], columns: 40, rows: 25,
       selectedRowId: Number(root.dataset.rowId), manifest: null, index: null,
       numeric: null, illuminant: null, spectral: null, cie: null,
-      numericFields: {}, illuminantFields: {}, spectralCache: new Map()
+      numericFields: {}, illuminantFields: {}, spectralCache: new Map(),
+      bridgeDocument: null, axfAsset: null
     };
 
     function identity() { return state.index.rows[state.selectedRowId]; }
@@ -469,6 +477,94 @@
       };
     }
 
+    function bridgeErrors(doc) {
+      const errors = [];
+      const required = ['schema_version', 'document_id', 'document_status', 'conformance_level', 'identity', 'assets', 'material_selector', 'identity_binding', 'measurement_provenance', 'render_results', 'physical_comparison', 'qc_conclusion'];
+      required.forEach((key) => { if (!Object.prototype.hasOwnProperty.call(doc || {}, key)) errors.push('Missing property: ' + key); });
+      if (errors.length) return errors;
+      if (doc.schema_version !== '0.1') errors.push('schema_version must be 0.1.');
+      const ids = new Set();
+      doc.assets.forEach((asset) => {
+        if (!asset.asset_id || ids.has(asset.asset_id)) errors.push('Asset IDs must be present and unique.');
+        ids.add(asset.asset_id);
+        if (!/^[a-f0-9]{64}$/.test(String(asset.sha256 || ''))) errors.push((asset.asset_id || 'asset') + ': invalid SHA-256.');
+        if (asset.role === 'APPEARANCE_MATERIAL' && (asset.media_type !== 'application/octet-stream' || asset.format !== 'AXF' || asset.file_extension !== '.axf' || asset.media_type_status !== 'UNREGISTERED_FALLBACK')) errors.push((asset.asset_id || 'asset') + ': invalid AxF media declaration.');
+      });
+      const selector = doc.material_selector;
+      const axf = doc.assets.find((asset) => asset.asset_id === selector.asset_ref && asset.role === 'APPEARANCE_MATERIAL');
+      if (!axf) errors.push('Material selector must resolve to an APPEARANCE_MATERIAL asset.');
+      const binding = doc.identity_binding;
+      if (binding.identity_ref !== doc.identity.identity_id) errors.push('Binding identity reference does not resolve.');
+      if (binding.asset_ref !== selector.asset_ref || binding.selector_ref !== selector.selector_id) errors.push('Binding asset or selector reference does not resolve.');
+      if (doc.identity.atlas_row !== identity()[0] || doc.identity.reference_code !== identity()[1] || doc.identity.master_sha256 !== state.manifest.source_master_sha256) errors.push('Bridge identity does not match the active ATLAS master selection.');
+      if (binding.status === 'VERIFIED' && (doc.identity.status !== 'VERIFIED' || !axf || axf.integrity_status !== 'VERIFIED' || selector.resolution_status !== 'RESOLVED')) errors.push('VERIFIED binding requires verified identity and AxF bytes plus a resolved selector.');
+      const provenance = doc.measurement_provenance;
+      if (provenance.status === 'MEASURED' && (!provenance.evidence_refs.length || !(provenance.organization || provenance.device || provenance.method))) errors.push('MEASURED material origin requires evidence and a method, device or organization.');
+      doc.render_results.forEach((render) => {
+        if (!['CALCULATED', 'SIMULATED'].includes(render.status)) errors.push('A render result cannot claim physical measurement.');
+        const output = doc.assets.find((asset) => asset.asset_id === render.output_asset_ref && asset.role === 'RENDER_RESULT');
+        if (!output) errors.push('Render output asset reference does not resolve.');
+      });
+      if (doc.physical_comparison.status === 'MEASURED' && !doc.physical_comparison.evidence_refs.length) errors.push('MEASURED physical comparison requires evidence.');
+      if (doc.qc_conclusion.status === 'VERIFIED' && (doc.physical_comparison.status !== 'MEASURED' || !doc.qc_conclusion.evidence_refs.length)) errors.push('VERIFIED QC requires measured physical comparison and evidence.');
+      return errors;
+    }
+
+    function renderBridgeStatus(errors) {
+      const doc = state.bridgeDocument;
+      bridgePanel.classList.toggle('atlas-clarus-aps__bridge--valid', !!doc && !errors.length);
+      bridgePanel.classList.toggle('atlas-clarus-aps__bridge--invalid', !!errors.length);
+      bridgeOutputs.summary.textContent = !doc ? 'NOT LOADED' : (errors.length ? 'INVALID' : 'VALID · ' + doc.conformance_level);
+      bridgeOutputs.binding.textContent = doc ? doc.identity_binding.status : 'NOT LOADED';
+      const axf = doc && doc.assets.find((asset) => asset.role === 'APPEARANCE_MATERIAL');
+      bridgeOutputs.asset.textContent = axf ? axf.integrity_status + ' · ' + axf.sha256.slice(0, 12) + '…' : 'NOT LOADED';
+      bridgeOutputs.origin.textContent = doc ? doc.measurement_provenance.status : 'UNKNOWN';
+      const renderStatus = doc && doc.render_results.length ? doc.render_results.map((item) => item.status).join(', ') : 'NOT EXECUTED';
+      bridgeOutputs.render.textContent = renderStatus + ' / ' + (doc ? doc.physical_comparison.status : 'NOT MEASURED');
+      const messages = errors.length ? errors : (doc ? ['Bridge structure and semantic integrity rules passed.', 'AxF decoding and material-selector resolution were not performed by WordPress.', 'Renderer output is not physical measurement evidence.'] : ['No bridge record loaded.']);
+      bridgeOutputs.report.replaceChildren(...messages.map((message) => {
+        const item = document.createElement('li'); item.textContent = message; return item;
+      }));
+      bridgeActions.export.disabled = !doc || errors.length > 0;
+    }
+
+    async function registerAxfFile() {
+      const file = bridgeControls['axf-file'].files[0];
+      if (!file) throw new Error('Select an .axf file first.');
+      if (!/\.axf$/i.test(file.name)) throw new Error('The selected asset must use the .axf extension.');
+      state.axfAsset = { name: file.name, sha256: await sha256(await file.arrayBuffer()) };
+      return state.axfAsset;
+    }
+
+    async function createBridgeDocument() {
+      const asset = await registerAxfFile();
+      const selectorValue = bridgeControls['selector-value'].value.trim();
+      if (!selectorValue) throw new Error('Enter a material name or selector ID.');
+      const row = identity();
+      const token = newEnvelopeId();
+      state.bridgeDocument = {
+        schema_version: '0.1', document_id: 'apf-axf-' + token, document_status: 'ACTIVE',
+        conformance_level: 'APF-AXF-REFERENCE',
+        identity: { identity_id: 'atlas-colour-' + row[0], atlas_row: row[0], reference_code: row[1], master_sha256: state.manifest.source_master_sha256, status: 'VERIFIED' },
+        assets: [{ asset_id: 'axf-' + token, role: 'APPEARANCE_MATERIAL', uri: asset.name, sha256: asset.sha256, media_type: 'application/octet-stream', format: 'AXF', file_extension: '.axf', media_type_status: 'UNREGISTERED_FALLBACK', integrity_status: 'VERIFIED' }],
+        material_selector: { selector_id: 'selector-' + token, asset_ref: 'axf-' + token, selector_type: bridgeControls['selector-type'].value, value: selectorValue, resolution_status: 'SOURCE_DECLARED', representation_model: 'UNKNOWN' },
+        identity_binding: { binding_id: 'binding-' + token, identity_ref: 'atlas-colour-' + row[0], asset_ref: 'axf-' + token, selector_ref: 'selector-' + token, status: 'REFERENCE_BOUND' },
+        measurement_provenance: { status: 'UNKNOWN', evidence_refs: [] },
+        render_results: [],
+        physical_comparison: { status: 'NOT_MEASURED', evidence_refs: [] },
+        qc_conclusion: { status: 'NOT_MEASURED', evidence_refs: [], decision: 'NOT_EVALUATED' },
+        notes: ['AxF bytes hashed locally in the browser; the file was not uploaded.', 'Selector is source-declared because this WordPress plugin does not decode AxF.', 'No render and no physical measurement were performed.']
+      };
+      renderBridgeStatus(bridgeErrors(state.bridgeDocument));
+    }
+
+    async function importBridgeDocument() {
+      const file = bridgeControls['bridge-file'].files[0];
+      if (!file) throw new Error('Select a bridge JSON file first.');
+      state.bridgeDocument = JSON.parse(await file.text());
+      renderBridgeStatus(bridgeErrors(state.bridgeDocument));
+    }
+
     async function exportApfBundle(button) {
       button.disabled = true;
       const originalText = button.textContent;
@@ -517,6 +613,21 @@
     });
     root.querySelector('[data-export="png"]').addEventListener('click', () => {
       canvas.toBlob((blob) => { if (blob) downloadBlob('atlas-clarus-apf-preview.png', blob, 'image/png'); }, 'image/png');
+    });
+    bridgeActions.create.addEventListener('click', () => {
+      createBridgeDocument().catch((error) => {
+        state.bridgeDocument = null;
+        renderBridgeStatus([error.message]);
+      });
+    });
+    bridgeActions.validate.addEventListener('click', () => {
+      importBridgeDocument().catch((error) => {
+        state.bridgeDocument = null;
+        renderBridgeStatus([error.message]);
+      });
+    });
+    bridgeActions.export.addEventListener('click', () => {
+      if (state.bridgeDocument) downloadBlob('atlas-clarus-apf-axf-bridge.json', JSON.stringify(state.bridgeDocument, null, 2) + '\n', 'application/json');
     });
 
     try {
