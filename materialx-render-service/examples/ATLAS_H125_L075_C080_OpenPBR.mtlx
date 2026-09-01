@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <open_pbr_surface name="ATLAS_OpenPBR_Surface" type="surfaceshader">
+    <input name="base_weight" type="float" value="1.0" />
+    <input name="base_color" type="color3" value="0.462745, 0.803922, 0.152941" colorspace="srgb_texture" />
+    <input name="base_metalness" type="float" value="0.0" />
+    <input name="specular_weight" type="float" value="1.0" />
+    <input name="specular_roughness" type="float" value="0.25" />
+    <input name="coat_weight" type="float" value="0.35" />
+    <input name="coat_roughness" type="float" value="0.12" />
+  </open_pbr_surface>
+  <surfacematerial name="ATLAS_H125_L075_C080_OpenPBR" type="material">
+    <input name="surfaceshader" type="surfaceshader" nodename="ATLAS_OpenPBR_Surface" />
+  </surfacematerial>
+</materialx>
