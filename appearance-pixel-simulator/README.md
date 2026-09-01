@@ -1,11 +1,16 @@
 # ATLAS Clarus Appearance Pixel Simulator
 
-**v0.3.0 — OPEN APPEARANCE PREVIEW / MATERIAL BRIDGE**
+**v0.3.1 — INTERACTIVE OBJECT LIBRARY**
 
 A WordPress plugin for exploring pixel-addressable appearance variants while
 keeping the ATLAS Clarus colour reference identity frozen and separately
 verifiable. APF provides the identity, status and evidence envelope above the
 simulation and its exported assets.
+
+Version 0.3.1 adds a locally bundled Three.js object library with a material
+sphere, folding carton, bottle, beverage can, material plate and fabric swatch.
+Object geometry, material zones and preview status remain explicitly separate
+from physical measurement and QC.
 
 Version 0.3.0 provides a manufacturer-neutral APF Material Bridge. MaterialX,
 OpenPBR JSON, glTF/GLB and PBR texture sets are first-class declarations.
