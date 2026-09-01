@@ -320,29 +320,6 @@
       };
     }
 
-    function exportManifest() {
-      return {
-        format_name: 'ATLAS Clarus Appearance Pixel Web Export', format_version: '0.1.1',
-        plugin_version: root.dataset.version, record_context: 'EXPERIMENTAL',
-        claim_class: 'MASTER_REFERENCE_WITH_ENGINEERING_SIMULATION',
-        master: {
-          source_master_sha256: state.manifest.source_master_sha256,
-          projection_manifest_sha256: root.dataset.projectionManifestSha256,
-          projection_status: 'RUNTIME_SHA256_VERIFIED', rows: state.manifest.source_master_rows,
-          source_columns: state.manifest.source_master_columns, row_id_base: 0
-        },
-        identity: selectedMasterRecord(), configuration: configuration(),
-        layer_evidence: {
-          identity_index: 'REFERENCE', spectral_reference: 'REFERENCE', illuminant_diagnostics: 'REFERENCE',
-          material_index: 'CONTROL', specular_proxy: 'SIMULATED', height: 'SIMULATED', normal_xyz: 'DERIVED',
-          embellishment_class: 'CONTROL', embellishment_coverage: 'CONTROL', appearance_rgb_u8: 'SIMULATED',
-          uncertainty: 'DERIVED', qc_status: 'CONTROL'
-        },
-        measurement_status: 'NOT_MEASURED',
-        evidence_boundary: 'Master identity, spectrum and illuminant diagnostics are verified reference data. Material/specular/height/appearance values are simulated; no BRDF/BSDF or measured QC.'
-      };
-    }
-
     function pixelExport() {
       const layers = {
         identity_index: [], material_index: [], spectral_reference_index: [], specular_proxy: [],
@@ -359,7 +336,94 @@
         layers.appearance_rgb_u8.push(cell.rgb); layers.uncertainty.push(Number(cell.uncertainty.toFixed(6)));
         layers.qc_status.push(0);
       }));
-      return { manifest: exportManifest(), storage: 'row-major flattened arrays', shape: [state.rows, state.columns], layers: layers };
+      return {
+        format_name: 'ATLAS Clarus Appearance Pixel Data', format_version: '0.1.2',
+        evidence_class: 'MASTER_REFERENCE_WITH_ENGINEERING_SIMULATION',
+        identity: selectedMasterRecord(), configuration: configuration(),
+        storage: 'row-major flattened arrays', shape: [state.rows, state.columns], layers: layers,
+        layer_evidence: {
+          identity_index: 'REFERENCE', spectral_reference_index: 'REFERENCE',
+          material_index: 'CONTROL', specular_proxy: 'SIMULATED', height: 'SIMULATED',
+          normal_xyz: 'CALCULATED', embellishment_class: 'CONTROL',
+          embellishment_coverage: 'CONTROL', appearance_rgb_u8: 'SIMULATED',
+          uncertainty: 'CALCULATED', qc_status: 'NOT_MEASURED'
+        }
+      };
+    }
+
+    function newEnvelopeId() {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (character) => {
+        const random = Math.floor(Math.random() * 16);
+        return (character === 'x' ? random : (random & 3) | 8).toString(16);
+      });
+    }
+
+    function canvasBlob() {
+      return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('PNG export failed.')), 'image/png');
+      });
+    }
+
+    function apfEnvelope(pixelSha256, previewSha256) {
+      const row = identity();
+      const selectedPixel = state.cells[state.selectedY][state.selectedX];
+      return {
+        apf_version: '0.1', envelope_id: newEnvelopeId(), created_utc: new Date().toISOString(),
+        conformance: 'APF-EVIDENCE',
+        identity: {
+          authority: 'ATLAS_CLARUS', source_atlas_row_id: row[0], reference: row[1],
+          master_sha256: state.manifest.source_master_sha256, freeze_status: 'VERIFIED',
+          rgb_u8: baseRgb(), hex: row[2]
+        },
+        assets: [
+          { asset_id: 'master_projection_manifest', role: 'OTHER', uri: root.dataset.masterBase + 'master-manifest.json', media_type: 'application/json', sha256: root.dataset.projectionManifestSha256, format_profile: 'ATLAS Clarus Master Browser Projection v0.1.1' },
+          { asset_id: 'appearance_pixels', role: 'PIXEL_CONTAINER', uri: 'atlas-clarus-apf-pixels.json', media_type: 'application/json', sha256: pixelSha256, format_profile: 'ATLAS Clarus row-major appearance layers v0.1.2' },
+          { asset_id: 'appearance_preview', role: 'PREVIEW', uri: 'atlas-clarus-apf-preview.png', media_type: 'image/png', sha256: previewSha256 }
+        ],
+        bindings: [
+          { binding_id: 'identity_pixel', asset_id: 'appearance_pixels', relationship: 'IDENTITY_REPRESENTATION', locator: { pixel_xy: [state.selectedX, state.selectedY], selector: 'layers.identity_index' }, status: 'REFERENCE_BOUND' },
+          { binding_id: 'appearance_region', asset_id: 'appearance_pixels', relationship: 'APPEARANCE_OUTPUT', locator: { region_xywh: [0, 0, state.columns, state.rows], selector: 'layers.appearance_rgb_u8' }, status: 'SIMULATED' },
+          { binding_id: 'preview_output', asset_id: 'appearance_preview', relationship: 'APPEARANCE_OUTPUT', status: 'SIMULATED' }
+        ],
+        conditions: [
+          { condition_id: 'simulated_view', kind: 'VIEWING', parameters: { illuminant_scenario: controls.light.value, view_angle_degrees: Number(controls.angle.value), gloss_proxy_GU: Number(controls.gloss.value), relief_depth_percent: Number(controls.depth.value) } }
+        ],
+        claims: [
+          { claim_id: 'identity_verified', subject: 'IDENTITY', status: 'VERIFIED', method: 'Runtime SHA-256 verification of the ATLAS master projection and selected row binding', evidence_asset_ids: ['master_projection_manifest'], responsible_system: 'ATLAS Clarus Appearance Pixel Simulator v' + root.dataset.version },
+          { claim_id: 'spectral_reference', subject: 'SPECTRAL_REFERENCE', status: 'REFERENCE_BOUND', method: 'Selected master row spectral reflectance on the 380–730 nm grid', evidence_asset_ids: ['master_projection_manifest', 'appearance_pixels'], responsible_system: 'ATLAS Clarus active master projection' },
+          { claim_id: 'appearance_simulation', subject: 'APPEARANCE', status: 'SIMULATED', method: 'Deterministic browser appearance simulation using declared controls', condition_id: 'simulated_view', evidence_asset_ids: ['appearance_pixels', 'appearance_preview'], result: { selected_pixel_rgb_u8: selectedPixel.rgb, physical_proof: false }, responsible_system: 'ATLAS Clarus Appearance Pixel Simulator v' + root.dataset.version },
+          { claim_id: 'production_not_executed', subject: 'PRODUCTION_FEASIBILITY', status: 'NOT_EXECUTED', method: 'No production target evaluated', evidence_asset_ids: [] },
+          { claim_id: 'device_values_not_executed', subject: 'DEVICE_VALUES', status: 'NOT_EXECUTED', method: 'No device separation generated', evidence_asset_ids: [] },
+          { claim_id: 'qc_not_measured', subject: 'MEASURED_QC', status: 'NOT_MEASURED', method: 'No physical sample measured', evidence_asset_ids: [] }
+        ],
+        workflow: {
+          reference_identity: { status: 'VERIFIED', claim_ids: ['identity_verified'] },
+          appearance_evidence: { status: 'SIMULATED', claim_ids: ['spectral_reference', 'appearance_simulation'] },
+          production_feasibility: { status: 'NOT_EXECUTED', claim_ids: ['production_not_executed'] },
+          device_values: { status: 'NOT_EXECUTED', claim_ids: ['device_values_not_executed'] },
+          measured_qc: { status: 'NOT_MEASURED', claim_ids: ['qc_not_measured'] }
+        }
+      };
+    }
+
+    async function exportApfBundle(button) {
+      button.disabled = true;
+      const originalText = button.textContent;
+      button.textContent = 'Building APF…';
+      try {
+        const pixelText = JSON.stringify(pixelExport()) + '\n';
+        const previewBlob = await canvasBlob();
+        const pixelDigest = await sha256(new TextEncoder().encode(pixelText));
+        const previewDigest = await sha256(await previewBlob.arrayBuffer());
+        const envelopeText = JSON.stringify(apfEnvelope(pixelDigest, previewDigest), null, 2) + '\n';
+        downloadBlob('atlas-clarus-apf-pixels.json', pixelText, 'application/json');
+        downloadBlob('atlas-clarus-apf-preview.png', previewBlob, 'image/png');
+        downloadBlob('atlas-clarus.apf.json', envelopeText, 'application/json');
+      } finally {
+        button.textContent = originalText;
+        button.disabled = false;
+      }
     }
 
     Object.keys(controls).forEach((name) => {
@@ -381,14 +445,16 @@
       state.selectedY = clamp(Math.floor((event.clientY - rect.top) / rect.height * state.rows), 0, state.rows - 1);
       draw();
     });
-    root.querySelector('[data-export="manifest"]').addEventListener('click', () => {
-      downloadBlob('atlas-clarus-master-bound-manifest.json', JSON.stringify(exportManifest(), null, 2) + '\n', 'application/json');
+    root.querySelector('[data-export="apf"]').addEventListener('click', (event) => {
+      exportApfBundle(event.currentTarget).catch((error) => {
+        outputs['master-status'].textContent = 'APF EXPORT FAILED · ' + error.message;
+      });
     });
     root.querySelector('[data-export="pixels"]').addEventListener('click', () => {
-      downloadBlob('atlas-clarus-master-bound-pixels.json', JSON.stringify(pixelExport()) + '\n', 'application/json');
+      downloadBlob('atlas-clarus-apf-pixels.json', JSON.stringify(pixelExport()) + '\n', 'application/json');
     });
     root.querySelector('[data-export="png"]').addEventListener('click', () => {
-      canvas.toBlob((blob) => { if (blob) downloadBlob('atlas-clarus-master-bound-preview.png', blob, 'image/png'); }, 'image/png');
+      canvas.toBlob((blob) => { if (blob) downloadBlob('atlas-clarus-apf-preview.png', blob, 'image/png'); }, 'image/png');
     });
 
     try {

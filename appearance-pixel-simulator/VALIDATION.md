@@ -1,7 +1,7 @@
-# ATLAS Clarus Appearance Pixel Simulator v0.1.1 — Validation
+# ATLAS Clarus Appearance Pixel Simulator v0.1.2 — Validation
 
 Result: **PASS with stated runtime limitation**  
-Release: **v0.1.1 — MASTER BOUND**
+Release: **v0.1.2 — APF ENVELOPE**
 
 ## Source binding
 
@@ -32,6 +32,10 @@ projection manifest. Spectral values span 0.0 to 0.9718000293 on the 380–730 n
 ## Code and package checks
 
 - JavaScript syntax (`node --check`): PASS
+- APF schema and example JSON parsing: PASS
+- APF required-field and cross-reference checks: PASS
+- APF export source contains SHA-256 binding for pixel JSON and PNG: PASS
+- Five-stage APF workflow status mapping: PASS
 - PHP delimiter balance: PASS
 - WordPress registration, enqueueing, settings sanitation and output escaping
   constructs: present
@@ -64,3 +68,8 @@ No PHP runtime or live WordPress/IONOS instance was available in the build
 environment. Consequently, PHP linting and an end-to-end WordPress activation/UI
 test were not executed here. Static checks and ZIP validation passed; installation
 on a staging WordPress instance remains the recommended final acceptance test.
+
+A dedicated external JSON Schema Draft 2020-12 validator was not installed in
+the build environment. Schema structure, JSON syntax, required example fields
+and all example cross-references were checked independently; formal CI schema
+validation remains a follow-up acceptance gate.

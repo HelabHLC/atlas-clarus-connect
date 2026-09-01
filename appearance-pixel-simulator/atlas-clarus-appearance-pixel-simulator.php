@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: ATLAS Clarus Appearance Pixel Simulator
- * Description: Master-bound, pixel-addressable appearance engineering simulator using the verified 13,283-row ATLAS Clarus active master projection.
- * Version: 0.1.1
+ * Description: Master-bound appearance engineering simulator with an APF identity, status and evidence envelope.
+ * Version: 0.1.2
  * Author: Norbert / ATLAS Clarus
  * License: GPL-2.0-or-later
  * Text Domain: atlas-clarus-appearance-pixel-simulator
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ATLAS_CLARUS_APS_VERSION', '0.1.1' );
+define( 'ATLAS_CLARUS_APS_VERSION', '0.1.2' );
 define( 'ATLAS_CLARUS_APS_URL', plugin_dir_url( __FILE__ ) );
 define( 'ATLAS_CLARUS_APS_MASTER_SHA256', '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4' );
 define( 'ATLAS_CLARUS_APS_PROJECTION_MANIFEST_SHA256', '561adb75debc920a5071e017e9de98abdbd517fb522d2bd4fa60aef2b85dc9ec' );
@@ -73,7 +73,7 @@ function atlas_clarus_aps_render_settings_page() {
 		</form>
 		<hr>
 		<p><strong><?php esc_html_e( 'Active master:', 'atlas-clarus-appearance-pixel-simulator' ); ?></strong> 13,283 rows · 114 source columns · SHA-256 <code><?php echo esc_html( ATLAS_CLARUS_APS_MASTER_SHA256 ); ?></code></p>
-		<p><strong><?php esc_html_e( 'Evidence boundary:', 'atlas-clarus-appearance-pixel-simulator' ); ?></strong> <?php esc_html_e( 'Identity, spectrum and illuminant-extension values come from the verified master projection. Material, specular, height and appearance layers remain deterministic simulations. The plugin does not create BRDF/BSDF data, a physical proof or measured QC.', 'atlas-clarus-appearance-pixel-simulator' ); ?></p>
+		<p><strong><?php esc_html_e( 'APF evidence boundary:', 'atlas-clarus-appearance-pixel-simulator' ); ?></strong> <?php esc_html_e( 'Identity, spectrum and illuminant-extension values come from the verified master projection. Material, specular, height and appearance layers remain deterministic simulations. APF records this distinction and does not create BRDF/BSDF data, a physical proof or measured QC.', 'atlas-clarus-appearance-pixel-simulator' ); ?></p>
 	</div>
 	<?php
 }
@@ -184,7 +184,7 @@ function atlas_clarus_aps_shortcode() {
 					<div><span><?php esc_html_e( 'Pixel / master channels', 'atlas-clarus-appearance-pixel-simulator' ); ?></span><code data-output="channels"></code></div>
 				</div>
 				<div class="atlas-clarus-aps__actions">
-					<button type="button" data-export="manifest"><?php esc_html_e( 'Export manifest', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
+					<button type="button" data-export="apf"><?php esc_html_e( 'Export APF bundle', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
 					<button type="button" data-export="pixels"><?php esc_html_e( 'Export pixel data', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
 					<button type="button" data-export="png"><?php esc_html_e( 'Export PNG', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
 				</div>

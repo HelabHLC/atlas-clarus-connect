@@ -1,10 +1,11 @@
 # ATLAS Clarus Appearance Pixel Simulator
 
-**v0.1.1 — MASTER BOUND**
+**v0.1.2 — APF ENVELOPE**
 
 A WordPress plugin for exploring pixel-addressable appearance variants while
 keeping the ATLAS Clarus colour reference identity frozen and separately
-verifiable.
+verifiable. APF provides the identity, status and evidence envelope above the
+simulation and its exported assets.
 
 ## What is master-bound
 
@@ -42,6 +43,9 @@ quality control or certification.
 - `build/generate_master_projection.py` — deterministic projection generator
 - `build/validate_master_projection.py` — exhaustive source/projection validator
 - `VALIDATION.md` — verification record and limitations
+- `schemas/apf-envelope-v0.1.schema.json` — APF Evidence Envelope schema
+- `docs/APF_ARCHITECTURE_v0.1.md` — normative review draft
+- `examples/apf-envelope-master-bound-example.json` — cross-format example
 
 Generated projection payloads are not committed to GitHub. Build them from the
 verified active master:
@@ -66,9 +70,8 @@ Use the prepared release ZIP in WordPress under **Plugins → Add New → Upload
 Plugin**. After activation, place `[atlas_clarus_appearance_simulator]` on a page
 or post.
 
-Release ZIP SHA-256:
-
-`b7cf036252f63925a65f1ef2d2c9a2bfba7789f69f04b5464c045b13d1c18dc1`
+The APF export downloads `atlas-clarus.apf.json`, its SHA-256-bound pixel JSON
+and the corresponding PNG preview.
 
 ## Current runtime limitation
 

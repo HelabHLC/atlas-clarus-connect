@@ -3,7 +3,7 @@ Contributors: atlasclarus
 Tags: colour, color, appearance, pixel, simulation, PKL
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv2 or later
 
 Master-bound, pixel-addressable appearance engineering simulator for WordPress.
@@ -25,13 +25,20 @@ master and every browser asset are SHA-256 identified and verified at runtime.
 Search or select a master identity, inspect its actual reference, RGB, HEX, Lab,
 spectrum and illuminant diagnostics, then explore material, finish, illumination,
 embellishment, texture, view angle, gloss and relief variants. Exports include a
-master-bound manifest, pixel data JSON and PNG preview.
+APF evidence envelope, pixel data JSON and PNG preview. The APF bundle registers
+the exported assets by URI and SHA-256 and records pixel/region bindings.
 
 Master reference fields and spectra are source evidence. Appearance pixels are
 an engineering simulation. They are not BRDF/BSDF measurements, a physical
 proof, measured QC or certification.
 
 == Changelog ==
+
+= 0.1.2 =
+* Added APF v0.1 Identity, Status and Evidence Envelope export.
+* Bound pixel JSON and PNG preview assets by SHA-256.
+* Added pixel/region locators and five-stage workflow status.
+* Added APF architecture, JSON Schema and complete cross-format example.
 
 = 0.1.1 =
 * Bound all 13,283 identities to the verified active master projection.
