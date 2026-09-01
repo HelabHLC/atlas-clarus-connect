@@ -21,10 +21,16 @@ interpreted as the APF core or as a partnership claim.
 - `APF-MATERIAL-MEASURED`: reference plus evidenced measurement provenance.
 - `APF-MATERIAL-QC`: physical comparison plus verified QC evidence.
 
+## Geometry layer
+
+Material identity and object geometry are independent. Built-in preview
+templates use `source_type: BUILT_IN` and list their material-zone IDs.
+Externally supplied geometry remains `SOURCE_DECLARED` until its bytes and
+zone mapping are verified. A realistic object render remains `SIMULATED`.
+
 ## Integrity
 
 Every binary asset requires SHA-256. A URI locates; a digest identifies.
 `VERIFIED` binding requires verified identity, verified asset bytes and a
 resolved selector. Rendering never establishes physical measurement. A
 proprietary adapter never changes the stable ATLAS colour identity.
-
