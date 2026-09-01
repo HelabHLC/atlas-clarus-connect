@@ -1,11 +1,22 @@
 # ATLAS Clarus Appearance Pixel Simulator
 
-**v0.2.0 Phase 1 — SPECTRAL D50/D65/A**
+**v0.3.0 — OPEN APPEARANCE PREVIEW / MATERIAL BRIDGE**
 
 A WordPress plugin for exploring pixel-addressable appearance variants while
 keeping the ATLAS Clarus colour reference identity frozen and separately
 verifiable. APF provides the identity, status and evidence envelope above the
 simulation and its exported assets.
+
+Version 0.3.0 provides a manufacturer-neutral APF Material Bridge. MaterialX,
+OpenPBR JSON, glTF/GLB and PBR texture sets are first-class declarations.
+External proprietary formats may be supported only through optional adapters
+and do not define the ATLAS Clarus architecture.
+
+Version 0.2.2 adds a manufacturer-neutral JSON renderer contract, a deterministic
+mock mode and an optional external server-side adapter. Mock output is always
+labelled `MOCK_SIMULATION`; it tests transport and evidence binding but does not
+decode the material. External mode requires an authenticated WordPress user with upload
+permission and keeps its bearer token server-side.
 
 The base colour stimulus under CIE D50, D65 and A is now calculated spectrally
 from the 36-value master reflectance and CIE 1931 2 degree colour-matching
