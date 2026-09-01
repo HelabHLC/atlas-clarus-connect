@@ -81,12 +81,20 @@
     root.querySelectorAll('[data-control]').forEach((node) => { controls[node.dataset.control] = node; });
     root.querySelectorAll('[data-output]').forEach((node) => { outputs[node.dataset.output] = node; });
     const buttons = Array.from(root.querySelectorAll('[data-export]'));
+    const bridgePanel = root.querySelector('.atlas-clarus-aps__bridge');
+    const bridgeControls = {};
+    const bridgeOutputs = {};
+    root.querySelectorAll('[data-bridge-control]').forEach((node) => { bridgeControls[node.dataset.bridgeControl] = node; });
+    root.querySelectorAll('[data-bridge-output]').forEach((node) => { bridgeOutputs[node.dataset.bridgeOutput] = node; });
+    const bridgeActions = {};
+    root.querySelectorAll('[data-bridge-action]').forEach((node) => { bridgeActions[node.dataset.bridgeAction] = node; });
     buttons.forEach((button) => { button.disabled = true; });
     const state = {
       ready: false, selectedX: 20, selectedY: 12, cells: [], columns: 40, rows: 25,
       selectedRowId: Number(root.dataset.rowId), manifest: null, index: null,
       numeric: null, illuminant: null, spectral: null, cie: null,
-      numericFields: {}, illuminantFields: {}, spectralCache: new Map()
+      numericFields: {}, illuminantFields: {}, spectralCache: new Map(),
+      bridgeDocument: null, materialAsset: null
     };
 
     function identity() { return state.index.rows[state.selectedRowId]; }
@@ -469,6 +477,172 @@
       };
     }
 
+    function bridgeErrors(doc) {
+      const errors = [];
+      const required = ['schema_version', 'document_id', 'document_status', 'conformance_level', 'identity', 'assets', 'material_selector', 'identity_binding', 'measurement_provenance', 'render_results', 'physical_comparison', 'qc_conclusion'];
+      required.forEach((key) => { if (!Object.prototype.hasOwnProperty.call(doc || {}, key)) errors.push('Missing property: ' + key); });
+      if (errors.length) return errors;
+      if (doc.schema_version !== '0.1') errors.push('schema_version must be 0.1.');
+      const ids = new Set();
+      doc.assets.forEach((asset) => {
+        if (!asset.asset_id || ids.has(asset.asset_id)) errors.push('Asset IDs must be present and unique.');
+        ids.add(asset.asset_id);
+        if (!/^[a-f0-9]{64}$/.test(String(asset.sha256 || ''))) errors.push((asset.asset_id || 'asset') + ': invalid SHA-256.');
+        if (asset.role === 'APPEARANCE_MATERIAL' && (!asset.format || !asset.media_type || !asset.file_extension)) errors.push((asset.asset_id || 'asset') + ': incomplete appearance-material declaration.');
+      });
+      const selector = doc.material_selector;
+      const material = doc.assets.find((asset) => asset.asset_id === selector.asset_ref && asset.role === 'APPEARANCE_MATERIAL');
+      if (!material) errors.push('Material selector must resolve to an APPEARANCE_MATERIAL asset.');
+      const binding = doc.identity_binding;
+      if (binding.identity_ref !== doc.identity.identity_id) errors.push('Binding identity reference does not resolve.');
+      if (binding.asset_ref !== selector.asset_ref || binding.selector_ref !== selector.selector_id) errors.push('Binding asset or selector reference does not resolve.');
+      if (doc.identity.atlas_row !== identity()[0] || doc.identity.reference_code !== identity()[1] || doc.identity.master_sha256 !== state.manifest.source_master_sha256) errors.push('Bridge identity does not match the active ATLAS master selection.');
+      if (binding.status === 'VERIFIED' && (doc.identity.status !== 'VERIFIED' || !material || material.integrity_status !== 'VERIFIED' || selector.resolution_status !== 'RESOLVED')) errors.push('VERIFIED binding requires verified identity and material bytes plus a resolved selector.');
+      const provenance = doc.measurement_provenance;
+      if (provenance.status === 'MEASURED' && (!provenance.evidence_refs.length || !(provenance.organization || provenance.device || provenance.method))) errors.push('MEASURED material origin requires evidence and a method, device or organization.');
+      doc.render_results.forEach((render) => {
+        if (!['CALCULATED', 'SIMULATED'].includes(render.status)) errors.push('A render result cannot claim physical measurement.');
+        const output = doc.assets.find((asset) => asset.asset_id === render.output_asset_ref && asset.role === 'RENDER_RESULT');
+        if (!output) errors.push('Render output asset reference does not resolve.');
+      });
+      if (doc.physical_comparison.status === 'MEASURED' && !doc.physical_comparison.evidence_refs.length) errors.push('MEASURED physical comparison requires evidence.');
+      if (doc.qc_conclusion.status === 'VERIFIED' && (doc.physical_comparison.status !== 'MEASURED' || !doc.qc_conclusion.evidence_refs.length)) errors.push('VERIFIED QC requires measured physical comparison and evidence.');
+      return errors;
+    }
+
+    function renderBridgeStatus(errors) {
+      const doc = state.bridgeDocument;
+      bridgePanel.classList.toggle('atlas-clarus-aps__bridge--valid', !!doc && !errors.length);
+      bridgePanel.classList.toggle('atlas-clarus-aps__bridge--invalid', !!errors.length);
+      bridgeOutputs.summary.textContent = !doc ? 'NOT LOADED' : (errors.length ? 'INVALID' : 'VALID · ' + doc.conformance_level);
+      bridgeOutputs.binding.textContent = doc ? doc.identity_binding.status : 'NOT LOADED';
+      const material = doc && doc.assets.find((asset) => asset.role === 'APPEARANCE_MATERIAL');
+      bridgeOutputs.asset.textContent = material ? material.format + ' · ' + material.integrity_status + ' · ' + material.sha256.slice(0, 12) + '…' : 'NOT LOADED';
+      bridgeOutputs.origin.textContent = doc ? doc.measurement_provenance.status : 'UNKNOWN';
+      const renderStatus = doc && doc.render_results.length ? doc.render_results.map((item) => item.status).join(', ') : 'NOT EXECUTED';
+      bridgeOutputs.render.textContent = renderStatus + ' / ' + (doc ? doc.physical_comparison.status : 'NOT MEASURED');
+      const messages = errors.length ? errors : (doc ? ['Bridge structure and semantic integrity rules passed.', 'Material decoding and selector resolution were not performed by WordPress.', 'Renderer output is not physical measurement evidence.'] : ['No bridge record loaded.']);
+      bridgeOutputs.report.replaceChildren(...messages.map((message) => {
+        const item = document.createElement('li'); item.textContent = message; return item;
+      }));
+      bridgeActions.export.disabled = !doc || errors.length > 0;
+      bridgeActions.render.disabled = !doc || errors.length > 0;
+    }
+
+    function materialDeclaration(file, format) {
+      const extension = '.' + file.name.split('.').pop().toLowerCase();
+      const declarations = {
+        MATERIALX: { mediaType: 'application/xml', extensions: ['.mtlx'] },
+        OPENPBR_JSON: { mediaType: 'application/json', extensions: ['.json'] },
+        GLTF: { mediaType: extension === '.glb' ? 'model/gltf-binary' : 'model/gltf+json', extensions: ['.glb', '.gltf'] },
+        PBR_TEXTURE_SET: { mediaType: 'application/zip', extensions: ['.zip'] },
+        AXF_ADAPTER: { mediaType: 'application/octet-stream', extensions: ['.axf'] },
+        OTHER: { mediaType: file.type || 'application/octet-stream', extensions: [extension] }
+      };
+      const declaration = declarations[format];
+      if (!declaration.extensions.includes(extension)) throw new Error('Selected file extension does not match material format ' + format + '.');
+      return { format: format, mediaType: declaration.mediaType, extension: extension };
+    }
+
+    async function registerMaterialFile() {
+      const file = bridgeControls['material-file'].files[0];
+      if (!file) throw new Error('Select an appearance-material file first.');
+      const declaration = materialDeclaration(file, bridgeControls['material-format'].value);
+      state.materialAsset = { name: file.name, sha256: await sha256(await file.arrayBuffer()), file: file, declaration: declaration };
+      return state.materialAsset;
+    }
+
+    async function createBridgeDocument() {
+      const asset = await registerMaterialFile();
+      const selectorValue = bridgeControls['selector-value'].value.trim();
+      if (!selectorValue) throw new Error('Enter a material name or selector ID.');
+      const row = identity();
+      const token = newEnvelopeId();
+      state.bridgeDocument = {
+        schema_version: '0.1', document_id: 'apf-material-' + token, document_status: 'ACTIVE',
+        conformance_level: 'APF-MATERIAL-REFERENCE',
+        identity: { identity_id: 'atlas-colour-' + row[0], atlas_row: row[0], reference_code: row[1], master_sha256: state.manifest.source_master_sha256, status: 'VERIFIED' },
+        assets: [{ asset_id: 'material-' + token, role: 'APPEARANCE_MATERIAL', uri: asset.name, sha256: asset.sha256, media_type: asset.declaration.mediaType, format: asset.declaration.format, file_extension: asset.declaration.extension, media_type_status: 'IMPLEMENTATION_DEFINED', integrity_status: 'VERIFIED' }],
+        material_selector: { selector_id: 'selector-' + token, asset_ref: 'material-' + token, selector_type: bridgeControls['selector-type'].value, value: selectorValue, resolution_status: 'SOURCE_DECLARED', representation_model: 'UNKNOWN' },
+        identity_binding: { binding_id: 'binding-' + token, identity_ref: 'atlas-colour-' + row[0], asset_ref: 'material-' + token, selector_ref: 'selector-' + token, status: 'REFERENCE_BOUND' },
+        measurement_provenance: { status: 'UNKNOWN', evidence_refs: [] },
+        render_results: [],
+        physical_comparison: { status: 'NOT_MEASURED', evidence_refs: [] },
+        qc_conclusion: { status: 'NOT_MEASURED', evidence_refs: [], decision: 'NOT_EVALUATED' },
+        notes: ['Material bytes hashed locally in the browser; the file was not uploaded.', 'Selector is source-declared because this WordPress plugin does not decode the material.', 'AxF, when used, is an optional external adapter and not the APF core.', 'No render and no physical measurement were performed.']
+      };
+      renderBridgeStatus(bridgeErrors(state.bridgeDocument));
+    }
+
+    async function importBridgeDocument() {
+      const file = bridgeControls['bridge-file'].files[0];
+      if (!file) throw new Error('Select a bridge JSON file first.');
+      state.bridgeDocument = JSON.parse(await file.text());
+      renderBridgeStatus(bridgeErrors(state.bridgeDocument));
+    }
+
+    function bufferToBase64(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let offset = 0; offset < bytes.length; offset += 0x8000) binary += String.fromCharCode.apply(null, bytes.subarray(offset, offset + 0x8000));
+      return window.btoa(binary);
+    }
+
+    async function sendToRenderer() {
+      const errors = bridgeErrors(state.bridgeDocument);
+      if (errors.length) throw new Error('Bridge must validate before rendering.');
+      const material = state.bridgeDocument.assets.find((asset) => asset.role === 'APPEARANCE_MATERIAL');
+      const request = {
+        connector_contract: 'ATLAS_CLARUS_RENDERER_CONNECTOR_v0.1',
+        identity: state.bridgeDocument.identity,
+        asset: { asset_id: material.asset_id, uri: material.uri, sha256: material.sha256, media_type: material.media_type, format: material.format },
+        material_selector: state.bridgeDocument.material_selector,
+        scene: {
+          scene_id: 'atlas-wordpress-scene-v0.1',
+          illumination: controls.light.value + ' / CIE ' + spectralAppearance().illuminant,
+          view_angle_degrees: Number(controls.angle.value),
+          gloss_proxy_GU: Number(controls.gloss.value),
+          camera: 'ATLAS WordPress preview camera'
+        }
+      };
+      if (root.dataset.rendererMode === 'external') {
+        if (!state.materialAsset || state.materialAsset.sha256 !== material.sha256) throw new Error('Select the material file matching this bridge before external rendering.');
+        if (state.materialAsset.file.size > 10 * 1024 * 1024) throw new Error('External connector v0.1 accepts material assets up to 10 MiB.');
+        request.asset.content_base64 = bufferToBase64(await state.materialAsset.file.arrayBuffer());
+      }
+      bridgeActions.render.disabled = true;
+      bridgeActions.render.textContent = 'Rendering…';
+      const response = await fetch(root.dataset.rendererUrl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': root.dataset.rendererNonce },
+        body: JSON.stringify(request)
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || 'Renderer request failed.');
+      if (!/^[a-f0-9]{64}$/.test(String(result.output_sha256 || '')) || !['CALCULATED', 'SIMULATED'].includes(result.status)) throw new Error('Renderer response integrity validation failed.');
+      const outputId = 'render-output-' + result.job_id;
+      state.bridgeDocument.assets = state.bridgeDocument.assets.filter((asset) => asset.role !== 'RENDER_RESULT');
+      state.bridgeDocument.assets.push({
+        asset_id: outputId, role: 'RENDER_RESULT', uri: 'renderer-result:' + result.job_id,
+        sha256: result.output_sha256, media_type: result.media_type, format: result.media_type,
+        media_type_status: 'IMPLEMENTATION_DEFINED', integrity_status: 'VERIFIED'
+      });
+      state.bridgeDocument.render_results = [{
+        render_id: 'render-' + result.job_id, binding_ref: state.bridgeDocument.identity_binding.binding_id,
+        renderer: result.renderer, renderer_version: String(result.renderer_version || 'UNDECLARED'),
+        scene_id: request.scene.scene_id, illumination: request.scene.illumination, camera: request.scene.camera,
+        output_asset_ref: outputId, status: result.status
+      }];
+      state.bridgeDocument.conformance_level = 'APF-MATERIAL-RENDERED';
+      state.bridgeDocument.notes.push(result.evidence_class + ': ' + (result.limitation || 'Renderer output; not physical measurement evidence.'));
+      const preview = bridgeOutputs.preview;
+      preview.querySelector('img').src = 'data:' + result.media_type + ';base64,' + result.output_base64;
+      bridgeOutputs['renderer-meta'].textContent = result.renderer + ' ' + (result.renderer_version || '') + ' · ' + result.evidence_class + ' · SHA-256 ' + result.output_sha256;
+      preview.hidden = false;
+      renderBridgeStatus(bridgeErrors(state.bridgeDocument));
+    }
+
     async function exportApfBundle(button) {
       button.disabled = true;
       const originalText = button.textContent;
@@ -517,6 +691,28 @@
     });
     root.querySelector('[data-export="png"]').addEventListener('click', () => {
       canvas.toBlob((blob) => { if (blob) downloadBlob('atlas-clarus-apf-preview.png', blob, 'image/png'); }, 'image/png');
+    });
+    bridgeActions.create.addEventListener('click', () => {
+      createBridgeDocument().catch((error) => {
+        state.bridgeDocument = null;
+        renderBridgeStatus([error.message]);
+      });
+    });
+    bridgeActions.validate.addEventListener('click', () => {
+      importBridgeDocument().catch((error) => {
+        state.bridgeDocument = null;
+        renderBridgeStatus([error.message]);
+      });
+    });
+    bridgeActions.export.addEventListener('click', () => {
+      if (state.bridgeDocument) downloadBlob('atlas-clarus-apf-material-bridge.json', JSON.stringify(state.bridgeDocument, null, 2) + '\n', 'application/json');
+    });
+    bridgeActions.render.addEventListener('click', () => {
+      const original = bridgeActions.render.textContent;
+      sendToRenderer().catch((error) => renderBridgeStatus([error.message])).finally(() => {
+        bridgeActions.render.textContent = original;
+        bridgeActions.render.disabled = !state.bridgeDocument || bridgeErrors(state.bridgeDocument).length > 0;
+      });
     });
 
     try {
