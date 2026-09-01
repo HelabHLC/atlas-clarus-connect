@@ -1,7 +1,19 @@
-# ATLAS Clarus Appearance Pixel Simulator v0.3.0 — Validation
+# ATLAS Clarus Appearance Pixel Simulator v0.3.1 — Validation
 
 Result: **PASS with stated runtime limitation**  
-Release: **v0.3.0 — OPEN APPEARANCE PREVIEW / MATERIAL BRIDGE**
+Release: **v0.3.1 — INTERACTIVE OBJECT LIBRARY**
+
+## Interactive object library
+
+| Check | Result |
+|---|---:|
+| Three.js delivery | LOCAL BUNDLE — no CDN |
+| Built-in templates | 6 |
+| Geometry status | BUILT_IN |
+| Material status | SIMULATED |
+| Preview/render status | SIMULATED |
+| Physical QC | NOT_MEASURED |
+| PNG preview export | IMPLEMENTED |
 
 ## Renderer connector checks
 
