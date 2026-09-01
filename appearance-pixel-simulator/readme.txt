@@ -3,7 +3,7 @@ Contributors: atlasclarus
 Tags: colour, color, appearance, pixel, simulation, PKL
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.3.0
+Stable tag: 0.3.1
 License: GPLv2 or later
 
 Master-bound, pixel-addressable appearance engineering simulator for WordPress.
@@ -40,6 +40,12 @@ reported in the UI and APF evidence. ALS LED and STR scenarios remain disabled
 until their authoritative spectral power distributions are available.
 
 == Changelog ==
+
+= 0.3.1 =
+* Adds a locally bundled Three.js interactive object preview without CDN requests.
+* Adds sphere, folding-carton, bottle, can, material-plate and fabric templates.
+* Adds built-in geometry and material-zone evidence records.
+* Keeps every interactive object preview SIMULATED and physical QC NOT_MEASURED.
 
 = 0.3.0 =
 * Renames the integration layer to APF Material Bridge and removes AxF from the product core.
