@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates cmake g++ git ninja-build python3 python3-pip python3-venv \
     libgl1-mesa-dev libglu1-mesa-dev libglfw3-dev libxi-dev libxinerama-dev \
-    libxcursor-dev libxrandr-dev libx11-dev mesa-utils xvfb xauth \
+    libxcursor-dev libxrandr-dev libx11-dev libxt-dev mesa-utils xvfb xauth \
     && git clone --branch "v${MATERIALX_VERSION}" --depth 1 --recursive \
        https://github.com/AcademySoftwareFoundation/MaterialX.git /tmp/MaterialX \
     && cmake -S /tmp/MaterialX -B /tmp/MaterialX/build -G Ninja \
