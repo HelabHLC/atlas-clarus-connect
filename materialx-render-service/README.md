@@ -7,6 +7,14 @@ the existing `ATLAS_CLARUS_RENDERER_CONNECTOR_v0.1` JSON request, verifies the
 ATLAS master digest and material bytes, invokes the open-source MaterialXView
 renderer and returns a SHA-256-bound PNG.
 
+## Deployment model
+
+ATLAS Clarus does **not** operate or provide a hosted rendering endpoint. This
+repository is an optional self-hosted reference implementation for users,
+companies and service providers that choose to run their own MaterialX renderer.
+The WordPress plugin remains fully usable in its local colour-aware mock mode
+without this service. External rendering is strictly opt-in.
+
 ## Evidence boundary
 
 - Material bytes: decoded by MaterialXView.
