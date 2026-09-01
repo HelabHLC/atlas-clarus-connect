@@ -1,7 +1,27 @@
-# ATLAS Clarus Appearance Pixel Simulator v0.2.0 — Validation
+# ATLAS Clarus Appearance Pixel Simulator v0.2.1 — Validation
 
 Result: **PASS with stated runtime limitation**  
-Release: **v0.2.0 Phase 1 — SPECTRAL D50/D65/A**
+Release: **v0.2.1 — SPECTRAL D50/D65/A + APF–AxF BRIDGE**
+
+## APF–AxF Bridge checks
+
+| Check | Result |
+|---|---:|
+| JavaScript syntax (`node --check`) | PASS |
+| Local AxF SHA-256 calculation | IMPLEMENTED — browser runtime required |
+| AxF upload to server | NOT PERFORMED |
+| Generated selector resolution | SOURCE_DECLARED |
+| Generated identity binding | REFERENCE_BOUND |
+| Generated material origin | UNKNOWN |
+| Generated render status | NOT EXECUTED |
+| Generated physical QC | NOT_MEASURED |
+| Imported bridge semantic checks | IMPLEMENTED |
+| AxF SDK decode / material resolution | NOT EXECUTED |
+| PHP syntax runtime | NOT EXECUTED — PHP unavailable in build environment |
+
+Imported records are checked for required layers, SHA-256 form, reference
+integrity, active ATLAS identity binding and forbidden evidence promotions.
+An actual AxF SDK/importer round-trip is outside this release.
 
 ## Source binding
 
