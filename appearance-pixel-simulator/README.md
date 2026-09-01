@@ -1,6 +1,6 @@
 # ATLAS Clarus Appearance Pixel Simulator
 
-**v0.2.1 — SPECTRAL D50/D65/A + APF–AxF BRIDGE**
+**v0.2.2 — APF–AxF BRIDGE + RENDERER CONNECTOR**
 
 A WordPress plugin for exploring pixel-addressable appearance variants while
 keeping the ATLAS Clarus colour reference identity frozen and separately
@@ -11,6 +11,12 @@ Version 0.2.1 adds an APF–AxF Bridge workspace that hashes a local AxF asset,
 binds it to the active ATLAS identity, imports and semantically validates bridge
 JSON, displays evidence statuses and exports the record. It does not decode or
 render AxF.
+
+Version 0.2.2 adds a manufacturer-neutral JSON renderer contract, a deterministic
+mock mode and an optional external server-side adapter. Mock output is always
+labelled `MOCK_SIMULATION`; it tests transport and evidence binding but does not
+decode AxF. External mode requires an authenticated WordPress user with upload
+permission and keeps its bearer token server-side.
 
 The base colour stimulus under CIE D50, D65 and A is now calculated spectrally
 from the 36-value master reflectance and CIE 1931 2 degree colour-matching
