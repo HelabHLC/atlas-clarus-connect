@@ -1,0 +1,47 @@
+{
+  "apf_version": "0.1",
+  "envelope_id": "8f76a19f-314f-4c7b-a4e0-f6c3b2048d25",
+  "created_utc": "2026-09-01T07:30:00Z",
+  "conformance": "APF-EVIDENCE",
+  "identity": {
+    "authority": "ATLAS_CLARUS",
+    "source_atlas_row_id": 4665,
+    "reference": "H125_L075_C080",
+    "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+    "freeze_status": "VERIFIED",
+    "rgb_u8": [118, 205, 39],
+    "hex": "#76CD27"
+  },
+  "assets": [
+    {"asset_id": "beauty_exr", "role": "PIXEL_CONTAINER", "uri": "assets/appearance.exr", "media_type": "image/x-exr", "sha256": "1111111111111111111111111111111111111111111111111111111111111111", "format_profile": "OpenEXR multipart"},
+    {"asset_id": "material_mtlx", "role": "MATERIAL", "uri": "assets/package.mtlx", "media_type": "application/vnd.materialx", "sha256": "2222222222222222222222222222222222222222222222222222222222222222"},
+    {"asset_id": "scene_gltf", "role": "SCENE", "uri": "assets/package.gltf", "media_type": "model/gltf+json", "sha256": "3333333333333333333333333333333333333333333333333333333333333333"},
+    {"asset_id": "spectral_cxf", "role": "SPECTRAL_EVIDENCE", "uri": "assets/reference.cxf", "media_type": "application/xml", "sha256": "4444444444444444444444444444444444444444444444444444444444444444", "format_profile": "CxF"},
+    {"asset_id": "display_icc", "role": "ICC_PROFILE", "uri": "assets/display.icc", "media_type": "application/vnd.iccprofile", "sha256": "5555555555555555555555555555555555555555555555555555555555555555"},
+    {"asset_id": "preview_png", "role": "PREVIEW", "uri": "assets/preview.png", "media_type": "image/png", "sha256": "6666666666666666666666666666666666666666666666666666666666666666"}
+  ],
+  "bindings": [
+    {"binding_id": "b_identity_pixel", "asset_id": "beauty_exr", "relationship": "IDENTITY_REPRESENTATION", "locator": {"channel": "RGBA", "pixel_xy": [320, 200]}, "status": "REFERENCE_BOUND"},
+    {"binding_id": "b_material", "asset_id": "material_mtlx", "relationship": "APPEARANCE_INPUT", "locator": {"material": "PackageGloss"}, "status": "VERIFIED"},
+    {"binding_id": "b_scene", "asset_id": "scene_gltf", "relationship": "APPEARANCE_INPUT", "locator": {"scene_node": "PackageFront"}, "status": "VERIFIED"},
+    {"binding_id": "b_preview", "asset_id": "preview_png", "relationship": "APPEARANCE_OUTPUT", "status": "SIMULATED"}
+  ],
+  "conditions": [
+    {"condition_id": "view_d50_30", "kind": "VIEWING", "parameters": {"illuminant": "D50", "view_angle_deg": 30, "observer": "CIE 1931 2 degree"}}
+  ],
+  "claims": [
+    {"claim_id": "c_identity", "subject": "IDENTITY", "status": "VERIFIED", "method": "ATLAS master row and SHA-256 verification", "evidence_asset_ids": [], "responsible_system": "ATLAS Clarus APF"},
+    {"claim_id": "c_spectrum", "subject": "SPECTRAL_REFERENCE", "status": "REFERENCE_BOUND", "method": "CxF asset binding", "evidence_asset_ids": ["spectral_cxf"], "responsible_system": "ATLAS Clarus APF"},
+    {"claim_id": "c_appearance", "subject": "APPEARANCE", "status": "SIMULATED", "method": "External renderer using referenced scene and material assets", "condition_id": "view_d50_30", "evidence_asset_ids": ["beauty_exr", "material_mtlx", "scene_gltf", "preview_png"], "result": {"physical_proof": false}, "responsible_system": "External renderer"},
+    {"claim_id": "c_production", "subject": "PRODUCTION_FEASIBILITY", "status": "NOT_EXECUTED", "method": "No production target evaluated", "evidence_asset_ids": []},
+    {"claim_id": "c_device", "subject": "DEVICE_VALUES", "status": "NOT_EXECUTED", "method": "No device separation generated", "evidence_asset_ids": ["display_icc"]},
+    {"claim_id": "c_qc", "subject": "MEASURED_QC", "status": "NOT_MEASURED", "method": "No physical sample measured", "evidence_asset_ids": []}
+  ],
+  "workflow": {
+    "reference_identity": {"status": "VERIFIED", "claim_ids": ["c_identity"]},
+    "appearance_evidence": {"status": "SIMULATED", "claim_ids": ["c_spectrum", "c_appearance"]},
+    "production_feasibility": {"status": "NOT_EXECUTED", "claim_ids": ["c_production"]},
+    "device_values": {"status": "NOT_EXECUTED", "claim_ids": ["c_device"]},
+    "measured_qc": {"status": "NOT_MEASURED", "claim_ids": ["c_qc"]}
+  }
+}
