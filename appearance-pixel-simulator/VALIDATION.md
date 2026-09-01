@@ -1,7 +1,42 @@
-# ATLAS Clarus Appearance Pixel Simulator v0.2.0 — Validation
+# ATLAS Clarus Appearance Pixel Simulator v0.3.0 — Validation
 
 Result: **PASS with stated runtime limitation**  
-Release: **v0.2.0 Phase 1 — SPECTRAL D50/D65/A**
+Release: **v0.3.0 — OPEN APPEARANCE PREVIEW / MATERIAL BRIDGE**
+
+## Renderer connector checks
+
+| Check | Result |
+|---|---:|
+| Manufacturer-neutral request/response contract | IMPLEMENTED |
+| Mock evidence class | `MOCK_SIMULATION` |
+| Mock material decoding | NOT EXECUTED |
+| External bearer token exposure to browser | BLOCKED — server-side only |
+| External material byte/digest comparison | IMPLEMENTED |
+| External maximum input/output size | 10 MiB |
+| Accepted result status | CALCULATED / SIMULATED only |
+| Result SHA-256 calculated by connector | IMPLEMENTED |
+| Physical QC promotion | BLOCKED |
+
+## APF Material Bridge checks
+
+| Check | Result |
+|---|---:|
+| JavaScript syntax (`node --check`) | PASS |
+| Local material SHA-256 calculation | IMPLEMENTED — browser runtime required |
+| Material upload during binding | NOT PERFORMED |
+| Generated selector resolution | SOURCE_DECLARED |
+| Generated identity binding | REFERENCE_BOUND |
+| Generated material origin | UNKNOWN |
+| Generated render status | NOT EXECUTED |
+| Generated physical QC | NOT_MEASURED |
+| Imported bridge semantic checks | IMPLEMENTED |
+| Material decoder / selector resolution | NOT EXECUTED |
+| PHP syntax runtime | NOT EXECUTED — PHP unavailable in build environment |
+
+Imported records are checked for required layers, SHA-256 form, reference
+integrity, active ATLAS identity binding and forbidden evidence promotions.
+A material-decoder round-trip is outside this release. AxF is retained only as
+an optional external-adapter declaration.
 
 ## Source binding
 
