@@ -3,7 +3,7 @@ Contributors: atlasclarus
 Tags: colour, color, appearance, pixel, simulation, PKL
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.2.0
+Stable tag: 0.3.0
 License: GPLv2 or later
 
 Master-bound, pixel-addressable appearance engineering simulator for WordPress.
@@ -40,6 +40,23 @@ reported in the UI and APF evidence. ALS LED and STR scenarios remain disabled
 until their authoritative spectral power distributions are available.
 
 == Changelog ==
+
+= 0.3.0 =
+* Renames the integration layer to APF Material Bridge and removes AxF from the product core.
+* Supports neutral material declarations for MaterialX, OpenPBR JSON, glTF/GLB and PBR texture sets.
+* Keeps AxF only as an explicitly optional external adapter.
+* Preserves identity, digest, renderer and evidence controls across material formats.
+
+= 0.2.2 =
+* Adds a manufacturer-neutral renderer connector contract.
+* Adds a clearly labelled deterministic mock renderer for end-to-end workflow testing.
+* Adds an optional server-side external JSON adapter with protected bearer token.
+* Binds verified renderer output hashes and SIMULATED/CALCULATED status into APF.
+
+= 0.2.1 =
+* Adds APF–AxF Bridge v0.1 import, identity binding, validation, status display and JSON export.
+* Computes the selected AxF file SHA-256 in the browser without uploading the file.
+* Keeps AxF decoding/rendering and physical measurement outside the WordPress runtime.
 
 = 0.2.0 =
 * Replaced RGB light multipliers for D50, D65 and A with spectral integration.
