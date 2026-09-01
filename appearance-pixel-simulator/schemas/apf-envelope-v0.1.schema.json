@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arbe-lambda-star.com/schemas/atlas-clarus/apf-envelope-v0.1.schema.json",
+  "title": "ATLAS Clarus APF Evidence Envelope v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apf_version", "envelope_id", "created_utc", "conformance", "identity", "assets", "bindings", "claims", "workflow"],
+  "properties": {
+    "apf_version": {"const": "0.1"},
+    "envelope_id": {"type": "string", "format": "uuid"},
+    "created_utc": {"type": "string", "format": "date-time"},
+    "conformance": {"enum": ["APF-IDENTITY", "APF-EVIDENCE", "APF-PRODUCTION", "APF-QC"]},
+    "identity": {"$ref": "#/$defs/identity"},
+    "assets": {"type": "array", "items": {"$ref": "#/$defs/asset"}, "uniqueItems": true},
+    "bindings": {"type": "array", "items": {"$ref": "#/$defs/binding"}},
+    "conditions": {"type": "array", "items": {"$ref": "#/$defs/condition"}, "default": []},
+    "claims": {"type": "array", "items": {"$ref": "#/$defs/claim"}},
+    "workflow": {"$ref": "#/$defs/workflow"},
+    "envelope_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "status": {"enum": ["REFERENCE_BOUND", "CALCULATED", "SIMULATED", "MEASURED", "VERIFIED", "NOT_EXECUTED", "NOT_MEASURED", "INVALID"]},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["authority", "source_atlas_row_id", "reference", "master_sha256", "freeze_status"],
+      "properties": {
+        "authority": {"const": "ATLAS_CLARUS"},
+        "source_atlas_row_id": {"type": "integer", "minimum": 0},
+        "reference": {"type": "string", "pattern": "^H[0-9]{3}_L[0-9]{3}_C[0-9]{3}$"},
+        "master_sha256": {"$ref": "#/$defs/sha256"},
+        "freeze_status": {"enum": ["REFERENCE_BOUND", "VERIFIED", "INVALID"]},
+        "rgb_u8": {"type": "array", "prefixItems": [{"type": "integer", "minimum": 0, "maximum": 255}, {"type": "integer", "minimum": 0, "maximum": 255}, {"type": "integer", "minimum": 0, "maximum": 255}], "items": false},
+        "hex": {"type": "string", "pattern": "^#[A-Fa-f0-9]{6}$"}
+      }
+    },
+    "asset": {
+      "type": "object", "additionalProperties": false,
+      "required": ["asset_id", "role", "uri", "media_type", "sha256"],
+      "properties": {
+        "asset_id": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,63}$"},
+        "role": {"enum": ["PIXEL_CONTAINER", "PREVIEW", "MATERIAL", "SCENE", "ICC_PROFILE", "SPECTRAL_EVIDENCE", "MEASUREMENT_EVIDENCE", "DEVICE_VALUES", "OTHER"]},
+        "uri": {"type": "string", "format": "uri-reference"},
+        "media_type": {"type": "string", "minLength": 3},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "format_profile": {"type": "string"}
+      }
+    },
+    "locator": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "channel": {"type": "string"},
+        "pixel_xy": {"type": "array", "prefixItems": [{"type": "integer", "minimum": 0}, {"type": "integer", "minimum": 0}], "items": false},
+        "region_xywh": {"type": "array", "prefixItems": [{"type": "integer", "minimum": 0}, {"type": "integer", "minimum": 0}, {"type": "integer", "minimum": 1}, {"type": "integer", "minimum": 1}], "items": false},
+        "material": {"type": "string"},
+        "scene_node": {"type": "string"},
+        "object": {"type": "string"},
+        "selector": {"type": "string"}
+      },
+      "minProperties": 1
+    },
+    "binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["binding_id", "asset_id", "relationship", "status"],
+      "properties": {
+        "binding_id": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,63}$"},
+        "asset_id": {"type": "string"},
+        "relationship": {"enum": ["IDENTITY_REPRESENTATION", "APPEARANCE_INPUT", "APPEARANCE_OUTPUT", "PRODUCTION_INPUT", "DEVICE_OUTPUT", "QC_EVIDENCE"]},
+        "locator": {"$ref": "#/$defs/locator"},
+        "status": {"$ref": "#/$defs/status"}
+      }
+    },
+    "condition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["condition_id", "kind", "parameters"],
+      "properties": {
+        "condition_id": {"type": "string"},
+        "kind": {"enum": ["VIEWING", "RENDERING", "PRODUCTION", "MEASUREMENT"]},
+        "parameters": {"type": "object"}
+      }
+    },
+    "claim": {
+      "type": "object", "additionalProperties": false,
+      "required": ["claim_id", "subject", "status", "method", "evidence_asset_ids"],
+      "properties": {
+        "claim_id": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,63}$"},
+        "subject": {"enum": ["IDENTITY", "SPECTRAL_REFERENCE", "APPEARANCE", "PRODUCTION_FEASIBILITY", "DEVICE_VALUES", "MEASURED_QC", "INTEGRITY"]},
+        "status": {"$ref": "#/$defs/status"},
+        "method": {"type": "string", "minLength": 1},
+        "condition_id": {"type": "string"},
+        "evidence_asset_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "result": {},
+        "responsible_system": {"type": "string"}
+      }
+    },
+    "stage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status"],
+      "properties": {"status": {"$ref": "#/$defs/status"}, "claim_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}}
+    },
+    "workflow": {
+      "type": "object", "additionalProperties": false,
+      "required": ["reference_identity", "appearance_evidence", "production_feasibility", "device_values", "measured_qc"],
+      "properties": {
+        "reference_identity": {"$ref": "#/$defs/stage"},
+        "appearance_evidence": {"$ref": "#/$defs/stage"},
+        "production_feasibility": {"$ref": "#/$defs/stage"},
+        "device_values": {"$ref": "#/$defs/stage"},
+        "measured_qc": {"$ref": "#/$defs/stage"}
+      }
+    }
+  }
+}
