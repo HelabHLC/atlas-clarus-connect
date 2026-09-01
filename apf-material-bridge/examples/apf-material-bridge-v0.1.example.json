@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.1",
+  "document_id": "apf-material-example-0001",
+  "document_status": "REVIEW_DRAFT",
+  "conformance_level": "APF-MATERIAL-REFERENCE",
+  "identity": {
+    "identity_id": "atlas-colour-4665",
+    "atlas_row": 4665,
+    "reference_code": "H125_L075_C080",
+    "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+    "status": "VERIFIED"
+  },
+  "assets": [{
+    "asset_id": "material-package-01",
+    "role": "APPEARANCE_MATERIAL",
+    "uri": "materials/package-varnish.mtlx",
+    "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "media_type": "application/xml",
+    "format": "MATERIALX",
+    "file_extension": ".mtlx",
+    "media_type_status": "IMPLEMENTATION_DEFINED",
+    "integrity_status": "VERIFIED"
+  }],
+  "material_selector": {
+    "selector_id": "selector-01",
+    "asset_ref": "material-package-01",
+    "selector_type": "DISPLAY_NAME",
+    "value": "Package Varnish",
+    "resolution_status": "SOURCE_DECLARED",
+    "representation_model": "OPENPBR"
+  },
+  "identity_binding": {
+    "binding_id": "binding-01",
+    "identity_ref": "atlas-colour-4665",
+    "asset_ref": "material-package-01",
+    "selector_ref": "selector-01",
+    "status": "REFERENCE_BOUND"
+  },
+  "measurement_provenance": {"status": "UNKNOWN", "evidence_refs": []},
+  "render_results": [],
+  "physical_comparison": {"status": "NOT_MEASURED", "evidence_refs": []},
+  "qc_conclusion": {"status": "NOT_MEASURED", "evidence_refs": [], "decision": "NOT_EVALUATED"},
+  "notes": ["MaterialX is the example format; APF does not depend on it.", "No render and no physical measurement were performed."]
+}
