@@ -3,7 +3,7 @@ Contributors: atlasclarus
 Tags: colour, color, appearance, pixel, simulation, PKL
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.2
+Stable tag: 0.2.0
 License: GPLv2 or later
 
 Master-bound, pixel-addressable appearance engineering simulator for WordPress.
@@ -17,7 +17,7 @@ Master-bound, pixel-addressable appearance engineering simulator for WordPress.
 
 == Description ==
 
-Version 0.1.1 binds the browser simulator to a verified projection of the active
+Version 0.2.0 binds the browser simulator to a verified projection of the active
 ATLAS Clarus Master v2 illumext: 13,283 reference rows, 114 source columns,
 36 spectral reflectance values per row and 26 illuminant diagnostics. The source
 master and every browser asset are SHA-256 identified and verified at runtime.
@@ -32,7 +32,21 @@ Master reference fields and spectra are source evidence. Appearance pixels are
 an engineering simulation. They are not BRDF/BSDF measurements, a physical
 proof, measured QC or certification.
 
+For CIE D50, D65 and A, the base colour stimulus is calculated from the master
+reflectance, the CIE illuminant SPD and the CIE 1931 2 degree observer on the
+native 380–730 nm, 10 nm master grid. XYZ is Bradford-adapted to the calculated
+D65 white before display-sRGB encoding. The restricted spectral range is
+reported in the UI and APF evidence. ALS LED and STR scenarios remain disabled
+until their authoritative spectral power distributions are available.
+
 == Changelog ==
+
+= 0.2.0 =
+* Replaced RGB light multipliers for D50, D65 and A with spectral integration.
+* Added CIE 1931 2 degree XYZ calculation and Bradford display adaptation.
+* Added runtime SHA-256 verification of the CIE spectral-engine asset.
+* Disabled ALS LED and STR scenarios without authoritative SPDs.
+* Added CALCULATED spectral evidence and range limitation to APF export.
 
 = 0.1.2 =
 * Added APF v0.1 Identity, Status and Evidence Envelope export.

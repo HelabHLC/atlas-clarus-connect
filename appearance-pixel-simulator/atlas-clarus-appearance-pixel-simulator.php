@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: ATLAS Clarus Appearance Pixel Simulator
- * Description: Master-bound appearance engineering simulator with an APF identity, status and evidence envelope.
- * Version: 0.1.2
+ * Description: Master-bound spectral appearance engine with CIE D50/D65/A calculation and APF evidence envelope.
+ * Version: 0.2.0
  * Author: Norbert / ATLAS Clarus
  * License: GPL-2.0-or-later
  * Text Domain: atlas-clarus-appearance-pixel-simulator
@@ -14,10 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ATLAS_CLARUS_APS_VERSION', '0.1.2' );
+define( 'ATLAS_CLARUS_APS_VERSION', '0.2.0' );
 define( 'ATLAS_CLARUS_APS_URL', plugin_dir_url( __FILE__ ) );
 define( 'ATLAS_CLARUS_APS_MASTER_SHA256', '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4' );
 define( 'ATLAS_CLARUS_APS_PROJECTION_MANIFEST_SHA256', '561adb75debc920a5071e017e9de98abdbd517fb522d2bd4fa60aef2b85dc9ec' );
+define( 'ATLAS_CLARUS_APS_CIE_ENGINE_SHA256', '6e989630a7e1592a4a627542f52d0fb2882effc43af62552c2f5cfde8d750c75' );
 
 function atlas_clarus_aps_activate() {
 	add_option( 'atlas_clarus_aps_source_row_id', '4665' );
@@ -112,6 +113,8 @@ function atlas_clarus_aps_shortcode() {
 		data-master-base="<?php echo esc_url( ATLAS_CLARUS_APS_URL . 'assets/master/' ); ?>"
 		data-master-sha256="<?php echo esc_attr( ATLAS_CLARUS_APS_MASTER_SHA256 ); ?>"
 		data-projection-manifest-sha256="<?php echo esc_attr( ATLAS_CLARUS_APS_PROJECTION_MANIFEST_SHA256 ); ?>"
+		data-cie-engine-url="<?php echo esc_url( ATLAS_CLARUS_APS_URL . 'assets/spectral/cie-spectral-engine-v0.2.0.json' ); ?>"
+		data-cie-engine-sha256="<?php echo esc_attr( ATLAS_CLARUS_APS_CIE_ENGINE_SHA256 ); ?>"
 	>
 		<header class="atlas-clarus-aps__header">
 			<div>
@@ -153,7 +156,7 @@ function atlas_clarus_aps_shortcode() {
 				</label>
 				<label><?php esc_html_e( 'Illuminant', 'atlas-clarus-appearance-pixel-simulator' ); ?>
 					<select data-control="light">
-						<option value="ALS_BASE_D50">ALS_BASE_D50</option><option value="ALS_BASE_D65">ALS_BASE_D65</option><option value="ALS_BASE_A">ALS_BASE_A</option><option value="ALS_LED_P1">ALS_LED_P1</option><option value="ALS_LED_P2">ALS_LED_P2</option><option value="ALS_LED_P3">ALS_LED_P3</option><option value="ALS_STR_1">ALS_STR_1</option><option value="ALS_STR_2">ALS_STR_2</option><option value="ALS_STR_3">ALS_STR_3</option>
+						<option value="ALS_BASE_D50">CIE D50 · spectral</option><option value="ALS_BASE_D65">CIE D65 · spectral</option><option value="ALS_BASE_A">CIE A · spectral</option><option value="ALS_LED_P1" disabled>ALS LED P1 · SPD required</option><option value="ALS_LED_P2" disabled>ALS LED P2 · SPD required</option><option value="ALS_LED_P3" disabled>ALS LED P3 · SPD required</option><option value="ALS_STR_1" disabled>ALS STR 1 · SPD required</option><option value="ALS_STR_2" disabled>ALS STR 2 · SPD required</option><option value="ALS_STR_3" disabled>ALS STR 3 · SPD required</option>
 					</select>
 				</label>
 				<label><?php esc_html_e( 'Embellishment', 'atlas-clarus-appearance-pixel-simulator' ); ?>

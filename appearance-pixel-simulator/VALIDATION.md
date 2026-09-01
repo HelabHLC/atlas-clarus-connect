@@ -1,7 +1,7 @@
-# ATLAS Clarus Appearance Pixel Simulator v0.1.2 — Validation
+# ATLAS Clarus Appearance Pixel Simulator v0.2.0 — Validation
 
 Result: **PASS with stated runtime limitation**  
-Release: **v0.1.2 — APF ENVELOPE**
+Release: **v0.2.0 Phase 1 — SPECTRAL D50/D65/A**
 
 ## Source binding
 
@@ -36,6 +36,12 @@ projection manifest. Spectral values span 0.0 to 0.9718000293 on the 380–730 n
 - APF required-field and cross-reference checks: PASS
 - APF export source contains SHA-256 binding for pixel JSON and PNG: PASS
 - Five-stage APF workflow status mapping: PASS
+- CIE source archive integrity: PASS
+- D50/D65/A and CIE 1931 2° source-file SHA-256 checks: PASS
+- 216 native-grid CIE values compared to supplied 1 nm sources: PASS
+- CIE engine runtime SHA-256 binding: PASS
+- RGB illuminant multipliers removed for D50/D65/A: PASS
+- ALS LED/STR controls disabled pending authoritative SPDs: PASS
 - PHP delimiter balance: PASS
 - WordPress registration, enqueueing, settings sanitation and output escaping
   constructs: present
@@ -50,7 +56,8 @@ Before enabling simulation and export, the browser verifies with Web Crypto:
 1. the projection-manifest SHA-256 embedded by the plugin;
 2. the source-master SHA-256 declared by the manifest;
 3. the SHA-256 and byte size of the index, numeric, illuminant and spectral assets;
-4. the expected shapes and row-ID range.
+4. the CIE spectral-engine asset SHA-256 and 36-point wavelength grid;
+5. the expected shapes and row-ID range.
 
 Any mismatch blocks the simulator and export controls.
 
@@ -61,6 +68,28 @@ from the verified active-master projection. Material, gloss, texture, relief,
 embellishment, viewing angle and rendered per-pixel appearance remain engineering
 simulations. QC remains `NOT_MEASURED`; no measured BRDF/BSDF claim, physical proof
 or certification is produced.
+
+## Spectral phase-1 calculation
+
+The calculation uses 36 wavelengths from 380 through 730 nm at 10 nm spacing:
+
+`master reflectance × illuminant SPD × CIE 1931 2° CMF → XYZ`
+
+Each illuminant is normalized to `Y=100` for a perfect diffuser over the same
+range. XYZ is Bradford-adapted from the calculated illuminant white to the
+calculated D65 white, then encoded as display sRGB. The display result is a
+calculated screen representation, not a measured appearance.
+
+Default row 4665 (`H125_L075_C080`) produced:
+
+| Illuminant | Calculated XYZ | Adapted display sRGB u8 |
+|---|---|---|
+| D50 | 32.043309 / 48.283041 / 7.860941 | 119 / 206 / 42 |
+| D65 | 30.861643 / 48.684648 / 9.637359 | 125 / 206 / 38 |
+| A | 36.327018 / 45.825433 / 4.146702 | 94 / 205 / 45 |
+
+The ATLAS master ends at 730 nm. These results must therefore be described as
+native-master-grid 380–730 nm calculations, not full 360–830 nm integrations.
 
 ## Environment limitation
 

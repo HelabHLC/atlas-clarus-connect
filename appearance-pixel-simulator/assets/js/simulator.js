@@ -23,12 +23,9 @@
     foil: { label: 'metal foil', code: 2 }, emboss: { label: 'emboss', code: 3 },
     raised: { label: 'raised ink', code: 4 }, holographic: { label: 'holographic foil', code: 5 }
   };
-  const lightMatrices = {
-    ALS_BASE_D50: [1.04, 1.00, 0.90], ALS_BASE_D65: [0.97, 1.00, 1.08],
-    ALS_BASE_A: [1.25, 0.93, 0.58], ALS_LED_P1: [0.96, 1.04, 1.06],
-    ALS_LED_P2: [0.90, 1.04, 1.14], ALS_LED_P3: [1.08, 1.02, 0.93],
-    ALS_STR_1: [1.15, 0.96, 0.82], ALS_STR_2: [0.88, 1.08, 1.04], ALS_STR_3: [1.03, 0.94, 1.13]
-  };
+  const spectralIlluminants = { ALS_BASE_D50: 'D50', ALS_BASE_D65: 'D65', ALS_BASE_A: 'A' };
+  const bradford = [[0.8951, 0.2664, -0.1614], [-0.7502, 1.7135, 0.0367], [0.0389, -0.0685, 1.0296]];
+  const bradfordInverse = [[0.9869929, -0.1470543, 0.1599627], [0.4323053, 0.5183603, 0.0492912], [-0.0085287, 0.0400428, 0.9684867]];
   const mapLabels = {
     composite: 'Appearance composite', identity: 'Frozen identity', spectral: 'Master spectral reflectance',
     specular: 'Simulated specular intensity', height: 'Simulated surface height', mask: 'Embellishment mask'
@@ -88,7 +85,8 @@
     const state = {
       ready: false, selectedX: 20, selectedY: 12, cells: [], columns: 40, rows: 25,
       selectedRowId: Number(root.dataset.rowId), manifest: null, index: null,
-      numeric: null, illuminant: null, spectral: null, numericFields: {}, illuminantFields: {}
+      numeric: null, illuminant: null, spectral: null, cie: null,
+      numericFields: {}, illuminantFields: {}, spectralCache: new Map()
     };
 
     function identity() { return state.index.rows[state.selectedRowId]; }
@@ -106,6 +104,59 @@
     function baseRgb() {
       const row = identity();
       return [row[3], row[4], row[5]];
+    }
+    function multiplyMatrix(matrix, vector) {
+      return matrix.map((row) => row.reduce((sum, value, index) => sum + value * vector[index], 0));
+    }
+    function spectralXyz(reflectance, spd) {
+      const cmf = state.cie.cmf;
+      let denominator = 0;
+      let x = 0; let y = 0; let z = 0;
+      for (let index = 0; index < reflectance.length; index += 1) {
+        denominator += spd[index] * cmf.y_bar[index];
+        x += reflectance[index] * spd[index] * cmf.x_bar[index];
+        y += reflectance[index] * spd[index] * cmf.y_bar[index];
+        z += reflectance[index] * spd[index] * cmf.z_bar[index];
+      }
+      const k = 100 / denominator;
+      return [x * k, y * k, z * k];
+    }
+    function adaptedXyz(xyz, sourceWhite, targetWhite) {
+      const sourceCone = multiplyMatrix(bradford, sourceWhite);
+      const targetCone = multiplyMatrix(bradford, targetWhite);
+      const cone = multiplyMatrix(bradford, xyz).map((value, index) => value * targetCone[index] / sourceCone[index]);
+      return multiplyMatrix(bradfordInverse, cone);
+    }
+    function xyzToDisplayRgb(xyz) {
+      const normalized = xyz.map((value) => value / 100);
+      const linear = [
+        3.2404542 * normalized[0] - 1.5371385 * normalized[1] - 0.4985314 * normalized[2],
+        -0.9692660 * normalized[0] + 1.8760108 * normalized[1] + 0.0415560 * normalized[2],
+        0.0556434 * normalized[0] - 0.2040259 * normalized[1] + 1.0572252 * normalized[2]
+      ];
+      return linear.map((value) => {
+        const encoded = value <= 0.0031308 ? 12.92 * value : 1.055 * Math.pow(Math.max(0, value), 1 / 2.4) - 0.055;
+        return clamp(Math.round(encoded * 255));
+      });
+    }
+    function spectralAppearance() {
+      const scenario = controls.light.value;
+      const illuminant = spectralIlluminants[scenario];
+      if (!illuminant || !state.cie) throw new Error('Spectral power distribution unavailable for ' + scenario + '.');
+      const key = state.selectedRowId + ':' + illuminant;
+      if (state.spectralCache.has(key)) return state.spectralCache.get(key);
+      const offset = state.selectedRowId * state.manifest.spectral.shape[1];
+      const reflectance = Array.from(state.spectral.slice(offset, offset + state.manifest.spectral.shape[1]));
+      const spd = state.cie.illuminants[illuminant].spd;
+      const d65Spd = state.cie.illuminants.D65.spd;
+      const ones = reflectance.map(() => 1);
+      const xyz = spectralXyz(reflectance, spd);
+      const sourceWhite = spectralXyz(ones, spd);
+      const d65White = spectralXyz(ones, d65Spd);
+      const adapted = adaptedXyz(xyz, sourceWhite, d65White);
+      const result = { illuminant: illuminant, xyz: xyz, adaptedXyzD65: adapted, displayRgb: xyzToDisplayRgb(adapted) };
+      state.spectralCache.set(key, result);
+      return result;
     }
     function heightAt(x, y, nx, ny) {
       const type = controls.texture.value;
@@ -130,12 +181,11 @@
     }
 
     function simulateCell(x, y, columns, rows) {
-      const base = baseRgb();
+      const base = spectralAppearance().displayRgb;
       const nx = (x + 0.5) / columns;
       const ny = (y + 0.5) / rows;
       const material = materials[controls.material.value];
       const finish = finishes[controls.finish.value];
-      const light = lightMatrices[controls.light.value];
       const angle = Number(controls.angle.value) / 80;
       const gloss = Number(controls.gloss.value) / 100;
       const depth = Number(controls.depth.value) / 100;
@@ -152,7 +202,7 @@
       const shade = material.diffuse * (1 - 0.20 * angle) * (1 + random + surface * depth);
       const mean = (base[0] + base[1] + base[2]) / 3;
       const saturated = base.map((channel) => mean + (channel - mean) * finish.saturation);
-      let rgb = saturated.map((channel, index) => channel * shade * light[index]);
+      let rgb = saturated.map((channel) => channel * shade);
       rgb[0] += 48 * material.warm;
       rgb[1] -= 14 * material.warm;
       if (controls.material.value === 'glass') rgb = rgb.map((channel) => channel * 0.78 + 36);
@@ -252,6 +302,7 @@
       const base = baseRgb();
       const cell = state.cells[state.selectedY] && state.cells[state.selectedY][state.selectedX];
       const diagnostics = masterDiagnostics();
+      const spectralResult = spectralAppearance();
       outputs.pkl.textContent = row[1];
       outputs.identity.textContent = row[2] + ' · RGB ' + base.join(' / ') + ' · source_atlas_row_id ' + row[0] + ' · Lab ' + [numericValue('lab_L'), numericValue('lab_a'), numericValue('lab_b')].map((value) => formatNumber(value, 2)).join(' / ');
       root.querySelector('.atlas-clarus-aps__swatch').style.setProperty('--atlas-clarus-reference', row[2]);
@@ -264,7 +315,7 @@
       if (!cell) return;
       outputs.pixel.textContent = 'x ' + state.selectedX + ' · y ' + state.selectedY + ' · ID ' + cell.identityIndex + ' · ' + state.columns + ' × ' + state.rows;
       outputs['pixel-rgb'].textContent = cell.rgb.join(' / ') + ' · simulated appearance';
-      outputs.channels.textContent = 'R' + controls.wavelength.value + ' ' + formatNumber(cell.referenceReflectance, 4) + ' · λv2 ' + formatNumber(diagnostics.lambdaV2Nm, 3) + ' nm · shift ' + formatNumber(diagnostics.shiftFromCoreNm, 3) + ' nm · ΔE00 ' + formatNumber(diagnostics.de00FromD50, 3) + ' · QC NOT_MEASURED';
+      outputs.channels.textContent = 'R' + controls.wavelength.value + ' ' + formatNumber(cell.referenceReflectance, 4) + ' · XYZ ' + spectralResult.xyz.map((value) => formatNumber(value, 3)).join(' / ') + ' · CIE 1931 2° · 380–730 nm CALCULATED · QC NOT_MEASURED';
     }
 
     function populateResults(query) {
@@ -316,7 +367,16 @@
         illuminant_scenario: controls.light.value, embellishment: controls.effect.value,
         texture: controls.texture.value, view_angle_degrees: Number(controls.angle.value),
         gloss_proxy_GU: Number(controls.gloss.value), relief_depth_percent: Number(controls.depth.value),
-        inspected_wavelength_nm: Number(controls.wavelength.value), grid: [state.rows, state.columns]
+        inspected_wavelength_nm: Number(controls.wavelength.value), grid: [state.rows, state.columns],
+        spectral_calculation: {
+          illuminant: spectralAppearance().illuminant, observer: state.cie.observer,
+          integration_range_nm: state.cie.integration.range_nm,
+          delta_lambda_nm: state.cie.integration.delta_lambda_nm,
+          xyz: spectralAppearance().xyz,
+          adapted_xyz_d65: spectralAppearance().adaptedXyzD65,
+          display_srgb_u8: spectralAppearance().displayRgb,
+          status: 'CALCULATED', limitation: state.cie.integration.limitation
+        }
       };
     }
 
@@ -337,14 +397,14 @@
         layers.qc_status.push(0);
       }));
       return {
-        format_name: 'ATLAS Clarus Appearance Pixel Data', format_version: '0.1.2',
+        format_name: 'ATLAS Clarus Appearance Pixel Data', format_version: '0.2.0',
         evidence_class: 'MASTER_REFERENCE_WITH_ENGINEERING_SIMULATION',
         identity: selectedMasterRecord(), configuration: configuration(),
         storage: 'row-major flattened arrays', shape: [state.rows, state.columns], layers: layers,
         layer_evidence: {
           identity_index: 'REFERENCE', spectral_reference_index: 'REFERENCE',
           material_index: 'CONTROL', specular_proxy: 'SIMULATED', height: 'SIMULATED',
-          normal_xyz: 'CALCULATED', embellishment_class: 'CONTROL',
+          spectral_illuminant_to_xyz: 'CALCULATED', normal_xyz: 'CALCULATED', embellishment_class: 'CONTROL',
           embellishment_coverage: 'CONTROL', appearance_rgb_u8: 'SIMULATED',
           uncertainty: 'CALCULATED', qc_status: 'NOT_MEASURED'
         }
@@ -378,7 +438,8 @@
         },
         assets: [
           { asset_id: 'master_projection_manifest', role: 'OTHER', uri: root.dataset.masterBase + 'master-manifest.json', media_type: 'application/json', sha256: root.dataset.projectionManifestSha256, format_profile: 'ATLAS Clarus Master Browser Projection v0.1.1' },
-          { asset_id: 'appearance_pixels', role: 'PIXEL_CONTAINER', uri: 'atlas-clarus-apf-pixels.json', media_type: 'application/json', sha256: pixelSha256, format_profile: 'ATLAS Clarus row-major appearance layers v0.1.2' },
+          { asset_id: 'cie_spectral_engine', role: 'OTHER', uri: root.dataset.cieEngineUrl, media_type: 'application/json', sha256: root.dataset.cieEngineSha256, format_profile: 'CIE D50/D65/A + CIE 1931 2 degree on ATLAS native 380-730 nm grid' },
+          { asset_id: 'appearance_pixels', role: 'PIXEL_CONTAINER', uri: 'atlas-clarus-apf-pixels.json', media_type: 'application/json', sha256: pixelSha256, format_profile: 'ATLAS Clarus row-major appearance layers v0.2.0' },
           { asset_id: 'appearance_preview', role: 'PREVIEW', uri: 'atlas-clarus-apf-preview.png', media_type: 'image/png', sha256: previewSha256 }
         ],
         bindings: [
@@ -387,11 +448,12 @@
           { binding_id: 'preview_output', asset_id: 'appearance_preview', relationship: 'APPEARANCE_OUTPUT', status: 'SIMULATED' }
         ],
         conditions: [
-          { condition_id: 'simulated_view', kind: 'VIEWING', parameters: { illuminant_scenario: controls.light.value, view_angle_degrees: Number(controls.angle.value), gloss_proxy_GU: Number(controls.gloss.value), relief_depth_percent: Number(controls.depth.value) } }
+          { condition_id: 'simulated_view', kind: 'VIEWING', parameters: { illuminant_scenario: controls.light.value, cie_illuminant: spectralAppearance().illuminant, observer: state.cie.observer, integration_range_nm: state.cie.integration.range_nm, delta_lambda_nm: state.cie.integration.delta_lambda_nm, chromatic_adaptation: 'Bradford to calculated D65 white', view_angle_degrees: Number(controls.angle.value), gloss_proxy_GU: Number(controls.gloss.value), relief_depth_percent: Number(controls.depth.value) } }
         ],
         claims: [
           { claim_id: 'identity_verified', subject: 'IDENTITY', status: 'VERIFIED', method: 'Runtime SHA-256 verification of the ATLAS master projection and selected row binding', evidence_asset_ids: ['master_projection_manifest'], responsible_system: 'ATLAS Clarus Appearance Pixel Simulator v' + root.dataset.version },
           { claim_id: 'spectral_reference', subject: 'SPECTRAL_REFERENCE', status: 'REFERENCE_BOUND', method: 'Selected master row spectral reflectance on the 380–730 nm grid', evidence_asset_ids: ['master_projection_manifest', 'appearance_pixels'], responsible_system: 'ATLAS Clarus active master projection' },
+          { claim_id: 'spectral_calculation', subject: 'APPEARANCE', status: 'CALCULATED', method: 'Native 10 nm integration of master reflectance, CIE illuminant SPD and CIE 1931 2 degree colour matching functions; Bradford adaptation to calculated D65 white for display sRGB', condition_id: 'simulated_view', evidence_asset_ids: ['master_projection_manifest', 'cie_spectral_engine', 'appearance_pixels'], result: configuration().spectral_calculation, responsible_system: 'ATLAS Clarus Spectral Engine v0.2.0 phase 1' },
           { claim_id: 'appearance_simulation', subject: 'APPEARANCE', status: 'SIMULATED', method: 'Deterministic browser appearance simulation using declared controls', condition_id: 'simulated_view', evidence_asset_ids: ['appearance_pixels', 'appearance_preview'], result: { selected_pixel_rgb_u8: selectedPixel.rgb, physical_proof: false }, responsible_system: 'ATLAS Clarus Appearance Pixel Simulator v' + root.dataset.version },
           { claim_id: 'production_not_executed', subject: 'PRODUCTION_FEASIBILITY', status: 'NOT_EXECUTED', method: 'No production target evaluated', evidence_asset_ids: [] },
           { claim_id: 'device_values_not_executed', subject: 'DEVICE_VALUES', status: 'NOT_EXECUTED', method: 'No device separation generated', evidence_asset_ids: [] },
@@ -399,7 +461,7 @@
         ],
         workflow: {
           reference_identity: { status: 'VERIFIED', claim_ids: ['identity_verified'] },
-          appearance_evidence: { status: 'SIMULATED', claim_ids: ['spectral_reference', 'appearance_simulation'] },
+          appearance_evidence: { status: 'SIMULATED', claim_ids: ['spectral_reference', 'spectral_calculation', 'appearance_simulation'] },
           production_feasibility: { status: 'NOT_EXECUTED', claim_ids: ['production_not_executed'] },
           device_values: { status: 'NOT_EXECUTED', claim_ids: ['device_values_not_executed'] },
           measured_qc: { status: 'NOT_MEASURED', claim_ids: ['qc_not_measured'] }
@@ -471,10 +533,12 @@
       state.numeric = new Float64Array(buffers[1]);
       state.illuminant = new Float64Array(buffers[2]);
       state.spectral = new Float32Array(buffers[3]);
+      state.cie = decodeJson(await fetchVerified(root.dataset.cieEngineUrl + '?ver=' + root.dataset.version, root.dataset.cieEngineSha256));
       if (state.index.row_count !== 13283 || state.index.rows.length !== 13283) throw new Error('Master row-count gate failed.');
       if (state.numeric.length !== state.manifest.numeric.shape[0] * state.manifest.numeric.shape[1]) throw new Error('Numeric projection shape gate failed.');
       if (state.illuminant.length !== state.manifest.illuminant.shape[0] * state.manifest.illuminant.shape[1]) throw new Error('Illuminant projection shape gate failed.');
       if (state.spectral.length !== state.manifest.spectral.shape[0] * state.manifest.spectral.shape[1]) throw new Error('Spectral projection shape gate failed.');
+      if (state.cie.integration.wavelengths_nm.length !== 36 || state.cie.integration.range_nm[0] !== 380 || state.cie.integration.range_nm[1] !== 730) throw new Error('CIE spectral-engine grid gate failed.');
       state.manifest.numeric.fields.forEach((field, index) => { state.numericFields[field] = index; });
       state.manifest.illuminant.fields.forEach((field, index) => { state.illuminantFields[field] = index; });
       state.selectedRowId = clamp(state.selectedRowId, 0, 13282);
@@ -482,7 +546,7 @@
       controls['master-search'].value = identity()[1];
       populateResults(controls['master-search'].value);
       buttons.forEach((button) => { button.disabled = false; });
-      outputs['master-status'].textContent = 'MASTER VERIFIED · REFERENCE + SIMULATION · NOT MEASURED';
+      outputs['master-status'].textContent = 'MASTER + CIE VERIFIED · SPECTRAL XYZ CALCULATED · APPEARANCE SIMULATED · NOT MEASURED';
       draw();
     } catch (error) {
       outputs['master-status'].textContent = 'MASTER VERIFICATION FAILED';
