@@ -3,7 +3,7 @@ Contributors: atlasclarus
 Tags: colour, color, appearance, pixel, simulation, PKL
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.2.1
+Stable tag: 0.2.2
 License: GPLv2 or later
 
 Master-bound, pixel-addressable appearance engineering simulator for WordPress.
@@ -40,6 +40,12 @@ reported in the UI and APF evidence. ALS LED and STR scenarios remain disabled
 until their authoritative spectral power distributions are available.
 
 == Changelog ==
+
+= 0.2.2 =
+* Adds a manufacturer-neutral renderer connector contract.
+* Adds a clearly labelled deterministic mock renderer for end-to-end workflow testing.
+* Adds an optional server-side external JSON adapter with protected bearer token.
+* Binds verified renderer output hashes and SIMULATED/CALCULATED status into APF.
 
 = 0.2.1 =
 * Adds APF–AxF Bridge v0.1 import, identity binding, validation, status display and JSON export.
