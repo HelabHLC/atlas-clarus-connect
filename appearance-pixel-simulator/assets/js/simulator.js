@@ -526,13 +526,14 @@
         const item = document.createElement('li'); item.textContent = message; return item;
       }));
       bridgeActions.export.disabled = !doc || errors.length > 0;
+      bridgeActions.render.disabled = !doc || errors.length > 0;
     }
 
     async function registerAxfFile() {
       const file = bridgeControls['axf-file'].files[0];
       if (!file) throw new Error('Select an .axf file first.');
       if (!/\.axf$/i.test(file.name)) throw new Error('The selected asset must use the .axf extension.');
-      state.axfAsset = { name: file.name, sha256: await sha256(await file.arrayBuffer()) };
+      state.axfAsset = { name: file.name, sha256: await sha256(await file.arrayBuffer()), file: file };
       return state.axfAsset;
     }
 
@@ -562,6 +563,68 @@
       const file = bridgeControls['bridge-file'].files[0];
       if (!file) throw new Error('Select a bridge JSON file first.');
       state.bridgeDocument = JSON.parse(await file.text());
+      renderBridgeStatus(bridgeErrors(state.bridgeDocument));
+    }
+
+    function bufferToBase64(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let offset = 0; offset < bytes.length; offset += 0x8000) binary += String.fromCharCode.apply(null, bytes.subarray(offset, offset + 0x8000));
+      return window.btoa(binary);
+    }
+
+    async function sendToRenderer() {
+      const errors = bridgeErrors(state.bridgeDocument);
+      if (errors.length) throw new Error('Bridge must validate before rendering.');
+      const axf = state.bridgeDocument.assets.find((asset) => asset.role === 'APPEARANCE_MATERIAL');
+      const request = {
+        connector_contract: 'ATLAS_CLARUS_RENDERER_CONNECTOR_v0.1',
+        identity: state.bridgeDocument.identity,
+        asset: { asset_id: axf.asset_id, uri: axf.uri, sha256: axf.sha256, media_type: axf.media_type, format: axf.format },
+        material_selector: state.bridgeDocument.material_selector,
+        scene: {
+          scene_id: 'atlas-wordpress-scene-v0.1',
+          illumination: controls.light.value + ' / CIE ' + spectralAppearance().illuminant,
+          view_angle_degrees: Number(controls.angle.value),
+          gloss_proxy_GU: Number(controls.gloss.value),
+          camera: 'ATLAS WordPress preview camera'
+        }
+      };
+      if (root.dataset.rendererMode === 'external') {
+        if (!state.axfAsset || state.axfAsset.sha256 !== axf.sha256) throw new Error('Select the AxF file matching this bridge before external rendering.');
+        if (state.axfAsset.file.size > 10 * 1024 * 1024) throw new Error('External connector v0.1 accepts AxF assets up to 10 MiB.');
+        request.asset.content_base64 = bufferToBase64(await state.axfAsset.file.arrayBuffer());
+      }
+      bridgeActions.render.disabled = true;
+      bridgeActions.render.textContent = 'Rendering…';
+      const response = await fetch(root.dataset.rendererUrl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': root.dataset.rendererNonce },
+        body: JSON.stringify(request)
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || 'Renderer request failed.');
+      if (!/^[a-f0-9]{64}$/.test(String(result.output_sha256 || '')) || !['CALCULATED', 'SIMULATED'].includes(result.status)) throw new Error('Renderer response integrity validation failed.');
+      const outputId = 'render-output-' + result.job_id;
+      state.bridgeDocument.assets = state.bridgeDocument.assets.filter((asset) => asset.role !== 'RENDER_RESULT');
+      state.bridgeDocument.assets.push({
+        asset_id: outputId, role: 'RENDER_RESULT', uri: 'renderer-result:' + result.job_id,
+        sha256: result.output_sha256, media_type: result.media_type, format: result.media_type,
+        media_type_status: 'IMPLEMENTATION_DEFINED', integrity_status: 'VERIFIED'
+      });
+      state.bridgeDocument.render_results = [{
+        render_id: 'render-' + result.job_id, binding_ref: state.bridgeDocument.identity_binding.binding_id,
+        renderer: result.renderer, renderer_version: String(result.renderer_version || 'UNDECLARED'),
+        scene_id: request.scene.scene_id, illumination: request.scene.illumination, camera: request.scene.camera,
+        output_asset_ref: outputId, status: result.status
+      }];
+      state.bridgeDocument.conformance_level = 'APF-AXF-RENDERED';
+      state.bridgeDocument.notes.push(result.evidence_class + ': ' + (result.limitation || 'Renderer output; not physical measurement evidence.'));
+      const preview = bridgeOutputs.preview;
+      preview.querySelector('img').src = 'data:' + result.media_type + ';base64,' + result.output_base64;
+      bridgeOutputs['renderer-meta'].textContent = result.renderer + ' ' + (result.renderer_version || '') + ' · ' + result.evidence_class + ' · SHA-256 ' + result.output_sha256;
+      preview.hidden = false;
       renderBridgeStatus(bridgeErrors(state.bridgeDocument));
     }
 
@@ -628,6 +691,13 @@
     });
     bridgeActions.export.addEventListener('click', () => {
       if (state.bridgeDocument) downloadBlob('atlas-clarus-apf-axf-bridge.json', JSON.stringify(state.bridgeDocument, null, 2) + '\n', 'application/json');
+    });
+    bridgeActions.render.addEventListener('click', () => {
+      const original = bridgeActions.render.textContent;
+      sendToRenderer().catch((error) => renderBridgeStatus([error.message])).finally(() => {
+        bridgeActions.render.textContent = original;
+        bridgeActions.render.disabled = !state.bridgeDocument || bridgeErrors(state.bridgeDocument).length > 0;
+      });
     });
 
     try {
