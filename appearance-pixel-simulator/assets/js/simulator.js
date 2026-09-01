@@ -94,7 +94,7 @@
       selectedRowId: Number(root.dataset.rowId), manifest: null, index: null,
       numeric: null, illuminant: null, spectral: null, cie: null,
       numericFields: {}, illuminantFields: {}, spectralCache: new Map(),
-      bridgeDocument: null, materialAsset: null
+      bridgeDocument: null, materialAsset: null, objectPreview: null
     };
 
     function identity() { return state.index.rows[state.selectedRowId]; }
@@ -299,6 +299,7 @@
       context.lineWidth = 2;
       context.strokeRect(state.selectedX * cellWidth + 1, state.selectedY * cellHeight + 1, Math.max(2, cellWidth - 2), Math.max(2, cellHeight - 2));
       updateOutputs();
+      if (state.objectPreview) state.objectPreview.updateMaterial();
     }
 
     function formatNumber(value, digits) {
@@ -425,6 +426,172 @@
         const random = Math.floor(Math.random() * 16);
         return (character === 'x' ? random : (random & 3) | 8).toString(16);
       });
+    }
+
+    function geometryRecord() {
+      const template = root.querySelector('[data-object-control="template"]');
+      const value = template ? template.value : 'package';
+      const zones = {
+        sphere: ['SURFACE'], package: ['BOX_BASE', 'PRINT_AREA'], bottle: ['BOTTLE_BODY', 'LABEL', 'CAP'],
+        can: ['CAN_BODY', 'PRINT_AREA', 'TOP_BOTTOM'], plate: ['SURFACE', 'EDGE'], fabric: ['FABRIC_SURFACE']
+      };
+      return {
+        geometry_id: 'builtin-' + value,
+        template: value.toUpperCase(),
+        source_type: 'BUILT_IN',
+        status: 'BUILT_IN',
+        implementation: 'ATLAS Clarus Open Appearance Object Library v0.1',
+        zone_ids: zones[value] || ['SURFACE']
+      };
+    }
+
+    async function setupObjectPreview() {
+      const panel = root.querySelector('.atlas-clarus-aps__objects');
+      const canvas3d = panel.querySelector('canvas');
+      const template = panel.querySelector('[data-object-control="template"]');
+      const rotation = panel.querySelector('[data-object-control="rotation"]');
+      const autoRotate = panel.querySelector('[data-object-control="auto-rotate"]');
+      const status = panel.querySelector('[data-object-output="status"]');
+      const rotationOutput = panel.querySelector('[data-object-output="rotation"]');
+      const evidence = panel.querySelector('[data-object-output="evidence"]');
+      const exportButton = panel.querySelector('[data-object-action="png"]');
+      const THREE = await import(root.dataset.threeModuleUrl + '?ver=' + root.dataset.version);
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas3d, antialias: true, alpha: true, preserveDrawingBuffer: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+      renderer.shadowMap.enabled = true;
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(36, 1.5, 0.1, 100);
+      camera.position.set(0, 1.05, 5.2);
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x263140, 1.55));
+      const key = new THREE.DirectionalLight(0xffffff, 3.4);
+      key.position.set(3.5, 5, 4); key.castShadow = true; scene.add(key);
+      const rim = new THREE.DirectionalLight(0x9fc8ff, 1.5);
+      rim.position.set(-4, 2, -2); scene.add(rim);
+      let object = new THREE.Group();
+      scene.add(object);
+      let dragging = false; let previousX = 0;
+      const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function physicalMaterial(zone, variation) {
+        const finish = controls.finish.value;
+        const roughness = { matte: .82, satin: .46, gloss: .12, metallic: .22, pearlescent: .28, softtouch: .92, uncoated: .88 }[finish];
+        const color = new THREE.Color(identity()[2]);
+        if (variation) color.offsetHSL(variation, 0, variation > 0 ? .08 : -.05);
+        return new THREE.MeshPhysicalMaterial({
+          name: zone, color: color, roughness: roughness,
+          metalness: controls.material.value === 'metal' || finish === 'metallic' ? .82 : .02,
+          clearcoat: ['gloss', 'pearlescent'].includes(finish) ? Number(controls.gloss.value) / 100 : .08,
+          clearcoatRoughness: Math.min(.75, roughness * .55),
+          transmission: controls.material.value === 'glass' ? .62 : 0,
+          thickness: controls.material.value === 'glass' ? .6 : 0,
+          sheen: controls.material.value === 'textile' ? .7 : 0,
+          sheenRoughness: .65
+        });
+      }
+
+      function mesh(geometry, material, zone) {
+        const result = new THREE.Mesh(geometry, material);
+        result.name = zone; result.castShadow = true; result.receiveShadow = true;
+        return result;
+      }
+
+      function disposeObject() {
+        object.traverse((child) => {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) (Array.isArray(child.material) ? child.material : [child.material]).forEach((material) => material.dispose());
+        });
+        scene.remove(object);
+      }
+
+      function buildObject() {
+        disposeObject();
+        object = new THREE.Group();
+        const base = physicalMaterial('SURFACE', 0);
+        const accent = physicalMaterial('PRINT_AREA', .015);
+        if (template.value === 'sphere') {
+          object.add(mesh(new THREE.SphereGeometry(1.25, 96, 64), base, 'SURFACE'));
+        } else if (template.value === 'package') {
+          const box = mesh(new THREE.BoxGeometry(2.4, 2.9, 1.05, 8, 8, 4), base, 'BOX_BASE');
+          object.add(box);
+          const print = mesh(new THREE.PlaneGeometry(1.55, 1.7), accent, 'PRINT_AREA');
+          print.position.set(0, .1, .531); object.add(print);
+        } else if (template.value === 'bottle') {
+          const points = [[0, -1.5], [.72, -1.45], [.78, -.9], [.72, .65], [.55, .98], [.28, 1.16], [.27, 1.45]].map((point) => new THREE.Vector2(point[0], point[1]));
+          object.add(mesh(new THREE.LatheGeometry(points, 72), base, 'BOTTLE_BODY'));
+          const label = mesh(new THREE.CylinderGeometry(.79, .79, 1.05, 72, 1, true), accent, 'LABEL');
+          label.position.y = -.15; object.add(label);
+          const capMaterial = physicalMaterial('CAP', -.01); capMaterial.metalness = .35;
+          const cap = mesh(new THREE.CylinderGeometry(.31, .31, .34, 48), capMaterial, 'CAP');
+          cap.position.y = 1.62; object.add(cap);
+        } else if (template.value === 'can') {
+          const body = mesh(new THREE.CylinderGeometry(.82, .82, 2.8, 96, 8), accent, 'CAN_BODY');
+          object.add(body);
+          const metal = physicalMaterial('TOP_BOTTOM', 0); metal.color.set(0xb9bec4); metal.metalness = .95; metal.roughness = .23;
+          const top = mesh(new THREE.CylinderGeometry(.78, .78, .06, 96), metal, 'TOP_BOTTOM'); top.position.y = 1.43; object.add(top);
+          const bottom = top.clone(); bottom.position.y = -1.43; object.add(bottom);
+        } else if (template.value === 'plate') {
+          object.add(mesh(new THREE.BoxGeometry(2.9, 2.1, .18, 12, 12, 2), base, 'SURFACE'));
+        } else {
+          const geometry = new THREE.PlaneGeometry(3, 2.25, 64, 48);
+          const positions = geometry.attributes.position;
+          for (let index = 0; index < positions.count; index += 1) {
+            const x = positions.getX(index); const y = positions.getY(index);
+            positions.setZ(index, Math.sin(x * 22) * .018 + Math.sin(y * 26) * .018);
+          }
+          geometry.computeVertexNormals();
+          const fabric = mesh(geometry, base, 'FABRIC_SURFACE'); fabric.rotation.x = -.12; object.add(fabric);
+        }
+        object.rotation.y = Number(rotation.value) * Math.PI / 180;
+        scene.add(object);
+        status.textContent = template.options[template.selectedIndex].text + ' · READY';
+        evidence.textContent = 'GEOMETRY BUILT_IN · MATERIAL SIMULATED · RENDER SIMULATED · QC NOT_MEASURED';
+        if (state.bridgeDocument) state.bridgeDocument.geometry = geometryRecord();
+      }
+
+      function updateMaterial() {
+        object.traverse((child) => {
+          if (!child.isMesh) return;
+          const zone = child.name || 'SURFACE';
+          const old = child.material;
+          child.material = physicalMaterial(zone, zone === 'PRINT_AREA' || zone === 'LABEL' || zone === 'CAN_BODY' ? .015 : 0);
+          if (zone === 'TOP_BOTTOM') { child.material.color.set(0xb9bec4); child.material.metalness = .95; child.material.roughness = .23; }
+          old.dispose();
+        });
+      }
+
+      function resize() {
+        const rect = canvas3d.getBoundingClientRect();
+        const width = Math.max(320, Math.round(rect.width));
+        const height = Math.max(220, Math.round(rect.height));
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height; camera.updateProjectionMatrix();
+      }
+      new ResizeObserver(resize).observe(canvas3d);
+      canvas3d.addEventListener('pointerdown', (event) => { dragging = true; previousX = event.clientX; canvas3d.setPointerCapture(event.pointerId); });
+      canvas3d.addEventListener('pointermove', (event) => {
+        if (!dragging) return;
+        object.rotation.y += (event.clientX - previousX) * .012; previousX = event.clientX;
+        rotation.value = String(Math.round(object.rotation.y * 180 / Math.PI));
+        rotationOutput.textContent = rotation.value + '°';
+      });
+      canvas3d.addEventListener('pointerup', () => { dragging = false; });
+      template.addEventListener('change', buildObject);
+      rotation.addEventListener('input', () => { object.rotation.y = Number(rotation.value) * Math.PI / 180; rotationOutput.textContent = rotation.value + '°'; });
+      exportButton.addEventListener('click', () => {
+        renderer.render(scene, camera);
+        canvas3d.toBlob((blob) => { if (blob) downloadBlob('atlas-clarus-object-preview-' + template.value + '.png', blob, 'image/png'); }, 'image/png');
+      });
+      buildObject(); resize(); exportButton.disabled = false;
+      state.objectPreview = { updateMaterial: updateMaterial };
+      function animate() {
+        if (autoRotate.checked && !reducedMotion && !dragging) object.rotation.y += .004;
+        renderer.render(scene, camera);
+        window.requestAnimationFrame(animate);
+      }
+      animate();
     }
 
     function canvasBlob() {
@@ -566,6 +733,7 @@
         material_selector: { selector_id: 'selector-' + token, asset_ref: 'material-' + token, selector_type: bridgeControls['selector-type'].value, value: selectorValue, resolution_status: 'SOURCE_DECLARED', representation_model: 'UNKNOWN' },
         identity_binding: { binding_id: 'binding-' + token, identity_ref: 'atlas-colour-' + row[0], asset_ref: 'material-' + token, selector_ref: 'selector-' + token, status: 'REFERENCE_BOUND' },
         measurement_provenance: { status: 'UNKNOWN', evidence_refs: [] },
+        geometry: geometryRecord(),
         render_results: [],
         physical_comparison: { status: 'NOT_MEASURED', evidence_refs: [] },
         qc_conclusion: { status: 'NOT_MEASURED', evidence_refs: [], decision: 'NOT_EVALUATED' },
@@ -602,7 +770,8 @@
           illumination: controls.light.value + ' / CIE ' + spectralAppearance().illuminant,
           view_angle_degrees: Number(controls.angle.value),
           gloss_proxy_GU: Number(controls.gloss.value),
-          camera: 'ATLAS WordPress preview camera'
+          camera: 'ATLAS WordPress preview camera',
+          geometry: geometryRecord()
         }
       };
       if (root.dataset.rendererMode === 'external') {
@@ -744,6 +913,10 @@
       buttons.forEach((button) => { button.disabled = false; });
       outputs['master-status'].textContent = 'MASTER + CIE VERIFIED · SPECTRAL XYZ CALCULATED · APPEARANCE SIMULATED · NOT MEASURED';
       draw();
+      setupObjectPreview().catch((error) => {
+        const status = root.querySelector('[data-object-output="status"]');
+        if (status) status.textContent = '3D PREVIEW UNAVAILABLE · ' + error.message;
+      });
     } catch (error) {
       outputs['master-status'].textContent = 'MASTER VERIFICATION FAILED';
       outputs.pkl.textContent = 'Reference unavailable';
