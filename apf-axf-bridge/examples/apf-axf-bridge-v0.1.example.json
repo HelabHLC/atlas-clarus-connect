@@ -1,0 +1,87 @@
+{
+  "schema_version": "0.1",
+  "document_id": "apf-axf-example-0001",
+  "document_status": "REVIEW_DRAFT",
+  "conformance_level": "APF-AXF-RENDERED",
+  "identity": {
+    "identity_id": "atlas-colour-4665",
+    "atlas_row": 4665,
+    "reference_code": "H125-L50-C040",
+    "master_sha256": "72e55107906ef5c8f08b1983b33b867c3fc5cd8b000000000000000000000000",
+    "status": "VERIFIED"
+  },
+  "assets": [
+    {
+      "asset_id": "axf-package-varnish",
+      "role": "APPEARANCE_MATERIAL",
+      "uri": "materials/package-varnish.axf",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "media_type": "application/octet-stream",
+      "format": "AXF",
+      "file_extension": ".axf",
+      "media_type_status": "UNREGISTERED_FALLBACK",
+      "integrity_status": "VERIFIED"
+    },
+    {
+      "asset_id": "render-package-varnish",
+      "role": "RENDER_RESULT",
+      "uri": "renders/package-varnish-d50.exr",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "media_type": "image/x-exr",
+      "format": "OPENEXR",
+      "file_extension": ".exr",
+      "media_type_status": "IMPLEMENTATION_DEFINED",
+      "integrity_status": "VERIFIED"
+    }
+  ],
+  "material_selector": {
+    "selector_id": "selector-varnish-01",
+    "asset_ref": "axf-package-varnish",
+    "selector_type": "AXF_DISPLAY_NAME",
+    "value": "Package Varnish / Atlas 4665",
+    "resolution_status": "RESOLVED",
+    "representation_model": "SVBRDF",
+    "real_world_size_mm": [100, 100],
+    "orientation_degrees": 0
+  },
+  "identity_binding": {
+    "binding_id": "binding-4665-varnish",
+    "identity_ref": "atlas-colour-4665",
+    "asset_ref": "axf-package-varnish",
+    "selector_ref": "selector-varnish-01",
+    "status": "VERIFIED"
+  },
+  "measurement_provenance": {
+    "status": "SOURCE_DECLARED",
+    "organization": "AxF source supplier (example only)",
+    "method": "Declared in source metadata; not independently verified",
+    "evidence_refs": []
+  },
+  "render_results": [
+    {
+      "render_id": "render-0001",
+      "binding_ref": "binding-4665-varnish",
+      "renderer": "Example AxF-capable renderer",
+      "renderer_version": "0.0-example",
+      "scene_id": "atlas-d50-proof-scene-v1",
+      "illumination": "CIE D50 reference SPD",
+      "camera": "45 degree example camera",
+      "output_asset_ref": "render-package-varnish",
+      "status": "SIMULATED"
+    }
+  ],
+  "physical_comparison": {
+    "status": "NOT_MEASURED",
+    "evidence_refs": []
+  },
+  "qc_conclusion": {
+    "status": "NOT_MEASURED",
+    "evidence_refs": [],
+    "decision": "NOT_EVALUATED"
+  },
+  "notes": [
+    "All asset hashes and paths in this record are illustrative.",
+    "The render is simulated and is not physical measurement evidence."
+  ]
+}
+
