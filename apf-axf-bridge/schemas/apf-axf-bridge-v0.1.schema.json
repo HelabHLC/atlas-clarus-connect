@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-clarus.example/schemas/apf-axf-bridge-v0.1.schema.json",
+  "title": "ATLAS Clarus APF–AxF Bridge v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "document_id", "document_status", "conformance_level", "identity", "assets", "material_selector", "identity_binding", "measurement_provenance", "render_results", "physical_comparison", "qc_conclusion"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "document_id": {"type": "string", "minLength": 1},
+    "document_status": {"enum": ["REVIEW_DRAFT", "ACTIVE", "SUPERSEDED", "INVALID"]},
+    "conformance_level": {"enum": ["APF-AXF-REFERENCE", "APF-AXF-RENDERED", "APF-AXF-MEASURED", "APF-AXF-QC"]},
+    "identity": {"$ref": "#/$defs/identity"},
+    "assets": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/asset"}},
+    "material_selector": {"$ref": "#/$defs/selector"},
+    "identity_binding": {"$ref": "#/$defs/binding"},
+    "measurement_provenance": {"$ref": "#/$defs/provenance"},
+    "render_results": {"type": "array", "items": {"$ref": "#/$defs/render"}},
+    "physical_comparison": {"$ref": "#/$defs/physical"},
+    "qc_conclusion": {"$ref": "#/$defs/qc"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["identity_id", "atlas_row", "reference_code", "master_sha256", "status"],
+      "properties": {
+        "identity_id": {"type": "string", "minLength": 1},
+        "atlas_row": {"type": "integer", "minimum": 1},
+        "reference_code": {"type": "string", "minLength": 1},
+        "master_sha256": {"$ref": "#/$defs/sha256"},
+        "status": {"enum": ["REFERENCE_BOUND", "VERIFIED", "INVALID"]}
+      }
+    },
+    "asset": {
+      "type": "object", "additionalProperties": false,
+      "required": ["asset_id", "role", "uri", "sha256", "media_type", "format", "integrity_status"],
+      "properties": {
+        "asset_id": {"type": "string", "minLength": 1},
+        "role": {"enum": ["APPEARANCE_MATERIAL", "RENDER_RESULT", "MEASUREMENT_EVIDENCE", "QC_EVIDENCE"]},
+        "uri": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "media_type": {"type": "string", "minLength": 1},
+        "format": {"type": "string", "minLength": 1},
+        "file_extension": {"type": "string"},
+        "media_type_status": {"enum": ["REGISTERED", "UNREGISTERED_FALLBACK", "IMPLEMENTATION_DEFINED"]},
+        "integrity_status": {"enum": ["SOURCE_DECLARED", "VERIFIED", "INVALID"]}
+      }
+    },
+    "selector": {
+      "type": "object", "additionalProperties": false,
+      "required": ["selector_id", "asset_ref", "selector_type", "value", "resolution_status"],
+      "properties": {
+        "selector_id": {"type": "string", "minLength": 1},
+        "asset_ref": {"type": "string", "minLength": 1},
+        "selector_type": {"enum": ["AXF_MATERIAL_ID", "AXF_REPRESENTATION_ID", "AXF_DISPLAY_NAME", "IMPLEMENTATION_DEFINED"]},
+        "value": {"type": "string", "minLength": 1},
+        "resolution_status": {"enum": ["RESOLVED", "SOURCE_DECLARED", "UNRESOLVED", "INVALID"]},
+        "representation_model": {"enum": ["SVBRDF", "EP_SVBRDF", "BTF", "CARPAINT", "OTHER", "UNKNOWN"]},
+        "real_world_size_mm": {"type": "array", "prefixItems": [{"type": "number", "exclusiveMinimum": 0}, {"type": "number", "exclusiveMinimum": 0}], "items": false},
+        "orientation_degrees": {"type": "number"}
+      }
+    },
+    "binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["binding_id", "identity_ref", "asset_ref", "selector_ref", "status"],
+      "properties": {
+        "binding_id": {"type": "string", "minLength": 1},
+        "identity_ref": {"type": "string", "minLength": 1},
+        "asset_ref": {"type": "string", "minLength": 1},
+        "selector_ref": {"type": "string", "minLength": 1},
+        "status": {"enum": ["REFERENCE_BOUND", "VERIFIED", "INVALID"]}
+      }
+    },
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "evidence_refs"],
+      "properties": {
+        "status": {"enum": ["MEASURED", "SOURCE_DECLARED", "NOT_MEASURED", "UNKNOWN"]},
+        "organization": {"type": "string"},
+        "device": {"type": "string"},
+        "method": {"type": "string"},
+        "measured_at": {"type": "string", "format": "date-time"},
+        "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+      }
+    },
+    "render": {
+      "type": "object", "additionalProperties": false,
+      "required": ["render_id", "binding_ref", "renderer", "renderer_version", "scene_id", "illumination", "camera", "output_asset_ref", "status"],
+      "properties": {
+        "render_id": {"type": "string", "minLength": 1},
+        "binding_ref": {"type": "string", "minLength": 1},
+        "renderer": {"type": "string", "minLength": 1},
+        "renderer_version": {"type": "string", "minLength": 1},
+        "scene_id": {"type": "string", "minLength": 1},
+        "illumination": {"type": "string", "minLength": 1},
+        "camera": {"type": "string", "minLength": 1},
+        "output_asset_ref": {"type": "string", "minLength": 1},
+        "status": {"enum": ["CALCULATED", "SIMULATED"]}
+      }
+    },
+    "physical": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "evidence_refs"],
+      "properties": {
+        "status": {"enum": ["NOT_MEASURED", "MEASURED", "INVALID"]},
+        "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "method": {"type": "string"}
+      }
+    },
+    "qc": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "evidence_refs"],
+      "properties": {
+        "status": {"enum": ["NOT_MEASURED", "VERIFIED", "INVALID"]},
+        "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "decision": {"enum": ["PASS", "FAIL", "NOT_EVALUATED"]}
+      }
+    }
+  }
+}
+
