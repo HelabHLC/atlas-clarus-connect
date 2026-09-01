@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ATLAS Clarus Appearance Pixel Simulator
  * Description: Master-bound spectral appearance engine with CIE D50/D65/A calculation and APF evidence envelope.
- * Version: 0.2.0
+ * Version: 0.2.1
  * Author: Norbert / ATLAS Clarus
  * License: GPL-2.0-or-later
  * Text Domain: atlas-clarus-appearance-pixel-simulator
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ATLAS_CLARUS_APS_VERSION', '0.2.0' );
+define( 'ATLAS_CLARUS_APS_VERSION', '0.2.1' );
 define( 'ATLAS_CLARUS_APS_URL', plugin_dir_url( __FILE__ ) );
 define( 'ATLAS_CLARUS_APS_MASTER_SHA256', '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4' );
 define( 'ATLAS_CLARUS_APS_PROJECTION_MANIFEST_SHA256', '561adb75debc920a5071e017e9de98abdbd517fb522d2bd4fa60aef2b85dc9ec' );
@@ -191,6 +191,28 @@ function atlas_clarus_aps_shortcode() {
 					<button type="button" data-export="pixels"><?php esc_html_e( 'Export pixel data', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
 					<button type="button" data-export="png"><?php esc_html_e( 'Export PNG', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
 				</div>
+				<details class="atlas-clarus-aps__bridge">
+					<summary><strong><?php esc_html_e( 'APF–AxF Bridge v0.1', 'atlas-clarus-appearance-pixel-simulator' ); ?></strong> <span data-bridge-output="summary">NOT LOADED</span></summary>
+					<p><?php esc_html_e( 'Bind an external AxF material to the selected ATLAS identity, validate a bridge record and export the evidence envelope. This plugin does not decode or render AxF.', 'atlas-clarus-appearance-pixel-simulator' ); ?></p>
+					<div class="atlas-clarus-aps__bridge-grid">
+						<label><?php esc_html_e( 'AxF asset', 'atlas-clarus-appearance-pixel-simulator' ); ?><input data-bridge-control="axf-file" type="file" accept=".axf,application/octet-stream"></label>
+						<label><?php esc_html_e( 'Bridge JSON', 'atlas-clarus-appearance-pixel-simulator' ); ?><input data-bridge-control="bridge-file" type="file" accept=".json,application/json"></label>
+						<label><?php esc_html_e( 'Material selector type', 'atlas-clarus-appearance-pixel-simulator' ); ?><select data-bridge-control="selector-type"><option value="AXF_DISPLAY_NAME">AxF display name</option><option value="AXF_MATERIAL_ID">AxF material ID</option><option value="AXF_REPRESENTATION_ID">AxF representation ID</option><option value="IMPLEMENTATION_DEFINED">Implementation defined</option></select></label>
+						<label><?php esc_html_e( 'Material selector', 'atlas-clarus-appearance-pixel-simulator' ); ?><input data-bridge-control="selector-value" type="text" placeholder="Material name or ID"></label>
+					</div>
+					<div class="atlas-clarus-aps__actions">
+						<button type="button" data-bridge-action="create"><?php esc_html_e( 'Create binding', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
+						<button type="button" data-bridge-action="validate"><?php esc_html_e( 'Validate bridge', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
+						<button type="button" data-bridge-action="export" disabled><?php esc_html_e( 'Export bridge JSON', 'atlas-clarus-appearance-pixel-simulator' ); ?></button>
+					</div>
+					<div class="atlas-clarus-aps__bridge-status" aria-live="polite">
+						<div><span><?php esc_html_e( 'Identity binding', 'atlas-clarus-appearance-pixel-simulator' ); ?></span><strong data-bridge-output="binding">NOT LOADED</strong></div>
+						<div><span><?php esc_html_e( 'AxF asset integrity', 'atlas-clarus-appearance-pixel-simulator' ); ?></span><strong data-bridge-output="asset">NOT LOADED</strong></div>
+						<div><span><?php esc_html_e( 'Material origin', 'atlas-clarus-appearance-pixel-simulator' ); ?></span><strong data-bridge-output="origin">UNKNOWN</strong></div>
+						<div><span><?php esc_html_e( 'Render / physical QC', 'atlas-clarus-appearance-pixel-simulator' ); ?></span><strong data-bridge-output="render">NOT EXECUTED / NOT MEASURED</strong></div>
+					</div>
+					<ul class="atlas-clarus-aps__bridge-report" data-bridge-output="report"><li><?php esc_html_e( 'No bridge record loaded.', 'atlas-clarus-appearance-pixel-simulator' ); ?></li></ul>
+				</details>
 				<p class="atlas-clarus-aps__boundary"><strong><?php esc_html_e( 'Evidence boundary:', 'atlas-clarus-appearance-pixel-simulator' ); ?></strong> <?php esc_html_e( 'Identity, spectral reference and illuminant diagnostics are master-bound. Material, specular, height and appearance pixels remain simulated—not BRDF/BSDF or physical QC data. QC_STATUS remains NOT_MEASURED.', 'atlas-clarus-appearance-pixel-simulator' ); ?></p>
 			</div>
 		</div>
