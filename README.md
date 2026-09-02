@@ -26,7 +26,7 @@ server or network connection. Its application demos document integration
 boundaries; they do not embed or claim native browser execution of the desktop
 applications.
 
-Current candidate: **v0.2.0-rc10 · READY_PENDING_AUDIT**. RC10 uses a self-contained
+Current candidate: **v0.2.0-rc11 · READY_PENDING_AUDIT**. RC11 uses a self-contained
 entrypoint so Windows may open `index.html` directly from the ZIP without losing
 the stylesheet, application code or embedded reference data. It restores the
 Wheel card workspace for harmony, tonal families, accessibility, ARBE comparison,
@@ -45,6 +45,8 @@ and a footer credit for the HLC-derived reference data from freieFarbe e.V.
 RC9 keeps the complete licence summary inside the self-contained entrypoint and
 removes the unreliable relative licensing link from the direct-file workflow.
 RC10 adds an accessible smartphone navigation menu with all bundle sections.
+RC11 introduces My Palettes: several named local palettes, selection, duplication,
+deletion, colour reordering and strict identity-validated Clarus JSON import.
 
 ## Current release contents
 
