@@ -13,7 +13,7 @@
   <header class="topbar">
     <a class="brand" href="#home"><span class="brand-mark"></span><span>ATLAS <b>CLARUS</b></span></a>
     <nav aria-label="Primary navigation">
-      <a href="#library">Hover Library</a><a href="#wheel">Identity Wheel</a><a href="#appearance">Appearance</a><a href="#workflows">App connections</a><a href="#about">About</a>
+      <a href="#library">Hover Library</a><a href="#wheel">Identity Wheel</a><a href="#appearance">Appearance</a><a href="#workflows">App connections</a><a href="#faq">FAQ</a><a href="#about">About</a>
     </nav>
     <button id="palette-toggle" class="palette-toggle">PALETTE <b id="palette-count">0</b></button><span class="offline">OFFLINE · LOCAL</span>
   </header>
@@ -64,8 +64,21 @@
       <div class="section-head"><div><p class="eyebrow">EVIDENCE</p><h2>About this bundle</h2></div><div class="gate">READY_PENDING_AUDIT</div></div>
       <div class="about-grid"><article><h3>Identity baseline</h3><p>13,283 master references. Zero-based <code>atlas_row_id</code>. Deterministic RGB-only reference binding. Workflow v3.4.0.</p></article><article><h3>Local by design</h3><p>This edition runs from <code>index.html</code>. It sends no analytics, user actions or colour selections anywhere.</p></article><article><h3>Claim boundary</h3><p>A displayed or simulated colour is not a physical measurement, production approval, print proof or certification.</p></article><article><h3>Documents</h3><p><a href="docs/README.html">Read the offline guide</a><br><a href="docs/LICENSING.html">Licensing and attribution</a><br><a href="docs/VALIDATION.html">Validation record</a></p></article></div>
     </section>
+    <section id="faq" class="view">
+      <div class="section-head"><div><p class="eyebrow">HELP</p><h2>Frequently asked questions</h2></div><div class="logic-badge">IDENTITY FIRST</div></div>
+      <div class="about-grid faq-grid">
+        <article><h3>What is ATLAS Clarus?</h3><p>An open workflow for finding, understanding, collecting and handing over colour-reference identities without silently redefining their source.</p></article>
+        <article><h3>How do I build a palette?</h3><p>Choose a colour in Hover, select <b>Add to palette</b>, then open the shared palette. The same collection remains available in the Wheel for review and editing.</p></article>
+        <article><h3>Which exports are included?</h3><p>ASE for Adobe/Affinity, GPL for GIMP/Inkscape, Figma-compatible Tokens JSON, CSS custom properties and Clarus JSON with identity evidence.</p></article>
+        <article><h3>Does an export preserve the identity?</h3><p>Clarus JSON retains the full reference metadata. Other application formats carry usable names and exact master RGB, but their host applications may not retain every provenance field.</p></article>
+        <article><h3>Is the displayed colour physically exact?</h3><p>No. Screen colour depends on display, profile and viewing conditions. It is a reference representation, not a measured print, textile, coating or production approval.</p></article>
+        <article><h3>Does the bundle track users?</h3><p>No. It runs locally, sends no analytics or colour selections, and stores the shared palette only in this browser's local storage.</p></article>
+        <article><h3>What does frozen A′ v0.4 mean?</h3><p>The established selection and ranking logic is not changed by this browser edition. Interaction Wheel v0.5 adds descriptive diagnostics only.</p></article>
+        <article><h3>Is this a Pantone library?</h3><p>No. Observed source-context views are descriptive and claim no Pantone identity or equivalence. ATLAS references remain independently addressed.</p></article>
+      </div>
+    </section>
   </main>
-  <aside id="palette-drawer" class="palette-drawer" aria-label="ATLAS Clarus palette"><div class="drawer-head"><div><p class="eyebrow">SHARED WORKSPACE</p><h2>My ATLAS palette</h2></div><button id="palette-close" aria-label="Close palette">×</button></div><p>Collect colours in the Hover Library, refine them in the Wheel, then export the same frozen identities.</p><div id="drawer-palette-list" class="drawer-palette-list"></div><div class="drawer-exports"><button data-palette-export="ase">Adobe / Affinity ASE</button><button data-palette-export="tokens">Figma Tokens</button><button data-palette-export="css">CSS</button><button data-palette-export="clarus">Clarus JSON</button></div><div id="export-status" class="export-status"></div><button id="drawer-clear">Clear palette</button></aside>
+  <aside id="palette-drawer" class="palette-drawer" aria-label="ATLAS Clarus palette"><div class="drawer-head"><div><p class="eyebrow">SHARED WORKSPACE</p><h2>My ATLAS palette</h2></div><button id="palette-close" aria-label="Close palette">×</button></div><p>Collect colours in the Hover Library, refine them in the Wheel, then export the same frozen identities.</p><div id="drawer-palette-list" class="drawer-palette-list"></div><div class="drawer-exports"><button data-palette-export="ase">Adobe / Affinity ASE</button><button data-palette-export="gpl">GIMP / Inkscape GPL</button><button data-palette-export="tokens">Figma Tokens</button><button data-palette-export="css">CSS</button><button data-palette-export="clarus">Clarus JSON</button></div><div id="export-status" class="export-status"></div><button id="drawer-clear">Clear palette</button></aside>
   <footer><span>ATLAS Clarus Connect Browser Bundle</span><b>EVERY COLOUR HAS AN ADDRESS.</b><span id="version">v0.2.0-rc1</span></footer>
   <script src="assets/atlas-data.js"></script>
   <script src="assets/palette-export.js"></script>

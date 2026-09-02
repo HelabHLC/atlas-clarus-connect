@@ -10,6 +10,7 @@
   function slug(ref){return ref.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
   function tokens(palette,master){const color={};palette.forEach(c=>{color[c.ref]={$type:'color',$value:c.hex,$extensions:{'org.atlas-clarus':{atlas_row_id:c.id,master_sha256:master,rgb:c.rgb,lab:c.lab,freeze_status:'FROZEN'}}}});return {$schema:'https://tr.designtokens.org/format/',$description:'ATLAS Clarus palette — Figma-compatible design tokens',color}}
   function css(palette,master){return `/* ATLAS Clarus palette\n   Master SHA-256: ${master}\n   Frozen reference identities; not measured QC.\n*/\n:root {\n${palette.map(c=>`  --atlas-${slug(c.ref)}: ${c.hex}; /* row ${c.id} · RGB ${c.rgb.join('/')} */`).join('\n')}\n}\n`}
+  function gpl(palette,master){return `GIMP Palette\nName: ATLAS Clarus Palette\nColumns: 4\n# Master SHA-256: ${master}\n# Frozen reference identities; not measured QC.\n${palette.map(c=>`${String(c.rgb[0]).padStart(3)} ${String(c.rgb[1]).padStart(3)} ${String(c.rgb[2]).padStart(3)}\t${c.ref}`).join('\n')}\n`}
   function clarus(palette,master){return {format:'ATLAS_CLARUS_PALETTE',version:'1.0',workflow:'ATLAS Clarus v3.4.0',master_sha256:master,row_id_base:0,freeze_status:'FROZEN',measured_qc_status:'NOT_MEASURED',references:palette.map((c,index)=>({palette_index:index,atlas_row_id:c.id,reference:c.ref,master_rgb:c.rgb,master_hex:c.hex,master_lab:c.lab}))}}
-  global.ATLAS_CLARUS_EXPORTS={ase,readAse,tokens,css,clarus};
+  global.ATLAS_CLARUS_EXPORTS={ase,readAse,tokens,css,gpl,clarus};
 })(typeof window!=='undefined'?window:globalThis);
