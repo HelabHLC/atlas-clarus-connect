@@ -26,7 +26,7 @@ server or network connection. Its application demos document integration
 boundaries; they do not embed or claim native browser execution of the desktop
 applications.
 
-Current candidate: **v0.2.0-rc6 · READY_PENDING_AUDIT**. RC6 uses a self-contained
+Current candidate: **v0.2.0-rc7 · READY_PENDING_AUDIT**. RC7 uses a self-contained
 entrypoint so Windows may open `index.html` directly from the ZIP without losing
 the stylesheet, application code or embedded reference data. It restores the
 Wheel card workspace for harmony, tonal families, accessibility, ARBE comparison,
@@ -38,7 +38,8 @@ verified and what still needs testing; Scribus is explicitly marked as planned.
 RC6 adds the first external handoff workflow: users collect exact master references
 directly in Hover, edit the same locally stored palette in the Wheel, and export it
 as ASE (Adobe/Affinity), Figma Tokens JSON, CSS custom properties or evidence-rich
-Clarus JSON. These exports do not change the frozen A′ v0.4 selection logic.
+Clarus JSON. RC7 adds GIMP Palette (`.gpl`) export for GIMP/Inkscape and an
+in-bundle FAQ. These additions do not change the frozen A′ v0.4 selection logic.
 
 ## Current release contents
 
