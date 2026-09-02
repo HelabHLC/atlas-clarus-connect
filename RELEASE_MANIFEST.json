@@ -10,10 +10,10 @@
   },
   "components": {
     "browser_bundle": {
-      "version": "0.2.0-rc8",
+      "version": "0.2.0-rc9",
       "path": "browser-bundle/",
       "entrypoint": "dist/atlas-clarus-browser-bundle/index.html",
-      "zip": "dist/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc8.zip",
+      "zip": "dist/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc9.zip",
       "status": "READY_PENDING_AUDIT",
       "offline": true,
       "entrypoint_packaging": "SELF_CONTAINED_SINGLE_FILE",
@@ -23,6 +23,7 @@
       "palette_exports": ["ASE", "GPL", "FIGMA_TOKENS_JSON", "CSS", "CLARUS_JSON"],
       "faq_tab": true,
       "visible_credit_tab": true,
+      "licensing_summary_self_contained": true,
       "upstream_reference_credit": "Copyright (c) freieFarbe e.V.",
       "app_connections_format": "CAN_VERIFIED_NEEDED",
       "external_runtime_dependencies": 0,
