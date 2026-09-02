@@ -26,7 +26,9 @@ server or network connection. Its application demos document integration
 boundaries; they do not embed or claim native browser execution of the desktop
 applications.
 
-Current candidate: **v0.2.0-rc1 · READY_PENDING_AUDIT**
+Current candidate: **v0.2.0-rc2 · READY_PENDING_AUDIT**. RC2 uses a self-contained
+entrypoint so Windows may open `index.html` directly from the ZIP without losing
+the stylesheet, application code or embedded reference data.
 
 ## Current release contents
 
