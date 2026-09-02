@@ -14,6 +14,20 @@ It combines three parts:
 2. **Colour Identity Wheel** — understand and locate a selected reference.
 3. **Identity Handoff** — transfer the zero-based identity, HLC designation and master digest between tools.
 
+## Offline browser bundle
+
+`browser-bundle/` builds a standalone edition that starts by opening `index.html`
+directly in a modern browser. It includes the Hover Library, Colour Identity
+Wheel, Identity Handoff, Appearance Pixel Simulator and documented workflow
+demos for Inkscape, GIMP, Krita and Scribus.
+
+The browser bundle performs no analytics and requires no account, installation,
+server or network connection. Its application demos document integration
+boundaries; they do not embed or claim native browser execution of the desktop
+applications.
+
+Current candidate: **v0.2.0-rc1 · READY_PENDING_AUDIT**
+
 ## Current release contents
 
 | Component | Included | Status |
@@ -48,6 +62,7 @@ hover-library/          WordPress plugin v0.1.5
 colour-identity-wheel/ Exact Wheel application, WordPress embed and integration boundary
 identity-handoff/      Normative transfer protocol and examples
 open-label/            Review-draft label documents
+browser-bundle/        Standalone offline HTML edition and deterministic ZIP builder
 LICENSES/              Licensing status and notices
 THIRD_PARTY_NOTICES.md Upstream rights and attribution boundary
 RELEASE_MANIFEST.json  Release contents and readiness gates

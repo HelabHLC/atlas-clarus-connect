@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>ATLAS Clarus — Browser Bundle</title>
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home"><span class="brand-mark"></span><span>ATLAS <b>CLARUS</b></span></a>
+    <nav aria-label="Primary navigation">
+      <a href="#library">Hover Library</a><a href="#wheel">Identity Wheel</a><a href="#appearance">Appearance</a><a href="#workflows">Workflows</a><a href="#about">About</a>
+    </nav>
+    <span class="offline">OFFLINE · LOCAL</span>
+  </header>
+
+  <main>
+    <section id="home" class="view hero active">
+      <div class="hero-copy">
+        <p class="eyebrow">OPEN COLOUR IDENTITY WORKFLOW</p>
+        <h1>Find colour.<br>Understand colour.<br><span>Keep its identity.</span></h1>
+        <p class="lead">A browser-ready edition of ATLAS Clarus Connect. No installation, server, account or network connection is required.</p>
+        <div class="actions"><a class="button primary" href="#library">Open the library</a><a class="button" href="#workflows">Explore workflows</a></div>
+      </div>
+      <div class="hero-orbit" aria-hidden="true"><div class="orbit-core">13,283<small>references</small></div></div>
+      <div class="principle"><b>PKL FULL REFERENCE</b><span>Identity first. Production feasibility later. Device values third. Measured QC last.</span></div>
+    </section>
+
+    <section id="library" class="view">
+      <div class="section-head"><div><p class="eyebrow">DISCOVER</p><h2>Hover Library</h2></div><div class="master-badge">MASTER <code>8283ab91…747c4</code></div></div>
+      <div class="toolbar"><input id="search" type="search" placeholder="Search HLC, HEX or row ID" autocomplete="off"><select id="lightness"><option value="all">All L* levels</option></select><button id="clear-search">Clear</button></div>
+      <div class="library-layout"><div><div id="library-status" class="status"></div><div id="colour-grid" class="colour-grid"></div><div class="pager"><button id="prev-page">← Previous</button><span id="page-info"></span><button id="next-page">Next →</button></div></div><aside id="selection" class="selection"><p>Select a colour to inspect its frozen reference identity.</p></aside></div>
+    </section>
+
+    <section id="wheel" class="view">
+      <div class="section-head"><div><p class="eyebrow">UNDERSTAND</p><h2>Colour Identity Wheel</h2></div><div class="logic-badge">A′ v0.4 LOGIC · FROZEN</div></div>
+      <p class="boundary">The wheel locates the selected reference. v0.5 diagnostic fields are descriptive only and do not alter A′ selection or ranking.</p>
+      <div class="wheel-layout"><canvas id="wheel-canvas" width="760" height="760" aria-label="HLC colour identity wheel"></canvas><aside class="wheel-panel"><div id="wheel-selection"></div><h3>v0.5 diagnostic boundary</h3><dl><dt>Target error</dt><dd>Diagnostic only</dd><dt>Winner margin</dt><dd>Diagnostic only</dd><dt>Local density (k=8)</dt><dd>Diagnostic only</dd><dt>Density stability</dt><dd>Diagnostic only</dd></dl><div class="gate pass">A′ SELECTION LOGIC: UNCHANGED</div></aside></div>
+    </section>
+
+    <section id="appearance" class="view">
+      <div class="section-head"><div><p class="eyebrow">EXPLORE</p><h2>Appearance Pixel Simulator</h2></div><div class="gate warning">SIMULATION · NOT MEASURED QC</div></div>
+      <p class="boundary">A local visual exploration layer. Material, finish, illumination and angle change the simulation — never the frozen reference identity.</p>
+      <div class="sim-layout"><div class="sim-controls"><label>Material<select id="material"><option value="paper">Coated paperboard</option><option value="polymer">Polymer film</option><option value="metal">Brushed metal</option><option value="textile">Woven textile</option><option value="glass">Translucent glass</option><option value="wood">Wood veneer</option></select></label><label>Finish<select id="finish"><option value="matte">Matte</option><option value="satin">Satin</option><option value="gloss">High gloss</option><option value="metallic">Metallic</option><option value="softtouch">Soft-touch</option></select></label><label>Illumination<select id="illuminant"><option value="D50">D50</option><option value="D65">D65</option><option value="A">Illuminant A</option></select></label><label>Viewing angle<input id="angle" type="range" min="0" max="80" value="30"><output id="angle-output">30°</output></label><label>Surface depth<input id="depth" type="range" min="0" max="100" value="35"></label></div><div><canvas id="sim-canvas" width="900" height="560"></canvas><div id="sim-caption" class="sim-caption"></div></div></div>
+    </section>
+
+    <section id="workflows" class="view">
+      <div class="section-head"><div><p class="eyebrow">CONNECT</p><h2>Application workflow demos</h2></div><div class="gate warning">DOCUMENTED DEMOS · NO NATIVE BROWSER INTEGRATION</div></div>
+      <p class="boundary">These demonstrations explain the verified handoff boundaries. The desktop applications are not bundled and are not executed inside this browser edition.</p>
+      <div id="workflow-cards" class="workflow-cards"></div>
+      <article id="workflow-detail" class="workflow-detail"></article>
+    </section>
+
+    <section id="about" class="view">
+      <div class="section-head"><div><p class="eyebrow">EVIDENCE</p><h2>About this bundle</h2></div><div class="gate">READY_PENDING_AUDIT</div></div>
+      <div class="about-grid"><article><h3>Identity baseline</h3><p>13,283 master references. Zero-based <code>atlas_row_id</code>. Deterministic RGB-only reference binding. Workflow v3.4.0.</p></article><article><h3>Local by design</h3><p>This edition runs from <code>index.html</code>. It sends no analytics, user actions or colour selections anywhere.</p></article><article><h3>Claim boundary</h3><p>A displayed or simulated colour is not a physical measurement, production approval, print proof or certification.</p></article><article><h3>Documents</h3><p><a href="docs/README.html">Read the offline guide</a><br><a href="docs/LICENSING.html">Licensing and attribution</a><br><a href="docs/VALIDATION.html">Validation record</a></p></article></div>
+    </section>
+  </main>
+  <footer><span>ATLAS Clarus Connect Browser Bundle</span><b>EVERY COLOUR HAS AN ADDRESS.</b><span id="version">v0.2.0-rc1</span></footer>
+  <script src="assets/atlas-data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

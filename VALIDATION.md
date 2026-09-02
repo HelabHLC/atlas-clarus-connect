@@ -1,5 +1,21 @@
 # Validation report — ATLAS Clarus Connect v0.1.0
 
+## Browser bundle v0.2.0-rc1
+
+- JavaScript syntax: PASS
+- Embedded reference count: 13,283
+- Unique zero-based `atlas_row_id` values: 13,283
+- Master SHA-256 metadata: PASS
+- Local entrypoint and relative asset paths: PASS
+- External runtime dependencies: 0
+- ZIP integrity/readback: PASS
+- A′ v0.4 selection logic: UNCHANGED; v0.5 information is diagnostic-only
+- Automated visual browser run: NOT_EXECUTED in the build environment
+- Release state: `READY_PENDING_AUDIT`
+
+The browser bundle does not constitute measured QC, a physical proof or native
+runtime validation of Inkscape, GIMP, Krita or Scribus.
+
 **Package status:** APPROVED FOR PUBLIC GITHUB RELEASE — NOT YET UPLOADED  
 **Validation scope:** locally available release candidate
 

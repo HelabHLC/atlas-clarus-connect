@@ -1,7 +1,7 @@
 {
   "project": "ATLAS Clarus Connect",
   "version": "0.1.0",
-  "status": "PUBLIC_GITHUB_SOURCE_RELEASE",
+  "status": "PUBLIC_GITHUB_SOURCE_RELEASE_WITH_BROWSER_RC",
   "workflow": "ATLAS Clarus Workflow v3.4.0",
   "master": {
     "row_count": 13283,
@@ -9,6 +9,16 @@
     "atlas_row_id_basis": "ZERO_BASED"
   },
   "components": {
+    "browser_bundle": {
+      "version": "0.2.0-rc1",
+      "path": "browser-bundle/",
+      "entrypoint": "dist/atlas-clarus-browser-bundle/index.html",
+      "zip": "dist/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc1.zip",
+      "status": "READY_PENDING_AUDIT",
+      "offline": true,
+      "external_runtime_dependencies": 0,
+      "a_prime_v04_logic": "UNCHANGED"
+    },
     "hover_library": {
       "version": "0.1.5",
       "source_included": true,
