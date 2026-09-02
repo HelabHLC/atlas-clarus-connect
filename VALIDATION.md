@@ -1,6 +1,6 @@
 # Validation report — ATLAS Clarus Connect v0.1.0
 
-## Browser bundle v0.2.0-rc3
+## Browser bundle v0.2.0-rc4
 
 - JavaScript syntax: PASS
 - Embedded reference count: 13,283
@@ -10,6 +10,7 @@
 - External runtime dependencies: 0
 - Self-contained `index.html` CSS, JavaScript and reference data: PASS
 - Wheel card workspace present: PASS
+- Hover Library view selector: 17/17 views present and ID-bound
 - ZIP integrity/readback: PASS
 - A′ v0.4 selection logic: UNCHANGED; v0.5 information is diagnostic-only
 - Automated visual browser run: NOT_EXECUTED in the build environment

@@ -10,13 +10,14 @@
   },
   "components": {
     "browser_bundle": {
-      "version": "0.2.0-rc3",
+      "version": "0.2.0-rc4",
       "path": "browser-bundle/",
       "entrypoint": "dist/atlas-clarus-browser-bundle/index.html",
-      "zip": "dist/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc3.zip",
+      "zip": "dist/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc4.zip",
       "status": "READY_PENDING_AUDIT",
       "offline": true,
       "entrypoint_packaging": "SELF_CONTAINED_SINGLE_FILE",
+      "observed_library_views": 17,
       "external_runtime_dependencies": 0,
       "a_prime_v04_logic": "UNCHANGED"
     },
