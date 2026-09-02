@@ -10,10 +10,10 @@
   },
   "components": {
     "browser_bundle": {
-      "version": "0.2.0-rc11",
+      "version": "0.2.0-rc12",
       "path": "browser-bundle/",
       "entrypoint": "dist/atlas-clarus-browser-bundle/index.html",
-      "zip": "dist/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc11.zip",
+      "zip": "dist/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc12.zip",
       "status": "READY_PENDING_AUDIT",
       "offline": true,
       "entrypoint_packaging": "SELF_CONTAINED_SINGLE_FILE",
@@ -22,6 +22,11 @@
       "palette_persistence": "MULTI_PALETTE_LOCAL_BROWSER_ONLY",
       "palette_management": ["CREATE", "NAME", "SELECT", "DUPLICATE", "DELETE", "REORDER", "STRICT_CLARUS_JSON_IMPORT"],
       "palette_exports": ["ASE", "GPL", "FIGMA_TOKENS_JSON", "CSS", "CLARUS_JSON"],
+      "roundtrip_validation": {
+        "formats": ["CLARUS_JSON", "ASE", "GPL", "FIGMA_TOKENS_JSON", "CSS"],
+        "statuses": ["IDENTITY_MATCH", "VALUE_MATCH", "MISMATCH", "UNVERIFIABLE"],
+        "identity_authority": "CLARUS_JSON_ONLY"
+      },
       "faq_tab": true,
       "visible_credit_tab": true,
       "licensing_summary_self_contained": true,

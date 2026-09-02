@@ -29,6 +29,21 @@ jobs:
           python-version: "3.12"
       - run: python identity-handoff/tests/validate_vectors.py
 
+  browser-roundtrip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: JavaScript syntax
+        run: |
+          node --check browser-bundle/src/app.js
+          node --check browser-bundle/src/palette-export.js
+          node --check browser-bundle/src/roundtrip-validator.js
+      - name: Round-trip status boundaries
+        run: node browser-bundle/test_roundtrip.js
+
   wheel-application:
     runs-on: ubuntu-latest
     defaults:
@@ -43,4 +58,3 @@ jobs:
           cache-dependency-path: colour-identity-wheel/application/package-lock.json
       - run: npm ci
       - run: npm test
-
