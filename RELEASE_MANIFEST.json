@@ -10,14 +10,17 @@
   },
   "components": {
     "browser_bundle": {
-      "version": "0.2.0-rc5",
+      "version": "0.2.0-rc6",
       "path": "browser-bundle/",
       "entrypoint": "dist/atlas-clarus-browser-bundle/index.html",
-      "zip": "dist/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc5.zip",
+      "zip": "dist/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc6.zip",
       "status": "READY_PENDING_AUDIT",
       "offline": true,
       "entrypoint_packaging": "SELF_CONTAINED_SINGLE_FILE",
       "observed_library_views": 17,
+      "shared_palette_workspace": "HOVER_AND_WHEEL",
+      "palette_persistence": "LOCAL_BROWSER_ONLY",
+      "palette_exports": ["ASE", "FIGMA_TOKENS_JSON", "CSS", "CLARUS_JSON"],
       "app_connections_format": "CAN_VERIFIED_NEEDED",
       "external_runtime_dependencies": 0,
       "a_prime_v04_logic": "UNCHANGED"

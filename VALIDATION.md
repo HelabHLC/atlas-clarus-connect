@@ -1,6 +1,6 @@
 # Validation report — ATLAS Clarus Connect v0.1.0
 
-## Browser bundle v0.2.0-rc5
+## Browser bundle v0.2.0-rc6
 
 - JavaScript syntax: PASS
 - Embedded reference count: 13,283
@@ -12,6 +12,9 @@
 - Wheel card workspace present: PASS
 - Hover Library view selector: 17/17 views present and ID-bound
 - Application status distinction (can do / verified / still needed): PASS
+- Shared Hover/Wheel palette with local-only persistence: PASS
+- ASE export structure and independent exact-RGB readback: PASS
+- Figma Tokens, CSS and Clarus JSON export generation: PASS
 - ZIP integrity/readback: PASS
 - A′ v0.4 selection logic: UNCHANGED; v0.5 information is diagnostic-only
 - Automated visual browser run: NOT_EXECUTED in the build environment
