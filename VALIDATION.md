@@ -1,6 +1,6 @@
 # Validation report — ATLAS Clarus Connect v0.1.0
 
-## Browser bundle v0.2.0-rc10
+## Browser bundle v0.2.0-rc11
 
 - JavaScript syntax: PASS
 - Embedded reference count: 13,283
@@ -21,6 +21,10 @@
 - Pantone non-affiliation boundary: PASS
 - Licensing summary available without relative file navigation: PASS
 - Smartphone hamburger navigation, all sections and ARIA state: PASS
+- Multiple named local palettes and RC10 migration: PASS
+- Palette create/select/rename/duplicate/delete/reorder controls: PASS
+- Clarus JSON import with master and exact-identity validation: PASS
+- Palette name retained in GPL, Tokens, CSS and Clarus JSON: PASS
 - ZIP integrity/readback: PASS
 - A′ v0.4 selection logic: UNCHANGED; v0.5 information is diagnostic-only
 - Automated visual browser run: NOT_EXECUTED in the build environment
