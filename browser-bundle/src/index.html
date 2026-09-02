@@ -6,6 +6,7 @@
   <meta name="color-scheme" content="dark">
   <title>ATLAS Clarus — Browser Bundle</title>
   <link rel="stylesheet" href="assets/app.css">
+  <style>.library-toolbar{align-items:end}.library-toolbar label{display:grid;gap:6px}.library-toolbar label span{font-size:.66rem;letter-spacing:.09em;color:var(--muted)}.library-toolbar .search-field{flex:1}.library-toolbar .search-field input{width:100%}@media(max-width:700px){.library-toolbar label,.library-toolbar .search-field{width:100%}}</style>
 </head>
 <body>
   <header class="topbar">
@@ -30,7 +31,7 @@
 
     <section id="library" class="view">
       <div class="section-head"><div><p class="eyebrow">DISCOVER</p><h2>Hover Library</h2></div><div class="master-badge">MASTER <code>8283ab91…747c4</code></div></div>
-      <div class="toolbar"><input id="search" type="search" placeholder="Search HLC, HEX or row ID" autocomplete="off"><select id="lightness"><option value="all">All L* levels</option></select><button id="clear-search">Clear</button></div>
+      <div class="toolbar library-toolbar"><label><span>LIBRARY / VIEW</span><select id="library-view"></select></label><label class="search-field"><span>SEARCH REFERENCE, ID OR HEX</span><input id="search" type="search" placeholder="H305_L015_C075, 12345, #2D0080" autocomplete="off"></label><label><span>LIGHTNESS</span><select id="lightness"><option value="all">All L* levels</option></select></label><button id="clear-search">Clear</button></div>
       <div class="library-layout"><div><div id="library-status" class="status"></div><div id="colour-grid" class="colour-grid"></div><div class="pager"><button id="prev-page">← Previous</button><span id="page-info"></span><button id="next-page">Next →</button></div></div><aside id="selection" class="selection"><p>Select a colour to inspect its frozen reference identity.</p></aside></div>
     </section>
 
