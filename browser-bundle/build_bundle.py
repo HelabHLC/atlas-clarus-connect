@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 HERE=ROOT/'browser-bundle'
 DIST=HERE/'dist'/'atlas-clarus-browser-bundle'
-ZIP=HERE/'dist'/'ATLAS_Clarus_Browser_Bundle_v0.2.0-rc2.zip'
+ZIP=HERE/'dist'/'ATLAS_Clarus_Browser_Bundle_v0.2.0-rc3.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 
 def sha(path:Path)->str:
@@ -38,7 +38,7 @@ app=(DIST/'assets/app.js').read_text(encoding='utf-8')
 html=html.replace('<link rel="stylesheet" href="assets/app.css">','<style>'+css+'</style>')
 html=html.replace('<script src="assets/atlas-data.js"></script>','<script>'+payload.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/app.js"></script>','<script>'+app.replace('</script','<\\/script')+'</script>')
-html=html.replace('v0.2.0-rc1','v0.2.0-rc2')
+html=html.replace('v0.2.0-rc1','v0.2.0-rc3')
 (DIST/'index.html').write_text(html,encoding='utf-8')
 
 docs={
@@ -48,7 +48,7 @@ docs={
 style='<style>body{max-width:850px;margin:60px auto;padding:20px;background:#0a0d12;color:#eef2f6;font:17px/1.7 system-ui}a{color:#65dfff}code{color:#a4ff73}</style>'
 for name,body in docs.items():(DIST/'docs'/name).write_text('<!doctype html><meta charset="utf-8">'+style+body,encoding='utf-8')
 
-manifest={'bundle':'ATLAS Clarus Browser Bundle','version':'0.2.0-rc2','status':'READY_PENDING_AUDIT','workflow':'ATLAS Clarus v3.4.0','master_sha256':MASTER,'master_rows':13283,'row_id_base':0,'offline_entrypoint':'index.html','entrypoint_packaging':'SELF_CONTAINED_SINGLE_FILE','a_prime_v04_logic':'UNCHANGED','measured_qc_status':'NOT_MEASURED'}
+manifest={'bundle':'ATLAS Clarus Browser Bundle','version':'0.2.0-rc3','status':'READY_PENDING_AUDIT','workflow':'ATLAS Clarus v3.4.0','master_sha256':MASTER,'master_rows':13283,'row_id_base':0,'offline_entrypoint':'index.html','entrypoint_packaging':'SELF_CONTAINED_SINGLE_FILE','a_prime_v04_logic':'UNCHANGED','measured_qc_status':'NOT_MEASURED'}
 (DIST/'BUNDLE_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
 files=sorted(p for p in DIST.rglob('*') if p.is_file())
 (DIST/'SHA256SUMS.txt').write_text(''.join(f'{sha(p)}  {p.relative_to(DIST).as_posix()}\n' for p in files),encoding='utf-8')
