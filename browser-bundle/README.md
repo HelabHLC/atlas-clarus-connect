@@ -10,9 +10,11 @@ python3 browser-bundle/build_bundle.py
 
 The generated ZIP opens through `atlas-clarus-browser-bundle/index.html` without a web server. CSS, JavaScript and all 13,283 references are embedded directly in that entrypoint, so it also works when Windows opens the HTML directly from inside the ZIP.
 
-RC7 provides one shared palette across Hover and Wheel. Palettes remain in local
+RC8 provides one shared palette across Hover and Wheel. Palettes remain in local
 browser storage and export as ASE, GPL, Figma Tokens JSON, CSS or Clarus JSON.
 An offline FAQ explains palette use, identity retention and claim boundaries.
+A visible Credits & Licensing tab acknowledges freieFarbe e.V., distinguishes
+upstream reference data from ATLAS modifications and states the licence map.
 
 ## Release boundary
 

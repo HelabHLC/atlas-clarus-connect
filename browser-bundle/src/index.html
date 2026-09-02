@@ -13,7 +13,7 @@
   <header class="topbar">
     <a class="brand" href="#home"><span class="brand-mark"></span><span>ATLAS <b>CLARUS</b></span></a>
     <nav aria-label="Primary navigation">
-      <a href="#library">Hover Library</a><a href="#wheel">Identity Wheel</a><a href="#appearance">Appearance</a><a href="#workflows">App connections</a><a href="#faq">FAQ</a><a href="#about">About</a>
+      <a href="#library">Hover Library</a><a href="#wheel">Identity Wheel</a><a href="#appearance">Appearance</a><a href="#workflows">App connections</a><a href="#faq">FAQ</a><a href="#credits">Credits</a><a href="#about">About</a>
     </nav>
     <button id="palette-toggle" class="palette-toggle">PALETTE <b id="palette-count">0</b></button><span class="offline">OFFLINE · LOCAL</span>
   </header>
@@ -77,9 +77,21 @@
         <article><h3>Is this a Pantone library?</h3><p>No. Observed source-context views are descriptive and claim no Pantone identity or equivalence. ATLAS references remain independently addressed.</p></article>
       </div>
     </section>
+    <section id="credits" class="view">
+      <div class="section-head"><div><p class="eyebrow">ACKNOWLEDGEMENT</p><h2>Credits &amp; licensing</h2></div><div class="logic-badge">OPEN COLOUR WORKFLOW</div></div>
+      <p class="connection-intro">ATLAS Clarus Connect builds on open colour-reference work and keeps upstream attribution, ATLAS modifications and third-party boundaries visible.</p>
+      <div class="about-grid">
+        <article><h3>Reference data</h3><p>HLC-derived database material is used with acknowledgement to <b>freieFarbe e.V.</b> and <a href="https://freiefarbe.de/" target="_blank" rel="noopener">freieFarbe.de</a>.</p><p><code>Copyright (c) freieFarbe e.V.</code></p></article>
+        <article><h3>ATLAS Clarus work</h3><p>The reference files were converted, indexed, reorganised or enriched for ATLAS Clarus. They are modified data products, not unchanged original freieFarbe distributions.</p><p>Copyright © 2026 ATLAS Clarus contributors.</p></article>
+        <article><h3>Licence map</h3><p>Original software: <b>GPL-2.0-or-later</b>.<br>Original documentation: <b>CC BY 4.0</b>.<br>HLC-derived reference data: <b>zlib licence</b>, with upstream notices.</p><p><a href="docs/LICENSING.html">Read the bundled licensing notice</a></p></article>
+        <article><h3>Independent project</h3><p>ATLAS Clarus Connect is not affiliated with, endorsed by or certified by Pantone. No Pantone library, identity or equivalence is licensed or asserted.</p><p>Other product and company names remain the property of their respective owners.</p></article>
+        <article><h3>Source</h3><p>Source code, modification history and validation records are published at <a href="https://github.com/HelabHLC/atlas-clarus-connect" target="_blank" rel="noopener">HelabHLC/atlas-clarus-connect</a>.</p></article>
+        <article><h3>Colour boundary</h3><p>Reference identity is not physical colour certification. Screen simulations, exports and application values do not constitute a measured production result.</p></article>
+      </div>
+    </section>
   </main>
   <aside id="palette-drawer" class="palette-drawer" aria-label="ATLAS Clarus palette"><div class="drawer-head"><div><p class="eyebrow">SHARED WORKSPACE</p><h2>My ATLAS palette</h2></div><button id="palette-close" aria-label="Close palette">×</button></div><p>Collect colours in the Hover Library, refine them in the Wheel, then export the same frozen identities.</p><div id="drawer-palette-list" class="drawer-palette-list"></div><div class="drawer-exports"><button data-palette-export="ase">Adobe / Affinity ASE</button><button data-palette-export="gpl">GIMP / Inkscape GPL</button><button data-palette-export="tokens">Figma Tokens</button><button data-palette-export="css">CSS</button><button data-palette-export="clarus">Clarus JSON</button></div><div id="export-status" class="export-status"></div><button id="drawer-clear">Clear palette</button></aside>
-  <footer><span>ATLAS Clarus Connect Browser Bundle</span><b>EVERY COLOUR HAS AN ADDRESS.</b><span id="version">v0.2.0-rc1</span></footer>
+  <footer><span>ATLAS Clarus Connect · HLC reference data © freieFarbe e.V.</span><b>EVERY COLOUR HAS AN ADDRESS.</b><span id="version">v0.2.0-rc1</span></footer>
   <script src="assets/atlas-data.js"></script>
   <script src="assets/palette-export.js"></script>
   <script src="assets/app.js"></script>
