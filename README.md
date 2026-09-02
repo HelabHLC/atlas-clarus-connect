@@ -26,7 +26,7 @@ server or network connection. Its application demos document integration
 boundaries; they do not embed or claim native browser execution of the desktop
 applications.
 
-Current candidate: **v0.2.0-rc7 · READY_PENDING_AUDIT**. RC7 uses a self-contained
+Current candidate: **v0.2.0-rc8 · READY_PENDING_AUDIT**. RC8 uses a self-contained
 entrypoint so Windows may open `index.html` directly from the ZIP without losing
 the stylesheet, application code or embedded reference data. It restores the
 Wheel card workspace for harmony, tonal families, accessibility, ARBE comparison,
@@ -40,6 +40,8 @@ directly in Hover, edit the same locally stored palette in the Wheel, and export
 as ASE (Adobe/Affinity), Figma Tokens JSON, CSS custom properties or evidence-rich
 Clarus JSON. RC7 adds GIMP Palette (`.gpl`) export for GIMP/Inkscape and an
 in-bundle FAQ. These additions do not change the frozen A′ v0.4 selection logic.
+RC8 makes attribution visible in the interface through a Credits & Licensing tab
+and a footer credit for the HLC-derived reference data from freieFarbe e.V.
 
 ## Current release contents
 

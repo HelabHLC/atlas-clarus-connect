@@ -1,6 +1,6 @@
 # Validation report — ATLAS Clarus Connect v0.1.0
 
-## Browser bundle v0.2.0-rc7
+## Browser bundle v0.2.0-rc8
 
 - JavaScript syntax: PASS
 - Embedded reference count: 13,283
@@ -17,6 +17,8 @@
 - Figma Tokens, CSS and Clarus JSON export generation: PASS
 - GIMP Palette (`.gpl`) exact-RGB generation/readback: PASS
 - FAQ navigation and eight boundary questions: PASS
+- Visible freieFarbe upstream credit and licence separation: PASS
+- Pantone non-affiliation boundary: PASS
 - ZIP integrity/readback: PASS
 - A′ v0.4 selection logic: UNCHANGED; v0.5 information is diagnostic-only
 - Automated visual browser run: NOT_EXECUTED in the build environment
