@@ -26,7 +26,7 @@ server or network connection. Its application demos document integration
 boundaries; they do not embed or claim native browser execution of the desktop
 applications.
 
-Current candidate: **v0.2.0-rc11 · READY_PENDING_AUDIT**. RC11 uses a self-contained
+Current candidate: **v0.2.0-rc12 · READY_PENDING_AUDIT**. RC12 uses a self-contained
 entrypoint so Windows may open `index.html` directly from the ZIP without losing
 the stylesheet, application code or embedded reference data. It restores the
 Wheel card workspace for harmony, tonal families, accessibility, ARBE comparison,
@@ -47,6 +47,10 @@ removes the unreliable relative licensing link from the direct-file workflow.
 RC10 adds an accessible smartphone navigation menu with all bundle sections.
 RC11 introduces My Palettes: several named local palettes, selection, duplication,
 deletion, colour reordering and strict identity-validated Clarus JSON import.
+RC12 adds a local Round-trip Validator for Clarus JSON, ASE, GPL, Figma-compatible
+Tokens and CSS. It distinguishes complete Clarus identity evidence from matching
+interchange values and reports `IDENTITY_MATCH`, `VALUE_MATCH`, `MISMATCH` or
+`UNVERIFIABLE` without changing the frozen A′ v0.4 selection logic.
 
 ## Current release contents
 

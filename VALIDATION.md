@@ -1,6 +1,6 @@
 # Validation report — ATLAS Clarus Connect v0.1.0
 
-## Browser bundle v0.2.0-rc11
+## Browser bundle v0.2.0-rc12
 
 - JavaScript syntax: PASS
 - Embedded reference count: 13,283
@@ -24,6 +24,11 @@
 - Multiple named local palettes and RC10 migration: PASS
 - Palette create/select/rename/duplicate/delete/reorder controls: PASS
 - Clarus JSON import with master and exact-identity validation: PASS
+- Round-trip parsing for Clarus JSON, ASE, GPL, Figma Tokens and CSS: PASS
+- Round-trip `IDENTITY_MATCH` restricted to authoritative Clarus JSON: PASS
+- Interchange-format `VALUE_MATCH` boundary: PASS
+- Changed value/order detection as `MISMATCH`: PASS
+- Empty/unsupported evidence reported as `UNVERIFIABLE`: PASS
 - Palette name retained in GPL, Tokens, CSS and Clarus JSON: PASS
 - ZIP integrity/readback: PASS
 - A′ v0.4 selection logic: UNCHANGED; v0.5 information is diagnostic-only

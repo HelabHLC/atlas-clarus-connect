@@ -10,10 +10,15 @@ python3 browser-bundle/build_bundle.py
 
 The generated ZIP opens through `atlas-clarus-browser-bundle/index.html` without a web server. CSS, JavaScript and all 13,283 references are embedded directly in that entrypoint, so it also works when Windows opens the HTML directly from inside the ZIP.
 
-RC11 provides several named palettes across Hover and Wheel. Palettes remain in
+RC12 provides several named palettes across Hover and Wheel. Palettes remain in
 local browser storage and export as ASE, GPL, Figma Tokens JSON, CSS or Clarus JSON.
 Users can select, rename, duplicate, delete and reorder palettes, and re-import a
 Clarus JSON palette only after its master and exact identities validate.
+The Round-trip Validator reopens all five export formats and compares them with
+the active palette. Clarus JSON can return `IDENTITY_MATCH`; interchange formats
+return `VALUE_MATCH` when their reference names and usable colour values survive.
+Changed content returns `MISMATCH`, while unsupported or insufficient evidence
+returns `UNVERIFIABLE`.
 An offline FAQ explains palette use, identity retention and claim boundaries.
 A visible Credits & Licensing tab acknowledges freieFarbe e.V., distinguishes
 upstream reference data from ATLAS modifications and states the licence map.
