@@ -1,6 +1,6 @@
 {
   "bundle": "ATLAS Clarus Browser Bundle",
-  "version": "0.2.0-rc4",
+  "version": "0.2.0-rc5",
   "status": "READY_PENDING_AUDIT",
   "workflow": "ATLAS Clarus v3.4.0",
   "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
@@ -9,6 +9,7 @@
   "offline_entrypoint": "index.html",
   "entrypoint_packaging": "SELF_CONTAINED_SINGLE_FILE",
   "observed_library_views": 17,
+  "app_connections_format": "CAN_VERIFIED_NEEDED",
   "a_prime_v04_logic": "UNCHANGED",
   "measured_qc_status": "NOT_MEASURED"
 }

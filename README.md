@@ -26,13 +26,15 @@ server or network connection. Its application demos document integration
 boundaries; they do not embed or claim native browser execution of the desktop
 applications.
 
-Current candidate: **v0.2.0-rc4 · READY_PENDING_AUDIT**. RC4 uses a self-contained
+Current candidate: **v0.2.0-rc5 · READY_PENDING_AUDIT**. RC5 uses a self-contained
 entrypoint so Windows may open `index.html` directly from the ZIP without losing
 the stylesheet, application code or embedded reference data. It restores the
 Wheel card workspace for harmony, tonal families, accessibility, ARBE comparison,
 palette packages, multi-profile context and measurement-entry review.
 The Hover Library also includes the complete 17-view selector from the supplied
 `views.json`; observed coverage views remain descriptive and claim no Pantone identity.
+The application-connections page now separates what users can do, what is
+verified and what still needs testing; Scribus is explicitly marked as planned.
 
 ## Current release contents
 

@@ -6,13 +6,13 @@
   <meta name="color-scheme" content="dark">
   <title>ATLAS Clarus — Browser Bundle</title>
   <link rel="stylesheet" href="assets/app.css">
-  <style>.library-toolbar{align-items:end}.library-toolbar label{display:grid;gap:6px}.library-toolbar label span{font-size:.66rem;letter-spacing:.09em;color:var(--muted)}.library-toolbar .search-field{flex:1}.library-toolbar .search-field input{width:100%}@media(max-width:700px){.library-toolbar label,.library-toolbar .search-field{width:100%}}</style>
+  <style>.library-toolbar{align-items:end}.library-toolbar label{display:grid;gap:6px}.library-toolbar label span{font-size:.66rem;letter-spacing:.09em;color:var(--muted)}.library-toolbar .search-field{flex:1}.library-toolbar .search-field input{width:100%}.connection-intro{max-width:850px;color:var(--muted);font-size:1rem;line-height:1.65}.workflow-card em{display:block;margin-top:14px;color:var(--accent);font-size:.66rem;letter-spacing:.08em;font-style:normal}.connection-title{display:flex;justify-content:space-between;align-items:start;gap:20px}.connection-status{border:1px solid #806c35;color:var(--warn);border-radius:999px;padding:8px 12px;font-size:.66rem;letter-spacing:.08em}.connection-explain{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}.connection-explain article{background:#0b1018;border:1px solid var(--line);border-radius:9px;padding:17px}.connection-explain span{color:var(--accent);font-size:.68rem;letter-spacing:.1em;font-weight:700}.connection-explain p{color:var(--muted);line-height:1.55}.flow-label{margin:25px 0 10px}@media(max-width:700px){.library-toolbar label,.library-toolbar .search-field{width:100%}.connection-explain{grid-template-columns:1fr}.connection-title{flex-direction:column}}</style>
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="#home"><span class="brand-mark"></span><span>ATLAS <b>CLARUS</b></span></a>
     <nav aria-label="Primary navigation">
-      <a href="#library">Hover Library</a><a href="#wheel">Identity Wheel</a><a href="#appearance">Appearance</a><a href="#workflows">Workflows</a><a href="#about">About</a>
+      <a href="#library">Hover Library</a><a href="#wheel">Identity Wheel</a><a href="#appearance">Appearance</a><a href="#workflows">App connections</a><a href="#about">About</a>
     </nav>
     <span class="offline">OFFLINE · LOCAL</span>
   </header>
@@ -53,8 +53,8 @@
     </section>
 
     <section id="workflows" class="view">
-      <div class="section-head"><div><p class="eyebrow">CONNECT</p><h2>Application workflow demos</h2></div><div class="gate warning">DOCUMENTED DEMOS · NO NATIVE BROWSER INTEGRATION</div></div>
-      <p class="boundary">These demonstrations explain the verified handoff boundaries. The desktop applications are not bundled and are not executed inside this browser edition.</p>
+      <div class="section-head"><div><p class="eyebrow">CONNECT</p><h2>How ATLAS Clarus connects to design applications</h2></div><div class="gate warning">DOCUMENTATION · DESKTOP APPS NOT INCLUDED</div></div>
+      <p class="connection-intro">Choose an application to see what ATLAS Clarus can already hand over, what has been verified, and what still needs practical testing. This page explains the connection; it does not run the desktop application inside the browser.</p>
       <div id="workflow-cards" class="workflow-cards"></div>
       <article id="workflow-detail" class="workflow-detail"></article>
     </section>
