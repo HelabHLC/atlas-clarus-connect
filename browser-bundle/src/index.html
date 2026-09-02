@@ -7,6 +7,7 @@
   <title>ATLAS Clarus — Browser Bundle</title>
   <link rel="stylesheet" href="assets/app.css">
   <style>.library-toolbar{align-items:end}.library-toolbar label{display:grid;gap:6px}.library-toolbar label span{font-size:.66rem;letter-spacing:.09em;color:var(--muted)}.library-toolbar .search-field{flex:1}.library-toolbar .search-field input{width:100%}.connection-intro{max-width:850px;color:var(--muted);font-size:1rem;line-height:1.65}.workflow-card em{display:block;margin-top:14px;color:var(--accent);font-size:.66rem;letter-spacing:.08em;font-style:normal}.connection-title{display:flex;justify-content:space-between;align-items:start;gap:20px}.connection-status{border:1px solid #806c35;color:var(--warn);border-radius:999px;padding:8px 12px;font-size:.66rem;letter-spacing:.08em}.connection-explain{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}.connection-explain article{background:#0b1018;border:1px solid var(--line);border-radius:9px;padding:17px}.connection-explain span{color:var(--accent);font-size:.68rem;letter-spacing:.1em;font-weight:700}.connection-explain p{color:var(--muted);line-height:1.55}.flow-label{margin:25px 0 10px}@media(max-width:700px){.library-toolbar label,.library-toolbar .search-field{width:100%}.connection-explain{grid-template-columns:1fr}.connection-title{flex-direction:column}}</style>
+  <style>.palette-toggle{margin-left:auto;padding:8px 12px;font-size:.7rem;letter-spacing:.08em}.palette-toggle b{display:inline-grid;place-items:center;min-width:21px;height:21px;margin-left:6px;border-radius:99px;background:var(--accent);color:#081006}.palette-drawer{position:fixed;z-index:50;top:0;right:0;width:min(430px,100vw);height:100vh;padding:26px;background:#0d131c;border-left:1px solid var(--line);box-shadow:-30px 0 70px #0009;transform:translateX(105%);transition:transform .25s ease;overflow:auto}.palette-drawer.open{transform:translateX(0)}.drawer-head{display:flex;justify-content:space-between;align-items:start}.drawer-head h2{margin:0}.drawer-head button{font-size:1.4rem;padding:4px 10px}.palette-drawer>p{color:var(--muted);line-height:1.55}.drawer-palette-list{display:grid;gap:7px;margin:22px 0}.drawer-item{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);padding:8px;border-radius:8px}.drawer-item i{width:38px;height:38px;border-radius:6px}.drawer-item b,.drawer-item small{display:block}.drawer-item small{color:var(--muted)}.drawer-item button{padding:5px 9px}.drawer-exports{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}.export-status{min-height:36px;color:var(--accent);font-size:.78rem;line-height:1.45}.selection-actions{grid-template-columns:1fr 1fr}.selection-actions [data-add-palette]{grid-column:1/-1;background:var(--accent);color:#081006;font-weight:700}@media(max-width:900px){.offline{display:none}.palette-toggle{margin-left:auto}}</style>
 </head>
 <body>
   <header class="topbar">
@@ -14,7 +15,7 @@
     <nav aria-label="Primary navigation">
       <a href="#library">Hover Library</a><a href="#wheel">Identity Wheel</a><a href="#appearance">Appearance</a><a href="#workflows">App connections</a><a href="#about">About</a>
     </nav>
-    <span class="offline">OFFLINE · LOCAL</span>
+    <button id="palette-toggle" class="palette-toggle">PALETTE <b id="palette-count">0</b></button><span class="offline">OFFLINE · LOCAL</span>
   </header>
 
   <main>
@@ -64,8 +65,10 @@
       <div class="about-grid"><article><h3>Identity baseline</h3><p>13,283 master references. Zero-based <code>atlas_row_id</code>. Deterministic RGB-only reference binding. Workflow v3.4.0.</p></article><article><h3>Local by design</h3><p>This edition runs from <code>index.html</code>. It sends no analytics, user actions or colour selections anywhere.</p></article><article><h3>Claim boundary</h3><p>A displayed or simulated colour is not a physical measurement, production approval, print proof or certification.</p></article><article><h3>Documents</h3><p><a href="docs/README.html">Read the offline guide</a><br><a href="docs/LICENSING.html">Licensing and attribution</a><br><a href="docs/VALIDATION.html">Validation record</a></p></article></div>
     </section>
   </main>
+  <aside id="palette-drawer" class="palette-drawer" aria-label="ATLAS Clarus palette"><div class="drawer-head"><div><p class="eyebrow">SHARED WORKSPACE</p><h2>My ATLAS palette</h2></div><button id="palette-close" aria-label="Close palette">×</button></div><p>Collect colours in the Hover Library, refine them in the Wheel, then export the same frozen identities.</p><div id="drawer-palette-list" class="drawer-palette-list"></div><div class="drawer-exports"><button data-palette-export="ase">Adobe / Affinity ASE</button><button data-palette-export="tokens">Figma Tokens</button><button data-palette-export="css">CSS</button><button data-palette-export="clarus">Clarus JSON</button></div><div id="export-status" class="export-status"></div><button id="drawer-clear">Clear palette</button></aside>
   <footer><span>ATLAS Clarus Connect Browser Bundle</span><b>EVERY COLOUR HAS AN ADDRESS.</b><span id="version">v0.2.0-rc1</span></footer>
   <script src="assets/atlas-data.js"></script>
+  <script src="assets/palette-export.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>
