@@ -20,6 +20,25 @@ jobs:
       - name: Validate Hover Library data
         run: php hover-library/tests/validate-data.php
 
+  browser-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Validate JavaScript syntax
+        run: |
+          node --check browser-bundle/src/app.js
+          node --check browser-bundle/src/palette-export.js
+      - name: Validate palette exports
+        run: node browser-bundle/tests/validate_exports.js
+      - name: Build and validate reproducible bundle
+        run: python browser-bundle/tests/validate_bundle.py
+
   identity-handoff-vectors:
     runs-on: ubuntu-latest
     steps:
@@ -43,4 +62,3 @@ jobs:
           cache-dependency-path: colour-identity-wheel/application/package-lock.json
       - run: npm ci
       - run: npm test
-

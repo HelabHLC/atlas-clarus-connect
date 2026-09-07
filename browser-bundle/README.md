@@ -10,7 +10,7 @@ python3 browser-bundle/build_bundle.py
 
 The generated ZIP opens through `atlas-clarus-browser-bundle/index.html` without a web server. CSS, JavaScript and all 13,283 references are embedded directly in that entrypoint, so it also works when Windows opens the HTML directly from inside the ZIP.
 
-RC11 provides several named palettes across Hover and Wheel. Palettes remain in
+RC12 provides several named palettes across Hover and Wheel. Palettes remain in
 local browser storage and export as ASE, GPL, Figma Tokens JSON, CSS or Clarus JSON.
 Users can select, rename, duplicate, delete and reorder palettes, and re-import a
 Clarus JSON palette only after its master and exact identities validate.
@@ -24,7 +24,9 @@ after selection, outside click or Escape.
 
 ## Release boundary
 
-- Status remains `READY_PENDING_AUDIT` until the clean release audit passes.
+- Status remains `READY_PENDING_VISUAL_AUDIT` until desktop and smartphone browser QA passes.
+- The ZIP uses fixed metadata and is byte-for-byte reproducible from the same source tree.
+- GitHub Actions rebuilds the bundle twice, verifies reproducibility, internal checksums and export round-trips.
 - The package does not alter reference binding, the active master, or the frozen A′ v0.4 selection logic.
 - Interaction Wheel v0.5 content is diagnostic-only.
 - Desktop application sections are documented workflow demonstrations, not embedded native integrations.
