@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: ATLAS Clarus Hover Library
- * Description: Interactive ATLAS Clarus HLC reference library with hover details, search, pagination, and documented observed-coverage views.
- * Version: 0.1.5
+ * Description: Interactive ATLAS Clarus HLC reference library with an identity-bound designer palette.
+ * Version: 0.2.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: ATLAS Clarus
@@ -12,7 +12,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('ATLAS_CLARUS_HOVER_VERSION', '0.1.5');
+define('ATLAS_CLARUS_HOVER_VERSION', '0.2.0');
 define('ATLAS_CLARUS_HOVER_FILE', __FILE__);
 define('ATLAS_CLARUS_HOVER_DIR', plugin_dir_path(__FILE__));
 define('ATLAS_CLARUS_HOVER_URL', plugin_dir_url(__FILE__));
