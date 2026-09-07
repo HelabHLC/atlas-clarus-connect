@@ -239,7 +239,8 @@
         nearest(c).forEach(n=>{const b=document.createElement('button');b.type='button';b.className='atlas-clarus-mini-row';b.innerHTML=`<span class="atlas-clarus-mini-chip" style="background:${esc(n.hex)}"></span><span><strong>${esc(n.ref)}</strong><small>${esc(n.hex)} · ID ${n.id}</small></span>`;b.addEventListener('click',()=>showSelection(n,views.core));nbox.appendChild(b);});
       };
       renderPalette();
-      paletteNameInput.addEventListener('input',debounce(()=>{paletteName=paletteNameInput.value.trim() || 'My ATLAS palette';savePalette();}));
+      const persistPaletteName = debounce(savePalette);
+      paletteNameInput.addEventListener('input',()=>{paletteName=paletteNameInput.value.trim() || 'My ATLAS palette';persistPaletteName();});
       sidebar.querySelector('.acl-copy-palette').addEventListener('click',()=>copyText(paletteJson()).then(()=>reportPalette('Identity-bound palette JSON copied.')).catch(()=>reportPalette('Copy failed.')));
       sidebar.querySelector('.acl-export-json').addEventListener('click',()=>{downloadText(safeFilename(paletteName)+'.json',paletteJson());reportPalette('JSON exported.');});
       sidebar.querySelector('.acl-export-csv').addEventListener('click',()=>{downloadText(safeFilename(paletteName)+'.csv',paletteCsv(),'text/csv');reportPalette('CSV exported.');});
