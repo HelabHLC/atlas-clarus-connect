@@ -3,7 +3,7 @@ Contributors: atlas-clarus
 Tags: color, colour, hlc, atlas, swatches
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.5
+Stable tag: 0.2.0
 License: GPLv2 or later
 
 Interactive ATLAS Clarus HLC reference library with exact active-PKL RGB swatches and hover details.
@@ -31,6 +31,13 @@ No 4C, ECG, device or measured-QC values are created by this plugin.
 4. Add `[atlas_clarus_library]` to a page or post.
 
 == Changelog ==
+
+= 0.2.0 =
+* Expanded the local palette into an identity-bound designer palette.
+* Added palette naming, colour ordering and a live palette strip.
+* Added JSON, CSV and CSS exports plus clipboard JSON.
+* Every JSON/CSV export includes the active master SHA-256 and exact ATLAS identities.
+* Migrates valid local v1 palette IDs without changing colour identity.
 
 = 0.1.5 =
 * Added verified deep-link handoff to the ATLAS Clarus Colour Identity Wheel.

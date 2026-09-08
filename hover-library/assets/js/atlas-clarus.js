@@ -29,6 +29,21 @@
     if (!ok) throw new Error('Copy command failed');
   }
 
+  function downloadText(filename, value, type='application/json') {
+    const blob = new Blob([value], {type:type+';charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  const safeFilename = value => String(value || 'atlas-clarus-palette')
+    .trim().toLowerCase().replace(/[^a-z0-9_-]+/g,'-').replace(/^-+|-+$/g,'') || 'atlas-clarus-palette';
+
   function detailHtml(c, view) {
     return `
       <div class="acl-title">${esc(c.ref)}</div>
@@ -134,7 +149,7 @@
       const sidebar = document.createElement('aside');
       sidebar.className = 'atlas-clarus-sidebar';
       sidebar.setAttribute('aria-label','Selected ATLAS colour and palette');
-      sidebar.innerHTML = '<section class="atlas-clarus-side-panel atlas-clarus-selection"><h2>ATLAS colour data</h2><div class="atlas-clarus-selection-body atlas-clarus-side-empty">Select a colour to inspect its exact ATLAS identity.</div></section><section class="atlas-clarus-side-panel"><h2>Nearby ATLAS references</h2><p class="atlas-clarus-boundary">Descriptive Lab neighbourhood only — not equivalence or production advice.</p><div class="atlas-clarus-neighbours atlas-clarus-side-empty">No colour selected.</div></section><section class="atlas-clarus-side-panel"><h2>My local palette</h2><div class="atlas-clarus-palette atlas-clarus-side-empty">No colours added.</div><button type="button" class="atlas-clarus-button acl-clear-palette">Clear palette</button></section>';
+      sidebar.innerHTML = '<section class="atlas-clarus-side-panel atlas-clarus-selection"><h2>ATLAS colour data</h2><div class="atlas-clarus-selection-body atlas-clarus-side-empty">Select a colour to inspect its exact ATLAS identity.</div></section><section class="atlas-clarus-side-panel"><h2>Nearby ATLAS references</h2><p class="atlas-clarus-boundary">Descriptive Lab neighbourhood only — not equivalence or production advice.</p><div class="atlas-clarus-neighbours atlas-clarus-side-empty">No colour selected.</div></section><section class="atlas-clarus-side-panel atlas-clarus-palette-panel"><h2>Designer palette</h2><label class="atlas-clarus-palette-label" for="'+esc(root.id)+'-palette-name">Palette name</label><input id="'+esc(root.id)+'-palette-name" class="atlas-clarus-palette-name" type="text" maxlength="80" value="My ATLAS palette"><div class="atlas-clarus-palette-strip" aria-hidden="true"></div><div class="atlas-clarus-palette atlas-clarus-side-empty">No colours added.</div><p class="atlas-clarus-palette-meta">0 / 24 colours · bound to active master</p><div class="atlas-clarus-palette-actions"><button type="button" class="atlas-clarus-button acl-copy-palette">Copy JSON</button><button type="button" class="atlas-clarus-button acl-export-json">Export JSON</button><button type="button" class="atlas-clarus-button acl-export-csv">Export CSV</button><button type="button" class="atlas-clarus-button acl-export-css">Export CSS</button><button type="button" class="atlas-clarus-button acl-clear-palette">Clear</button></div><div class="atlas-clarus-palette-status" role="status" aria-live="polite"></div></section>';
       layout.append(browser,sidebar);
       root.appendChild(layout);
 
@@ -143,16 +158,67 @@
       tip.setAttribute('role','tooltip');
       document.body.appendChild(tip);
 
-      const paletteKey = 'atlasClarusLocalPaletteV1';
+      const paletteKey = 'atlasClarusLocalPaletteV2';
+      const legacyPaletteKey = 'atlasClarusLocalPaletteV1';
       let palette = [];
-      try { palette = JSON.parse(localStorage.getItem(paletteKey) || '[]').filter(id=>byId.has(Number(id))).slice(0,24); } catch (_) { palette=[]; }
+      let paletteName = 'My ATLAS palette';
+      try {
+        const saved = JSON.parse(localStorage.getItem(paletteKey) || 'null');
+        if (saved && saved.master_sha256 === MASTER_SHA256 && Array.isArray(saved.ids)) {
+          palette = saved.ids.filter(id=>byId.has(Number(id))).slice(0,24);
+          paletteName = String(saved.name || paletteName).slice(0,80);
+        } else {
+          const legacy = JSON.parse(localStorage.getItem(legacyPaletteKey) || '[]');
+          if (Array.isArray(legacy)) palette = legacy.filter(id=>byId.has(Number(id))).slice(0,24);
+        }
+      } catch (_) { palette=[]; }
+      const paletteNameInput = sidebar.querySelector('.atlas-clarus-palette-name');
+      paletteNameInput.value = paletteName;
 
-      const savePalette = () => { try { localStorage.setItem(paletteKey, JSON.stringify(palette)); } catch (_) {} };
+      const paletteDocument = () => ({
+        schema: 'org.atlas-clarus.palette.v1',
+        name: paletteName,
+        workflow: 'ATLAS Clarus Workflow v3.4.0',
+        master_sha256: MASTER_SHA256,
+        identity_status: 'MASTER_BOUND',
+        measured_qc_status: 'NOT_MEASURED',
+        colours: palette.map(id => {
+          const c=byId.get(Number(id));
+          return {atlas_row_id:c.id,reference:c.ref,rgb:c.rgb,hex:c.hex,lab:c.lab};
+        })
+      });
+      const paletteJson = () => JSON.stringify(paletteDocument(), null, 2);
+      const paletteCsv = () => {
+        const rows=[['atlas_row_id','reference','R','G','B','HEX','L','a','b','master_sha256']];
+        paletteDocument().colours.forEach(c=>rows.push([c.atlas_row_id,c.reference,...c.rgb,c.hex,...c.lab,MASTER_SHA256]));
+        return rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+      };
+      const paletteCss = () => {
+        const lines=[':root {'];
+        paletteDocument().colours.forEach((c,index)=>lines.push(`  --atlas-colour-${index+1}: ${c.hex}; /* ${c.reference} · atlas_row_id ${c.atlas_row_id} */`));
+        lines.push('}', '', `/* master_sha256: ${MASTER_SHA256} */`);
+        return lines.join('\n');
+      };
+      const reportPalette = message => { sidebar.querySelector('.atlas-clarus-palette-status').textContent=message; };
+      const savePalette = () => {
+        try { localStorage.setItem(paletteKey, JSON.stringify({name:paletteName,master_sha256:MASTER_SHA256,ids:palette})); } catch (_) {}
+      };
       const renderPalette = () => {
         const box=sidebar.querySelector('.atlas-clarus-palette');
+        const strip=sidebar.querySelector('.atlas-clarus-palette-strip');
+        const meta=sidebar.querySelector('.atlas-clarus-palette-meta');
+        strip.replaceChildren();
+        palette.forEach(id=>{const c=byId.get(Number(id));if(!c)return;const chip=document.createElement('span');chip.style.background=c.hex;chip.title=c.ref;strip.appendChild(chip);});
+        meta.textContent=`${palette.length} / 24 colours · MASTER_BOUND · ${MASTER_SHA256.slice(0,12)}…`;
         if (!palette.length) { box.className='atlas-clarus-palette atlas-clarus-side-empty'; box.textContent='No colours added.'; return; }
         box.className='atlas-clarus-palette'; box.replaceChildren();
-        palette.forEach(id=>{ const c=byId.get(Number(id)); if(!c)return; const row=document.createElement('button'); row.type='button'; row.className='atlas-clarus-mini-row'; row.innerHTML=`<span class="atlas-clarus-mini-chip" style="background:${esc(c.hex)}"></span><span><strong>${esc(c.ref)}</strong><small>${esc(c.hex)} · ID ${c.id}</small></span><span aria-hidden="true">×</span>`; row.setAttribute('aria-label',`Remove ${c.ref} from palette`); row.addEventListener('click',()=>{palette=palette.filter(x=>Number(x)!==Number(c.id));savePalette();renderPalette();}); box.appendChild(row); });
+        palette.forEach((id,index)=>{ const c=byId.get(Number(id)); if(!c)return; const row=document.createElement('div'); row.className='atlas-clarus-mini-row atlas-clarus-palette-row'; row.innerHTML=`<span class="atlas-clarus-mini-chip" style="background:${esc(c.hex)}"></span><button type="button" class="atlas-clarus-palette-select"><strong>${esc(c.ref)}</strong><small>${esc(c.hex)} · ID ${c.id}</small></button><span class="atlas-clarus-palette-row-actions"><button type="button" class="acl-move-up" aria-label="Move ${esc(c.ref)} up" ${index===0?'disabled':''}>↑</button><button type="button" class="acl-move-down" aria-label="Move ${esc(c.ref)} down" ${index===palette.length-1?'disabled':''}>↓</button><button type="button" class="acl-remove" aria-label="Remove ${esc(c.ref)} from palette">×</button></span>`;
+          row.querySelector('.atlas-clarus-palette-select').addEventListener('click',()=>showSelection(c,views.core));
+          row.querySelector('.acl-remove').addEventListener('click',()=>{palette=palette.filter(x=>Number(x)!==Number(c.id));savePalette();renderPalette();});
+          row.querySelector('.acl-move-up').addEventListener('click',()=>{if(index<1)return;[palette[index-1],palette[index]]=[palette[index],palette[index-1]];savePalette();renderPalette();});
+          row.querySelector('.acl-move-down').addEventListener('click',()=>{if(index>=palette.length-1)return;[palette[index+1],palette[index]]=[palette[index],palette[index+1]];savePalette();renderPalette();});
+          box.appendChild(row);
+        });
       };
 
       const nearest = (c, count=6) => colors.filter(x=>x.id!==c.id).map(x=>({c:x,d:(x.lab[0]-c.lab[0])**2+(x.lab[1]-c.lab[1])**2+(x.lab[2]-c.lab[2])**2})).sort((a,b)=>a.d-b.d||a.c.id-b.c.id).slice(0,count).map(x=>x.c);
@@ -173,6 +239,12 @@
         nearest(c).forEach(n=>{const b=document.createElement('button');b.type='button';b.className='atlas-clarus-mini-row';b.innerHTML=`<span class="atlas-clarus-mini-chip" style="background:${esc(n.hex)}"></span><span><strong>${esc(n.ref)}</strong><small>${esc(n.hex)} · ID ${n.id}</small></span>`;b.addEventListener('click',()=>showSelection(n,views.core));nbox.appendChild(b);});
       };
       renderPalette();
+      const persistPaletteName = debounce(savePalette);
+      paletteNameInput.addEventListener('input',()=>{paletteName=paletteNameInput.value.trim() || 'My ATLAS palette';persistPaletteName();});
+      sidebar.querySelector('.acl-copy-palette').addEventListener('click',()=>copyText(paletteJson()).then(()=>reportPalette('Identity-bound palette JSON copied.')).catch(()=>reportPalette('Copy failed.')));
+      sidebar.querySelector('.acl-export-json').addEventListener('click',()=>{downloadText(safeFilename(paletteName)+'.json',paletteJson());reportPalette('JSON exported.');});
+      sidebar.querySelector('.acl-export-csv').addEventListener('click',()=>{downloadText(safeFilename(paletteName)+'.csv',paletteCsv(),'text/csv');reportPalette('CSV exported.');});
+      sidebar.querySelector('.acl-export-css').addEventListener('click',()=>{downloadText(safeFilename(paletteName)+'.css',paletteCss(),'text/css');reportPalette('CSS exported.');});
       sidebar.querySelector('.acl-clear-palette').addEventListener('click',()=>{palette=[];savePalette();renderPalette();});
       const cardsButton=displayField.querySelector('.acl-view-cards'); const bookButton=displayField.querySelector('.acl-view-book');
       const setDisplay=compact=>{root.classList.toggle('atlas-clarus-compact',compact);cardsButton.setAttribute('aria-pressed',String(!compact));bookButton.setAttribute('aria-pressed',String(compact));};
