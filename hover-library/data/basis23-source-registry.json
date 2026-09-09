@@ -1,0 +1,35 @@
+{
+  "dataset": "ATLAS_BASIS23_HOVER_RECIPES",
+  "version": "0.6.0-beta1",
+  "atlas_master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "basis_version": "ATLAS_COMBINED_BASIS23_v0_8",
+  "benchmark_sha256": "3b3e13ad393b260b5aeceb3af57d14dc8379b6f0ea153ce83b842fbd550587c8",
+  "rows": 13283,
+  "within_de00_5": 11593,
+  "outside_de00_5": 1690,
+  "shard_size": 256,
+  "shard_count": 52,
+  "published_payload": "DERIVED_RECIPES_ONLY_NO_SOURCE_SPECTRA",
+  "publication_status": "NON_COMMERCIAL_PUBLIC_BETA",
+  "sources": [
+    {
+      "family": "CHSOS",
+      "label": "CHSOS Pigments Checker / FORS database",
+      "url": "https://chsopensource.org/products/pigments-checker/",
+      "license_note": "Original data and applicable terms remain with CHSOS"
+    },
+    {
+      "family": "KIMERA_PAINTMIXING",
+      "label": "PaintMixing / Kimera source dataset",
+      "url": "https://github.com/miciwan/PaintMixing",
+      "license_note": "Repository data license: CC BY 4.0 per source README"
+    }
+  ],
+  "boundaries": [
+    "COMPUTATIONAL_ONLY",
+    "PHYSICAL_MIXING_VALIDATION_NOT_PERFORMED",
+    "MEASURED_QC_STATUS_NOT_MEASURED",
+    "NO_PRODUCTION_APPROVAL",
+    "NO_PANTONE_EQUIVALENCE_CLAIM"
+  ]
+}

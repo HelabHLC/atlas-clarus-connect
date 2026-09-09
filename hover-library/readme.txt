@@ -3,7 +3,7 @@ Contributors: atlas-clarus
 Tags: color, colour, hlc, atlas, swatches
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.5
+Stable tag: 0.2.0-beta1
 License: GPLv2 or later
 
 Interactive ATLAS Clarus HLC reference library with exact active-PKL RGB swatches and hover details.
@@ -23,6 +23,8 @@ measured_qc_status = NOT_MEASURED
 
 No 4C, ECG, device or measured-QC values are created by this plugin.
 
+The selected-colour panel can load a derived Basis-23 computational recipe for every ATLAS row. Recipe percentages and benchmark ΔE00 values are demo proxies, not measured paint recipes. The public payload contains no source reflectance spectra. Each component links to its CHSOS or PaintMixing/Kimera source.
+
 == Installation ==
 
 1. In WordPress go to Plugins > Add New > Upload Plugin.
@@ -31,6 +33,13 @@ No 4C, ECG, device or measured-QC values are created by this plugin.
 4. Add `[atlas_clarus_library]` to a page or post.
 
 == Changelog ==
+
+= 0.2.0-beta1 =
+* Added lazy-loaded Basis-23 computational recipes for all 13,283 ATLAS references.
+* Added per-component links to the public source datasets.
+* Added strict row-ID, HLC-reference and basis-version binding checks.
+* Published derived recipe data only; source spectra are not redistributed.
+* Status remains NON_COMMERCIAL_PUBLIC_BETA and NOT_MEASURED.
 
 = 0.1.5 =
 * Added verified deep-link handoff to the ATLAS Clarus Colour Identity Wheel.

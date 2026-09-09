@@ -15,6 +15,7 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
   const yes = (v) => String(v) !== '0';
   const MASTER_SHA256 = '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4';
+  const BASIS23_VERSION = 'ATLAS_COMBINED_BASIS23_v0_8';
   const debounce = (fn, delay=140) => { let timer; return (...args) => { clearTimeout(timer); timer=setTimeout(()=>fn(...args),delay); }; };
 
   async function copyText(value) {
@@ -41,6 +42,23 @@
     `;
   }
 
+  function recipeHtml(recipe) {
+    const within = recipe.computational_tolerance_status === 'WITHIN_COMPUTATIONAL_TOLERANCE';
+    const components = recipe.components.map(component => `
+      <li><strong>${Number(component.percent).toFixed(2)}%</strong> ${esc(component.name)}
+        <a href="${esc(component.source_url)}" target="_blank" rel="noopener noreferrer">source ↗</a>
+      </li>`).join('');
+    return `
+      <div class="atlas-clarus-recipe-head">
+        <h3>Basis-23 computational recipe</h3>
+        <span class="atlas-clarus-recipe-badge ${within ? 'is-within' : 'is-outside'}">${within ? 'ΔE00 ≤ 5' : 'ΔE00 > 5'}</span>
+      </div>
+      <p class="atlas-clarus-recipe-score">Best found: <strong>ΔE00 ${Number(recipe.de00).toFixed(2)}</strong> · ${recipe.component_count} components</p>
+      <ol class="atlas-clarus-recipe-components">${components}</ol>
+      <p class="atlas-clarus-boundary">Computational demo proxy only. Best-found heuristic, not a proof of global optimum. Physical mixing has not been validated; measured QC: NOT_MEASURED; no production approval or identity-equivalence claim.</p>
+    `;
+  }
+
   async function init(root) {
     try {
       const [colorDoc, viewDoc] = await Promise.all([
@@ -64,6 +82,18 @@
       const perPage = Math.max(24, Math.min(480, parseInt(root.dataset.perPage || '120', 10) || 120));
       let page = 0;
       let query = '';
+      let selectionRequest = 0;
+
+      const getRecipe = async (c) => {
+        const shard = Math.floor(Number(c.id) / 256).toString().padStart(3, '0');
+        const recipes = await getJson(root.dataset.basis23Url + shard + '.json');
+        const recipe = recipes[Number(c.id) % 256];
+        if (!recipe || Number(recipe.source_atlas_row_id) !== Number(c.id) || recipe.reference !== c.ref ||
+            recipe.basis_version !== BASIS23_VERSION || root.dataset.basis23Version !== BASIS23_VERSION) {
+          throw new Error('Basis-23 recipe binding mismatch for atlas_row_id '+c.id);
+        }
+        return recipe;
+      };
 
       root.innerHTML = '';
       const toolbar = document.createElement('div');
@@ -164,7 +194,10 @@
         wheelUrl.searchParams.set('source', 'hover-library');
         const body=sidebar.querySelector('.atlas-clarus-selection-body');
         body.className='atlas-clarus-selection-body';
-        body.innerHTML=`<div class="atlas-clarus-selected-swatch" style="background:${esc(c.hex)}"></div>${detailHtml(c,view)}<div class="atlas-clarus-actions"><button type="button" class="atlas-clarus-button acl-copy-ref">Copy reference</button><button type="button" class="atlas-clarus-button acl-copy-hex">Copy HEX</button><button type="button" class="atlas-clarus-button acl-add-palette">Add to palette</button><a class="atlas-clarus-button acl-open-wheel" href="${esc(wheelUrl.href)}" target="_blank" rel="noopener noreferrer">Open in Colour Identity Wheel ↗</a></div><div class="atlas-clarus-copy-status" role="status" aria-live="polite"></div>`;
+        body.innerHTML=`<div class="atlas-clarus-selected-swatch" style="background:${esc(c.hex)}"></div>${detailHtml(c,view)}<div class="atlas-clarus-actions"><button type="button" class="atlas-clarus-button acl-copy-ref">Copy reference</button><button type="button" class="atlas-clarus-button acl-copy-hex">Copy HEX</button><button type="button" class="atlas-clarus-button acl-add-palette">Add to palette</button><a class="atlas-clarus-button acl-open-wheel" href="${esc(wheelUrl.href)}" target="_blank" rel="noopener noreferrer">Open in Colour Identity Wheel ↗</a></div><div class="atlas-clarus-copy-status" role="status" aria-live="polite"></div><section class="atlas-clarus-recipe" aria-live="polite"><p class="atlas-clarus-recipe-loading">Loading Basis-23 recipe…</p></section>`;
+        const recipeBox=body.querySelector('.atlas-clarus-recipe');
+        const request=++selectionRequest;
+        getRecipe(c).then(recipe=>{if(request===selectionRequest)recipeBox.innerHTML=recipeHtml(recipe);}).catch(err=>{if(request===selectionRequest)recipeBox.innerHTML='<p class="atlas-clarus-boundary">Basis-23 recipe unavailable or failed its identity check.</p>';console.error('ATLAS Clarus Basis-23:',err);});
         const report=m=>{body.querySelector('.atlas-clarus-copy-status').textContent=m;};
         body.querySelector('.acl-copy-ref').addEventListener('click',()=>copyText(c.ref).then(()=>report('Reference copied.')).catch(()=>report('Copy failed.')));
         body.querySelector('.acl-copy-hex').addEventListener('click',()=>copyText(c.hex).then(()=>report('HEX copied.')).catch(()=>report('Copy failed.')));

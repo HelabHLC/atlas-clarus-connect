@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ATLAS Clarus Hover Library
  * Description: Interactive ATLAS Clarus HLC reference library with hover details, search, pagination, and documented observed-coverage views.
- * Version: 0.1.5
+ * Version: 0.2.0-beta1
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: ATLAS Clarus
@@ -12,12 +12,13 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('ATLAS_CLARUS_HOVER_VERSION', '0.1.5');
+define('ATLAS_CLARUS_HOVER_VERSION', '0.2.0-beta1');
 define('ATLAS_CLARUS_HOVER_FILE', __FILE__);
 define('ATLAS_CLARUS_HOVER_DIR', plugin_dir_path(__FILE__));
 define('ATLAS_CLARUS_HOVER_URL', plugin_dir_url(__FILE__));
 define('ATLAS_CLARUS_MASTER_SHA256', '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4');
 define('ATLAS_CLARUS_WHEEL_URL', 'https://atlas-clarus-reference-wheel.arbe-lambda-star.chatgpt.site/');
+define('ATLAS_CLARUS_BASIS23_VERSION', 'ATLAS_COMBINED_BASIS23_v0_8');
 
 function atlas_clarus_hover_allowed_views() {
     return array('core','xgc','solid_c','solid_u','bridge_c','bridge_u','neons_c','neons_u','metallics_c','cmyk_c','cmyk_u','tcx','tpg','tsx','tn','tpm','skintone');
@@ -129,11 +130,13 @@ function atlas_clarus_hover_shortcode($atts=array()) {
     wp_enqueue_style('atlas-clarus-hover-library'); wp_enqueue_script('atlas-clarus-hover-library');
     $instance = wp_unique_id('atlas-clarus-');
     return sprintf(
-        '<section id="%1$s" class="atlas-clarus-library" aria-label="%9$s" data-colors-url="%2$s" data-views-url="%3$s" data-default-view="%4$s" data-per-page="%5$d" data-show-status="%6$s" data-show-search="%7$s" data-show-library-selector="%8$s" data-wheel-url="%11$s"><div class="atlas-clarus-loading" role="status">%10$s</div></section>',
+        '<section id="%1$s" class="atlas-clarus-library" aria-label="%9$s" data-colors-url="%2$s" data-views-url="%3$s" data-default-view="%4$s" data-per-page="%5$d" data-show-status="%6$s" data-show-search="%7$s" data-show-library-selector="%8$s" data-wheel-url="%11$s" data-basis23-url="%12$s" data-basis23-version="%13$s"><div class="atlas-clarus-loading" role="status">%10$s</div></section>',
         esc_attr($instance),esc_url(ATLAS_CLARUS_HOVER_URL.'data/colors.json'),esc_url(ATLAS_CLARUS_HOVER_URL.'data/views.json'),esc_attr($view),$per_page,
         atlas_clarus_hover_yesno($atts['show_status'],true)?'1':'0',atlas_clarus_hover_yesno($atts['show_search'],true)?'1':'0',atlas_clarus_hover_yesno($atts['show_library_selector'],true)?'1':'0',
         esc_attr__('ATLAS Clarus colour reference library','atlas-clarus-hover-library'),esc_html__('Loading ATLAS Clarus library…','atlas-clarus-hover-library'),
-        esc_url(apply_filters('atlas_clarus_hover_wheel_url', ATLAS_CLARUS_WHEEL_URL))
+        esc_url(apply_filters('atlas_clarus_hover_wheel_url', ATLAS_CLARUS_WHEEL_URL)),
+        esc_url(ATLAS_CLARUS_HOVER_URL.'data/basis23-recipes/'),
+        esc_attr(ATLAS_CLARUS_BASIS23_VERSION)
     );
 }
 add_shortcode('atlas_clarus_library','atlas_clarus_hover_shortcode');
