@@ -23,3 +23,17 @@ Reference pages for licensing review:
 
 - <https://freiefarbe.de/en/licence/>
 - <https://freiefarbe.de/en/thema-farbe/software/>
+
+## CHSOS spectral source data
+
+Spectral source data used in the Basis-23 computational recipes originate from
+Cultural Heritage Science Open Source (CHSOS), published by Antonino Cosentino,
+<https://chsopensource.org/>. Used with permission. Computational processing and
+derived results are by ATLAS Clarus. CHSOS has not reviewed or validated the
+derived mixtures.
+
+The operational permission record is documented in repository issue #24. The
+original correspondence remains in the project owner's private records. This is
+not presented as a formal licence agreement and does not imply endorsement,
+consulting, authorship, production approval, physical validation, or colour-
+identity equivalence by CHSOS or Antonino Cosentino.
