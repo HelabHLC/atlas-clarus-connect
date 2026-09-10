@@ -94,6 +94,8 @@ ATLAS Clarus preserves a reference identity. It does not claim that a screen, pr
 
 The named source-context views in the Hover Library are observed coverage views. They are not Pantone libraries and assert no Pantone identity equivalence.
 
+Basis-23 recipes are computational candidates derived in part from CHSOS spectral source data. CHSOS is cited in the Hover Library, its source registry and `THIRD_PARTY_NOTICES.md`; CHSOS has not reviewed or validated the derived mixtures. The recipes remain `COMPUTATIONAL_ONLY`, physical QC remains `NOT_MEASURED`, and no endorsement or production approval is claimed.
+
 ## Verification before deployment
 
 Before deploying a modified build:

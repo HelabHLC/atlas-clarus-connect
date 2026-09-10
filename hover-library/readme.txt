@@ -25,6 +25,8 @@ No 4C, ECG, device or measured-QC values are created by this plugin.
 
 The selected-colour panel can load a derived Basis-23 computational recipe for every ATLAS row. Recipe percentages and benchmark ΔE00 values are demo proxies, not measured paint recipes. The public payload contains no source reflectance spectra. Each component links to its CHSOS or PaintMixing/Kimera source.
 
+Spectral source data: Cultural Heritage Science Open Source (CHSOS), published by Antonino Cosentino, https://chsopensource.org/. Used with permission. Computational processing and derived results by ATLAS Clarus. CHSOS has not reviewed or validated the derived mixtures. See repository issue #24 for the operational permission record; the original correspondence remains in the project owner's private records.
+
 == Installation ==
 
 1. In WordPress go to Plugins > Add New > Upload Plugin.

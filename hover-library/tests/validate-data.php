@@ -21,6 +21,13 @@ $check($registry['basis_version'] === 'ATLAS_COMBINED_BASIS23_v0_8', 'Basis-23 v
 $check($registry['rows'] === 13283 && $registry['shard_size'] === 256 && $registry['shard_count'] === 52, 'Basis-23 row/shard metadata');
 $check($registry['within_de00_5'] === 11593 && $registry['outside_de00_5'] === 1690, 'Basis-23 benchmark totals');
 $check($registry['published_payload'] === 'DERIVED_RECIPES_ONLY_NO_SOURCE_SPECTRA', 'Basis-23 publication boundary');
+$chsosSources = array_values(array_filter($registry['sources'], static function ($source) { return $source['family'] === 'CHSOS'; }));
+$check(count($chsosSources) === 1, 'single CHSOS registry source');
+$chsos = $chsosSources[0];
+$check($chsos['publisher'] === 'Antonino Cosentino', 'CHSOS publisher attribution');
+$check(strpos($chsos['attribution'], 'Used with permission.') !== false, 'CHSOS permission attribution');
+$check(strpos($chsos['attribution'], 'CHSOS has not reviewed or validated') !== false, 'CHSOS non-validation boundary');
+$check(in_array('NO_CHSOS_ENDORSEMENT_OR_VALIDATION', $registry['boundaries'], true), 'CHSOS non-endorsement boundary');
 
 $recipeCount = 0;
 $withinCount = 0;

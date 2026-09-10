@@ -5,5 +5,5 @@
   "freeze_status_for_observed_views":"NOT_FROZEN_EXPERIMENTAL","measured_qc_status":"NOT_MEASURED",
   "pantone_identity_claim":"NONE","production_branches_materialized":false,
   "ui_update":"lazy_basis23_computational_recipes_with_source_links",
-  "basis23_recipes":{"version":"ATLAS_COMBINED_BASIS23_v0_8","rows":13283,"within_de00_5":11593,"outside_de00_5":1690,"publication_status":"NON_COMMERCIAL_PUBLIC_BETA","payload":"DERIVED_RECIPES_ONLY_NO_SOURCE_SPECTRA","physical_mixing_validation":"NOT_PERFORMED","production_approval":"NOT_SUPPORTED"}
+  "basis23_recipes":{"version":"ATLAS_COMBINED_BASIS23_v0_8","rows":13283,"within_de00_5":11593,"outside_de00_5":1690,"publication_status":"NON_COMMERCIAL_PUBLIC_BETA","payload":"DERIVED_RECIPES_ONLY_NO_SOURCE_SPECTRA","source_registry":"data/basis23-source-registry.json","chsos_permission_record":"https://github.com/HelabHLC/atlas-clarus-connect/issues/24","chsos_review_or_validation":"NOT_PERFORMED","physical_mixing_validation":"NOT_PERFORMED","production_approval":"NOT_SUPPORTED"}
 }

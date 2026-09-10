@@ -55,6 +55,7 @@
       </div>
       <p class="atlas-clarus-recipe-score">Best found: <strong>ΔE00 ${Number(recipe.de00).toFixed(2)}</strong> · ${recipe.component_count} components</p>
       <ol class="atlas-clarus-recipe-components">${components}</ol>
+      <p class="atlas-clarus-attribution">Spectral source data: <a href="https://chsopensource.org/" target="_blank" rel="noopener noreferrer">Cultural Heritage Science Open Source (CHSOS)</a>, published by Antonino Cosentino. Used with permission. Computational processing and derived results by ATLAS Clarus. CHSOS has not reviewed or validated the derived mixtures.</p>
       <p class="atlas-clarus-boundary">Computational demo proxy only. Best-found heuristic, not a proof of global optimum. Physical mixing has not been validated; measured QC: NOT_MEASURED; no production approval or identity-equivalence claim.</p>
     `;
   }

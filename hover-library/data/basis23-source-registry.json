@@ -16,7 +16,10 @@
       "family": "CHSOS",
       "label": "CHSOS Pigments Checker / FORS database",
       "url": "https://chsopensource.org/products/pigments-checker/",
-      "license_note": "Original data and applicable terms remain with CHSOS"
+      "publisher": "Antonino Cosentino",
+      "permission_record": "Repository issue #24; original correspondence retained privately by the project owner",
+      "attribution": "Spectral source data: Cultural Heritage Science Open Source (CHSOS), published by Antonino Cosentino, https://chsopensource.org/. Used with permission. Computational processing and derived results by ATLAS Clarus. CHSOS has not reviewed or validated the derived mixtures.",
+      "license_note": "Used under the written permission recorded in repository issue #24; this record is not presented as a formal licence agreement"
     },
     {
       "family": "KIMERA_PAINTMIXING",
@@ -30,6 +33,7 @@
     "PHYSICAL_MIXING_VALIDATION_NOT_PERFORMED",
     "MEASURED_QC_STATUS_NOT_MEASURED",
     "NO_PRODUCTION_APPROVAL",
+    "NO_CHSOS_ENDORSEMENT_OR_VALIDATION",
     "NO_PANTONE_EQUIVALENCE_CLAIM"
   ]
 }
