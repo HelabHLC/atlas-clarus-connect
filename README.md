@@ -26,7 +26,7 @@ server or network connection. Its application demos document integration
 boundaries; they do not embed or claim native browser execution of the desktop
 applications.
 
-Current candidate: **v0.2.0-rc11 · READY_PENDING_AUDIT**. RC11 uses a self-contained
+Current candidate: **v0.2.0-rc18-pixel-loupe · PROVENANCE_SYNC_CANDIDATE**. RC11 uses a self-contained
 entrypoint so Windows may open `index.html` directly from the ZIP without losing
 the stylesheet, application code or embedded reference data. It restores the
 Wheel card workspace for harmony, tonal families, accessibility, ARBE comparison,
@@ -47,6 +47,12 @@ removes the unreliable relative licensing link from the direct-file workflow.
 RC10 adds an accessible smartphone navigation menu with all bundle sections.
 RC11 introduces My Palettes: several named local palettes, selection, duplication,
 deletion, colour reordering and strict identity-validated Clarus JSON import.
+RC18 synchronises the public Browser Edition source: an Image Picker samples the
+original decoded 8-bit sRGB pixel, displays an 11 × 11 pixel loupe with marked
+centre, coordinates and RGB, and binds the pixel by squared RGB distance against
+the unchanged full master. Picker → Hover → Wheel navigation preserves explicit
+return paths. Screen-pixel assignment remains neither a spectral measurement nor
+physical colour equality, measured QC or production approval.
 
 ## Current release contents
 
