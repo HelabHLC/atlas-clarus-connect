@@ -7,7 +7,8 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 HERE=ROOT/'browser-bundle'
 DIST=HERE/'dist'/'atlas-clarus-browser-bundle'
-ZIP=HERE/'dist'/'ATLAS_Clarus_Browser_Bundle_v0.2.0-rc12.zip'
+VERSION='0.2.0-rc18-pixel-loupe'
+ZIP=HERE/'dist'/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 ZIP_TIMESTAMP=(2026, 1, 1, 0, 0, 0)
 
@@ -20,7 +21,7 @@ def sha(path:Path)->str:
 if DIST.exists(): shutil.rmtree(DIST)
 (DIST/'assets').mkdir(parents=True)
 (DIST/'docs').mkdir()
-for name in ('index.html','app.css','palette-export.js','app.js'):
+for name in ('index.html','app.css','basis23-recipes.js','palette-export.js','app.js'):
     target=DIST/('assets/'+name if name!='index.html' else name)
     shutil.copy2(HERE/'src'/name,target)
 
@@ -33,18 +34,30 @@ source['views']=view_source['views']
 payload='window.ATLAS_CLARUS_DATA='+json.dumps(source,separators=(',',':'),ensure_ascii=False)+';\n'
 (DIST/'assets/atlas-data.js').write_text(payload,encoding='utf-8')
 
+registry=json.loads((ROOT/'hover-library/data/basis23-source-registry.json').read_text(encoding='utf-8'))
+recipes=[]
+for shard in sorted((ROOT/'hover-library/data/basis23-recipes').glob('*.json')):
+    recipes.extend(json.loads(shard.read_text(encoding='utf-8')))
+assert len(recipes)==13283
+assert all(recipe['basis_version']==registry['basis_version'] for recipe in recipes)
+basis_payload='window.ATLAS_BASIS23_DATA='+json.dumps({'registry':registry,'rows':recipes},separators=(',',':'),ensure_ascii=False)+';\n'
+(DIST/'assets/basis23-data.js').write_text(basis_payload,encoding='utf-8')
+
 # Keep the normal asset files for inspection, but also produce one truly
 # self-contained entrypoint. This survives Windows opening only index.html from
 # inside a ZIP into a temporary directory.
 html=(DIST/'index.html').read_text(encoding='utf-8')
 css=(DIST/'assets/app.css').read_text(encoding='utf-8')
 app=(DIST/'assets/app.js').read_text(encoding='utf-8')
+recipe_app=(DIST/'assets/basis23-recipes.js').read_text(encoding='utf-8')
 palette_export=(DIST/'assets/palette-export.js').read_text(encoding='utf-8')
 html=html.replace('<link rel="stylesheet" href="assets/app.css">','<style>'+css+'</style>')
 html=html.replace('<script src="assets/atlas-data.js"></script>','<script>'+payload.replace('</script','<\\/script')+'</script>')
+html=html.replace('<script src="assets/basis23-data.js"></script>','<script>'+basis_payload.replace('</script','<\\/script')+'</script>')
+html=html.replace('<script src="assets/basis23-recipes.js"></script>','<script>'+recipe_app.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/palette-export.js"></script>','<script>'+palette_export.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/app.js"></script>','<script>'+app.replace('</script','<\\/script')+'</script>')
-html=html.replace('v0.2.0-rc1','v0.2.0-rc12')
+html=html.replace('v0.2.0-rc1','v'+VERSION)
 (DIST/'index.html').write_text(html,encoding='utf-8')
 
 docs={
@@ -54,7 +67,7 @@ docs={
 style='<style>body{max-width:850px;margin:60px auto;padding:20px;background:#0a0d12;color:#eef2f6;font:17px/1.7 system-ui}a{color:#65dfff}code{color:#a4ff73}</style>'
 for name,body in docs.items():(DIST/'docs'/name).write_text('<!doctype html><meta charset="utf-8">'+style+body,encoding='utf-8')
 
-manifest={'bundle':'ATLAS Clarus Browser Bundle','version':'0.2.0-rc12','status':'READY_PENDING_VISUAL_AUDIT','workflow':'ATLAS Clarus v3.4.0','master_sha256':MASTER,'master_rows':13283,'row_id_base':0,'offline_entrypoint':'index.html','entrypoint_packaging':'SELF_CONTAINED_SINGLE_FILE','reproducible_zip':True,'observed_library_views':17,'shared_palette_workspace':'HOVER_AND_WHEEL','palette_persistence':'MULTI_PALETTE_LOCAL_BROWSER_ONLY','palette_management':['CREATE','NAME','SELECT','DUPLICATE','DELETE','REORDER','STRICT_CLARUS_JSON_IMPORT'],'palette_exports':['ASE','GPL','FIGMA_TOKENS_JSON','CSS','CLARUS_JSON'],'faq_tab':True,'visible_credit_tab':True,'licensing_summary_self_contained':True,'mobile_navigation':'HAMBURGER_ACCESSIBLE','upstream_reference_credit':'Copyright (c) freieFarbe e.V.','app_connections_format':'CAN_VERIFIED_NEEDED','a_prime_v04_logic':'UNCHANGED','measured_qc_status':'NOT_MEASURED'}
+manifest={'bundle':'ATLAS Clarus Browser Bundle','version':VERSION,'status':'PROVENANCE_SYNC_CANDIDATE','workflow':'ATLAS Clarus v3.4.0','master_sha256':MASTER,'master_rows':13283,'row_id_base':0,'offline_entrypoint':'index.html','entrypoint_packaging':'SELF_CONTAINED_SINGLE_FILE','reproducible_zip':True,'observed_library_views':17,'image_picker':'ORIGINAL_8BIT_SRGB_PIXEL','pixel_loupe':'11_X_11_WITH_CENTRE_COORDINATES_AND_RGB','picker_binding':'RGB_SQUARED_DISTANCE_FULL_MASTER','picker_handoff':'PICKER_TO_HOVER_TO_WHEEL_WITH_RETURN','shared_palette_workspace':'HOVER_AND_WHEEL','palette_persistence':'MULTI_PALETTE_LOCAL_BROWSER_ONLY','palette_management':['CREATE','NAME','SELECT','DUPLICATE','DELETE','REORDER','STRICT_CLARUS_JSON_IMPORT'],'palette_exports':['ASE','GPL','FIGMA_TOKENS_JSON','CSS','CLARUS_JSON'],'basis23_recipes':'COMPUTATIONAL_ONLY_NOT_MEASURED','faq_tab':True,'visible_credit_tab':True,'licensing_summary_self_contained':True,'mobile_navigation':'HAMBURGER_ACCESSIBLE','upstream_reference_credit':'Copyright (c) freieFarbe e.V.','app_connections_format':'CAN_VERIFIED_NEEDED','a_prime_v04_logic':'UNCHANGED','measured_qc_status':'NOT_MEASURED','production_approval':'NOT_SUPPORTED'}
 (DIST/'BUNDLE_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
 files=sorted(p for p in DIST.rglob('*') if p.is_file())
 (DIST/'SHA256SUMS.txt').write_text(''.join(f'{sha(p)}  {p.relative_to(DIST).as_posix()}\n' for p in files),encoding='utf-8')
