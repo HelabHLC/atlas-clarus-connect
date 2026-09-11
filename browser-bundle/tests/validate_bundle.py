@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 BUNDLE=ROOT/'browser-bundle'
-VERSION='0.2.0-rc18-pixel-loupe'
+VERSION='0.2.0-rc19-area-sampling'
 ZIP=BUNDLE/'dist'/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 
@@ -48,12 +48,16 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     html=archive.read(prefix+'index.html').decode('utf-8')
     assert 'v'+VERSION in html
     assert 'id="picker-loupe"' in html
-    assert 'span=11' in html and 'getImageData(point.ix,point.iy,1,1)' in html
+    assert 'id="picker-sample-size"' in html
+    assert '<option value="1" selected>Single pixel</option>' in html
+    assert 'AREA_MEAN_RGB' in html and 'sampleAt(point,size)' in html
+    assert 'if(data[i+3]<128)continue' in html
+    assert 'Channel σ (diagnostic)' in html
     assert "d=(c.rgb[0]-rgb[0])**2" in html
-    assert 'Screen-pixel assignment only.' in html
+    assert 'Observed screen colour only.' in html
     assert 'COMPUTATIONAL ONLY · NOT MEASURED' in html
     assert "data-back-hover" in html and "data-back-picker" in html
     assert 'assets/app.js' not in html and 'assets/atlas-data.js' not in html
     assert 'window.ATLAS_CLARUS_DATA=' in html
 
-print(f'PASS: reproducible RC18 provenance-sync bundle {first}')
+print(f'PASS: reproducible RC19 area-sampling bundle {first}')
