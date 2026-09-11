@@ -26,7 +26,7 @@ server or network connection. Its application demos document integration
 boundaries; they do not embed or claim native browser execution of the desktop
 applications.
 
-Current candidate: **v0.2.0-rc18-pixel-loupe · PROVENANCE_SYNC_CANDIDATE**. RC11 uses a self-contained
+Current candidate: **v0.2.0-rc19-area-sampling · PROVENANCE_SYNC_CANDIDATE**. The bundle uses a self-contained
 entrypoint so Windows may open `index.html` directly from the ZIP without losing
 the stylesheet, application code or embedded reference data. It restores the
 Wheel card workspace for harmony, tonal families, accessibility, ARBE comparison,
@@ -53,6 +53,11 @@ centre, coordinates and RGB, and binds the pixel by squared RGB distance against
 the unchanged full master. Picker → Hover → Wheel navigation preserves explicit
 return paths. Screen-pixel assignment remains neither a spectral measurement nor
 physical colour equality, measured QC or production approval.
+RC19 retains single-pixel sampling as the default and adds optional 5 × 5, 11 × 11
+and 21 × 21 area means. Edge clipping, the alpha threshold (`alpha < 128`), valid
+pixel counts, mean rounding and per-channel population standard deviation are
+covered by executable numerical tests. This observation step does not redefine a
+frozen `atlas_row_id` or change the full-master RGB-only binding.
 
 ## Current release contents
 
