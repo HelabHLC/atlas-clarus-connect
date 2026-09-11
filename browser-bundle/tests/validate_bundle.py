@@ -29,7 +29,7 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         prefix+'index.html',prefix+'BUNDLE_MANIFEST.json',prefix+'SHA256SUMS.txt',
         prefix+'assets/app.js',prefix+'assets/app.css',prefix+'assets/atlas-data.js',
         prefix+'assets/basis23-data.js',prefix+'assets/basis23-recipes.js',
-        prefix+'assets/palette-export.js'
+        prefix+'assets/palette-export.js',prefix+'assets/image-sampling.js'
     }
     assert required <= names
     sums=archive.read(prefix+'SHA256SUMS.txt').decode('utf-8').splitlines()
@@ -51,13 +51,15 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert 'id="picker-sample-size"' in html
     assert '<option value="1" selected>Single pixel</option>' in html
     assert 'AREA_MEAN_RGB' in html and 'sampleAt(point,size)' in html
-    assert 'if(data[i+3]<128)continue' in html
+    assert 'ATLAS_CLARUS_SAMPLING' in html
+    assert 'Pixels with alpha below 128 are excluded.' in html
     assert 'Channel σ (diagnostic)' in html
     assert "d=(c.rgb[0]-rgb[0])**2" in html
     assert 'Observed screen colour only.' in html
     assert 'COMPUTATIONAL ONLY · NOT MEASURED' in html
     assert "data-back-hover" in html and "data-back-picker" in html
     assert 'assets/app.js' not in html and 'assets/atlas-data.js' not in html
+    assert 'assets/image-sampling.js' not in html
     assert 'window.ATLAS_CLARUS_DATA=' in html
 
 print(f'PASS: reproducible RC19 area-sampling bundle {first}')

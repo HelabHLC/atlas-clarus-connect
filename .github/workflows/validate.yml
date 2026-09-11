@@ -33,7 +33,10 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           node --check browser-bundle/src/app.js
+          node --check browser-bundle/src/image-sampling.js
           node --check browser-bundle/src/palette-export.js
+      - name: Validate numerical image sampling
+        run: node browser-bundle/tests/validate_sampling.js
       - name: Validate palette exports
         run: node browser-bundle/tests/validate_exports.js
       - name: Build and validate reproducible bundle
