@@ -2,6 +2,22 @@
 
 This directory builds a standalone offline HTML edition of ATLAS Clarus Connect.
 
+Current candidate: **v0.2.0-rc20-core-journey**.
+
+## Primary user path
+
+1. Open an image in Image Picker and sample one pixel or a square area.
+2. Choose **Open in Hover** to inspect the bound reference. The Wheel is optional.
+3. Choose **Add to palette** and name the palette.
+4. **Export Clarus JSON** as a portable backup; import it to restore exact references.
+5. Export ASE or GPL when transferring swatches to a desktop design application.
+
+Local browser storage is a convenience, not a backup. RC20 keeps a visible warning
+when storage fails, retains the in-memory workspace for export, validates imported
+identities without numeric coercion, and reports the 64-colour / 50-palette limits.
+The import validates the complete file before adding a palette; it does not
+re-bind incoming RGB values. See [acceptance and remaining gates](RC20_CORE_JOURNEY.md).
+
 ## Build
 
 ```bash

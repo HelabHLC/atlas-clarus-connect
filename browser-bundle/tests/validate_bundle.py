@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 BUNDLE=ROOT/'browser-bundle'
-VERSION='0.2.0-rc19-area-sampling'
+VERSION='0.2.0-rc20-core-journey'
 ZIP=BUNDLE/'dist'/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 
@@ -44,6 +44,9 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert manifest['version']==VERSION
     assert manifest['master_sha256']==MASTER
     assert manifest['master_rows']==13283
+    assert manifest['status']=='CORE_JOURNEY_TEST_CANDIDATE'
+    assert manifest['primary_user_path']=='PICKER_HOVER_PALETTE_CLARUS_JSON'
+    assert manifest['max_palettes']==50 and manifest['max_palette_colours']==64
     assert manifest['reproducible_zip'] is True
     html=archive.read(prefix+'index.html').decode('utf-8')
     assert 'v'+VERSION in html
@@ -61,5 +64,8 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert 'assets/app.js' not in html and 'assets/atlas-data.js' not in html
     assert 'assets/image-sampling.js' not in html
     assert 'window.ATLAS_CLARUS_DATA=' in html
+    assert 'id="palette-storage-status"' in html
+    assert 'Your first palette · four steps' in html
+    assert 'validateClarus(data,colors,MASTER)' in html
 
-print(f'PASS: reproducible RC19 area-sampling bundle {first}')
+print(f'PASS: reproducible RC20 core-journey bundle {first}')

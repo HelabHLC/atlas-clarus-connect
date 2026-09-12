@@ -39,6 +39,8 @@ jobs:
         run: node browser-bundle/tests/validate_sampling.js
       - name: Validate palette exports
         run: node browser-bundle/tests/validate_exports.js
+      - name: Validate palette persistence failures and limits
+        run: node browser-bundle/tests/validate_palette_workspace.js
       - name: Build and validate reproducible bundle
         run: python browser-bundle/tests/validate_bundle.py
 

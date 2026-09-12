@@ -26,7 +26,7 @@ server or network connection. Its application demos document integration
 boundaries; they do not embed or claim native browser execution of the desktop
 applications.
 
-Current candidate: **v0.2.0-rc19-area-sampling · PROVENANCE_SYNC_CANDIDATE**. The bundle uses a self-contained
+Current candidate: **v0.2.0-rc20-core-journey · CORE_JOURNEY_TEST_CANDIDATE**. The bundle uses a self-contained
 entrypoint so Windows may open `index.html` directly from the ZIP without losing
 the stylesheet, application code or embedded reference data. It restores the
 Wheel card workspace for harmony, tonal families, accessibility, ARBE comparison,
@@ -58,6 +58,8 @@ and 21 × 21 area means. Edge clipping, the alpha threshold (`alpha < 128`), val
 pixel counts, mean rounding and per-channel population standard deviation are
 covered by executable numerical tests. This observation step does not redefine a
 frozen `atlas_row_id` or change the full-master RGB-only binding.
+
+RC20 stabilises the primary path: image → reference → palette → Clarus JSON backup/import. It adds visible storage-failure feedback, strict typed import validation and explicit palette limits. Browser visual acceptance remains pending; see [the RC20 acceptance record](browser-bundle/RC20_CORE_JOURNEY.md).
 
 ## Current release contents
 
