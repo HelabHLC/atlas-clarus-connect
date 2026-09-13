@@ -42,3 +42,16 @@ html{scroll-padding-top:var(--topbar-height)}
 .topbar{height:var(--topbar-height);background:#0a0d12}
 .view{scroll-margin-top:var(--topbar-height)}
 @media(max-width:900px){.topbar nav{top:var(--topbar-height);isolation:isolate;background:#0a0d12;box-shadow:0 22px 40px #000}}
+/* Parallel print preparation shares identity, never device output. */
+.print-intro{max-width:850px;color:var(--muted);line-height:1.7}
+.print-source,.print-path{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;min-width:0}
+.print-source{margin:24px 0}.print-source label,.print-path label{display:grid;gap:7px;margin:14px 0;color:var(--muted);font-size:.82rem}
+.print-source input,.print-path input,.print-path select{width:100%;min-width:0;border:1px solid var(--line);border-radius:7px;background:#0a1017;color:var(--text);padding:11px;font:inherit;box-sizing:border-box}
+.print-source-actions,.print-export-actions{display:flex;flex-wrap:wrap;gap:10px}.print-export-actions{margin-top:24px}
+.print-references{display:flex;gap:10px;flex-wrap:wrap}.print-reference{display:grid;grid-template-columns:28px 1fr;gap:2px 8px;padding:10px;background:#0a1017;border-radius:8px;font-size:.8rem}.print-reference i{grid-row:span 2;border-radius:5px}.print-reference small{color:var(--muted)}
+.print-paths{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.print-path h3{font-size:1.45rem;margin:4px 0}.print-path .card-heading{align-items:flex-start;flex-wrap:wrap}.print-path p{line-height:1.55;color:var(--muted)}
+.print-path-status{font-size:.75rem;color:var(--warn);max-width:240px}.print-profile-summary{display:grid;gap:6px;font-size:.82rem;padding:14px 0;min-height:55px}.print-profile-summary code{font-size:.68rem;overflow-wrap:anywhere;color:var(--accent)}.print-profile-summary small{color:var(--muted)}
+.print-results{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:22px 0 0;border-top:1px solid var(--line);padding-top:18px}.print-results dd{margin:0;color:var(--warn)}
+.print-rule{padding:16px;border-left:3px solid var(--accent);line-height:1.65;background:#101c1c}
+#print-message{min-height:24px;line-height:1.6;color:var(--accent)}#print-message.error{color:#ff9c9c}#print button:disabled{opacity:.5;cursor:not-allowed}#print-count{color:var(--accent)}
+@media(max-width:760px){.print-paths{grid-template-columns:1fr}.print-source,.print-path{padding:18px}.print-source-actions>button,.print-export-actions>button{width:100%}}

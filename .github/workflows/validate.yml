@@ -35,6 +35,10 @@ jobs:
           node --check browser-bundle/src/app.js
           node --check browser-bundle/src/image-sampling.js
           node --check browser-bundle/src/palette-export.js
+          node --check browser-bundle/src/print-handoff.js
+          node --check browser-bundle/src/print-ui.js
+      - name: Validate parallel print handoff and rejection vectors
+        run: node browser-bundle/tests/validate_print_handoff.js
       - name: Validate numerical image sampling
         run: node browser-bundle/tests/validate_sampling.js
       - name: Validate palette exports
@@ -47,6 +51,18 @@ jobs:
         run: node browser-bundle/tests/validate_layout.js
       - name: Build and validate reproducible bundle
         run: python browser-bundle/tests/validate_bundle.py
+      - name: Build reviewable offline candidate
+        run: python browser-bundle/build_bundle.py
+      - name: Install DOM test dependencies
+        run: npm ci --prefix browser-bundle/tests --ignore-scripts
+      - name: Validate shipped print preparation UI
+        run: node browser-bundle/tests/validate_print_ui.js
+      - name: Upload offline candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-clarus-parallel-print-candidate
+          path: browser-bundle/build/*.zip
+          retention-days: 14
 
   identity-handoff-vectors:
     runs-on: ubuntu-latest

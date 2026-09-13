@@ -3,21 +3,24 @@ import hashlib
 import io
 import json
 import subprocess
+import tempfile
 import zipfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 BUNDLE=ROOT/'browser-bundle'
-VERSION='0.2.0-rc20-core-journey'
-ZIP=BUNDLE/'dist'/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
+VERSION='0.2.0-rc21-parallel-print-handoff'
+temp_output=tempfile.TemporaryDirectory(prefix='atlas-print-bundle-')
+OUTPUT=Path(temp_output.name)
+ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
-subprocess.run(['python3',str(BUNDLE/'build_bundle.py')],check=True)
+subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPUT)],check=True)
 first=digest(ZIP)
-subprocess.run(['python3',str(BUNDLE/'build_bundle.py')],check=True)
+subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPUT)],check=True)
 second=digest(ZIP)
 assert first==second, f'non-reproducible ZIP: {first} != {second}'
 
@@ -29,7 +32,8 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         prefix+'index.html',prefix+'BUNDLE_MANIFEST.json',prefix+'SHA256SUMS.txt',
         prefix+'assets/app.js',prefix+'assets/app.css',prefix+'assets/atlas-data.js',
         prefix+'assets/basis23-data.js',prefix+'assets/basis23-recipes.js',
-        prefix+'assets/palette-export.js',prefix+'assets/image-sampling.js'
+        prefix+'assets/palette-export.js',prefix+'assets/image-sampling.js',
+        prefix+'assets/print-handoff.js',prefix+'assets/print-ui.js'
     }
     assert required <= names
     sums=archive.read(prefix+'SHA256SUMS.txt').decode('utf-8').splitlines()
@@ -37,14 +41,14 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         expected,name=line.split('  ',1)
         actual=hashlib.sha256(archive.read(prefix+name)).hexdigest()
         assert actual==expected, f'checksum mismatch: {name}'
-        extracted=BUNDLE/'dist'/'atlas-clarus-browser-bundle'/name
+        extracted=OUTPUT/'atlas-clarus-browser-bundle'/name
         assert extracted.is_file(), f'extracted dist file missing: {name}'
         assert digest(extracted)==expected, f'extracted dist mismatch: {name}'
     manifest=json.loads(archive.read(prefix+'BUNDLE_MANIFEST.json'))
     assert manifest['version']==VERSION
     assert manifest['master_sha256']==MASTER
     assert manifest['master_rows']==13283
-    assert manifest['status']=='CORE_JOURNEY_TEST_CANDIDATE'
+    assert manifest['status']=='PARALLEL_PRINT_PREPARATION_CANDIDATE'
     assert manifest['primary_user_path']=='PICKER_HOVER_PALETTE_CLARUS_JSON'
     assert manifest['max_palettes']==50 and manifest['max_palette_colours']==64
     assert manifest['reproducible_zip'] is True
@@ -72,4 +76,10 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert 'After — Computed Mix' in html
     assert 'COMPUTATIONAL PREVIEW · NOT PHYSICALLY VERIFIED' in html
 
-print(f'PASS: reproducible RC20 core-journey bundle {first}')
+    assert manifest['print_paths']==['4C','ECG']
+    assert manifest['print_device_calculation']=='NOT_IMPLEMENTED'
+    assert 'ATLAS_CLARUS_PARALLEL_PRINT_HANDOFF' in html
+    assert 'assets/print-handoff.js' not in html and 'assets/print-ui.js' not in html
+    assert 'id="print"' in html and 'data-prepare-print' in html
+
+print(f'PASS: reproducible parallel-print preparation bundle {first}')

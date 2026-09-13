@@ -1,0 +1,115 @@
+{
+  "format": "ATLAS_CLARUS_PARALLEL_PRINT_HANDOFF",
+  "version": "0.1.0",
+  "workflow_version": "3.4.0",
+  "job_name": "ATLAS parallel preparation - row 10519",
+  "created_at": "2026-09-13T00:00:00.000Z",
+  "status": "PREPARATION_ONLY",
+  "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "row_id_base": 0,
+  "freeze_status": "FROZEN",
+  "reference_variant": "RGB_ONLY_DLambda_POSTHOC",
+  "topology": "PARALLEL_FROM_SAME_FROZEN_REFERENCE",
+  "references": [
+    {
+      "index": 0,
+      "source_atlas_row_id": 10519,
+      "production_atlas_row_id": 10519,
+      "reference": "H285_L025_C065",
+      "master_rgb": [
+        0,
+        55,
+        157
+      ],
+      "master_hex": "#00379D",
+      "master_lab": [
+        25,
+        16.8232,
+        -62.7852
+      ]
+    }
+  ],
+  "production_paths": [
+    {
+      "path_id": "4C",
+      "input_kind": "FROZEN_ATLAS_REFERENCES",
+      "input_from_path": null,
+      "input_references": [
+        {
+          "source_atlas_row_id": 10519,
+          "production_atlas_row_id": 10519
+        }
+      ],
+      "expected_device_space": "CMYK",
+      "channel_order": [
+        "C",
+        "M",
+        "Y",
+        "K"
+      ],
+      "channel_order_status": "CMYK",
+      "profile": null,
+      "printing_condition": "",
+      "substrate": "",
+      "rendering_intent": null,
+      "black_point_compensation": null,
+      "preparation_status": "PROFILE_MISSING",
+      "missing": [
+        "ICC_PROFILE",
+        "PRINTING_CONDITION",
+        "SUBSTRATE",
+        "RENDERING_INTENT",
+        "BLACK_POINT_COMPENSATION",
+        "ICC_TRANSFORM"
+      ],
+      "device_values": null,
+      "feasibility": {
+        "status": "NOT_EVALUATED",
+        "result": null
+      },
+      "measured_qc": {
+        "status": "NOT_MEASURED",
+        "record": null
+      },
+      "production_approval": "NOT_PROVIDED"
+    },
+    {
+      "path_id": "ECG",
+      "input_kind": "FROZEN_ATLAS_REFERENCES",
+      "input_from_path": null,
+      "input_references": [
+        {
+          "source_atlas_row_id": 10519,
+          "production_atlas_row_id": 10519
+        }
+      ],
+      "expected_device_space": "7CLR",
+      "channel_order": null,
+      "channel_order_status": "REQUIRES_PROFILE_AND_PRESS_CONFIRMATION",
+      "profile": null,
+      "printing_condition": "",
+      "substrate": "",
+      "rendering_intent": null,
+      "black_point_compensation": null,
+      "preparation_status": "PROFILE_MISSING",
+      "missing": [
+        "ICC_PROFILE",
+        "PRINTING_CONDITION",
+        "SUBSTRATE",
+        "RENDERING_INTENT",
+        "BLACK_POINT_COMPENSATION",
+        "ICC_TRANSFORM"
+      ],
+      "device_values": null,
+      "feasibility": {
+        "status": "NOT_EVALUATED",
+        "result": null
+      },
+      "measured_qc": {
+        "status": "NOT_MEASURED",
+        "record": null
+      },
+      "production_approval": "NOT_PROVIDED"
+    }
+  ]
+}
