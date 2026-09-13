@@ -32,6 +32,9 @@ Export Clarus JSON → import and compare.**
   supplied Lab values and other annotations do not overwrite canonical values.
 - Creating, duplicating or importing a 51st palette is blocked before mutation.
   Adding a 65th colour or an already present reference gives explicit feedback.
+- Narrow navigation now uses a fully opaque background. Hash routing is deferred
+  to the next animation frame and both document and views reserve the sticky
+  72-pixel header offset, preventing routed headings from being obscured.
 
 ## Basis-23 B/A preview regression repair
 
@@ -61,9 +64,11 @@ RC19 archives remain historical artifacts; RC20 gets a distinct version and ZIP.
 - `node browser-bundle/tests/validate_palette_workspace.js`: PASS. Actual shipped
   handler execution with injected storage failure, in-memory preservation,
   persistent warning, recovery, and 49/50 workspace capacity.
+- `node browser-bundle/tests/validate_layout.js`: PASS. Opaque narrow navigation,
+  sticky-header scroll offsets and deferred route scrolling are present.
 - `python identity-handoff/tests/validate_vectors.py`: PASS (1 valid, 8 invalid).
 - Reproducible ZIP and checked-in distribution parity: PASS (two identical builds).
-  RC20 ZIP SHA-256: `eba176e9ae2c66692366ea04c1715acbf583cce993e5274ea236c516e7c5b6c6`.
+  RC20 ZIP SHA-256: `470660da40ea4ec5d598c599201cdb4f08ead7d3498a12d4e7b59f69d85c9185`.
 
 The workspace test executes shipped function bodies with small storage/DOM
 boundaries. It is not a real browser, visual, upload, download or accessibility test.
@@ -92,6 +97,10 @@ or visually accepted release on the strength of the code tests alone.
 
 Perform desktop `file://` and a real smartphone test separately; a narrow desktop
 viewport does not prove a mobile browser's file/download behaviour.
+
+The WordPress canvas wrapper owns the separate **Zur Homepage** control. Its
+floating overlay must be replaced by an in-flow navigation link in the matching
+WordPress package; that wrapper change is not part of this standalone bundle.
 
 ## Next release decision
 

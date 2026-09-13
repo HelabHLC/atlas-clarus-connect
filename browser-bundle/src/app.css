@@ -35,3 +35,10 @@
 .quick-start ol{padding-left:22px;line-height:1.65}.quick-start li{margin:8px 0}.quick-start p{color:var(--muted);font-size:.85rem;line-height:1.5}
 .palette-storage-status{position:relative;z-index:5;margin:16px 24px;padding:14px 18px;border:1px solid #c69a40;background:#302713;color:#ffe5a7;line-height:1.5}
 .palette-storage-status[hidden]{display:none}
+
+/* RC20 responsive acceptance fixes. */
+:root{--topbar-height:72px}
+html{scroll-padding-top:var(--topbar-height)}
+.topbar{height:var(--topbar-height);background:#0a0d12}
+.view{scroll-margin-top:var(--topbar-height)}
+@media(max-width:900px){.topbar nav{top:var(--topbar-height);isolation:isolate;background:#0a0d12;box-shadow:0 22px 40px #000}}

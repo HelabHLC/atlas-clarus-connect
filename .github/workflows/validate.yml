@@ -43,6 +43,8 @@ jobs:
         run: node browser-bundle/tests/validate_palette_workspace.js
       - name: Validate Basis-23 before-after previews
         run: node browser-bundle/tests/validate_basis23_preview.js
+      - name: Validate responsive layout safeguards
+        run: node browser-bundle/tests/validate_layout.js
       - name: Build and validate reproducible bundle
         run: python browser-bundle/tests/validate_bundle.py
 
