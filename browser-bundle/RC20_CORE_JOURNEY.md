@@ -33,6 +33,13 @@ Export Clarus JSON → import and compare.**
 - Creating, duplicating or importing a 51st palette is blocked before mutation.
   Adding a 65th colour or an already present reference gives explicit feedback.
 
+## Basis-23 B/A preview regression repair
+
+- Restores the verified computational display values for all 13,283 recipes.
+- Shows `Before — ATLAS Target` and `After — Computed Mix` without changing the PKL reference identity.
+- Keeps the visible boundary `COMPUTATIONAL PREVIEW · NOT PHYSICALLY VERIFIED`.
+- Treats a missing or invalid display reconstruction as fail-closed instead of inventing an After colour.
+
 ## Frozen contract
 
 Master SHA-256:
@@ -45,6 +52,9 @@ RC19 archives remain historical artifacts; RC20 gets a distinct version and ZIP.
 
 ## Executed checks
 
+- `node browser-bundle/tests/validate_basis23_preview.js`: PASS. All 13,283
+  display reconstructions validate; row 1702 renders both B/A colours and the
+  physical-validation boundary.
 - `node browser-bundle/tests/validate_sampling.js`: PASS.
 - `node browser-bundle/tests/validate_exports.js`: PASS. Real-master Clarus round
   trip, complete-file rejection vectors, 64/65 boundary and existing ASE readback.
@@ -53,7 +63,7 @@ RC19 archives remain historical artifacts; RC20 gets a distinct version and ZIP.
   persistent warning, recovery, and 49/50 workspace capacity.
 - `python identity-handoff/tests/validate_vectors.py`: PASS (1 valid, 8 invalid).
 - Reproducible ZIP and checked-in distribution parity: PASS (two identical builds).
-  RC20 ZIP SHA-256: `24cd090171ea8a36319c64e2856d775765a60135805ea15f187adb3331478788`.
+  RC20 ZIP SHA-256: `eba176e9ae2c66692366ea04c1715acbf583cce993e5274ea236c516e7c5b6c6`.
 
 The workspace test executes shipped function bodies with small storage/DOM
 boundaries. It is not a real browser, visual, upload, download or accessibility test.

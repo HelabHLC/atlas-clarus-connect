@@ -17,6 +17,7 @@
 .basis23-recipe a{padding:8px 0;color:#8edbff}
 .basis23-recipe .within{color:#b0ef9b}.basis23-recipe .outside{color:#ffb0a3}
 .basis23-recipe .recipe-note{color:var(--muted);font-size:.75rem}
+.basis23-recipe .recipe-preview-boundary{color:#e7d2a2;font-size:.72rem;font-weight:750;letter-spacing:.05em;margin:10px 0 6px}
 
 .recipe-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 8px}
 .recipe-comparison strong{display:block;font-size:14px;line-height:1.5;min-height:42px}

@@ -67,5 +67,9 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert 'id="palette-storage-status"' in html
     assert 'Your first palette · four steps' in html
     assert 'validateClarus(data,colors,MASTER)' in html
+    assert html.count('"mix_display"')==13283
+    assert 'Before — ATLAS Target' in html
+    assert 'After — Computed Mix' in html
+    assert 'COMPUTATIONAL PREVIEW · NOT PHYSICALLY VERIFIED' in html
 
 print(f'PASS: reproducible RC20 core-journey bundle {first}')

@@ -40,6 +40,15 @@ for shard in sorted((ROOT/'hover-library/data/basis23-recipes').glob('*.json')):
     recipes.extend(json.loads(shard.read_text(encoding='utf-8')))
 assert len(recipes)==13283
 assert all(recipe['basis_version']==registry['basis_version'] for recipe in recipes)
+mix_display=json.loads((ROOT/'hover-library/data/basis23-mix-display.json').read_text(encoding='utf-8'))
+assert mix_display['dataset']=='ATLAS_BASIS23_MIX_DISPLAY_V1'
+assert mix_display['atlas_master_sha256']==MASTER
+assert mix_display['basis_version']==registry['basis_version']
+assert mix_display['rows']==13283 and len(mix_display['displays'])==13283
+for expected_id,(recipe,display_row) in enumerate(zip(recipes,mix_display['displays'])):
+    assert recipe['source_atlas_row_id']==expected_id
+    assert display_row['source_atlas_row_id']==expected_id
+    recipe['mix_display']=display_row['mix_display']
 basis_payload='window.ATLAS_BASIS23_DATA='+json.dumps({'registry':registry,'rows':recipes},separators=(',',':'),ensure_ascii=False)+';\n'
 (DIST/'assets/basis23-data.js').write_text(basis_payload,encoding='utf-8')
 
