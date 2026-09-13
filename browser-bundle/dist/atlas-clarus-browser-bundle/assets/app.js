@@ -21,7 +21,9 @@
     views.forEach(v=>v.classList.toggle('active',v.id===id));
     document.querySelectorAll('[data-back-hover]').forEach(b=>b.hidden=!hoverReturn);
     if(id==='wheel')drawWheel();if(id==='appearance')drawSimulation();
-    scrollTo({left:restore?.x||0,top:restore?.y||0,behavior:'instant'});
+    // Native hash scrolling may run after this listener. Move on the next frame
+    // so a newly activated view cannot start beneath the sticky header.
+    requestAnimationFrame(()=>scrollTo({left:restore?.x||0,top:restore?.y||0,behavior:'instant'}));
   }
   addEventListener('hashchange',route);
   const menuToggle=$('#menu-toggle'),primaryNav=$('#primary-nav');
