@@ -68,9 +68,7 @@ Workflow v3.4.0. Source assignment and A′ v0.4 are unchanged.
 ## Current capability boundary
 
 This implementation makes the previously missing preparation/transfer step
-usable offline. It does **not** introduce an ICC transform engine, calculate
-CMYK or seven-channel values, create a PDF/X file, automate Scribus, or verify a
-physical print. No real 4C or ECG production profile is bundled with this feature.
+usable offline. The reference handoff does **not** calculate or export production-ready CMYK or seven-channel values, create a PDF/X file, automate Scribus, or verify a physical print. RC22 separately provides [ICC image previews](PRINT_IMAGE_PREVIEW.md); these previews do not populate the reference handoff with output values. No real 4C or ECG production profile is bundled with this feature.
 Missing profiles and calculations stay open in **both** paths. The existing
 Wheel measurement-entry widget is not copied into either production QC record.
 

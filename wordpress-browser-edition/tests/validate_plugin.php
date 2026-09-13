@@ -101,10 +101,11 @@ check(ATLAS_Clarus_Browser_Edition::runtime_ready(), 'Existing RC20 runtime no l
 $z = new ZipArchive(); check($z->open($package . '/assets/bundle.zip') === true, 'Missing bundle');
 $manifest = json_decode($z->getFromName('atlas-clarus-browser-bundle/BUNDLE_MANIFEST.json'), true);
 $html = $z->getFromName('atlas-clarus-browser-bundle/index.html'); $z->close();
-check(invoke_private('validate_manifest', $manifest) === true, 'Pinned RC21 manifest rejected');
+check(invoke_private('validate_manifest', $manifest) === true, 'Pinned RC22 manifest rejected');
 foreach (array('version' => '0.2.0-rc20-core-journey', 'master_rows' => '13283',
     'master_sha256' => str_repeat('0', 64), 'print_topology' => '4C_TO_ECG',
-    'print_device_calculation' => 'IMPLEMENTED', 'print_paths' => array('ECG', '4C'),
+    'print_device_calculation' => 'IMPLEMENTED', 'image_preview_max_edge' => '1200',
+    'image_preview_paper_white_simulation' => true, 'image_preview_exports' => array('BA_PNG'), 'print_paths' => array('ECG', '4C'),
     'print_exports' => array('PARALLEL_PRINT_JSON')) as $key => $value) {
     $bad = $manifest; $bad[$key] = $value;
     check(is_wp_error(invoke_private('validate_manifest', $bad)), 'Accepted invalid ' . $key);
@@ -144,17 +145,17 @@ foreach (array('unzip', 'manifest', 'checksum') as $failure) {
     check(count(glob(dirname($old) . '/*', GLOB_ONLYDIR)) === 1, 'Failed attempt left extraction directory');
 }
 $fault = '';
-check(invoke_private('install_bundle') === true, 'RC21 installation failed');
+check(invoke_private('install_bundle') === true, 'RC22 installation failed');
 $runtime = $options[ATLAS_Clarus_Browser_Edition::OPTION_RUNTIME_PATH];
 check($runtime !== $old && is_file($runtime . '/index.html'), 'New runtime not selected');
 check($options[ATLAS_Clarus_Browser_Edition::OPTION_RUNTIME_SHA] === ATLAS_Clarus_Browser_Edition::BUNDLE_SHA256, 'SHA not recorded');
 $previous = $options[ATLAS_Clarus_Browser_Edition::OPTION_PREVIOUS_RUNTIME];
 check($previous === array('path' => $old, 'sha' => 'previous-sha', 'at' => 'previous-date'), 'Rollback snapshot differs');
 check(invoke_private('install_bundle') === true, 'Repeated install failed');
-check($options[ATLAS_Clarus_Browser_Edition::OPTION_PREVIOUS_RUNTIME] === $previous, 'Repeated install replaced rollback with RC21');
+check($options[ATLAS_Clarus_Browser_Edition::OPTION_PREVIOUS_RUNTIME] === $previous, 'Repeated install replaced rollback with RC22');
 check(is_file($runtime . '/index.html') && is_file($old . '/index.html'), 'Repeat install removed existing runtime');
 
-// Real RC21 document: navigation injection must preserve application script bytes.
+// Real RC22 document: navigation injection must preserve application script bytes.
 $injected = invoke_private('inject_canvas_exit_button', $html);
 check(substr_count($injected, 'id="atlas-clarus-canvas-exit"') === 1, 'Homepage link absent or duplicated');
 check(strpos($injected, 'id="atlas-clarus-canvas-exit"') < strpos($injected, '</nav>'), 'Homepage link outside navigation');
@@ -168,7 +169,7 @@ register_shutdown_function(function () use ($old) {
     check(get_option(ATLAS_Clarus_Browser_Edition::OPTION_RUNTIME_SHA) === 'previous-sha', 'Rollback did not restore SHA');
     check(get_option(ATLAS_Clarus_Browser_Edition::OPTION_INSTALLED_AT) === 'previous-date', 'Rollback did not restore timestamp');
     check($GLOBALS['notice']['success'] === true && isset($GLOBALS['redirect']), 'Rollback notice/redirect missing');
-    echo "PASS: RC21 PHP manifest, guarded mutations, failure preservation, install, repeat install, canvas injection and rollback\n";
+    echo "PASS: RC22 PHP manifest, guarded mutations, failure preservation, install, repeat install, canvas injection and rollback\n";
 });
 $finished = true;
 ATLAS_Clarus_Browser_Edition::handle_rollback_request();

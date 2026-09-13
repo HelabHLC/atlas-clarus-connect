@@ -6,7 +6,7 @@
     const P = root.ATLAS_CLARUS_PRINT;
     const $ = selector => section.querySelector(selector);
     const escape = value => String(value).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-    let entries = [], busy = false;
+    let entries = [], busy = false, preview = null;
     const settings = { '4C': P.emptySettings(), ECG: P.emptySettings() };
     function message(value, error = false) {
       $('#print-message').textContent = value;
@@ -14,7 +14,7 @@
     }
     function lock(value) {
       busy = value;
-      section.querySelectorAll('button,input,select').forEach(el => { el.disabled = value; });
+      section.querySelectorAll('button,input,select').forEach(el => { if (!el.closest('#print-image-preview')) el.disabled = value; });
       $('#print-export').disabled = value || !entries.length;
       $('#print-report').disabled = value || !entries.length;
       P.PATHS.forEach(id => { $(`[data-print-path="${id}"] [data-profile-clear]`).disabled = value || !settings[id].profile; });
@@ -29,7 +29,7 @@
       const s = settings[id], card = $(`[data-print-path="${id}"]`);
       const status = card.querySelector('[data-path-status]');
       status.textContent = !s.profile ? 'Profile missing' : !s.printing_condition.trim() || !s.substrate.trim() ||
-        s.rendering_intent === null || s.black_point_compensation === null ? 'Complete the print settings' : 'Prepared · ICC calculation still required';
+        s.rendering_intent === null || s.black_point_compensation === null ? 'Complete the print settings' : 'Prepared · reference output calculation still required';
       const p = s.profile;
       card.querySelector('[data-profile-summary]').innerHTML = p ?
         `<b>${escape(p.file_name)}</b><span>ICC ${escape(p.version)} · ${escape(p.device_space)} / ${escape(p.pcs)}</span><code>${escape(p.sha256)}</code><small>File structure checked. Transform not validated.</small>` : '<span>No output profile attached.</span>';
@@ -56,23 +56,23 @@
         const key = input.dataset.setting;
         settings[id][key] = key === 'black_point_compensation' ? (input.value === '' ? null : input.value === 'true') :
           key === 'rendering_intent' ? input.value || null : input.value;
-        renderPath(id);
+        preview?.invalidate(id); renderPath(id);
       }));
       card.querySelector('[data-profile-file]').addEventListener('change', async event => {
         const file = event.target.files[0]; event.target.value = '';
         if (!file || busy) return;
-        settings[id].profile = null; renderPath(id); lock(true);
+        settings[id].profile = null; preview?.invalidate(id); renderPath(id); lock(true);
         message(`Checking ${id} output profile…`);
         try {
           if (file.size > P.MAX_PROFILE_BYTES) throw Error('ICC files must be no larger than 16 MiB.');
           const profile = await P.readProfile(new Uint8Array(await file.arrayBuffer()), file.name, id);
-          settings[id].profile = profile;
+          settings[id].profile = profile; preview?.invalidate(id);
           message(`${id} profile attached. The other path is unchanged. No device values have been calculated.`);
         } catch (error) { message(`${id} profile rejected: ${error.message}`, true); }
         finally { lock(false); renderPath(id); }
       });
       card.querySelector('[data-profile-clear]').onclick = () => {
-        settings[id].profile = null; renderPath(id); message(`${id} profile removed. The other path is unchanged.`);
+        settings[id].profile = null; preview?.invalidate(id); renderPath(id); message(`${id} profile removed. The other path is unchanged.`);
       };
       renderPath(id);
     }
@@ -110,13 +110,14 @@
           settings[id] = { profile: p.profile, printing_condition: p.printing_condition, substrate: p.substrate,
             rendering_intent: p.rendering_intent, black_point_compensation: p.black_point_compensation };
           card.querySelectorAll('[data-setting]').forEach(input => { const value = settings[id][input.dataset.setting]; input.value = value === null ? '' : String(value); });
-          renderPath(id);
+          preview?.invalidate(id); renderPath(id);
         }
         renderReferences(); message('Handoff restored: identities, independent paths and embedded profile hashes verified.');
       } catch (error) { message(`Import blocked: ${error.message} The current handoff was retained.`, true); }
       finally { lock(false); P.PATHS.forEach(renderPath); }
     };
     root.addEventListener('hashchange', () => { if (location.hash === '#print' && !entries.length) use('selected'); });
+    preview = root.ATLAS_CLARUS_PREVIEW_UI?.init({ ...context, getSettings: () => settings });
     renderReferences();
     if (location.hash === '#print') use('selected');
     return { open: use };

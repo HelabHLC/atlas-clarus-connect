@@ -30,11 +30,13 @@ def verify(root):
         block = source.split("$expected = array(", 1)[1].split(");", 1)[0]
         expected = {k: v[1:-1] if v.startswith("'") else int(v)
                     for k, v in re.findall(r"'([^']+)'\s*=>\s*('[^']*'|\d+)\s*,", block)}
-        assert len(expected) == 25
+        assert len(expected) == 28
         for k, v in expected.items():
             assert type(manifest.get(k)) is type(v) and manifest[k] == v, k
         assert manifest["print_paths"] == ["4C", "ECG"]
         assert manifest["print_exports"] == ["PARALLEL_PRINT_JSON", "READABLE_HTML_REPORT"]
+        assert manifest["image_preview_paper_white_simulation"] is False
+        assert manifest["image_preview_exports"] == ["BA_PNG", "PREVIEW_METADATA_JSON"]
         sampling = source.split("$expected_sampling = array(", 1)[1].split(");", 1)[0]
         assert manifest["sampling_modes"] == re.findall(r"'([^']+)'", sampling)
         checked = set()
@@ -58,12 +60,15 @@ def verify(root):
         "archive_crc": "PASS", "embedded_file_sha256": "PASS",
         "embedded_checksums_verified": len(checked), "strict_scalar_manifest_fields": len(expected),
         "sampling_and_parallel_print_arrays": "PASS", "source_manifest_alignment": "PASS",
-        "bundle_source_commit": "8dd064bffec54a845e35771f88dbfeebbe9acea6",
-        "bundle_source_ci": "https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/34775232421",
+        "source_base_commit": "664367843966c41a2bd5e673c22845533d6be059",
+        "source_candidate": "RC22 parallel image preview",
+        "source_review": "https://github.com/HelabHLC/atlas-clarus-connect/pull/29",
         "wrapper_php_execution": "SEPARATE_CI_JOB_WORDPRESS_BROWSER_EDITION",
         "wordpress_ionos_integration": "ACCEPTANCE_PENDING",
         "visual_desktop_and_real_smartphone": "ACCEPTANCE_PENDING",
-        "print_device_calculation": "NOT_IMPLEMENTED",
+        "print_device_calculation": manifest["print_device_calculation"],
+        "image_preview_engine": manifest["image_preview_engine"],
+        "real_press_profile_acceptance": "PENDING_USER_PROFILES",
     }
 
 

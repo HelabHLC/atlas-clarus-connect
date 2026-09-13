@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 BUNDLE=ROOT/'browser-bundle'
-VERSION='0.2.0-rc21-parallel-print-handoff'
+VERSION='0.2.0-rc22-parallel-image-preview'
 temp_output=tempfile.TemporaryDirectory(prefix='atlas-print-bundle-')
 OUTPUT=Path(temp_output.name)
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
@@ -48,7 +48,7 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert manifest['version']==VERSION
     assert manifest['master_sha256']==MASTER
     assert manifest['master_rows']==13283
-    assert manifest['status']=='PARALLEL_PRINT_PREPARATION_CANDIDATE'
+    assert manifest['status']=='PARALLEL_IMAGE_PREVIEW_CANDIDATE'
     assert manifest['primary_user_path']=='PICKER_HOVER_PALETTE_CLARUS_JSON'
     assert manifest['max_palettes']==50 and manifest['max_palette_colours']==64
     assert manifest['reproducible_zip'] is True
@@ -77,8 +77,13 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert 'COMPUTATIONAL PREVIEW · NOT PHYSICALLY VERIFIED' in html
 
     assert manifest['print_paths']==['4C','ECG']
-    assert manifest['print_device_calculation']=='NOT_IMPLEMENTED'
+    assert manifest['print_device_calculation']=='IMAGE_PREVIEW_ONLY_REFERENCE_HANDOFF_NOT_CALCULATED'
     assert 'ATLAS_CLARUS_PARALLEL_PRINT_HANDOFF' in html
+    assert manifest['image_preview']=='INDEPENDENT_ICC_ROUND_TRIPS_FROM_SAME_SRGB_IMAGE'
+    assert manifest['image_preview_max_edge']==1200
+    assert 'id="atlas-print-worker-source"' in html
+    assert 'assets/print-preview-ui.js' not in html
+    assert 'Original ↔ 4C preview' in html and 'Original ↔ ECG preview' in html
     assert 'assets/print-handoff.js' not in html and 'assets/print-ui.js' not in html
     assert 'id="print"' in html and 'data-prepare-print' in html
 

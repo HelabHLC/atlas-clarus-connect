@@ -55,3 +55,18 @@ html{scroll-padding-top:var(--topbar-height)}
 .print-rule{padding:16px;border-left:3px solid var(--accent);line-height:1.65;background:#101c1c}
 #print-message{min-height:24px;line-height:1.6;color:var(--accent)}#print-message.error{color:#ff9c9c}#print button:disabled{opacity:.5;cursor:not-allowed}#print-count{color:var(--accent)}
 @media(max-width:760px){.print-paths{grid-template-columns:1fr}.print-source,.print-path{padding:18px}.print-source-actions>button,.print-export-actions>button{width:100%}}
+
+/* Independent image previews share one sRGB source, never each other's output. */
+.print-image-preview{margin:30px 0;padding:24px;border:1px solid var(--line);border-radius:14px;background:#0d131c}
+.preview-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:16px 0}
+.preview-file-label{display:flex;flex-direction:column;gap:6px;max-width:100%}
+.preview-file-label input{max-width:100%}
+.preview-comparison{padding:20px 0;border-top:1px solid #263142;margin-top:24px}
+.preview-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.preview-pair figure{margin:0;min-width:0;background:#090c12;border:1px solid #263142;border-radius:8px;overflow:hidden}
+.preview-pair figcaption{padding:10px 12px;font-size:13px;color:#d6e0eb}
+.preview-pair canvas{display:block;width:100%;height:auto;background:#fff}
+.preview-pair canvas[hidden]{display:none}
+.preview-comparison [data-preview-status]{overflow-wrap:anywhere;font-size:14px}
+#print-image-preview button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:650px){.print-image-preview{padding:14px}.preview-pair{grid-template-columns:1fr}.preview-actions button{width:100%}}

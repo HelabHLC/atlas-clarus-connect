@@ -2,12 +2,12 @@
 
 This directory builds a standalone offline HTML edition of ATLAS Clarus Connect.
 
-Development candidate: **v0.2.0-rc21-parallel-print-handoff**.
+Development candidate: **v0.2.0-rc22-parallel-image-preview**.
 
 Adds offline preparation of **parallel 4C and ECG paths** from the same frozen
 references. Each path carries its own ICC file and print settings. The complete
 JSON can be exported and re-imported with identity and embedded-profile checks.
-Device calculation and physical QC remain open. See [print handoff](PRINT_HANDOFF.md).
+RC22 adds independent Original ↔ 4C and Original ↔ ECG image previews with local ICC round trips and B/A PNG export. Reference-job device values and physical QC remain open. See [image previews](PRINT_IMAGE_PREVIEW.md). See [print handoff](PRINT_HANDOFF.md).
 The checked-in `dist/` remains the RC20 baseline; development builds use `build/`.
 
 ## Primary user path
@@ -19,6 +19,7 @@ The checked-in `dist/` remains the RC20 baseline; development builds use `build/
 5. Export ASE or GPL when transferring swatches to a desktop design application.
 6. Choose **Prepare for print** for one reference or **Prepare palette for print**
    for the active palette. Prepare 4C and ECG in parallel, then export both paths.
+7. In Print preparation, load an image or use the Picker image. Attach a CMYK / 7CLR output profile and select intent/BPC for each path. Create the previews and save each B/A PNG and its calculation details.
 
 Local browser storage is a convenience, not a backup. RC20 keeps a visible warning
 when storage fails, retains the in-memory workspace for export, validates imported

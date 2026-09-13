@@ -83,7 +83,7 @@
           <label>Substrate<input data-setting="substrate" maxlength="160" placeholder="Paper or material specification"></label>
           <label>Rendering intent<select data-setting="rendering_intent"><option value="">Not specified</option></select></label>
           <label>Black-point compensation<select data-setting="black_point_compensation"><option value="">Not specified</option><option value="true">On</option><option value="false">Off</option></select></label>
-          <dl class="print-results"><dt>CMYK values</dt><dd>Not calculated</dd><dt>Feasibility</dt><dd>Not evaluated</dd><dt>Measured QC</dt><dd>NOT_MEASURED</dd></dl>
+          <dl class="print-results"><dt>Reference CMYK values</dt><dd>Not calculated</dd><dt>Feasibility</dt><dd>Not evaluated</dd><dt>Measured QC</dt><dd>NOT_MEASURED</dd></dl>
         </article>
         <article data-print-path="ECG" class="print-path">
           <div class="card-heading"><div><p class="eyebrow">PARALLEL PATH</p><h3>ECG · 7 channels</h3></div><span class="print-path-status" data-path-status></span></div>
@@ -94,14 +94,39 @@
           <label>Substrate<input data-setting="substrate" maxlength="160" placeholder="Paper or material specification"></label>
           <label>Rendering intent<select data-setting="rendering_intent"><option value="">Not specified</option></select></label>
           <label>Black-point compensation<select data-setting="black_point_compensation"><option value="">Not specified</option><option value="true">On</option><option value="false">Off</option></select></label>
-          <dl class="print-results"><dt>Seven-channel values</dt><dd>Not calculated</dd><dt>Feasibility</dt><dd>Not evaluated</dd><dt>Measured QC</dt><dd>NOT_MEASURED</dd></dl>
+          <dl class="print-results"><dt>Reference seven-channel values</dt><dd>Not calculated</dd><dt>Feasibility</dt><dd>Not evaluated</dd><dt>Measured QC</dt><dd>NOT_MEASURED</dd></dl>
           <p class="boundary">CMYKOGV channel order and FOGRA55 applicability must be confirmed from the supplied profile and printing condition.</p>
         </article>
+      </div>
+      <div id="print-image-preview" class="print-image-preview">
+        <p class="eyebrow">PARALLEL IMAGE COMPARISON</p><h2>One original. Two independent previews.</h2>
+        <p>Load an image, then attach the matching output profiles above and choose rendering intent and black-point compensation for each path.</p>
+        <div class="preview-actions"><label class="preview-file-label">Load preview image<input id="preview-image-file" type="file" accept="image/png,image/jpeg,image/webp"></label><button id="preview-use-picker">Use Image Picker image</button><button id="preview-run-both" disabled>Create both previews</button></div>
+        <p id="preview-image-status" role="status">PNG, JPEG or WebP · local processing · preview up to 1200 px on its longest side.</p>
+        <article class="preview-comparison" data-preview-path="4C">
+          <h3>Original ↔ 4C preview</h3>
+          <div class="preview-pair">
+            <figure><figcaption>Before · Original / browser sRGB</figcaption><canvas data-preview-original hidden aria-label="Original image for 4C comparison"></canvas></figure>
+            <figure><figcaption>After · 4C ICC preview</figcaption><canvas data-preview-after hidden aria-label="4C profile image preview"></canvas></figure>
+          </div>
+          <p data-preview-status role="status" aria-live="polite">Load an image to begin.</p>
+          <div class="preview-actions"><button data-preview-run disabled>Create 4C preview</button><button data-preview-save disabled>Save 4C B/A · PNG</button><button data-preview-metadata disabled>Save 4C preview details · JSON</button></div>
+        </article>
+        <article class="preview-comparison" data-preview-path="ECG">
+          <h3>Original ↔ ECG preview</h3>
+          <div class="preview-pair">
+            <figure><figcaption>Before · Original / browser sRGB</figcaption><canvas data-preview-original hidden aria-label="Original image for ECG comparison"></canvas></figure>
+            <figure><figcaption>After · ECG ICC preview</figcaption><canvas data-preview-after hidden aria-label="ECG profile image preview"></canvas></figure>
+          </div>
+          <p data-preview-status role="status" aria-live="polite">Load an image to begin.</p>
+          <div class="preview-actions"><button data-preview-run disabled>Create ECG preview</button><button data-preview-save disabled>Save ECG B/A · PNG</button><button data-preview-metadata disabled>Save ECG preview details · JSON</button></div>
+        </article>
+        <p class="boundary">Computational ICC image previews: browser sRGB → the selected output profile → sRGB. Both paths use the same original image. Return to sRGB is relative colorimetric, with no paper-white simulation. These are screen previews, not measured print results. The source image and previews are not stored in Print JSON; save the image comparisons separately. ATLAS reference identities are unchanged.</p>
       </div>
       <p class="print-rule">Both paths start from the same ATLAS references. Neither path receives the other path’s device values. Profile changes preserve the source identity.</p>
       <div class="print-export-actions"><button id="print-export">Export both paths · JSON</button><button id="print-report">Export readable report</button></div>
       <p id="print-message" role="status" aria-live="polite"></p>
-      <p class="boundary">Keep the handoff as a JSON file; this preparation is held in memory only. Attached ICC files (up to 16 MiB each) are embedded in the JSON. Device calculation, PDF/X output and physical measurement remain separate steps. The readable report is a preparation record, not a colour proof.</p>
+      <p class="boundary">Keep the handoff as a JSON file; this preparation is held in memory only. Attached ICC files (up to 16 MiB each) are embedded in the JSON. Reference device values, PDF/X output and physical measurement remain separate steps. The readable report is a preparation record, not a colour proof.</p>
     </section>
 
     <section id="appearance" class="view">
@@ -155,6 +180,8 @@
   <script src="assets/palette-export.js"></script>
   <script src="assets/image-sampling.js"></script>
   <script src="assets/print-handoff.js"></script>
+  <script type="application/json" id="atlas-print-worker-source">null</script>
+  <script src="assets/print-preview-ui.js"></script>
   <script src="assets/print-ui.js"></script>
   <script src="assets/app.js"></script>
 </body>

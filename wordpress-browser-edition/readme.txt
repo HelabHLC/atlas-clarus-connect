@@ -2,56 +2,54 @@
 Contributors: HelabHLC
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.11-beta1
+Stable tag: 0.1.12-beta1
 
-WordPress / IONOS delivery wrapper for ATLAS Clarus Browser Bundle RC21.
-STATUS: TEST CANDIDATE. Visual and WordPress/IONOS acceptance pending.
+WordPress / IONOS delivery wrapper for ATLAS Clarus Browser Bundle RC22.
+STATUS: TEST CANDIDATE. Visual, real press-profile and IONOS acceptance pending.
 
 == Installation / update ==
 
-1. Export important palettes as Clarus JSON. Export print jobs as Print JSON before closing or reloading: print jobs are held in memory.
+1. Export important palettes as Clarus JSON and print jobs as Print JSON before closing the page. Save image comparisons separately as B/A PNG and preview details JSON.
 2. WordPress > Plugins > Add New > Upload Plugin: upload this ZIP and replace the existing ATLAS Clarus Browser Edition. Do not delete/uninstall the old plugin first.
-3. Tools > ATLAS Clarus Browser Edition: the existing runtime stays active until you explicitly switch it. The supplied bundle must show v0.2.0-rc21-parallel-print-handoff.
-4. First test on your IONOS staging installation: select "Mitgeliefertes RC21 prüfen und aktiv schalten". This immediately switches the served runtime after verification.
-5. Open /atlas-clarus-browser-bundle/ and check the scenarios in IONOS_RC21_ABNAHME.md. Clear any enabled WordPress/IONOS page cache for this route if the old version remains visible.
-6. The control "Zur vorherigen Laufzeit zurückwechseln" restores the runtime active before the RC21 switch. It retains the previous files.
+3. Tools > ATLAS Clarus Browser Edition: the existing runtime stays active until you explicitly switch it. The supplied version must show v0.2.0-rc22-parallel-image-preview.
+4. First test on your IONOS staging installation: select "Mitgeliefertes RC22 prüfen und aktiv schalten". This immediately switches the served runtime after verification.
+5. Open /atlas-clarus-browser-bundle/ and follow IONOS_RC22_ABNAHME.md. Clear any enabled IONOS/WordPress page cache for this route if the old version remains visible.
+6. "Zur vorherigen Laufzeit zurückwechseln" restores the runtime active before RC22 was switched on, retaining its files.
 
-The plugin folder, options, full-canvas route, runtime route and shortcode [atlas_clarus_browser_edition] remain compatible. No page, menu or homepage setting is rewritten. The homepage link stays in the ATLAS navigation, without floating over content. WordPress needs a writable uploads directory and ZIP extraction support.
+The plugin folder, options, routes and shortcode [atlas_clarus_browser_edition] remain compatible. The homepage link stays in normal ATLAS navigation. WordPress needs a writable uploads directory and ZIP extraction support.
 
-== RC21 print preparation ==
+== Original / 4C and Original / ECG image previews ==
 
-Select a reference in Hover or Wheel and choose "Prepare for print", or prepare a whole palette. Both 4C and ECG begin with the same frozen ATLAS reference IDs. Each path has separate ICC attachments, printing condition, substrate, rendering intent and black-point compensation settings. There is no conversion from one path to the other.
+In Print preparation, load a PNG/JPEG/WebP image or choose "Use Image Picker image". Each path needs its own output profile (CMYK for 4C, 7CLR for ECG), rendering intent and BPC setting. "Create both previews" starts two independent calculations from the same browser sRGB image.
 
-Export/import the complete job as Print JSON; export the readable HTML report for review. The JSON includes the attached ICC bytes and hashes. Missing profiles and incomplete conditions remain visible. A 7CLR ICC header does not establish CMYKOGV channel order or FOGRA55 suitability.
+The bundled LittleCMS 2.16 engine (lcms-wasm 1.0.5, MIT) runs locally in WebAssembly workers, including offline. Each path performs sRGB -> selected profile's 16-bit device values -> sRGB. Return intent is relative colorimetric with BPC off. There is no paper-white simulation. Profiles need usable A2B and B2A transforms; missing or unsupported transforms produce a visible error instead of a fabricated preview.
 
-This candidate prepares a handoff. It does not calculate CMYK or ECG device values, create production PDF/X files or provide physical print approval. The frozen ATLAS master, RGB-only source assignment and A-prime v0.4 logic are unchanged.
+The comparison is capped at 1200 pixels on the longest side; transparency is composited on white. Export each B/A comparison as PNG and its image/profile hashes and settings as preview JSON. Changing one path invalidates only its preview. Changing the image invalidates both. Images are held in memory and are not embedded in Print Handoff JSON.
 
-== Integrity / provenance ==
+These are computational screen previews, not measured or certified print proofs. A 7CLR profile does not establish CMYKOGV order or FOGRA55 applicability. The frozen ATLAS master, RGB-only source assignment and A-prime logic are unchanged. Production-ready reference separations, PDF/X output and physical print approval remain open.
 
-Bundle version: v0.2.0-rc21-parallel-print-handoff
-Bundle ZIP bytes: 2102053
-Bundle SHA-256: d6bc4230d54e1160e6e1bb80179e4f106937f1f55a47eb1edc383e054914be95
-Master SHA-256: 8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4
-Master rows: 13283
-Bundle source commit: 8dd064bffec54a845e35771f88dbfeebbe9acea6
-Bundle source CI: https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/34775232421
-Source and WordPress CI: https://github.com/HelabHLC/atlas-clarus-connect/pull/29
+== Parallel reference handoff ==
 
-The installer checks the embedded ZIP size/SHA, strict manifest values and all listed file checksums before changing the runtime options. PACKAGE_VALIDATION.json records archive/source preflight, not a live WordPress test. The GitHub wordpress-browser-edition jobs separately execute PHP syntax, manifest rejection, installation failure preservation, successful switching and rollback tests using a WordPress API test shim. Visual and real IONOS integration checks remain open.
+Select a reference in Hover/Wheel and choose "Prepare for print", or prepare a palette. 4C and ECG carry the same frozen ATLAS IDs with separate profiles and settings. Print JSON exports/imports both paths and their exact profile bytes. The reference handoff does not contain the image preview's transient device values.
+
+== Integrity / validation ==
+
+The pinned bundle version, size and SHA-256 appear in the plugin admin page and PACKAGE_VALIDATION.json. The installer checks ZIP integrity, manifest identity and listed file hashes before switching. The source tree and CI results are reviewable at https://github.com/HelabHLC/atlas-clarus-connect/pull/29.
+
+Automated coverage includes native/WASM ICC vectors, actual worker execution through DOM controls, independent invalidation, unchanged ATLAS identities, reproducible builds and PHP 7.4/8.3 install/rollback tests using a WordPress API shim. Canvas IO in DOM tests is stubbed. These tests do not replace real browser/IONOS or physical press acceptance. Test profiles are artificial software fixtures and are not shipped as end-user profiles.
 
 == Changelog ==
 
+= 0.1.12-beta1 =
+* Embed RC22 with two independent profile-driven B/A image comparisons and PNG/metadata exports.
+* Pin and validate image-preview topology, engine and export manifest fields.
+* Preserve explicit runtime switch, previous-runtime rollback and navigation fixes.
+
 = 0.1.11-beta1 =
-* Embed the exact verified RC21 parallel print preparation bundle.
-* Validate the RC21 workflow, independent 4C/ECG paths, profile transport and export manifest fields.
-* Preserve the beta3 navigation correction, existing runtime options and explicit switch/rollback.
-* Add a reproducible WordPress package builder and executable PHP update/rollback tests in GitHub CI.
+* RC21 parallel 4C/ECG print preparation and profile transport.
 
 = 0.1.10-beta3 =
-* Move the homepage link into ATLAS navigation; opaque mobile menu and section scroll offset.
+* Homepage link in ATLAS navigation, opaque mobile menu and section scroll offset.
 
 = 0.1.10-beta2 =
-* Restore verified computational Before/After previews for all 13,283 Basis-23 recipes.
-
-= 0.1.10-beta1 =
-* Embed RC20 with strict manifest identity and palette import/storage checks.
+* Verified computational Before/After previews for all 13,283 Basis-23 recipes.
