@@ -13,7 +13,7 @@ from verify_package import verify
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent
-NAME = "ATLAS_Clarus_Browser_Edition_v0.1.12-beta1_RC22.zip"
+NAME = "ATLAS_Clarus_Browser_Edition_v0.1.14-beta1_RC22.zip"
 BUNDLE = "ATLAS_Clarus_Browser_Bundle_v0.2.0-rc22-parallel-image-preview.zip"
 FILES = ("atlas-clarus-browser-edition.php", "index.php", "readme.txt",
          "IONOS_RC22_ABNAHME.md", "verify_package.py")
