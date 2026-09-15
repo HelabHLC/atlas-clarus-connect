@@ -16,6 +16,13 @@ It combines three parts:
 
 ## Offline browser bundle
 
+**Development branch addition:** parallel 4C / ECG print preparation is now
+implemented as an offline handoff with exact embedded ICC files, separate path
+settings and verified JSON re-import. This is preparation only: device values,
+PDF/X output and physical QC are still open. See
+[`browser-bundle/PRINT_HANDOFF.md`](browser-bundle/PRINT_HANDOFF.md). RC21 development
+builds are separate from the checked-in RC20 baseline and do not publish a release.
+
 `browser-bundle/` builds a standalone edition that starts by opening `index.html`
 directly in a modern browser. It includes the Hover Library, Colour Identity
 Wheel, Identity Handoff, Appearance Pixel Simulator and documented workflow

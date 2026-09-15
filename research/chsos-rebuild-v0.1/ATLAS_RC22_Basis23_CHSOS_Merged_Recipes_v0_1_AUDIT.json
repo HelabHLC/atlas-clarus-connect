@@ -1,0 +1,100 @@
+{
+  "status": "PASS",
+  "dataset_sha256": "f6ce60d1b08e453924e45fb4a5a95e0887ec0bd1f3fcc4531c51b72cbe5355c7",
+  "row_count": 13283,
+  "within_de00_5": 12394,
+  "outside_de00_5": 889,
+  "improved_rows": 10074,
+  "rescued_to_le5": 801,
+  "regressions": 0,
+  "component_distribution": {
+    "1": 16,
+    "2": 1303,
+    "3": 4271,
+    "4": 7693
+  },
+  "top_new_chsos_usage": [
+    [
+      "PW 6 - anatase",
+      1410
+    ],
+    [
+      "PB 33 - manganese blue",
+      1400
+    ],
+    [
+      "PW 11 - antimony white",
+      1148
+    ],
+    [
+      "PW 21 - barium sulfate",
+      1014
+    ],
+    [
+      "PV 3 - gentian violet",
+      985
+    ],
+    [
+      "PW 7 - zinc sulfide",
+      859
+    ],
+    [
+      "PR 90 - eosin Y",
+      742
+    ],
+    [
+      "PG 36 - phthalo green YS",
+      724
+    ],
+    [
+      "PV 15 - ultramarine violet",
+      639
+    ],
+    [
+      "PY 53 - nickel titanium yellow",
+      571
+    ],
+    [
+      "PY 159 - praseodymium yellow",
+      519
+    ],
+    [
+      "Basic Red 9 - fuchsine",
+      483
+    ],
+    [
+      "PY 32 - strontium yellow",
+      430
+    ],
+    [
+      "PG 51 - victoria green",
+      427
+    ],
+    [
+      "PY 184 - bismuth vanadate yellow",
+      400
+    ],
+    [
+      "PY 154 - benzimidazolone yellow H3G",
+      382
+    ],
+    [
+      "PY 109 - isoindole yellow",
+      361
+    ],
+    [
+      "PY 3 – hansa yellow 10G",
+      351
+    ],
+    [
+      "PR 259 - ultramarine pink",
+      348
+    ],
+    [
+      "PY 151 - benzimidazolone yellow H4G",
+      333
+    ]
+  ],
+  "evidence_status": "MODEL_ONLY_NOT_PHYSICALLY_VALIDATED",
+  "errors": []
+}

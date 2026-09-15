@@ -1,8 +1,8 @@
 (function(root){
   'use strict';
   const MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4';
-  const BASIS='ATLAS_COMBINED_BASIS23_v0_8';
-  const SOURCES={CHSOS:'https://chsopensource.org/products/pigments-checker/',KIMERA_PAINTMIXING:'https://github.com/miciwan/PaintMixing'};
+  const BASIS='ATLAS_RC22_BASIS23_CHSOS_GORGIAS_v0_1';
+  const SOURCES={CHSOS:'https://chsopensource.org/products/pigments-checker/',CHSOS_SUPPLEMENT:'https://chsopensource.org/products/pigments-checker/',KIMERA:'https://github.com/miciwan/PaintMixing',KIMERA_PAINTMIXING:'https://github.com/miciwan/PaintMixing'};
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function validate(r,c){
     if(!r||!c||!Number.isInteger(c.id)||r.source_atlas_row_id!==c.id||r.reference!==c.ref||r.basis_version!==BASIS)throw Error('Recipe identity mismatch');
@@ -28,7 +28,7 @@
   }
   function displayValid(r){
     const d=r.mix_display;
-    return !!(d&&d.status==='VERIFIED'&&d.method==='KS_PROXY_D50_2DEG_400_700_BRADFORD_D65_SRGB_V1'&&/^#[0-9A-F]{6}$/.test(d.hex)&&Array.isArray(d.rgb)&&d.rgb.length===3&&d.rgb.every(v=>Number.isInteger(v)&&v>=0&&v<=255)&&d.hex==='#'+d.rgb.map(v=>v.toString(16).padStart(2,'0').toUpperCase()).join('')&&Number.isFinite(d.recomputed_de00)&&d.recomputed_de00>=0&&Number.isFinite(d.benchmark_error)&&d.benchmark_error>=0&&d.benchmark_error<=.001&&Math.abs(d.recomputed_de00-r.de00)<=.001&&typeof d.srgb_clipped==='boolean');
+    return !!(d&&d.status==='VERIFIED'&&d.method==='KS_PROXY_D50_2DEG_400_700_BRADFORD_D65_SRGB_V2_REBUILD'&&/^#[0-9A-F]{6}$/.test(d.hex)&&Array.isArray(d.rgb)&&d.rgb.length===3&&d.rgb.every(v=>Number.isInteger(v)&&v>=0&&v<=255)&&d.hex==='#'+d.rgb.map(v=>v.toString(16).padStart(2,'0').toUpperCase()).join('')&&Number.isFinite(d.recomputed_de00)&&d.recomputed_de00>=0&&Number.isFinite(d.benchmark_error)&&d.benchmark_error>=0&&d.benchmark_error<=.001&&Math.abs(d.recomputed_de00-r.de00)<=.001&&typeof d.srgb_clipped==='boolean');
   }
   function comparison(r,c){
     if(!displayValid(r))return '<p role="status">Mix preview unavailable: reconstruction not verified.</p>';
