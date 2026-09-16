@@ -83,6 +83,7 @@
           <label>Substrate<input data-setting="substrate" maxlength="160" placeholder="Paper or material specification"></label>
           <label>Rendering intent<select data-setting="rendering_intent"><option value="">Not specified</option></select></label>
           <label>Black-point compensation<select data-setting="black_point_compensation"><option value="">Not specified</option><option value="true">On</option><option value="false">Off</option></select></label>
+          <button data-profiled-reference>Create profile-bound reference data</button>
           <dl class="print-results"><dt>Reference CMYK values</dt><dd>Not calculated</dd><dt>Feasibility</dt><dd>Not evaluated</dd><dt>Measured QC</dt><dd>NOT_MEASURED</dd></dl>
         </article>
         <article data-print-path="ECG" class="print-path">
@@ -94,6 +95,8 @@
           <label>Substrate<input data-setting="substrate" maxlength="160" placeholder="Paper or material specification"></label>
           <label>Rendering intent<select data-setting="rendering_intent"><option value="">Not specified</option></select></label>
           <label>Black-point compensation<select data-setting="black_point_compensation"><option value="">Not specified</option><option value="true">On</option><option value="false">Off</option></select></label>
+          <label>Confirmed channel order<input data-profiled-channel-order maxlength="80" placeholder="e.g. C, M, Y, K, O, G, V"></label>
+          <button data-profiled-reference>Create profile-bound reference data</button>
           <dl class="print-results"><dt>Reference seven-channel values</dt><dd>Not calculated</dd><dt>Feasibility</dt><dd>Not evaluated</dd><dt>Measured QC</dt><dd>NOT_MEASURED</dd></dl>
           <p class="boundary">CMYKOGV channel order and FOGRA55 applicability must be confirmed from the supplied profile and printing condition.</p>
         </article>
@@ -182,8 +185,9 @@
   <script src="assets/print-handoff.js"></script>
   <script type="application/json" id="atlas-print-worker-source">null</script>
   <script src="assets/print-preview-ui.js"></script>
-  <script src="assets/print-ui.js"></script>
   <script src="assets/reference-card.js"></script>
+  <script src="assets/profiled-reference-card.js"></script>
+  <script src="assets/print-ui.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>

@@ -11,6 +11,7 @@ const env = vm.createContext({ Uint8Array, Uint16Array, Uint32Array, Int8Array, 
   atob, btoa, setTimeout, clearTimeout, performance, fetch: blocked, XMLHttpRequest: blocked });
 vm.runInContext(code, env);
 const calc = env.ATLAS_PREVIEW_CALCULATE;
+const separate = env.ATLAS_REFERENCE_SEPARATE;
 const pixels = Uint8Array.from(vectors.input_rgb.flatMap((v, i) => i % 3 === 2 ? [v, 255] : [v]));
 const intentNames = ['Perceptual', 'Relative colorimetric', 'Saturation', 'Absolute colorimetric'];
 const job = p => ({ path: p.path, width: 7, height: 1, pixels: pixels.slice(),
@@ -56,6 +57,16 @@ const job = p => ({ path: p.path, width: 7, height: 1, pixels: pixels.slice(),
     if (String.fromCharCode(...bad.profile.slice(at, at + 4)) === 'B2A0') bad.profile.set([0, 0, 0, 0], at);
   }
   await assert.rejects(calc(bad), /both A2B and B2A/);
+  for (const p of vectors.cases) {
+    const result = await separate({ path: p.path, rgb: [128, 64, 32], profile: job(p).profile,
+      intent: 'Relative colorimetric', bpc: false,
+      channelOrder: p.path === 'ECG' ? ['C','M','Y','K','O','G','V'] : undefined });
+    assert.equal(result.device_values_16bit.length, p.path === '4C' ? 4 : 7);
+    assert.ok(result.device_values_16bit.every(v => Number.isInteger(v) && v >= 0 && v <= 65535));
+    assert.equal(result.method, 'SRGB_TO_DEVICE16'); assert.equal(result.measured_qc, 'NOT_MEASURED');
+  }
+  await assert.rejects(separate({ path: 'ECG', rgb: [1,2,3], profile: job(vectors.cases[1]).profile,
+    intent: 'Relative colorimetric', bpc: false }), /channel order/i);
   assert.equal(networkCalls, 0);
   console.log('PASS: 16 exact native/WASM ICC vectors, real 4C and 7-channel round trips, isolated inputs, chunking, alpha, unsupported-profile rejection, zero network calls');
 })().catch(error => { console.error(error); process.exitCode = 1; });

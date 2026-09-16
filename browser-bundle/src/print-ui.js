@@ -34,6 +34,42 @@
       card.querySelector('[data-profile-summary]').innerHTML = p ?
         `<b>${escape(p.file_name)}</b><span>ICC ${escape(p.version)} · ${escape(p.device_space)} / ${escape(p.pcs)}</span><code>${escape(p.sha256)}</code><small>File structure checked. Transform not validated.</small>` : '<span>No output profile attached.</span>';
       card.querySelector('[data-profile-clear]').disabled = busy || !p;
+      card.querySelector('[data-profiled-reference]').disabled = busy || entries.length !== 1 || !p ||
+        !s.printing_condition.trim() || !s.substrate.trim() || s.rendering_intent === null || s.black_point_compensation === null;
+    }
+    const profileBytes = profile => {
+      const binary = atob(profile.data_base64);
+      return Uint8Array.from(binary, ch => ch.charCodeAt(0));
+    };
+    function runSeparation(job) {
+      return new Promise((resolve, reject) => {
+        const source = document.querySelector('#atlas-print-worker-source')?.textContent;
+        if (!source || source === 'null') return reject(Error('The embedded LittleCMS worker is unavailable.'));
+        const worker = new Worker(URL.createObjectURL(new Blob([source], { type: 'text/javascript' })));
+        worker.onmessage = event => {
+          if (event.data.type === 'reference-result') { worker.terminate(); resolve(event.data.result); }
+          if (event.data.type === 'error') { worker.terminate(); reject(Error(event.data.message)); }
+        };
+        worker.onerror = event => { worker.terminate(); reject(Error(event.message || 'LittleCMS worker failed.')); };
+        worker.postMessage(job, [job.profile.buffer]);
+      });
+    }
+    async function createProfiledReference(id) {
+      if (busy) return;
+      const card = $(`[data-print-path="${id}"]`), s = settings[id]; lock(true);
+      try {
+        if (entries.length !== 1) throw Error('Choose exactly one frozen ATLAS reference.');
+        const channelOrder = id === 'ECG' ? card.querySelector('[data-profiled-channel-order]').value.split(',').map(x => x.trim()).filter(Boolean) : undefined;
+        message(`Calculating ${id} device channels locally with LittleCMS…`);
+        const separation = await runSeparation({ operation: 'reference-separation', path: id, rgb: [...entries[0].rgb],
+          profile: profileBytes(s.profile), intent: s.rendering_intent, bpc: s.black_point_compensation, channelOrder });
+        const data = root.ATLAS_CLARUS_PROFILED_REFERENCE_CARD.create({ entry: entries[0], colors: context.colors,
+          master: context.master, profile: s.profile, settings: { ...s, path_id: id }, separation });
+        const stem = `ATLAS_Profiled_Reference_${data.reference.atlas_address}_${id}`;
+        context.download(stem + '.profiled-reference.json', JSON.stringify(data, null, 2), 'application/json');
+        message(`${id} reference separated and exported. Profile-bound, not measured, not certified; no device PDF was generated.`);
+      } catch (error) { message(`Profile-bound reference blocked: ${error.message}`, true); }
+      finally { lock(false); P.PATHS.forEach(renderPath); }
     }
     function use(scope) {
       if (busy) return;
@@ -74,6 +110,7 @@
       card.querySelector('[data-profile-clear]').onclick = () => {
         settings[id].profile = null; preview?.invalidate(id); renderPath(id); message(`${id} profile removed. The other path is unchanged.`);
       };
+      card.querySelector('[data-profiled-reference]').onclick = () => createProfiledReference(id);
       renderPath(id);
     }
     $('#print-use-selected').onclick = () => use('selected');

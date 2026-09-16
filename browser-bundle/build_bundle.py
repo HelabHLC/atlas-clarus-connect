@@ -25,7 +25,7 @@ def sha(path:Path)->str:
 if DIST.exists(): shutil.rmtree(DIST)
 (DIST/'assets').mkdir(parents=True)
 (DIST/'docs').mkdir()
-for name in ('index.html','app.css','basis23-recipes.js','palette-export.js','image-sampling.js','print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js','app.js'):
+for name in ('index.html','app.css','basis23-recipes.js','palette-export.js','image-sampling.js','print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js','profiled-reference-card.js','app.js'):
     target=DIST/('assets/'+name if name!='index.html' else name)
     shutil.copy2(HERE/'src'/name,target)
 
@@ -74,7 +74,7 @@ html=html.replace('<script src="assets/image-sampling.js"></script>','<script>'+
 worker=worker_source()
 (DIST/'assets/lcms-worker.js').write_text(worker,encoding='utf-8')
 html=html.replace('<script type="application/json" id="atlas-print-worker-source">null</script>', '<script type="application/json" id="atlas-print-worker-source">'+json.dumps(worker).replace('<','\\u003c')+'</script>')
-for module in ('print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js'):
+for module in ('print-handoff.js','print-preview-ui.js','reference-card.js','profiled-reference-card.js','print-ui.js'):
     script=(DIST/'assets'/module).read_text(encoding='utf-8')
     html=html.replace(f'<script src="assets/{module}"></script>','<script>'+script.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/app.js"></script>','<script>'+app.replace('</script','<\\/script')+'</script>')
