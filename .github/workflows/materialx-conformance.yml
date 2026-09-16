@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build MaterialX render service
         working-directory: materialx-render-service
         run: docker build --build-arg MATERIALX_VERSION=1.39.4 -t atlas-clarus-materialx:0.4.0 .
@@ -36,7 +36,7 @@ jobs:
       - name: Record container logs
         if: always()
         run: mkdir -p conformance-output && docker logs atlas-materialx > conformance-output/container.log 2>&1 || true
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: materialx-conformance-v0.4.0
