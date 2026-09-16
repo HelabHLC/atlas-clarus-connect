@@ -11,7 +11,7 @@ jobs:
   checked-in-archives:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Validate checked-in release and research archives
         shell: bash
         run: |
@@ -29,7 +29,7 @@ jobs:
   hover-library:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "7.4"
@@ -41,11 +41,11 @@ jobs:
   browser-bundle:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - name: Validate JavaScript syntax
@@ -85,7 +85,7 @@ jobs:
       - name: Validate independent B/A image interactions
         run: node browser-bundle/tests/validate_preview_ui.js
       - name: Upload offline candidate
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: atlas-clarus-parallel-print-candidate
           path: browser-bundle/build/*.zip
@@ -94,8 +94,8 @@ jobs:
   identity-handoff-vectors:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: python identity-handoff/tests/validate_vectors.py
@@ -106,8 +106,8 @@ jobs:
       matrix:
         php: ["7.4", "8.3"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - uses: shivammathur/setup-php@v2
@@ -135,7 +135,7 @@ jobs:
           php wordpress-browser-edition/tests/validate_plugin.php "$RUNNER_TEMP/atlas-plugin-test/atlas-clarus-browser-edition"
       - name: Upload installable IONOS candidate
         if: matrix.php == '8.3'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: atlas-clarus-ionos-rc22-plugin
           path: wordpress-browser-edition/build/*
@@ -147,8 +147,8 @@ jobs:
       run:
         working-directory: colour-identity-wheel/application
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
