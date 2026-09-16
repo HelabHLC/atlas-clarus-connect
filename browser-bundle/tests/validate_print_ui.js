@@ -1,6 +1,9 @@
 // DOM execution of the shipped offline application; not a visual browser test.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const printUiSource = fs.readFileSync('browser-bundle/src/print-ui.js', 'utf8');
+assert.match(printUiSource, /JSON\.parse\(encoded\)/, 'Reference separation must decode the JSON-embedded worker source');
+assert.match(printUiSource, /reference separation timed out/i, 'Reference separation must not lock the UI indefinitely');
 const { webcrypto } = require('node:crypto');
 const { JSDOM } = require('jsdom');
 const html = fs.readFileSync('browser-bundle/src/index.html', 'utf8');

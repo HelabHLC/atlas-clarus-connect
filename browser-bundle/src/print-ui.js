@@ -43,14 +43,25 @@
     };
     function runSeparation(job) {
       return new Promise((resolve, reject) => {
-        const source = document.querySelector('#atlas-print-worker-source')?.textContent;
-        if (!source || source === 'null') return reject(Error('The embedded LittleCMS worker is unavailable.'));
-        const worker = new Worker(URL.createObjectURL(new Blob([source], { type: 'text/javascript' })));
-        worker.onmessage = event => {
-          if (event.data.type === 'reference-result') { worker.terminate(); resolve(event.data.result); }
-          if (event.data.type === 'error') { worker.terminate(); reject(Error(event.data.message)); }
+        const encoded = document.querySelector('#atlas-print-worker-source')?.textContent;
+        if (!encoded || encoded === 'null') return reject(Error('The embedded LittleCMS worker is unavailable.'));
+        let source;
+        try { source = JSON.parse(encoded); } catch (_) { return reject(Error('The embedded LittleCMS worker is invalid.')); }
+        const url = URL.createObjectURL(new Blob([source], { type: 'text/javascript' }));
+        const worker = new Worker(url);
+        let settled = false;
+        const finish = (error, result) => {
+          if (settled) return;
+          settled = true; clearTimeout(timer); worker.terminate(); URL.revokeObjectURL(url);
+          error ? reject(error) : resolve(result);
         };
-        worker.onerror = event => { worker.terminate(); reject(Error(event.message || 'LittleCMS worker failed.')); };
+        const timer = setTimeout(() => finish(Error('LittleCMS reference separation timed out. Try another validated output profile.')), 30000);
+        worker.onmessage = event => {
+          if (event.data.type === 'reference-result') finish(null, event.data.result);
+          else if (event.data.type === 'error') finish(Error(event.data.message));
+          else finish(Error('Unexpected LittleCMS worker response.'));
+        };
+        worker.onerror = event => finish(Error(event.message || 'LittleCMS worker failed.'));
         worker.postMessage(job, [job.profile.buffer]);
       });
     }
