@@ -33,7 +33,8 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         prefix+'assets/app.js',prefix+'assets/app.css',prefix+'assets/atlas-data.js',
         prefix+'assets/basis23-data.js',prefix+'assets/basis23-recipes.js',
         prefix+'assets/palette-export.js',prefix+'assets/image-sampling.js',
-        prefix+'assets/print-handoff.js',prefix+'assets/print-ui.js'
+        prefix+'assets/print-handoff.js',prefix+'assets/print-ui.js',
+        prefix+'assets/reference-card.js'
     }
     assert required <= names
     sums=archive.read(prefix+'SHA256SUMS.txt').decode('utf-8').splitlines()
@@ -86,5 +87,10 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert 'Original ↔ 4C preview' in html and 'Original ↔ ECG preview' in html
     assert 'assets/print-handoff.js' not in html and 'assets/print-ui.js' not in html
     assert 'id="print"' in html and 'data-prepare-print' in html
+    assert 'ATLAS_CLARUS_REFERENCE_CARD' in html and 'data-reference-card' in html
+    assert 'assets/reference-card.js' not in html
+    assert manifest['reference_card_handoff_version']=='0.1.0'
+    assert manifest['reference_card_output_status']=='PRINTED_NOT_MEASURED'
+    assert manifest['reference_card_identity_change']=='NONE'
 
 print(f'PASS: reproducible parallel-print preparation bundle {first}')
