@@ -1,0 +1,75 @@
+{
+  "schema": "ATLAS_CLARUS_IMAGE_PICKER_REGRESSION_TEST_V1",
+  "test_case_id": "IMAGE_PICKER_AUSTRALIAN_HIBISCUS_001",
+  "title": "Australian Hibiscus — single-pixel PKL Full Reference resolution",
+  "status": "REPRODUCIBLE_VERIFIED",
+  "purpose": "Verify that the same source image, pixel coordinate and PKL master resolve to the same ATLAS reference identity after UI or implementation changes.",
+  "identity_policy": {
+    "assignment": "PKL_FULL_REFERENCE",
+    "primary_metric": "RGB_SQUARED_DISTANCE",
+    "lab_or_delta_e_used_for_assignment": false,
+    "statement": "Source pixel is observed RGB data. ATLAS result is the resolved PKL Full Reference identity."
+  },
+  "input": {
+    "subject": "Australian Hibiscus",
+    "sampling_mode_ui": "Single pixel",
+    "sampling_mode_result": "PIXEL_RGB",
+    "centre_coordinate": {"x": 512, "y": 161},
+    "source_pixel": {"rgb": [104, 63, 193], "hex": "#683FC1"}
+  },
+  "expected_result": {
+    "atlas_reference": "H305_L035_C080",
+    "atlas_row_id": 11215,
+    "master_rgb": [102, 52, 191],
+    "rgb_squared_distance": 129
+  },
+  "master_binding": {
+    "version": "v2_illumext",
+    "row_count": 13283,
+    "sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4"
+  },
+  "assertions": [
+    {"field": "sampling_mode_result", "operator": "equals", "expected": "PIXEL_RGB"},
+    {"field": "source_pixel.rgb", "operator": "equals", "expected": [104, 63, 193]},
+    {"field": "source_pixel.hex", "operator": "equals", "expected": "#683FC1"},
+    {"field": "atlas_reference", "operator": "equals", "expected": "H305_L035_C080"},
+    {"field": "atlas_row_id", "operator": "equals", "expected": 11215},
+    {"field": "master_rgb", "operator": "equals", "expected": [102, 52, 191]},
+    {"field": "rgb_squared_distance", "operator": "equals", "expected": 129}
+  ],
+  "comparison_context": {
+    "reported_hue_values_visible_in_source_graphic_degrees": {
+      "CIECAM02": 315,
+      "CIECAM16": 306,
+      "CIE_Lab": 302,
+      "additional_displayed_value": 311,
+      "OKLCh": 304
+    },
+    "normative_for_atlas_assignment": false,
+    "note": "Displayed hue values are comparison context only and must not be used as ground truth for ATLAS identity."
+  },
+  "evidence": {
+    "source_image": {
+      "file_name": "1789140197050.jfif",
+      "format": "JPEG_JFIF",
+      "pixel_dimensions": [800, 750],
+      "sha256": "c013bfbebdf28d0d5793d0bc42591d4de7bf331f181332605d968a3f7973acce",
+      "verified_pixel": {"coordinate": [512, 161], "rgb": [104, 63, 193]},
+      "repository_embedded": false
+    },
+    "result_screenshot": {
+      "file_name": "8006d7bd-cf6d-4f04-8816-002159e7a639.png",
+      "pixel_dimensions": [1600, 900],
+      "sha256": "53d29ca55c594f6c42e6ca7d6bd5c5183f79739331808d741a30c866e4a58149",
+      "scope": "Documents the visible Image Picker result and expected ATLAS assignment.",
+      "repository_embedded": false
+    }
+  },
+  "pass_condition": "All assertions match exactly when the original picker input image is sampled at x=512, y=161 against the same PKL master.",
+  "limitations": [
+    "The evidence images are hash-bound but not embedded in this repository fixture.",
+    "The expected ATLAS assignment is verified against the documented Browser Bundle result; independent execution still requires the Image Picker implementation, the bound master and the hash-matching source image.",
+    "Displayed hue values in the source graphic remain non-normative comparison context."
+  ],
+  "reproducibility_status": "REPRODUCIBLE_WITH_BOUND_SOURCE_IMAGE_AND_MASTER"
+}
