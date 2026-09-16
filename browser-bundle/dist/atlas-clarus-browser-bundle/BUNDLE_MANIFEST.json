@@ -1,7 +1,7 @@
 {
   "bundle": "ATLAS Clarus Browser Bundle",
-  "version": "0.2.0-rc19-area-sampling",
-  "status": "PROVENANCE_SYNC_CANDIDATE",
+  "version": "0.2.0-rc20-core-journey",
+  "status": "CORE_JOURNEY_TEST_CANDIDATE",
   "workflow": "ATLAS Clarus v3.4.0",
   "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
   "master_rows": 13283,
@@ -25,6 +25,11 @@
   "picker_handoff": "PICKER_TO_HOVER_TO_WHEEL_WITH_RETURN",
   "shared_palette_workspace": "HOVER_AND_WHEEL",
   "palette_persistence": "MULTI_PALETTE_LOCAL_BROWSER_ONLY",
+  "palette_storage_failure": "VISIBLE_PERSISTENT_WARNING",
+  "palette_import_validation": "STRICT_TYPED_FULL_FILE_BEFORE_MUTATION",
+  "primary_user_path": "PICKER_HOVER_PALETTE_CLARUS_JSON",
+  "max_palettes": 50,
+  "max_palette_colours": 64,
   "palette_management": [
     "CREATE",
     "NAME",

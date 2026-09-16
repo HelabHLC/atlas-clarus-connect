@@ -23,4 +23,40 @@ assert.deepEqual(clarus.references.map(r=>r.atlas_row_id),[0,4665]);
 assert.match(exportsApi.css(palette,master,'Validation Palette'),/Master SHA-256/);
 assert.match(exportsApi.gpl(palette,master,'Validation Palette'),/^GIMP Palette/);
 assert.equal(exportsApi.tokens(palette,master,'Validation Palette').color.H000_L095_C000.$value,'#F0F0F0');
-console.log('PASS: palette export structure and ASE round-trip');
+// Import uses the same validator shipped to the browser, against the real
+// public master projection. Export order must survive without re-binding RGB.
+const source = JSON.parse(fs.readFileSync('hover-library/data/colors.json','utf8'));
+assert.equal(source.master_sha256,master);
+const realPalette = [source.colors[0],source.colors[4966],source.colors[10519]];
+const exported = exportsApi.clarus(realPalette,master,'Round-trip fixture');
+const importedIds = data=>Array.from(exportsApi.validateClarus(data,source.colors,master));
+assert.deepEqual(importedIds(JSON.parse(JSON.stringify(exported))),realPalette.map(c=>c.id));
+const corrupt = change=>{
+  const candidate=JSON.parse(JSON.stringify(exported));change(candidate);
+  assert.throws(()=>importedIds(candidate));
+};
+corrupt(d=>d.master_sha256='different master');
+corrupt(d=>d.version='99');
+corrupt(d=>d.row_id_base=1);
+corrupt(d=>d.row_id_base='0');
+corrupt(d=>d.freeze_status='UNFROZEN');
+corrupt(d=>d.measured_qc_status='MEASURED');
+corrupt(d=>d.palette_name={name:'not a string'});
+for(const value of [null,false,true,'0',[],0.5,-1,13283]){
+  corrupt(d=>d.references[0].atlas_row_id=value);
+}
+corrupt(d=>d.references[0].reference='H999_L999_C999');
+corrupt(d=>d.references[0].master_hex='#NOTHEX');
+corrupt(d=>d.references[0].master_rgb.push(255));
+corrupt(d=>d.references[0].master_rgb.pop());
+corrupt(d=>d.references[0].master_rgb[0]=String(d.references[0].master_rgb[0]));
+corrupt(d=>d.references[0].master_rgb[0]=null);
+corrupt(d=>d.references[0]=null);
+corrupt(d=>d.references.push(d.references[0]));
+corrupt(d=>d.references=[]);
+const full = exportsApi.clarus(source.colors.slice(0,64),master,'64 colours');
+assert.equal(importedIds(full).length,64);
+assert.throws(()=>importedIds(exportsApi.clarus(source.colors.slice(0,65),master,'65 colours')));
+// The complete file is rejected even if its first references are valid.
+corrupt(d=>d.references[d.references.length-1].reference='wrong last reference');
+console.log('PASS: palette exports, ASE round-trip and strict full-master Clarus import vectors');

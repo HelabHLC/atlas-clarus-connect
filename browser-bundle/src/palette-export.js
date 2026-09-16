@@ -12,5 +12,30 @@
   function css(palette,master,name='ATLAS Clarus Palette'){return `/* ${name}\n   ATLAS Clarus · Master SHA-256: ${master}\n   Frozen reference identities; not measured QC.\n*/\n:root {\n${palette.map(c=>`  --atlas-${slug(c.ref)}: ${c.hex}; /* row ${c.id} · RGB ${c.rgb.join('/')} */`).join('\n')}\n}\n`}
   function gpl(palette,master,name='ATLAS Clarus Palette'){return `GIMP Palette\nName: ${name.replace(/[\r\n]/g,' ')}\nColumns: 4\n# Master SHA-256: ${master}\n# Frozen reference identities; not measured QC.\n${palette.map(c=>`${String(c.rgb[0]).padStart(3)} ${String(c.rgb[1]).padStart(3)} ${String(c.rgb[2]).padStart(3)}\t${c.ref}`).join('\n')}\n`}
   function clarus(palette,master,name='ATLAS Clarus Palette'){return {format:'ATLAS_CLARUS_PALETTE',version:'1.1',palette_name:name,workflow:'ATLAS Clarus v3.4.0',master_sha256:master,row_id_base:0,freeze_status:'FROZEN',measured_qc_status:'NOT_MEASURED',references:palette.map((c,index)=>({palette_index:index,atlas_row_id:c.id,reference:c.ref,master_rgb:c.rgb,master_hex:c.hex,master_lab:c.lab}))}}
-  global.ATLAS_CLARUS_EXPORTS={ase,readAse,tokens,css,gpl,clarus};
+  // Validate the entire file before the caller changes any workspace state.
+  // IDs and channels are numbers in our own exports: never coerce null,
+  // booleans, strings or arrays into a different reference identity.
+  function validateClarus(data,colors,master){
+    if(!data||data.format!=='ATLAS_CLARUS_PALETTE'||
+       !['1.0','1.1'].includes(data.version)||data.row_id_base!==0||
+       data.master_sha256!==master||data.freeze_status!=='FROZEN'||
+       data.measured_qc_status!=='NOT_MEASURED'||
+       (data.palette_name!==undefined&&typeof data.palette_name!=='string')||
+       !Array.isArray(data.references)||!data.references.length||data.references.length>64){
+      throw Error('Not a compatible Clarus palette or master.');
+    }
+    const masterById=new Map(colors.map(c=>[c.id,c])),seen=new Set(),ids=[];
+    for(const ref of data.references){
+      const c=ref&&Number.isInteger(ref.atlas_row_id)&&masterById.get(ref.atlas_row_id);
+      if(!c||seen.has(c.id)||ref.reference!==c.ref||
+         typeof ref.master_hex!=='string'||ref.master_hex.toUpperCase()!==c.hex.toUpperCase()||
+         !Array.isArray(ref.master_rgb)||ref.master_rgb.length!==3||
+         !c.rgb.every((v,i)=>Number.isInteger(ref.master_rgb[i])&&v===ref.master_rgb[i])){
+        throw Error('Identity validation failed.');
+      }
+      seen.add(c.id);ids.push(c.id);
+    }
+    return ids;
+  }
+  global.ATLAS_CLARUS_EXPORTS={ase,readAse,tokens,css,gpl,clarus,validateClarus};
 })(typeof window!=='undefined'?window:globalThis);

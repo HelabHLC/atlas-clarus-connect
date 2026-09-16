@@ -3,21 +3,24 @@ import hashlib
 import io
 import json
 import subprocess
+import tempfile
 import zipfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 BUNDLE=ROOT/'browser-bundle'
-VERSION='0.2.0-rc19-area-sampling'
-ZIP=BUNDLE/'dist'/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
+VERSION='0.2.0-rc22-parallel-image-preview'
+temp_output=tempfile.TemporaryDirectory(prefix='atlas-print-bundle-')
+OUTPUT=Path(temp_output.name)
+ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
-subprocess.run(['python3',str(BUNDLE/'build_bundle.py')],check=True)
+subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPUT)],check=True)
 first=digest(ZIP)
-subprocess.run(['python3',str(BUNDLE/'build_bundle.py')],check=True)
+subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPUT)],check=True)
 second=digest(ZIP)
 assert first==second, f'non-reproducible ZIP: {first} != {second}'
 
@@ -29,7 +32,9 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         prefix+'index.html',prefix+'BUNDLE_MANIFEST.json',prefix+'SHA256SUMS.txt',
         prefix+'assets/app.js',prefix+'assets/app.css',prefix+'assets/atlas-data.js',
         prefix+'assets/basis23-data.js',prefix+'assets/basis23-recipes.js',
-        prefix+'assets/palette-export.js',prefix+'assets/image-sampling.js'
+        prefix+'assets/palette-export.js',prefix+'assets/image-sampling.js',
+        prefix+'assets/print-handoff.js',prefix+'assets/print-ui.js',
+        prefix+'assets/reference-card.js'
     }
     assert required <= names
     sums=archive.read(prefix+'SHA256SUMS.txt').decode('utf-8').splitlines()
@@ -37,13 +42,16 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         expected,name=line.split('  ',1)
         actual=hashlib.sha256(archive.read(prefix+name)).hexdigest()
         assert actual==expected, f'checksum mismatch: {name}'
-        extracted=BUNDLE/'dist'/'atlas-clarus-browser-bundle'/name
+        extracted=OUTPUT/'atlas-clarus-browser-bundle'/name
         assert extracted.is_file(), f'extracted dist file missing: {name}'
         assert digest(extracted)==expected, f'extracted dist mismatch: {name}'
     manifest=json.loads(archive.read(prefix+'BUNDLE_MANIFEST.json'))
     assert manifest['version']==VERSION
     assert manifest['master_sha256']==MASTER
     assert manifest['master_rows']==13283
+    assert manifest['status']=='PARALLEL_IMAGE_PREVIEW_CANDIDATE'
+    assert manifest['primary_user_path']=='PICKER_HOVER_PALETTE_CLARUS_JSON'
+    assert manifest['max_palettes']==50 and manifest['max_palette_colours']==64
     assert manifest['reproducible_zip'] is True
     html=archive.read(prefix+'index.html').decode('utf-8')
     assert 'v'+VERSION in html
@@ -61,5 +69,28 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert 'assets/app.js' not in html and 'assets/atlas-data.js' not in html
     assert 'assets/image-sampling.js' not in html
     assert 'window.ATLAS_CLARUS_DATA=' in html
+    assert 'id="palette-storage-status"' in html
+    assert 'Your first palette · four steps' in html
+    assert 'validateClarus(data,colors,MASTER)' in html
+    assert html.count('"mix_display"')==13283
+    assert 'Before — ATLAS Target' in html
+    assert 'After — Computed Mix' in html
+    assert 'COMPUTATIONAL PREVIEW · NOT PHYSICALLY VERIFIED' in html
 
-print(f'PASS: reproducible RC19 area-sampling bundle {first}')
+    assert manifest['print_paths']==['4C','ECG']
+    assert manifest['print_device_calculation']=='IMAGE_PREVIEW_ONLY_REFERENCE_HANDOFF_NOT_CALCULATED'
+    assert 'ATLAS_CLARUS_PARALLEL_PRINT_HANDOFF' in html
+    assert manifest['image_preview']=='INDEPENDENT_ICC_ROUND_TRIPS_FROM_SAME_SRGB_IMAGE'
+    assert manifest['image_preview_max_edge']==1200
+    assert 'id="atlas-print-worker-source"' in html
+    assert 'assets/print-preview-ui.js' not in html
+    assert 'Original ↔ 4C preview' in html and 'Original ↔ ECG preview' in html
+    assert 'assets/print-handoff.js' not in html and 'assets/print-ui.js' not in html
+    assert 'id="print"' in html and 'data-prepare-print' in html
+    assert 'ATLAS_CLARUS_REFERENCE_CARD' in html and 'data-reference-card' in html
+    assert 'assets/reference-card.js' not in html
+    assert manifest['reference_card_handoff_version']=='0.1.0'
+    assert manifest['reference_card_output_status']=='PRINTED_NOT_MEASURED'
+    assert manifest['reference_card_identity_change']=='NONE'
+
+print(f'PASS: reproducible parallel-print preparation bundle {first}')

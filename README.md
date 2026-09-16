@@ -16,6 +16,13 @@ It combines three parts:
 
 ## Offline browser bundle
 
+**Development branch addition:** parallel 4C / ECG print preparation is now
+implemented as an offline handoff with exact embedded ICC files, separate path
+settings and verified JSON re-import. This is preparation only: device values,
+PDF/X output and physical QC are still open. See
+[`browser-bundle/PRINT_HANDOFF.md`](browser-bundle/PRINT_HANDOFF.md). RC21 development
+builds are separate from the checked-in RC20 baseline and do not publish a release.
+
 `browser-bundle/` builds a standalone edition that starts by opening `index.html`
 directly in a modern browser. It includes the Hover Library, Colour Identity
 Wheel, Identity Handoff, Appearance Pixel Simulator and documented workflow
@@ -26,7 +33,7 @@ server or network connection. Its application demos document integration
 boundaries; they do not embed or claim native browser execution of the desktop
 applications.
 
-Current candidate: **v0.2.0-rc19-area-sampling · PROVENANCE_SYNC_CANDIDATE**. The bundle uses a self-contained
+Current candidate: **v0.2.0-rc20-core-journey · CORE_JOURNEY_TEST_CANDIDATE**. The bundle uses a self-contained
 entrypoint so Windows may open `index.html` directly from the ZIP without losing
 the stylesheet, application code or embedded reference data. It restores the
 Wheel card workspace for harmony, tonal families, accessibility, ARBE comparison,
@@ -58,6 +65,8 @@ and 21 × 21 area means. Edge clipping, the alpha threshold (`alpha < 128`), val
 pixel counts, mean rounding and per-channel population standard deviation are
 covered by executable numerical tests. This observation step does not redefine a
 frozen `atlas_row_id` or change the full-master RGB-only binding.
+
+RC20 stabilises the primary path: image → reference → palette → Clarus JSON backup/import. It adds visible storage-failure feedback, strict typed import validation and explicit palette limits. Browser visual acceptance remains pending; see [the RC20 acceptance record](browser-bundle/RC20_CORE_JOURNEY.md).
 
 ## Current release contents
 

@@ -2,6 +2,31 @@
 
 This directory builds a standalone offline HTML edition of ATLAS Clarus Connect.
 
+Development candidate: **v0.2.0-rc22-parallel-image-preview**.
+
+Adds offline preparation of **parallel 4C and ECG paths** from the same frozen
+references. Each path carries its own ICC file and print settings. The complete
+JSON can be exported and re-imported with identity and embedded-profile checks.
+RC22 adds independent Original ↔ 4C and Original ↔ ECG image previews with local ICC round trips and B/A PNG export. Reference-job device values and physical QC remain open. See [image previews](PRINT_IMAGE_PREVIEW.md). See [print handoff](PRINT_HANDOFF.md).
+The checked-in `dist/` remains the RC20 baseline; development builds use `build/`.
+
+## Primary user path
+
+1. Open an image in Image Picker and sample one pixel or a square area.
+2. Choose **Open in Hover** to inspect the bound reference. The Wheel is optional.
+3. Choose **Add to palette** and name the palette.
+4. **Export Clarus JSON** as a portable backup; import it to restore exact references.
+5. Export ASE or GPL when transferring swatches to a desktop design application.
+6. Choose **Prepare for print** for one reference or **Prepare palette for print**
+   for the active palette. Prepare 4C and ECG in parallel, then export both paths.
+7. In Print preparation, load an image or use the Picker image. Attach a CMYK / 7CLR output profile and select intent/BPC for each path. Create the previews and save each B/A PNG and its calculation details.
+
+Local browser storage is a convenience, not a backup. RC20 keeps a visible warning
+when storage fails, retains the in-memory workspace for export, validates imported
+identities without numeric coercion, and reports the 64-colour / 50-palette limits.
+The import validates the complete file before adding a palette; it does not
+re-bind incoming RGB values. See [acceptance and remaining gates](RC20_CORE_JOURNEY.md).
+
 ## Build
 
 ```bash

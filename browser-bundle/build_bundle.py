@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """Build the deterministic, file:// compatible ATLAS Clarus browser ZIP."""
 from __future__ import annotations
-import hashlib, json, shutil, zipfile
+import argparse, hashlib, json, shutil, zipfile
 from pathlib import Path
+from build_lcms import worker_source
 
 ROOT=Path(__file__).resolve().parents[1]
 HERE=ROOT/'browser-bundle'
-DIST=HERE/'dist'/'atlas-clarus-browser-bundle'
-VERSION='0.2.0-rc19-area-sampling'
-ZIP=HERE/'dist'/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--output-dir', type=Path, default=HERE/'build', help='Development output directory (keeps the checked-in RC20 distribution intact).')
+OUTPUT=parser.parse_args().output_dir.resolve()
+DIST=OUTPUT/'atlas-clarus-browser-bundle'
+VERSION='0.2.0-rc22-parallel-image-preview'
+ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 ZIP_TIMESTAMP=(2026, 1, 1, 0, 0, 0)
 
@@ -21,7 +25,7 @@ def sha(path:Path)->str:
 if DIST.exists(): shutil.rmtree(DIST)
 (DIST/'assets').mkdir(parents=True)
 (DIST/'docs').mkdir()
-for name in ('index.html','app.css','basis23-recipes.js','palette-export.js','image-sampling.js','app.js'):
+for name in ('index.html','app.css','basis23-recipes.js','palette-export.js','image-sampling.js','print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js','app.js'):
     target=DIST/('assets/'+name if name!='index.html' else name)
     shutil.copy2(HERE/'src'/name,target)
 
@@ -40,6 +44,15 @@ for shard in sorted((ROOT/'hover-library/data/basis23-recipes').glob('*.json')):
     recipes.extend(json.loads(shard.read_text(encoding='utf-8')))
 assert len(recipes)==13283
 assert all(recipe['basis_version']==registry['basis_version'] for recipe in recipes)
+mix_display=json.loads((ROOT/'hover-library/data/basis23-mix-display.json').read_text(encoding='utf-8'))
+assert mix_display['dataset']=='ATLAS_BASIS23_MIX_DISPLAY_V1'
+assert mix_display['atlas_master_sha256']==MASTER
+assert mix_display['basis_version']==registry['basis_version']
+assert mix_display['rows']==13283 and len(mix_display['displays'])==13283
+for expected_id,(recipe,display_row) in enumerate(zip(recipes,mix_display['displays'])):
+    assert recipe['source_atlas_row_id']==expected_id
+    assert display_row['source_atlas_row_id']==expected_id
+    recipe['mix_display']=display_row['mix_display']
 basis_payload='window.ATLAS_BASIS23_DATA='+json.dumps({'registry':registry,'rows':recipes},separators=(',',':'),ensure_ascii=False)+';\n'
 (DIST/'assets/basis23-data.js').write_text(basis_payload,encoding='utf-8')
 
@@ -58,19 +71,27 @@ html=html.replace('<script src="assets/basis23-data.js"></script>','<script>'+ba
 html=html.replace('<script src="assets/basis23-recipes.js"></script>','<script>'+recipe_app.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/palette-export.js"></script>','<script>'+palette_export.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/image-sampling.js"></script>','<script>'+image_sampling.replace('</script','<\\/script')+'</script>')
+worker=worker_source()
+(DIST/'assets/lcms-worker.js').write_text(worker,encoding='utf-8')
+html=html.replace('<script type="application/json" id="atlas-print-worker-source">null</script>', '<script type="application/json" id="atlas-print-worker-source">'+json.dumps(worker).replace('<','\\u003c')+'</script>')
+for module in ('print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js'):
+    script=(DIST/'assets'/module).read_text(encoding='utf-8')
+    html=html.replace(f'<script src="assets/{module}"></script>','<script>'+script.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/app.js"></script>','<script>'+app.replace('</script','<\\/script')+'</script>')
 html=html.replace('v0.2.0-rc1','v'+VERSION)
 (DIST/'index.html').write_text(html,encoding='utf-8')
 
 docs={
-'README.html':('<h1>ATLAS Clarus Browser Bundle</h1><p>Open <code>index.html</code> directly in a modern browser. No server, account, installation or network connection is required.</p><h2>Included</h2><ul><li>Hover Library with 13,283 references</li><li>Shared Hover and Wheel palette workspace</li><li>ASE, GPL, Figma Tokens, CSS and Clarus JSON exports</li><li>Colour Identity Wheel</li><li>FAQ and Identity Handoff guidance</li><li>Appearance Pixel Simulator</li><li>Inkscape, GIMP, Krita and Scribus workflow demonstrations</li></ul><p><a href="../index.html">Return to ATLAS Clarus</a></p>'),
-'LICENSING.html':('<h1>Licensing and attribution</h1><p>Original software: <strong>GPL-2.0-or-later</strong>. Original ATLAS Clarus documentation: <strong>CC BY 4.0</strong>. HLC-derived reference data: <strong>zlib licence</strong>, subject to upstream notices.</p><h2>Upstream reference-data credit</h2><p><strong>Copyright (c) freieFarbe e.V.</strong></p><p>The reference files have been converted, indexed, reorganised or enriched for ATLAS Clarus. They are modified data products and are not presented as unchanged original freieFarbe distributions.</p><h2>ATLAS Clarus</h2><p>Copyright © 2026 ATLAS Clarus contributors.</p><p>The repository files <code>LICENSING.md</code>, <code>LICENSES/</code> and <code>THIRD_PARTY_NOTICES.md</code> are the authoritative licence map. ATLAS Clarus Connect is not affiliated with, endorsed by or certified by Pantone. No Pantone identity or equivalence is asserted.</p><p><a href="../index.html#credits">Return to credits</a></p>'),
+'README.html':('<h1>ATLAS Clarus Browser Bundle</h1><p>Open <code>index.html</code> directly in a modern browser. No server, account, installation or network connection is required.</p><h2>Included</h2><ul><li>Hover Library with 13,283 references</li><li>Shared Hover and Wheel palette workspace</li><li>ASE, GPL, Figma Tokens, CSS and Clarus JSON exports</li><li>Colour Identity Wheel</li><li>Parallel 4C / ECG print preparation with embedded ICC files and verified JSON re-import</li><li>Original / 4C and Original / ECG image comparisons, calculated locally with the selected ICC profiles, with B/A PNG exports</li><li>FAQ and Identity Handoff guidance</li><li>Appearance Pixel Simulator</li><li>Inkscape, GIMP, Krita and Scribus workflow demonstrations</li></ul><p><a href="../index.html">Return to ATLAS Clarus</a></p>'),
+'LICENSING.html':('<h1>Licensing and attribution</h1><p>Original software: <strong>GPL-2.0-or-later</strong>. Original ATLAS Clarus documentation: <strong>CC BY 4.0</strong>. HLC-derived reference data: <strong>zlib licence</strong>, subject to upstream notices.</p><h2>Upstream reference-data credit</h2><p><strong>Copyright (c) freieFarbe e.V.</strong></p><p>The reference files have been converted, indexed, reorganised or enriched for ATLAS Clarus. They are modified data products and are not presented as unchanged original freieFarbe distributions.</p><h2>Local ICC engine</h2><p>lcms-wasm 1.0.5 / LittleCMS 2.16, MIT. See LCMS-WASM-LICENSE.txt and LCMS-LICENSE.txt in this folder. <a href="https://github.com/mattdesl/lcms-wasm">Upstream project</a>.</p><h2>ATLAS Clarus</h2><p>Copyright © 2026 ATLAS Clarus contributors.</p><p>The repository files <code>LICENSING.md</code>, <code>LICENSES/</code> and <code>THIRD_PARTY_NOTICES.md</code> are the authoritative licence map. ATLAS Clarus Connect is not affiliated with, endorsed by or certified by Pantone. No Pantone identity or equivalence is asserted.</p><p><a href="../index.html#credits">Return to credits</a></p>'),
 'VALIDATION.html':(f'<h1>Validation record</h1><p>Status: <strong>READY_PENDING_VISUAL_AUDIT</strong></p><ul><li>Reference count: 13,283</li><li>Master SHA-256: <code>{MASTER}</code></li><li>Row IDs: zero-based and unique</li><li>Reproducible build and offline dependency scan: automated in GitHub Actions</li><li>A′ v0.4 selection logic: unchanged by this presentation bundle</li></ul><p><a href="../index.html">Return to ATLAS Clarus</a></p>')}
 style='<style>body{max-width:850px;margin:60px auto;padding:20px;background:#0a0d12;color:#eef2f6;font:17px/1.7 system-ui}a{color:#65dfff}code{color:#a4ff73}</style>'
 for name,body in docs.items():(DIST/'docs'/name).write_text('<!doctype html><meta charset="utf-8">'+style+body,encoding='utf-8')
 
-manifest={'bundle':'ATLAS Clarus Browser Bundle','version':VERSION,'status':'PROVENANCE_SYNC_CANDIDATE','workflow':'ATLAS Clarus v3.4.0','master_sha256':MASTER,'master_rows':13283,'row_id_base':0,'offline_entrypoint':'index.html','entrypoint_packaging':'SELF_CONTAINED_SINGLE_FILE','reproducible_zip':True,'observed_library_views':17,'image_picker':'ORIGINAL_8BIT_SRGB_PIXEL_OR_AREA_MEAN','sampling_modes':['PIXEL_RGB','AREA_MEAN_RGB_5_X_5','AREA_MEAN_RGB_11_X_11','AREA_MEAN_RGB_21_X_21'],'area_alpha_threshold':128,'area_edge_policy':'CLIP_TO_IMAGE_BOUNDS','area_variation':'PER_CHANNEL_POPULATION_STANDARD_DEVIATION_DIAGNOSTIC_ONLY','pixel_loupe':'ADAPTIVE_PIXEL_GRID_WITH_MARKED_SAMPLE_AREA','picker_binding':'RGB_SQUARED_DISTANCE_FULL_MASTER','picker_handoff':'PICKER_TO_HOVER_TO_WHEEL_WITH_RETURN','shared_palette_workspace':'HOVER_AND_WHEEL','palette_persistence':'MULTI_PALETTE_LOCAL_BROWSER_ONLY','palette_management':['CREATE','NAME','SELECT','DUPLICATE','DELETE','REORDER','STRICT_CLARUS_JSON_IMPORT'],'palette_exports':['ASE','GPL','FIGMA_TOKENS_JSON','CSS','CLARUS_JSON'],'basis23_recipes':'COMPUTATIONAL_ONLY_NOT_MEASURED','faq_tab':True,'visible_credit_tab':True,'licensing_summary_self_contained':True,'mobile_navigation':'HAMBURGER_ACCESSIBLE','upstream_reference_credit':'Copyright (c) freieFarbe e.V.','app_connections_format':'CAN_VERIFIED_NEEDED','a_prime_v04_logic':'UNCHANGED','measured_qc_status':'NOT_MEASURED','production_approval':'NOT_SUPPORTED'}
+manifest={'bundle':'ATLAS Clarus Browser Bundle','version':VERSION,'status':'PARALLEL_IMAGE_PREVIEW_CANDIDATE','workflow':'ATLAS Clarus v3.4.0','master_sha256':MASTER,'master_rows':13283,'row_id_base':0,'offline_entrypoint':'index.html','entrypoint_packaging':'SELF_CONTAINED_SINGLE_FILE','reproducible_zip':True,'observed_library_views':17,'image_picker':'ORIGINAL_8BIT_SRGB_PIXEL_OR_AREA_MEAN','sampling_modes':['PIXEL_RGB','AREA_MEAN_RGB_5_X_5','AREA_MEAN_RGB_11_X_11','AREA_MEAN_RGB_21_X_21'],'area_alpha_threshold':128,'area_edge_policy':'CLIP_TO_IMAGE_BOUNDS','area_variation':'PER_CHANNEL_POPULATION_STANDARD_DEVIATION_DIAGNOSTIC_ONLY','pixel_loupe':'ADAPTIVE_PIXEL_GRID_WITH_MARKED_SAMPLE_AREA','picker_binding':'RGB_SQUARED_DISTANCE_FULL_MASTER','picker_handoff':'PICKER_TO_HOVER_TO_WHEEL_WITH_RETURN','shared_palette_workspace':'HOVER_AND_WHEEL','palette_persistence':'MULTI_PALETTE_LOCAL_BROWSER_ONLY','palette_storage_failure':'VISIBLE_PERSISTENT_WARNING','palette_import_validation':'STRICT_TYPED_FULL_FILE_BEFORE_MUTATION','primary_user_path':'PICKER_HOVER_PALETTE_CLARUS_JSON','max_palettes':50,'max_palette_colours':64,'palette_management':['CREATE','NAME','SELECT','DUPLICATE','DELETE','REORDER','STRICT_CLARUS_JSON_IMPORT'],'palette_exports':['ASE','GPL','FIGMA_TOKENS_JSON','CSS','CLARUS_JSON'],'basis23_recipes':'COMPUTATIONAL_ONLY_NOT_MEASURED','faq_tab':True,'visible_credit_tab':True,'licensing_summary_self_contained':True,'mobile_navigation':'HAMBURGER_ACCESSIBLE','upstream_reference_credit':'Copyright (c) freieFarbe e.V.','app_connections_format':'CAN_VERIFIED_NEEDED','a_prime_v04_logic':'UNCHANGED','measured_qc_status':'NOT_MEASURED','production_approval':'NOT_SUPPORTED','reference_card_handoff_version':'0.1.0','reference_card_output_status':'PRINTED_NOT_MEASURED','reference_card_identity_change':'NONE','print_handoff_version':'0.1.0','print_topology':'PARALLEL_FROM_SAME_FROZEN_REFERENCE','print_paths':['4C','ECG'],'print_profile_transport':'EMBEDDED_ICC_WITH_SHA256','print_device_calculation':'IMAGE_PREVIEW_ONLY_REFERENCE_HANDOFF_NOT_CALCULATED','print_exports':['PARALLEL_PRINT_JSON','READABLE_HTML_REPORT'],'print_state_persistence':'IN_MEMORY_WITH_VERIFIED_JSON_IMPORT','image_preview':'INDEPENDENT_ICC_ROUND_TRIPS_FROM_SAME_SRGB_IMAGE','image_preview_engine':'LittleCMS 2.16 / lcms-wasm 1.0.5','image_preview_max_edge':1200,'image_preview_paper_white_simulation':False,'image_preview_exports':['BA_PNG','PREVIEW_METADATA_JSON']}
 (DIST/'BUNDLE_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
+for source_name,target_name in [('LICENSE.md','LCMS-WASM-LICENSE.txt'),('LCMS-LICENSE.txt','LCMS-LICENSE.txt'),('PROVENANCE.json','LCMS-PROVENANCE.json')]:
+    shutil.copyfile(HERE/'vendor/lcms-wasm'/source_name,DIST/'docs'/target_name)
 files=sorted(p for p in DIST.rglob('*') if p.is_file())
 (DIST/'SHA256SUMS.txt').write_text(''.join(f'{sha(p)}  {p.relative_to(DIST).as_posix()}\n' for p in files),encoding='utf-8')
 if ZIP.exists(): ZIP.unlink()
