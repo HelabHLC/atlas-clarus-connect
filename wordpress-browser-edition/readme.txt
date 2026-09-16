@@ -2,7 +2,7 @@
 Contributors: HelabHLC
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.14-beta1
+Stable tag: 0.1.12-beta1
 
 WordPress / IONOS delivery wrapper for ATLAS Clarus Browser Bundle RC22.
 STATUS: TEST CANDIDATE. Visual, real press-profile and IONOS acceptance pending.
@@ -39,15 +39,6 @@ The pinned bundle version, size and SHA-256 appear in the plugin admin page and 
 Automated coverage includes native/WASM ICC vectors, actual worker execution through DOM controls, independent invalidation, unchanged ATLAS identities, reproducible builds and PHP 7.4/8.3 install/rollback tests using a WordPress API shim. Canvas IO in DOM tests is stubbed. These tests do not replace real browser/IONOS or physical press acceptance. Test profiles are artificial software fixtures and are not shipped as end-user profiles.
 
 == Changelog ==
-
-= 0.1.14-beta1 =
-* Accept retained CHSOS_SUPPLEMENT and KIMERA source-family identifiers.
-* Add full assembled-dataset validation across all 13,283 recipes.
-
-= 0.1.13-beta1 =
-* Activate the audited RC22 Basis-23 x CHSOS Gorgias rebuild for all 13,283 references.
-* Provide verified computational Before/After displays with 12,394 recipes within Delta E00 5.
-* Preserve the explicit model-only, not physically validated evidence boundary.
 
 = 0.1.12-beta1 =
 * Embed RC22 with two independent profile-driven B/A image comparisons and PNG/metadata exports.
