@@ -20,5 +20,6 @@ recipes. The dataset remains `MODEL_ONLY_NOT_PHYSICALLY_VALIDATED`,
 JSON SHA-256:
 `d102c1f320ce080bfe84fe3f3c0bf255ddb53497ca90c65b19163df047524059`
 
-Gzip SHA-256:
-`0f577fee61ba6f4430b9bd11149445a1fa6fbed0fb4afc4622fb4ee5bca27d9c`
+The JSON hash above describes the original research run. No dataset archive
+from that run is distributed in this branch; the previously checked-in gzip
+was incomplete and has been removed.

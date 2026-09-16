@@ -10,7 +10,7 @@ Vorher Paletten als **Clarus JSON** sichern. Druckaufträge immer als **Print JS
 bevor die Seite geschlossen oder neu geladen wird. Für eine andere Domain Paletten/Jobs per JSON übertragen.
 
 1. ZIP über **Plugins → Neues Plugin hinzufügen → Plugin hochladen** einspielen und das bestehende Plugin ersetzen.
-2. **Werkzeuge → ATLAS Clarus Browser Edition** öffnen. Mitgeliefert: RC22, **2.467.420 Byte**.
+2. **Werkzeuge → ATLAS Clarus Browser Edition** öffnen. Mitgeliefert: RC22, **2.467.418 Byte**.
 3. Auf **Mitgeliefertes RC22 prüfen und aktiv schalten** klicken. Erwartung: **Neues Bundle aktiv: JA**.
 4. **Full-Canvas Browser Edition öffnen**. Bei altem Inhalt den Cache der Browser-Seite in IONOS/WordPress leeren und neu laden.
 5. Bei Problemen **Zur vorherigen Laufzeit zurückwechseln** wählen. Der vorherige Laufzeitordner bleibt erhalten.
@@ -48,6 +48,6 @@ Datum, Test-URL, WordPress-/PHP-Version, Browser und Smartphone: noch einzutrage
 4C und ECG verwenden dieselbe eingefrorene ATLAS-Referenz. Es gibt keine 4C→ECG- oder ECG→4C-Umrechnung.
 Die Bildvorschauen berechnen einen ICC-Rundlauf sRGB → Gerätewerte → sRGB. Sie simulieren kein Papierweiß. Produktionsfertige Referenz-Druckwerte und physische Druckprüfung bleiben offen. Die Vorschau ist auf 1200 Pixel an der längsten Seite begrenzt und wird nicht im Print-Handoff-JSON gespeichert.
 
-Bundle-SHA-256: `6f7bd18f23620d34ac20a408bb37f5d940a5d98e94c46fc41a01c0568997a9be`.
+Bundle-SHA-256: `a62f163584746531822e3148a74d5b7d2b03d057da32efcf0588e1a0718524e2`.
 Der Homepage-Link wird beim Ausliefern im normalen Navigationsmenü ergänzt; die ZIP-Prüfsumme
 gilt für das unveränderte eingebettete Bundle vor dieser Laufzeitergänzung.

@@ -1,9 +1,16 @@
-# RC22 browser download
+# RC22 browser candidate
 
-The ZIP is the exact tested RC22 offline browser candidate from source commit `62e44151e007784f1f119756d1793d1a49bacbb7`.
+Build the review candidate from the PR source with:
 
-Download the ZIP, extract it, and open `atlas-clarus-browser-bundle/index.html`. No account or local server is needed to run the downloaded application.
+```bash
+python browser-bundle/build_bundle.py
+```
 
 This is a test candidate with independent Original / 4C and Original / ECG ICC image previews. Supply the matching output profiles to calculate previews. Real browser, IONOS and press-profile acceptance remains open.
 
-SHA-256: `6f7bd18f23620d34ac20a408bb37f5d940a5d98e94c46fc41a01c0568997a9be`.
+Expected size: `2467418` bytes.
+
+Expected SHA-256: `a62f163584746531822e3148a74d5b7d2b03d057da32efcf0588e1a0718524e2`.
+
+The package is produced and uploaded by GitHub Actions. It is not duplicated as
+a checked-in binary, so reviewers have one reproducible artifact to trust.

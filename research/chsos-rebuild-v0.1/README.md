@@ -10,6 +10,13 @@ Alle Ergebnisse sind `MODEL_ONLY`, `NOT_MEASURED` und nicht für eine
 Produktionsfreigabe geeignet. Die Suche liefert den besten gefundenen
 heuristischen Kandidaten, keinen Beweis eines globalen Optimums.
 
+Die CHSOS-Ergebnisarchive werden nicht in diesem Branch verteilt. Frühere
+eingecheckte `.json.gz`-Dateien waren unvollständig und wurden entfernt. Die
+Forschungsdaten müssen aus den dokumentierten Eingaben reproduziert und vor
+einer erneuten Veröffentlichung mit `gzip -t` sowie dem Validator geprüft
+werden. RC22 lädt weiterhin ausschließlich `ATLAS_COMBINED_BASIS23_v0_8`;
+dieses Forschungsmodul wird nicht in den Runtime-Datensatz importiert.
+
 ## Aufruf
 
 ```bash
