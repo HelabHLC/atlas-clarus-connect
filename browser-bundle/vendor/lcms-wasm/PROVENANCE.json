@@ -1,0 +1,11 @@
+{
+  "package": "lcms-wasm",
+  "version": "1.0.5",
+  "lcms_version": "2.16",
+  "source": "https://github.com/mattdesl/lcms-wasm",
+  "npm_archive": "https://registry.npmjs.org/lcms-wasm/-/lcms-wasm-1.0.5.tgz",
+  "archive_sha256": "4b73babc672f79df9aa114b916313077ad6bb5807e86b13cacbbbb7b7cdf8cdd",
+  "wasm_sha256": "dbcbee3fb3a49459a60bb6b29d6ab25fe7c219b0cc0c2b9579c0cc78f7390ddd",
+  "runtime_sha256": "1a5c8f81186211856ba7c5d6841e35fe3fa901b857a247f72318e1652c5e1cec",
+  "license": "MIT"
+}

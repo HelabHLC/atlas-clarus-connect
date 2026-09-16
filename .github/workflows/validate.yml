@@ -8,6 +8,24 @@ permissions:
   contents: read
 
 jobs:
+  checked-in-archives:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate checked-in release and research archives
+        shell: bash
+        run: |
+          set -euo pipefail
+          for root in browser-bundle/downloads downloads; do
+            [[ -d "$root" ]] || continue
+            while IFS= read -r -d '' archive; do
+              unzip -tq "$archive"
+            done < <(find "$root" -type f -name '*.zip' -print0)
+          done
+          while IFS= read -r -d '' archive; do
+            gzip -t "$archive"
+          done < <(find research/chsos-rebuild-v0.1 -type f -name '*.json.gz' -print0)
+
   hover-library:
     runs-on: ubuntu-latest
     steps:
@@ -35,6 +53,15 @@ jobs:
           node --check browser-bundle/src/app.js
           node --check browser-bundle/src/image-sampling.js
           node --check browser-bundle/src/palette-export.js
+          node --check browser-bundle/src/print-handoff.js
+          node --check browser-bundle/src/print-ui.js
+          node --check browser-bundle/src/print-preview-ui.js
+          node --check browser-bundle/src/print-preview-worker.js
+          node --check browser-bundle/src/reference-card.js
+      - name: Validate reference card handoff and rejection vectors
+        run: node browser-bundle/tests/validate_reference_card.js
+      - name: Validate parallel print handoff and rejection vectors
+        run: node browser-bundle/tests/validate_print_handoff.js
       - name: Validate numerical image sampling
         run: node browser-bundle/tests/validate_sampling.js
       - name: Validate palette exports
@@ -47,6 +74,22 @@ jobs:
         run: node browser-bundle/tests/validate_layout.js
       - name: Build and validate reproducible bundle
         run: python browser-bundle/tests/validate_bundle.py
+      - name: Build reviewable offline candidate
+        run: python browser-bundle/build_bundle.py
+      - name: Install DOM test dependencies
+        run: npm ci --prefix browser-bundle/tests --ignore-scripts
+      - name: Validate shipped print preparation UI
+        run: node browser-bundle/tests/validate_print_ui.js
+      - name: Validate native and WASM image preview vectors
+        run: node browser-bundle/tests/validate_preview.js
+      - name: Validate independent B/A image interactions
+        run: node browser-bundle/tests/validate_preview_ui.js
+      - name: Upload offline candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-clarus-parallel-print-candidate
+          path: browser-bundle/build/*.zip
+          retention-days: 14
 
   identity-handoff-vectors:
     runs-on: ubuntu-latest
@@ -56,6 +99,47 @@ jobs:
         with:
           python-version: "3.12"
       - run: python identity-handoff/tests/validate_vectors.py
+
+  wordpress-browser-edition:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ["7.4", "8.3"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip
+      - name: PHP syntax
+        run: |
+          php -l wordpress-browser-edition/atlas-clarus-browser-edition.php
+          php -l wordpress-browser-edition/tests/validate_plugin.php
+      - name: Build installable IONOS plugin
+        run: python wordpress-browser-edition/build_plugin.py
+      - name: Verify documented RC22 package identity
+        run: |
+          package=wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.12-beta1_RC22.zip
+          test "$(wc -c < "$package")" -eq 2442569
+          echo "38b206a0b1b38c8f17a1939b685e3d11ec8db01be8a2e6c54d29091074d8a030  $package" | sha256sum -c -
+      - name: Reproduce installable package
+        run: |
+          python wordpress-browser-edition/build_plugin.py --output-dir "$RUNNER_TEMP/atlas-plugin-repeat"
+          cmp wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.12-beta1_RC22.zip "$RUNNER_TEMP/atlas-plugin-repeat/ATLAS_Clarus_Browser_Edition_v0.1.12-beta1_RC22.zip"
+      - name: Execute plugin install and rollback tests
+        run: |
+          unzip -q wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.12-beta1_RC22.zip -d "$RUNNER_TEMP/atlas-plugin-test"
+          php wordpress-browser-edition/tests/validate_plugin.php "$RUNNER_TEMP/atlas-plugin-test/atlas-clarus-browser-edition"
+      - name: Upload installable IONOS candidate
+        if: matrix.php == '8.3'
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-clarus-ionos-rc22-plugin
+          path: wordpress-browser-edition/build/*
+          retention-days: 14
 
   wheel-application:
     runs-on: ubuntu-latest

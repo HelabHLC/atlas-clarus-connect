@@ -19,6 +19,10 @@ assert.equal(displayData.rows, 13283);
 assert.equal(displayData.displays.length, 13283);
 assert.equal(recipes.length, 13283);
 
+// Validate the complete assembled Basis-23 runtime dataset. CHSOS rebuild
+// research artifacts are intentionally not activated by this RC22 fixture.
+const store = api.create({registry: JSON.parse(fs.readFileSync(`${root}/basis23-source-registry.json`, 'utf8')), rows: recipes}, colors.colors, colors.master_sha256);
+
 for (let id = 0; id < recipes.length; id++) {
   const displayRow = displayData.displays[id];
   assert.equal(recipes[id].source_atlas_row_id, id);
@@ -28,8 +32,8 @@ for (let id = 0; id < recipes.length; id++) {
 
 const id = 1702;
 const recipe = {...recipes[id], mix_display: displayData.displays[id].mix_display};
-const store = {get(c) { assert.equal(c.id, id); return recipe; }};
-const html = api.render(store, colors.colors[id]);
+const renderStore = {get(c) { assert.equal(c.id, id); return recipe; }};
+const html = api.render(renderStore, colors.colors[id]);
 assert.match(html, /Before — ATLAS Target/);
 assert.match(html, /After — Computed Mix/);
 assert.match(html, /#FF874B/);
@@ -37,4 +41,4 @@ assert.match(html, /#FD884E/);
 assert.match(html, /COMPUTATIONAL PREVIEW · NOT PHYSICALLY VERIFIED/);
 assert.doesNotMatch(html, /Mix preview unavailable/);
 
-console.log('PASS: 13,283 verified Basis-23 B/A displays and RC20 regression fixture');
+console.log('PASS: 13,283 verified Basis-23 B/A displays; CHSOS rebuild remains research-only');

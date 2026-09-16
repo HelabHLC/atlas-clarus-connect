@@ -1,0 +1,83 @@
+name: Publish current browser bundle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "browser-bundle/**"
+      - "hover-library/data/**"
+      - ".github/workflows/publish-browser-bundle.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-current-browser-bundle
+  cancel-in-progress: false
+
+jobs:
+  validate-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Validate reference-card contract
+        run: |
+          node --check browser-bundle/src/reference-card.js
+          node browser-bundle/tests/validate_reference_card.js
+
+      - name: Build and verify reproducible browser bundle
+        run: python browser-bundle/tests/validate_bundle.py
+
+      - name: Build publication copy
+        run: python browser-bundle/build_bundle.py --output-dir "$RUNNER_TEMP/atlas-browser-release"
+
+      - name: Prepare stable release assets
+        id: asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_zip="$RUNNER_TEMP/atlas-browser-release/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc22-parallel-image-preview.zip"
+          test -f "$source_zip"
+          asset="ATLAS_Clarus_Browser_Bundle_current.zip"
+          cp "$source_zip" "$asset"
+          sha256sum "$asset" > "$asset.sha256"
+          echo "sha256=$(sha256sum "$asset" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "bytes=$(wc -c < "$asset")" >> "$GITHUB_OUTPUT"
+
+      - name: Publish stable download endpoint
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ASSET_SHA256: ${{ steps.asset.outputs.sha256 }}
+          ASSET_BYTES: ${{ steps.asset.outputs.bytes }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="browser-bundle-current"
+          asset="ATLAS_Clarus_Browser_Bundle_current.zip"
+          notes="$RUNNER_TEMP/browser-bundle-current.md"
+          cat > "$notes" <<EOF
+          # ATLAS Clarus Browser Bundle — current verified build
+
+          This moving prerelease contains the latest browser bundle built and verified from the protected `main` branch.
+
+          - Source commit: `${GITHUB_SHA}`
+          - Size: `${ASSET_BYTES}` bytes
+          - SHA-256: `${ASSET_SHA256}`
+          - Status: reproducible CI build
+
+          The stable website download URL remains unchanged when this asset is replaced.
+          EOF
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --title "ATLAS Clarus Browser Bundle — current" --notes-file "$notes" --prerelease
+          else
+            gh release create "$tag" --target "$GITHUB_SHA" --title "ATLAS Clarus Browser Bundle — current" --notes-file "$notes" --prerelease
+          fi
+          gh release upload "$tag" "$asset" "$asset.sha256" --clobber
