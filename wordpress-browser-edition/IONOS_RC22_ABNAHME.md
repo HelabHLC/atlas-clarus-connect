@@ -48,6 +48,6 @@ Datum, Test-URL, WordPress-/PHP-Version, Browser und Smartphone: noch einzutrage
 4C und ECG verwenden dieselbe eingefrorene ATLAS-Referenz. Es gibt keine 4C→ECG- oder ECG→4C-Umrechnung.
 Die Bildvorschauen berechnen einen ICC-Rundlauf sRGB → Gerätewerte → sRGB. Sie simulieren kein Papierweiß. Produktionsfertige Referenz-Druckwerte und physische Druckprüfung bleiben offen. Die Vorschau ist auf 1200 Pixel an der längsten Seite begrenzt und wird nicht im Print-Handoff-JSON gespeichert.
 
-Bundle-SHA-256: `2adc5120a98b6338c4a7b6e247712a3347424c03e3a14cb9fda3bf40148350ad`.
+Bundle-SHA-256: `b824fde7c72f854a88fde7b82f391e14d43a717253a2cd4126e1c06b4cd03ed2`.
 Der Homepage-Link wird beim Ausliefern im normalen Navigationsmenü ergänzt; die ZIP-Prüfsumme
 gilt für das unveränderte eingebettete Bundle vor dieser Laufzeitergänzung.

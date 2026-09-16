@@ -58,8 +58,11 @@ jobs:
           node --check browser-bundle/src/print-preview-ui.js
           node --check browser-bundle/src/print-preview-worker.js
           node --check browser-bundle/src/reference-card.js
+          node --check browser-bundle/src/profiled-reference-card.js
       - name: Validate reference card handoff and rejection vectors
         run: node browser-bundle/tests/validate_reference_card.js
+      - name: Validate profile-bound reference card contract
+        run: node browser-bundle/tests/validate_profiled_reference_card.js
       - name: Validate parallel print handoff and rejection vectors
         run: node browser-bundle/tests/validate_print_handoff.js
       - name: Validate numerical image sampling
@@ -123,8 +126,8 @@ jobs:
       - name: Verify documented RC22 package identity
         run: |
           package=wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.12-beta1_RC22.zip
-          test "$(wc -c < "$package")" -eq 2442569
-          echo "38b206a0b1b38c8f17a1939b685e3d11ec8db01be8a2e6c54d29091074d8a030  $package" | sha256sum -c -
+          test "$(wc -c < "$package")" -eq 2447019
+          echo "17864cf7d516a2dddcd9a2ffb9833319c8ec592d3c401bf74e0b5e1f2e9a54c8  $package" | sha256sum -c -
       - name: Reproduce installable package
         run: |
           python wordpress-browser-edition/build_plugin.py --output-dir "$RUNNER_TEMP/atlas-plugin-repeat"
