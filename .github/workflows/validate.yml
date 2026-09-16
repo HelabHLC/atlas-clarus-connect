@@ -57,6 +57,9 @@ jobs:
           node --check browser-bundle/src/print-ui.js
           node --check browser-bundle/src/print-preview-ui.js
           node --check browser-bundle/src/print-preview-worker.js
+          node --check browser-bundle/src/reference-card.js
+      - name: Validate reference card handoff and rejection vectors
+        run: node browser-bundle/tests/validate_reference_card.js
       - name: Validate parallel print handoff and rejection vectors
         run: node browser-bundle/tests/validate_print_handoff.js
       - name: Validate numerical image sampling
