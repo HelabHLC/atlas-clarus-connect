@@ -63,18 +63,18 @@ jobs:
           tag="browser-bundle-current"
           asset="ATLAS_Clarus_Browser_Bundle_current.zip"
           notes="$RUNNER_TEMP/browser-bundle-current.md"
-          cat > "$notes" <<EOF
-          # ATLAS Clarus Browser Bundle — current verified build
-
-          This moving prerelease contains the latest browser bundle built and verified from the protected `main` branch.
-
-          - Source commit: `${GITHUB_SHA}`
-          - Size: `${ASSET_BYTES}` bytes
-          - SHA-256: `${ASSET_SHA256}`
-          - Status: reproducible CI build
-
-          The stable website download URL remains unchanged when this asset is replaced.
-          EOF
+          {
+            echo "# ATLAS Clarus Browser Bundle — current verified build"
+            echo
+            echo "This moving prerelease contains the latest browser bundle built and verified from the protected main branch."
+            echo
+            printf '%s\n' "- Source commit: ${GITHUB_SHA}"
+            printf '%s\n' "- Size: ${ASSET_BYTES} bytes"
+            printf '%s\n' "- SHA-256: ${ASSET_SHA256}"
+            echo "- Status: reproducible CI build"
+            echo
+            echo "The stable website download URL remains unchanged when this asset is replaced."
+          } > "$notes"
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release edit "$tag" --title "ATLAS Clarus Browser Bundle — current" --notes-file "$notes" --prerelease
           else
