@@ -123,8 +123,8 @@ jobs:
       - name: Verify documented RC22 package identity
         run: |
           package=wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.12-beta1_RC22.zip
-          test "$(wc -c < "$package")" -eq 2437308
-          echo "63305e126cc073871eafd10b564a579e9ec58eef0216a7ee42063d3548b98a0c  $package" | sha256sum -c -
+          test "$(wc -c < "$package")" -eq 2442569
+          echo "38b206a0b1b38c8f17a1939b685e3d11ec8db01be8a2e6c54d29091074d8a030  $package" | sha256sum -c -
       - name: Reproduce installable package
         run: |
           python wordpress-browser-edition/build_plugin.py --output-dir "$RUNNER_TEMP/atlas-plugin-repeat"
