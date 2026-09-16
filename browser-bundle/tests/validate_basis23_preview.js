@@ -10,17 +10,17 @@ for (const file of fs.readdirSync(`${root}/basis23-recipes`).filter(name => name
   recipes.push(...JSON.parse(fs.readFileSync(`${root}/basis23-recipes/${file}`, 'utf8')));
 }
 
-assert.equal(displayData.dataset, 'ATLAS_RC22_CHSOS_REBUILD_MIX_DISPLAY_V2');
+assert.equal(displayData.dataset, 'ATLAS_BASIS23_MIX_DISPLAY_V1');
 assert.equal(displayData.atlas_master_sha256, colors.master_sha256);
 assert.equal(displayData.basis_version, api.BASIS);
-assert.equal(displayData.source_artifact_sha256, '86ae3144ee708383c98aa553a9e07e08255860c74adb8f3c2c783d7297fe2327');
+assert.equal(displayData.source_artifact_sha256, '4dd1dc4927f075610512ed01dbe1b47323e9f14424b110b268b1b0c4cc4caf1b');
 assert.equal(displayData.boundary, 'COMPUTATIONAL_PREVIEW_NOT_PHYSICALLY_VERIFIED');
 assert.equal(displayData.rows, 13283);
 assert.equal(displayData.displays.length, 13283);
 assert.equal(recipes.length, 13283);
 
-// Validate the complete assembled dataset, including every retained source
-// family. Preview checks alone do not exercise create()'s fail-closed binding.
+// Validate the complete assembled Basis-23 runtime dataset. CHSOS rebuild
+// research artifacts are intentionally not activated by this RC22 fixture.
 const store = api.create({registry: JSON.parse(fs.readFileSync(`${root}/basis23-source-registry.json`, 'utf8')), rows: recipes}, colors.colors, colors.master_sha256);
 
 for (let id = 0; id < recipes.length; id++) {
@@ -37,8 +37,8 @@ const html = api.render(renderStore, colors.colors[id]);
 assert.match(html, /Before — ATLAS Target/);
 assert.match(html, /After — Computed Mix/);
 assert.match(html, /#FF874B/);
-assert.match(html, /#FF874A/);
+assert.match(html, /#FD884E/);
 assert.match(html, /COMPUTATIONAL PREVIEW · NOT PHYSICALLY VERIFIED/);
 assert.doesNotMatch(html, /Mix preview unavailable/);
 
-console.log('PASS: 13,283 verified Basis-23 × CHSOS rebuild B/A displays');
+console.log('PASS: 13,283 verified Basis-23 B/A displays; CHSOS rebuild remains research-only');
