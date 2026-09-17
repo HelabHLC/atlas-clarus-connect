@@ -521,7 +521,7 @@ final class ATLAS_Clarus_Browser_Edition {
         if ( array( '4C', 'ECG' ) !== ( $manifest['print_paths'] ?? array() ) ) {
             return new WP_Error( 'atlas_manifest', 'Bundle-Identität ungültig: Feld print_paths.' );
         }
-        if ( array( 'PARALLEL_PRINT_JSON', 'READABLE_HTML_REPORT' ) !== ( $manifest['print_exports'] ?? array() ) ) {
+        if ( array( 'PARALLEL_PRINT_JSON', 'READABLE_HTML_REPORT', 'PROFILED_REFERENCE_JSON', 'DEVICECMYK_REFERENCE_PDF' ) !== ( $manifest['print_exports'] ?? array() ) ) {
             return new WP_Error( 'atlas_manifest', 'Bundle-Identität ungültig: Feld print_exports.' );
         }
         return true;
