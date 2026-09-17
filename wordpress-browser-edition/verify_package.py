@@ -34,7 +34,7 @@ def verify(root):
         for k, v in expected.items():
             assert type(manifest.get(k)) is type(v) and manifest[k] == v, k
         assert manifest["print_paths"] == ["4C", "ECG"]
-        assert manifest["print_exports"] == ["PARALLEL_PRINT_JSON", "READABLE_HTML_REPORT"]
+        assert manifest["print_exports"] == ["PARALLEL_PRINT_JSON", "READABLE_HTML_REPORT", "PROFILED_REFERENCE_JSON", "DEVICECMYK_REFERENCE_PDF"]
         assert manifest["image_preview_paper_white_simulation"] is False
         assert manifest["image_preview_exports"] == ["BA_PNG", "PREVIEW_METADATA_JSON"]
         sampling = source.split("$expected_sampling = array(", 1)[1].split(");", 1)[0]
