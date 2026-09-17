@@ -1,0 +1,46 @@
+<article class="atlas-manual" data-version="v0.2.0-rc22">
+<header class="atlas-manual__hero">
+<p class="atlas-manual__eyebrow">ATLAS CLARUS · USER MANUAL</p>
+<h1>Browser Bundle RC22</h1>
+<p class="atlas-manual__lead">Select and freeze ATLAS colour identities, build portable palettes, prepare independent 4C and ECG paths, create local ICC previews and export traceable evidence.</p>
+<p class="atlas-manual__flow">Browser sRGB → PKL FULL REFERENCE → 4C / 7C ECG</p>
+<p class="atlas-manual__warning"><strong>Release candidate:</strong> RC22 is <code>READY_PENDING_VISUAL_AUDIT</code>. A screen preview is not a measured print, contract proof or production approval.</p>
+<div class="atlas-manual__actions">
+<a class="atlas-manual__button" href="https://raw.githubusercontent.com/HelabHLC/atlas-clarus-connect/main/docs/manual/ATLAS_Clarus_Browser_Bundle_RC22_User_Manual_EN.pdf">Download PDF</a>
+<a class="atlas-manual__button atlas-manual__button--secondary" href="https://raw.githubusercontent.com/HelabHLC/atlas-clarus-connect/main/docs/manual/ATLAS_Clarus_Browser_Bundle_RC22_User_Manual_EN.docx">Download Word</a>
+</div>
+</header>
+<nav class="atlas-manual__toc" aria-label="Manual sections">
+<a href="#quick-start">Quick start</a><a href="#identity">Identity model</a><a href="#picker">Image Picker</a><a href="#palettes">Palettes</a><a href="#wheel">Identity Wheel</a><a href="#print">4C and ECG</a><a href="#preview">Image previews</a><a href="#evidence">Evidence</a><a href="#troubleshooting">Troubleshooting</a>
+</nav>
+<section id="quick-start"><h2><span>01</span> Quick start</h2>
+<ol><li><strong>Extract the ZIP.</strong> Keep the complete folder structure. Do not run the application inside the archive.</li><li><strong>Open index.html.</strong> Use a current desktop browser. The header should show <code>OFFLINE · LOCAL</code>.</li><li><strong>Choose a source.</strong> Use Image Picker for an image region or Hover Library for a known reference.</li><li><strong>Freeze and save.</strong> Add the reference to a palette and export Clarus JSON. Browser storage is not a backup.</li><li><strong>Prepare for print.</strong> Attach the appropriate CMYK and/or 7CLR profile, record the production metadata and export the handoff JSON.</li></ol></section>
+<section id="identity"><h2><span>02</span> Understand the identity model</h2>
+<p>The source is resolved to the active PKL master before any production path is prepared. The ATLAS address, <code>atlas_row_id</code>, master RGB and master provenance remain the reference identity. Output profiles create device-specific preparations; they do not rewrite the master.</p>
+<div class="atlas-manual__grid"><article><h3>Observed source</h3><p>RGB pixels read locally from an image. This is not a spectral measurement.</p></article><article><h3>PKL Full Reference</h3><p>The frozen colour address and provenance. It does not guarantee reproduction on every device.</p></article><article><h3>4C and ECG paths</h3><p>Independent profile-bound preparations. Neither path receives device values from the other.</p></article><article><h3>Measured QC</h3><p>A later physical result may be appended without overwriting the identity.</p></article></div>
+<p><strong>Validation baseline:</strong> 13,283 references · zero-based unique row IDs · master SHA-256 <code>8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4</code> · A′ v0.4 selection logic unchanged.</p></section>
+<section id="picker"><h2><span>03</span> Use the Image Picker</h2>
+<ol><li>Load PNG, JPEG, WebP or GIF.</li><li>Choose Single pixel or an area mean of 5 × 5, 11 × 11 or 21 × 21 pixels.</li><li>Click the intended region and inspect the loupe.</li><li>Review ATLAS reference, <code>atlas_row_id</code>, master RGB, HEX and provenance.</li><li>Add the result to a palette, open it in the Wheel, create a reference card or prepare it for print.</li></ol>
+<p class="atlas-manual__warning"><strong>Boundary:</strong> area averaging is not spectral measurement, physical equality, production approval or measured QC.</p></section>
+<section id="palettes"><h2><span>04</span> Find references and build palettes</h2>
+<p>Search the Hover Library by HLC reference, <code>atlas_row_id</code> or HEX. For example: <code>H040_L045_C095</code>, <code>1382</code> or <code>#D60000</code>.</p>
+<ul><li>Each palette can hold up to 64 references.</li><li>The local workspace can hold up to 50 palettes.</li><li>Export Clarus JSON after meaningful changes.</li><li>Use ASE for Adobe and Affinity, GPL for GIMP and Inkscape, token JSON for Figma and CSS custom properties for web projects.</li></ul></section>
+<section id="wheel"><h2><span>05</span> Explore without changing identity</h2>
+<p>The Colour Identity Wheel shows screen contrast, illumination-resilience metadata, ARBE λ* comparison, geometric relationships and tonal families. These tools add context; they do not replace the selected reference.</p>
+<h3>Append measured QC</h3><p>Select the immutable target, measure the physical sample outside the bundle, and enter L*, a*, b* plus the instrument or source. RC22 reports ΔE*ab for local review. This is not ΔE00 and is not written into the master.</p></section>
+<section id="print"><h2><span>06</span> Prepare independent 4C and ECG paths</h2>
+<ol><li>Name the job and choose the selected reference, active palette or imported handoff.</li><li>Attach a printer-class CMYK profile to 4C.</li><li>Attach a printer-class 7CLR CMYKOGV profile to ECG.</li><li>Record printing condition and substrate.</li><li>Select rendering intent and black-point compensation independently.</li><li>Create profile-bound data and retain <code>NOT_MEASURED</code> until a real sample is measured.</li><li>Export both paths as JSON and export the readable report.</li></ol>
+<p><strong>Supported intents:</strong> Perceptual, Relative colorimetric, Saturation and Absolute colorimetric. Profiles must be no larger than 16 MiB. Image preview requires both A2B and B2A transforms.</p></section>
+<section id="preview"><h2><span>07</span> Create parallel image previews</h2>
+<p>The module performs independent local LittleCMS round trips: sRGB → device values → sRGB. Load PNG, JPEG or WebP, or reuse the Image Picker image. The longest side is limited to 1200 pixels.</p>
+<ul><li>Create both previews together or calculate only one path.</li><li>Save each before-and-after PNG.</li><li>Save the matching preview-details JSON with profile hash and settings.</li></ul>
+<p class="atlas-manual__warning"><strong>Do not claim:</strong> a round-trip preview is not paper-white simulation, a physical print, contract proof, certification or production approval.</p></section>
+<section id="evidence"><h2><span>08</span> Create reference cards and evidence</h2>
+<div class="atlas-manual__grid"><article><h3>Clarus JSON</h3><p>Identity and master provenance.</p></article><article><h3>Print handoff JSON</h3><p>Profiles, settings and independent production paths.</p></article><article><h3>B/A PNG and preview JSON</h3><p>Screen comparison and calculation details.</p></article><article><h3>Production PDF</h3><p>Encoded device values and output intent; professional separation preflight remains required.</p></article></div>
+<p>Archive the identity JSON, handoff JSON, report, ICC evidence, production PDF, preflight report and later physical measurement together.</p></section>
+<section id="troubleshooting"><h2><span>09</span> Troubleshooting</h2>
+<dl><dt>Application does not open correctly</dt><dd>Extract the complete archive again and open <code>index.html</code> inside the intact folder.</dd><dt>A saved palette disappeared</dt><dd>Import the most recent Clarus JSON backup.</dd><dt>An ICC profile is rejected</dt><dd>Use CMYK for 4C or 7CLR CMYKOGV for ECG, below 16 MiB, with valid transforms.</dd><dt>Create both previews is disabled</dt><dd>Load an image and attach compatible profiles to both paths.</dd><dt>The physical print differs</dt><dd>Check press, substrate, calibration, RIP conversion and viewing conditions, then measure the dried sample.</dd></dl></section>
+<section><h2><span>10</span> Before printer handoff</h2>
+<ul><li>Confirm ATLAS address, <code>atlas_row_id</code> and master SHA-256.</li><li>Confirm the exact ICC profile and its SHA-256.</li><li>Record printing condition, substrate, rendering intent and BPC.</li><li>Preflight the production PDF and inspect all intended separations.</li><li>Tell the printer not to apply an unintended additional conversion.</li><li>Measure the dried sample after controlled printing.</li></ul></section>
+<footer class="atlas-manual__footer"><p><strong>Claim boundary:</strong> ATLAS Clarus identifies, freezes and documents a reference colour and its preparation paths. Physical claims require controlled printing, documented viewing conditions and measurement.</p><p>Credit: freieFarbe e. V. and freieFarbe.de for the open HLC colour reference and foundational work.</p><p><a href="https://github.com/HelabHLC/atlas-clarus-connect/tree/main/docs/manual">View the maintained source on GitHub</a></p></footer>
+</article>
