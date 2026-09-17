@@ -18,7 +18,7 @@ STATUS: TEST CANDIDATE. Visual, real press-profile and IONOS acceptance pending.
 
 The plugin folder, options, routes and shortcode [atlas_clarus_browser_edition] remain compatible. The homepage link stays in normal ATLAS navigation. WordPress needs a writable uploads directory and ZIP extraction support.
 
-== Original / 4C and Original / ECG image previews ==
+== PKL Full Reference / 4C and PKL Full Reference / ECG image previews ==
 
 In Print preparation, load a PNG/JPEG/WebP image or choose "Use Image Picker image". Each path needs its own output profile (CMYK for 4C, 7CLR for ECG), rendering intent and BPC setting. "Create both previews" starts two independent calculations from the same browser sRGB image.
 
@@ -34,7 +34,7 @@ Select a reference in Hover/Wheel and choose "Prepare for print", or prepare a p
 
 == Integrity / validation ==
 
-The pinned bundle version, size and SHA-256 appear in the plugin admin page and PACKAGE_VALIDATION.json. The installer checks ZIP integrity, manifest identity and listed file hashes before switching. The source tree and CI results are reviewable at https://github.com/HelabHLC/atlas-clarus-connect/pull/29.
+The pinned bundle version, size and SHA-256 appear in the plugin admin page and PACKAGE_VALIDATION.json. The installer checks ZIP integrity, manifest identity and listed file hashes before switching. The source tree and CI results are reviewable at https://github.com/HelabHLC/atlas-clarus-connect/compare/main...feature%2Fpkl-first-production-previews.
 
 Automated coverage includes native/WASM ICC vectors, actual worker execution through DOM controls, independent invalidation, unchanged ATLAS identities, reproducible builds and PHP 7.4/8.3 install/rollback tests using a WordPress API shim. Canvas IO in DOM tests is stubbed. These tests do not replace real browser/IONOS or physical press acceptance. Test profiles are artificial software fixtures and are not shipped as end-user profiles.
 

@@ -30,7 +30,7 @@ def verify(root):
         block = source.split("$expected = array(", 1)[1].split(");", 1)[0]
         expected = {k: v[1:-1] if v.startswith("'") else int(v)
                     for k, v in re.findall(r"'([^']+)'\s*=>\s*('[^']*'|\d+)\s*,", block)}
-        assert len(expected) == 28
+        assert len(expected) == 30
         for k, v in expected.items():
             assert type(manifest.get(k)) is type(v) and manifest[k] == v, k
         assert manifest["print_paths"] == ["4C", "ECG"]
@@ -62,7 +62,7 @@ def verify(root):
         "sampling_and_parallel_print_arrays": "PASS", "source_manifest_alignment": "PASS",
         "source_base_commit": "664367843966c41a2bd5e673c22845533d6be059",
         "source_candidate": "RC22 parallel image preview",
-        "source_review": "https://github.com/HelabHLC/atlas-clarus-connect/pull/29",
+        "source_review": "https://github.com/HelabHLC/atlas-clarus-connect/compare/main...feature%2Fpkl-first-production-previews",
         "wrapper_php_execution": "SEPARATE_CI_JOB_WORDPRESS_BROWSER_EDITION",
         "wordpress_ionos_integration": "ACCEPTANCE_PENDING",
         "visual_desktop_and_real_smartphone": "ACCEPTANCE_PENDING",
