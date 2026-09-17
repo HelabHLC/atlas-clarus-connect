@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class ATLAS_Clarus_Browser_Edition {
     const VERSION              = '0.1.12-beta1';
     const BUNDLE_VERSION       = 'v0.2.0-rc22-parallel-image-preview';
-    const BUNDLE_SIZE          = 2481703;
-    const BUNDLE_SHA256        = '941d62d772e580ec9f265a800c4588ee48a3e1928cbdb921c4a9c2c12ab15a2f';
+    const BUNDLE_SIZE          = 2635877;
+    const BUNDLE_SHA256        = 'a733c210a8ec6eaabf292c457d52864b1a5ec978b9416982198b2ecde8df48f3';
     const OPTION_PREVIOUS_RUNTIME = 'atlas_clarus_browser_edition_previous_runtime';
     const OPTION_RUNTIME_PATH  = 'atlas_clarus_browser_edition_runtime_path';
     const OPTION_RUNTIME_SHA   = 'atlas_clarus_browser_edition_runtime_sha256';
