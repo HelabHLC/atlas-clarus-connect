@@ -5,6 +5,7 @@
     if (!panel) return null;
     const $ = selector => panel.querySelector(selector);
     const paths = ['4C', 'ECG'], P = root.ATLAS_CLARUS_PRINT;
+    const pkl = root.ATLAS_CLARUS_PKL_IMAGE.create(context.colors, context.master);
     const states = Object.fromEntries(paths.map(id => [id, { revision: 0, worker: null, result: null, timer: null }]));
     let source = null, loading = false, loadRevision = 0, workerURL = null;
     const card = id => $(`[data-preview-path="${id}"]`);
@@ -55,9 +56,12 @@
       const pixels = new Uint8Array(ctx.getImageData(0, 0, width, height).data);
       const sha = await digest(pixels);
       if (revision !== loadRevision) return;
-      source = { pixels, width, height, sha256: sha, name, original_width: originalWidth, original_height: originalHeight };
-      paths.forEach(id => { invalidate(id); draw(card(id).querySelector('[data-preview-original]'), pixels, width, height); });
-      $('#preview-image-status').textContent = `${name} · ${width} × ${height} preview from ${originalWidth} × ${originalHeight} · browser sRGB · transparency on white`;
+      const bound = pkl.bind(pixels), pklHash = await digest(bound.pixels);
+      if (revision !== loadRevision) return;
+      source = { pixels, width, height, sha256: sha, name, original_width: originalWidth, original_height: originalHeight,
+        pkl_pixels: bound.pixels, pkl_sha256: pklHash, pkl_evidence: bound.evidence };
+      paths.forEach(id => { invalidate(id); draw(card(id).querySelector('[data-preview-original]'), bound.pixels, width, height); });
+      $('#preview-image-status').textContent = `${name} · ${width} × ${height} from ${originalWidth} × ${originalHeight} · browser sRGB source bound to PKL Full Reference · ${bound.evidence.assigned_master_rows} master rows · 0 foreign colors`;
     }
     async function usePicker() {
       const picked = context.getPickerImage?.();
@@ -124,9 +128,10 @@
             const metadata = {
               format: 'ATLAS_CLARUS_IMAGE_PREVIEW', version: '0.1.0', status: 'COMPUTATIONAL_PREVIEW_NOT_MEASURED',
               created_at: new Date().toISOString(), path: id, input_from_path: null,
-              input_kind: 'BROWSER_DECODED_SRGB_IMAGE', atlas_reference_reassignment: false,
+              input_kind: 'PKL_FULL_REFERENCE_IMAGE', atlas_reference_reassignment: true,
               source: { name: image.name, width: image.width, height: image.height, original_width: image.original_width,
                 original_height: image.original_height, rgba_sha256: image.sha256, transparency: 'COMPOSITED_ON_WHITE' },
+              pkl_reference: { rgba_sha256: image.pkl_sha256, ...image.pkl_evidence },
               output_rgba_sha256: outputHash,
               profile: { file_name: settings.profile.file_name, sha256: settings.profile.sha256, device_space: settings.profile.device_space },
               printing_condition: settings.printing_condition, substrate: settings.substrate,
@@ -139,7 +144,7 @@
             refresh();
           } catch (error) { fail(error.message); }
         };
-        const pixels = image.pixels.slice();
+        const pixels = image.pkl_pixels.slice();
         const profile = Uint8Array.from(atob(settings.profile.data_base64), c => c.charCodeAt(0));
         worker.postMessage({ path: id, width: image.width, height: image.height, pixels, profile,
           intent: settings.rendering_intent, bpc: settings.black_point_compensation }, [pixels.buffer, profile.buffer]);
@@ -155,9 +160,9 @@
       canvas.width = displayWidth * 2 + gap + margin * 2; canvas.height = displayHeight + top + bottom;
       const ctx = canvas.getContext('2d', { colorSpace: 'srgb' });
       ctx.fillStyle = '#0a0d12'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#9bff55'; ctx.font = 'bold 22px system-ui'; ctx.fillText(`ATLAS CLARUS · ORIGINAL ↔ ${id} PREVIEW`, margin, 34);
+      ctx.fillStyle = '#9bff55'; ctx.font = 'bold 22px system-ui'; ctx.fillText(`ATLAS CLARUS · PKL FULL REFERENCE ↔ ${id} PREVIEW`, margin, 34);
       ctx.fillStyle = '#eef2f6'; ctx.font = '18px system-ui';
-      ctx.fillText('Original · browser sRGB', margin, 75); ctx.fillText(`${id} · ICC preview`, margin + displayWidth + gap, 75);
+      ctx.fillText('PKL Full Reference · exact master RGB', margin, 75); ctx.fillText(`${id} · ICC preview`, margin + displayWidth + gap, 75);
       const imageScale = Math.min(displayWidth / width, displayHeight / height), dw = width * imageScale, dh = height * imageScale;
       const dx = (displayWidth - dw) / 2, dy = (displayHeight - dh) / 2;
       ctx.drawImage(card(id).querySelector('[data-preview-original]'), margin + dx, top + dy, dw, dh);

@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class ATLAS_Clarus_Browser_Edition {
     const VERSION              = '0.1.12-beta1';
     const BUNDLE_VERSION       = 'v0.2.0-rc22-parallel-image-preview';
-    const BUNDLE_SIZE          = 2472640;
-    const BUNDLE_SHA256        = '2adc5120a98b6338c4a7b6e247712a3347424c03e3a14cb9fda3bf40148350ad';
+    const BUNDLE_SIZE          = 2475796;
+    const BUNDLE_SHA256        = '30e3372c12a172e9f459ffc86b083461f6389ef9e424ae3a00b967d4119d165a';
     const OPTION_PREVIOUS_RUNTIME = 'atlas_clarus_browser_edition_previous_runtime';
     const OPTION_RUNTIME_PATH  = 'atlas_clarus_browser_edition_runtime_path';
     const OPTION_RUNTIME_SHA   = 'atlas_clarus_browser_edition_runtime_sha256';
@@ -282,7 +282,7 @@ final class ATLAS_Clarus_Browser_Edition {
             <p>Die Browser-Anwendung wird nach der Einrichtung lokal von dieser WordPress-Installation ausgeliefert. Es wird kein <code>chatgpt.site</code>-iframe verwendet.</p>
             <p><strong>Navigation v0.1.2:</strong> Ein WordPress-Menülink auf diese Full-Canvas-Adresse öffnet automatisch in einem neuen Tab. In der App selbst wird zusätzlich ein dezenter Button <code>← Zur Homepage</code> eingeblendet.</p>
 
-            <p><strong>Neu: Druckvorbereitung.</strong> 4C und ECG übernehmen dieselben ATLAS-Referenzen als unabhängige, parallele Wege. Profile und Druckbedingungen lassen sich getrennt hinterlegen; Druckaufträge können als JSON und HTML-Bericht exportiert werden. Neu in RC22: Original ↔ 4C und Original ↔ ECG als unabhängige ICC-Bildvorschauen mit B/A-PNG-Export. Dafür je Weg das passende Profil, Rendering Intent und BPC wählen. Referenz-Druckwerte und physische Freigabe bleiben offen. Druckaufträge vor dem Schließen als Print JSON exportieren.</p>
+            <p><strong>Neu: Druckvorbereitung.</strong> 4C und ECG übernehmen dieselben ATLAS-Referenzen als unabhängige, parallele Wege. Profile und Druckbedingungen lassen sich getrennt hinterlegen; Druckaufträge können als JSON und HTML-Bericht exportiert werden. Neu in RC22: Browser-sRGB-Quelle → PKL Full Reference → unabhängige 4C- und ECG-ICC-Bildvorschauen mit B/A-PNG-Export. Dafür je Weg das passende Profil, Rendering Intent und BPC wählen. Referenz-Druckwerte und physische Freigabe bleiben offen. Druckaufträge vor dem Schließen als Print JSON exportieren.</p>
 
             <p><strong>RC22-Testkandidat – Browser-Abnahme offen:</strong> Desktop-/Mobilprüfung, WordPress-Laufzeittest und Quellenfreigabe sind vor öffentlichem Einsatz erforderlich. Das Plugin-Update allein schaltet das Bundle nicht um. Der folgende Knopf ändert die öffentlich ausgelieferte Laufzeit sofort.</p>
             <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin:20px 0;">
@@ -501,7 +501,9 @@ final class ATLAS_Clarus_Browser_Edition {
             'print_profile_transport' => 'EMBEDDED_ICC_WITH_SHA256',
             'print_device_calculation' => 'IMAGE_PREVIEW_ONLY_REFERENCE_HANDOFF_NOT_CALCULATED',
             'print_state_persistence' => 'IN_MEMORY_WITH_VERIFIED_JSON_IMPORT',
-            'image_preview' => 'INDEPENDENT_ICC_ROUND_TRIPS_FROM_SAME_SRGB_IMAGE',
+            'image_preview' => 'PKL_FULL_REFERENCE_THEN_INDEPENDENT_4C_ECG_ICC_PREVIEWS',
+            'image_preview_identity_binding' => 'RGB_ONLY_NEAREST_MASTER_WITH_ATLAS_ROW_ID_TIEBREAK',
+            'image_preview_foreign_colors_required' => 0,
             'image_preview_engine' => 'LittleCMS 2.16 / lcms-wasm 1.0.5',
             'image_preview_max_edge' => 1200,
         );

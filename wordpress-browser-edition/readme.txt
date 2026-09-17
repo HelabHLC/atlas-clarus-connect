@@ -18,7 +18,7 @@ STATUS: TEST CANDIDATE. Visual, real press-profile and IONOS acceptance pending.
 
 The plugin folder, options, routes and shortcode [atlas_clarus_browser_edition] remain compatible. The homepage link stays in normal ATLAS navigation. WordPress needs a writable uploads directory and ZIP extraction support.
 
-== Original / 4C and Original / ECG image previews ==
+== PKL Full Reference / 4C and PKL Full Reference / ECG image previews ==
 
 In Print preparation, load a PNG/JPEG/WebP image or choose "Use Image Picker image". Each path needs its own output profile (CMYK for 4C, 7CLR for ECG), rendering intent and BPC setting. "Create both previews" starts two independent calculations from the same browser sRGB image.
 
