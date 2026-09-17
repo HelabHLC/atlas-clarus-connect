@@ -8,8 +8,8 @@ python wordpress-browser-edition/build_plugin.py
 
 | Package | Bytes | SHA-256 |
 | --- | ---: | --- |
-| `ATLAS_Clarus_Browser_Bundle_v0.2.0-rc22-parallel-image-preview.zip` | 2477673 | `2dfaf0df9fea4fb8561aef064bf6a307f0702e88a622c908548c476338779c57` |
-| `ATLAS_Clarus_Browser_Edition_v0.1.12-beta1_RC22.zip` | 2447343 | `095f93aa692d5206ec7bbc9dc2a3f01b43839846f5c4e00186ac830b1e211462` |
+| `ATLAS_Clarus_Browser_Bundle_v0.2.0-rc22-parallel-image-preview.zip` | 2481068 | `4ce129a68234ab985f79fc60d01e4582797c9340f07a5df0668276a00711e40c` |
+| `ATLAS_Clarus_Browser_Edition_v0.1.12-beta1_RC22.zip` | 2450776 | `4cb6bf47f7d4e7792b22af8f981e72be14dad7c75d2e02a9573cb1b497573b61` |
 
 The WordPress package embeds the exact browser bundle listed above. RC22 keeps
 `ATLAS_COMBINED_BASIS23_v0_8` as its runtime recipe dataset. The CHSOS rebuild

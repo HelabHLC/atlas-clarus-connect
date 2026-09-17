@@ -78,7 +78,11 @@
           master: context.master, profile: s.profile, settings: { ...s, path_id: id }, separation });
         const stem = `ATLAS_Profiled_Reference_${data.reference.atlas_address}_${id}`;
         context.download(stem + '.profiled-reference.json', JSON.stringify(data, null, 2), 'application/json');
-        message(`${id} reference separated and exported. Profile-bound, not measured, not certified; no device PDF was generated.`);
+        if (id === '4C') {
+          const pdf = root.ATLAS_CLARUS_PROFILED_REFERENCE_CARD.deviceCmykPdf(data, profileBytes(s.profile));
+          context.download(stem + '.device-cmyk-reference.pdf', pdf, 'application/pdf');
+        }
+        message(`${id} reference separated and exported. ${id === '4C' ? 'DeviceCMYK PDF generated; not PDF/X-certified, not measured.' : 'Profile-bound, not measured, not certified.'}`);
       } catch (error) { message(`Profile-bound reference blocked: ${error.message}`, true); }
       finally { lock(false); P.PATHS.forEach(renderPath); }
     }

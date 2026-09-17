@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class ATLAS_Clarus_Browser_Edition {
     const VERSION              = '0.1.12-beta1';
     const BUNDLE_VERSION       = 'v0.2.0-rc22-parallel-image-preview';
-    const BUNDLE_SIZE          = 2477673;
-    const BUNDLE_SHA256        = '2dfaf0df9fea4fb8561aef064bf6a307f0702e88a622c908548c476338779c57';
+    const BUNDLE_SIZE          = 2481068;
+    const BUNDLE_SHA256        = '4ce129a68234ab985f79fc60d01e4582797c9340f07a5df0668276a00711e40c';
     const OPTION_PREVIOUS_RUNTIME = 'atlas_clarus_browser_edition_previous_runtime';
     const OPTION_RUNTIME_PATH  = 'atlas_clarus_browser_edition_runtime_path';
     const OPTION_RUNTIME_SHA   = 'atlas_clarus_browser_edition_runtime_sha256';
@@ -477,7 +477,7 @@ final class ATLAS_Clarus_Browser_Edition {
         // Strict values from the pinned RC22 manifest; never coerce identity fields.
         $expected = array(
             'version' => '0.2.0-rc22-parallel-image-preview',
-            'status' => 'PARALLEL_IMAGE_PREVIEW_CANDIDATE',
+            'status' => 'PROFILE_BOUND_DEVICECMYK_PDF_CANDIDATE',
             'master_rows' => 13283,
             'master_sha256' => '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4',
             'row_id_base' => 0,
@@ -499,7 +499,7 @@ final class ATLAS_Clarus_Browser_Edition {
             'print_handoff_version' => '0.1.0',
             'print_topology' => 'PARALLEL_FROM_SAME_FROZEN_REFERENCE',
             'print_profile_transport' => 'EMBEDDED_ICC_WITH_SHA256',
-            'print_device_calculation' => 'IMAGE_PREVIEW_ONLY_REFERENCE_HANDOFF_NOT_CALCULATED',
+            'print_device_calculation' => 'SINGLE_REFERENCE_DEVICE16_WITH_PROFILE_BOUND_DEVICECMYK_PDF',
             'print_state_persistence' => 'IN_MEMORY_WITH_VERIFIED_JSON_IMPORT',
             'image_preview' => 'INDEPENDENT_ICC_ROUND_TRIPS_FROM_SAME_SRGB_IMAGE',
             'image_preview_engine' => 'LittleCMS 2.16 / lcms-wasm 1.0.5',
@@ -521,7 +521,7 @@ final class ATLAS_Clarus_Browser_Edition {
         if ( array( '4C', 'ECG' ) !== ( $manifest['print_paths'] ?? array() ) ) {
             return new WP_Error( 'atlas_manifest', 'Bundle-Identität ungültig: Feld print_paths.' );
         }
-        if ( array( 'PARALLEL_PRINT_JSON', 'READABLE_HTML_REPORT' ) !== ( $manifest['print_exports'] ?? array() ) ) {
+        if ( array( 'PARALLEL_PRINT_JSON', 'READABLE_HTML_REPORT', 'PROFILED_REFERENCE_JSON', 'DEVICECMYK_REFERENCE_PDF' ) !== ( $manifest['print_exports'] ?? array() ) ) {
             return new WP_Error( 'atlas_manifest', 'Bundle-Identität ungültig: Feld print_exports.' );
         }
         return true;
