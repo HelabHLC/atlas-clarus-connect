@@ -1,10 +1,14 @@
 # Parallel image previews — RC22
 
-The Print preparation section now includes **Original ↔ 4C preview** and
-**Original ↔ ECG preview**. Both use a copy of the same browser-decoded sRGB
-image; neither consumes the other's output. This image operation does not assign
-new ATLAS references or alter the frozen master, primary RGB-only assignment,
-palettes or A′ logic.
+The Print preparation section now implements the controlled chain
+
+`browser sRGB source → PKL Full Reference → 4C preview / ECG preview`.
+
+Every composited source pixel is assigned deterministically to the nearest exact
+RGB triplet in the active 13,283-row PKL master. Squared RGB distance is the only
+identity metric; `atlas_row_id` resolves equal-distance ties. Lab and Delta E do
+not participate. Both ICC paths consume the same resulting PKL raster; neither
+consumes the other's output.
 
 ## Use
 
@@ -17,15 +21,16 @@ palettes or A′ logic.
    JSON** to retain image/profile hashes, conditions and calculation settings.
 
 The preview is limited to 1200 pixels on its longest side. Image dimensions and
-resizing are displayed. The original is the browser's sRGB canvas rendition,
-not the untouched source-file encoding or a native wide-gamut/CMYK document.
-Input ICC handling before the sRGB canvas is delegated to the browser decoder.
+resizing are displayed. The source is the browser's sRGB canvas rendition, not
+the untouched source-file encoding or a native wide-gamut/CMYK document. Input
+ICC handling before the sRGB canvas is delegated to the browser decoder. The
+displayed reference pane is the PKL-bound raster, not that source raster.
 
 ## Calculation
 
 Each path runs in its own local Blob worker with embedded WebAssembly:
 
-`browser sRGB → selected output profile, 16-bit device values → sRGB display image`
+`browser sRGB → exact PKL master RGB → selected output profile, 16-bit device values → sRGB display image`
 
 - Engine: **LittleCMS 2.16**, from the pinned **lcms-wasm 1.0.5** npm archive.
 - Forward transform uses the selected intent and BPC setting.
@@ -55,7 +60,9 @@ JSON carries references/settings/profiles, not these preview rasters.
   results: 4C and seven-channel, all four intents, BPC off/on.
 - Additional real WASM tests cover chunk boundaries, input immutability, branch
   isolation, alpha handling, missing transforms, profile mismatch and no network.
-- DOM tests drive the real WASM through workers and verify shared source hashes,
+- PKL binding tests verify exact master RGB output, deterministic row-ID tie
+  resolution, zero foreign colours and unchanged master identity.
+- DOM tests drive the real WASM through workers and verify shared PKL hashes,
   different outputs, per-path invalidation, cancellation, failure handling,
   PNG/metadata actions and unchanged ATLAS references. Canvas raster IO and PNG
   encoding are stubbed in these DOM tests; they do not claim visual acceptance.

@@ -7,7 +7,7 @@ Development candidate: **v0.2.0-rc22-parallel-image-preview**.
 Adds offline preparation of **parallel 4C and ECG paths** from the same frozen
 references. Each path carries its own ICC file and print settings. The complete
 JSON can be exported and re-imported with identity and embedded-profile checks.
-RC22 adds independent Original ↔ 4C and Original ↔ ECG image previews with local ICC round trips and B/A PNG export. Reference-job device values and physical QC remain open. See [image previews](PRINT_IMAGE_PREVIEW.md). See [print handoff](PRINT_HANDOFF.md).
+RC22 adds a PKL-first image chain: browser-sRGB source → PKL Full Reference → independent 4C and ECG ICC previews, with B/A PNG export. Reference-job device values and physical QC remain open. See [image previews](PRINT_IMAGE_PREVIEW.md). See [print handoff](PRINT_HANDOFF.md).
 The checked-in `dist/` remains the RC20 baseline; development builds use `build/`.
 
 ## Primary user path

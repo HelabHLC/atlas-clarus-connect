@@ -44,7 +44,7 @@ w.Worker = class {
   terminate() { this.ended = true; this.thread?.terminate(); }
 };
 $('#atlas-print-worker-source').textContent = JSON.stringify(fs.readFileSync('browser-bundle/build/atlas-clarus-browser-bundle/assets/lcms-worker.js', 'utf8'));
-for (const name of ['print-handoff.js', 'print-preview-ui.js', 'print-ui.js']) w.eval(fs.readFileSync(`browser-bundle/src/${name}`, 'utf8'));
+for (const name of ['pkl-image-binding.js', 'print-handoff.js', 'print-preview-ui.js', 'print-ui.js']) w.eval(fs.readFileSync(`browser-bundle/src/${name}`, 'utf8'));
 const data = JSON.parse(fs.readFileSync('hover-library/data/colors.json'));
 const picker = d.createElement('canvas'); picker.width = 7; picker.height = 1;
 w.ATLAS_CLARUS_PRINT_UI.init({ colors: data.colors, master: data.master_sha256,
@@ -72,8 +72,10 @@ async function attach(id, bytes) {
 (async () => {
   assert.ok(run('4C').disabled && run('ECG').disabled);
   await $('#preview-use-picker').onclick();
-  assert.deepEqual(raster.get(beforeCanvas('4C')), pixels);
-  assert.deepEqual(raster.get(beforeCanvas('ECG')), pixels);
+  const pklPixels = raster.get(beforeCanvas('4C'));
+  assert.deepEqual(raster.get(beforeCanvas('ECG')), pklPixels);
+  const masterRgb = new Set(data.colors.map(c => c.rgb.join(',')));
+  for (let i = 0; i < pklPixels.length; i += 4) assert.ok(masterRgb.has(`${pklPixels[i]},${pklPixels[i+1]},${pklPixels[i+2]}`));
   for (const p of fixture.cases) {
     await attach(p.path, new Uint8Array(Buffer.from(p.icc_base64, 'base64')));
     input(`[data-print-path="${p.path}"] [data-setting="rendering_intent"]`, 'Relative colorimetric');
@@ -81,13 +83,16 @@ async function attach(id, bytes) {
   }
   $('#preview-run-both').click();
   await waitFor(() => !afterCanvas('4C').hidden && !afterCanvas('ECG').hidden);
-  assert.deepEqual(sent[0].pixels, pixels); assert.deepEqual(sent[1].pixels, pixels);
+  assert.deepEqual(sent[0].pixels, pklPixels); assert.deepEqual(sent[1].pixels, pklPixels);
   assert.notDeepEqual(raster.get(afterCanvas('4C')), raster.get(afterCanvas('ECG')));
   const four = details('4C'), ecg = details('ECG');
   assert.equal(four.source.rgba_sha256, ecg.source.rgba_sha256);
   assert.equal(four.source.rgba_sha256, createHash('sha256').update(pixels).digest('hex'));
+  assert.equal(four.pkl_reference.rgba_sha256, ecg.pkl_reference.rgba_sha256);
+  assert.equal(four.pkl_reference.foreign_colors, 0);
+  assert.equal(four.pkl_reference.master_sha256, data.master_sha256);
   assert.equal(four.input_from_path, null); assert.equal(ecg.input_from_path, null);
-  assert.equal(four.atlas_reference_reassignment, false);
+  assert.equal(four.atlas_reference_reassignment, true);
   assert.notEqual(four.profile.sha256, ecg.profile.sha256);
   $(`[data-preview-path="4C"] [data-preview-save]`).click();
   assert.match(downloads.at(-1).name, /4C_Before_After\.png$/);

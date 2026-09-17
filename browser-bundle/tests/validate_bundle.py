@@ -33,6 +33,7 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         prefix+'assets/app.js',prefix+'assets/app.css',prefix+'assets/atlas-data.js',
         prefix+'assets/basis23-data.js',prefix+'assets/basis23-recipes.js',
         prefix+'assets/palette-export.js',prefix+'assets/image-sampling.js',
+        prefix+'assets/pkl-image-binding.js',
         prefix+'assets/print-handoff.js',prefix+'assets/print-ui.js',
         prefix+'assets/reference-card.js'
     }
@@ -68,6 +69,7 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert "data-back-hover" in html and "data-back-picker" in html
     assert 'assets/app.js' not in html and 'assets/atlas-data.js' not in html
     assert 'assets/image-sampling.js' not in html
+    assert 'assets/pkl-image-binding.js' not in html
     assert 'window.ATLAS_CLARUS_DATA=' in html
     assert 'id="palette-storage-status"' in html
     assert 'Your first palette · four steps' in html
@@ -81,11 +83,13 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert manifest['print_device_calculation']=='SINGLE_REFERENCE_DEVICE16_WITH_PROFILE_BOUND_DEVICECMYK_AND_DEVICEN_PDF'
     assert manifest['print_exports']==['PARALLEL_PRINT_JSON','READABLE_HTML_REPORT','PROFILED_REFERENCE_JSON','DEVICECMYK_REFERENCE_PDF','DEVICEN_CMYKOGV_REFERENCE_PDF']
     assert 'ATLAS_CLARUS_PARALLEL_PRINT_HANDOFF' in html
-    assert manifest['image_preview']=='INDEPENDENT_ICC_ROUND_TRIPS_FROM_SAME_SRGB_IMAGE'
+    assert manifest['image_preview']=='PKL_FULL_REFERENCE_THEN_INDEPENDENT_4C_ECG_ICC_PREVIEWS'
+    assert manifest['image_preview_identity_binding']=='RGB_ONLY_NEAREST_MASTER_WITH_ATLAS_ROW_ID_TIEBREAK'
+    assert manifest['image_preview_foreign_colors_required']==0
     assert manifest['image_preview_max_edge']==1200
     assert 'id="atlas-print-worker-source"' in html
     assert 'assets/print-preview-ui.js' not in html
-    assert 'Original ↔ 4C preview' in html and 'Original ↔ ECG preview' in html
+    assert 'PKL Full Reference ↔ 4C preview' in html and 'PKL Full Reference ↔ ECG preview' in html
     assert 'assets/print-handoff.js' not in html and 'assets/print-ui.js' not in html
     assert 'id="print"' in html and 'data-prepare-print' in html
     assert 'ATLAS_CLARUS_REFERENCE_CARD' in html and 'data-reference-card' in html

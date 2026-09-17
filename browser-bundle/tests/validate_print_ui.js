@@ -28,7 +28,7 @@ w.HTMLAnchorElement.prototype.click = function () {
 // No remote resources are loaded. These are the actual generated local data and
 // source modules, with canvas drawing stubbed because this is a DOM test.
 for (const name of ['atlas-data.js','basis23-data.js']) w.eval(fs.readFileSync(`browser-bundle/build/atlas-clarus-browser-bundle/assets/${name}`, 'utf8'));
-for (const name of ['basis23-recipes.js','palette-export.js','image-sampling.js','print-handoff.js','print-preview-ui.js','print-ui.js','app.js']) w.eval(fs.readFileSync(`browser-bundle/src/${name}`, 'utf8'));
+for (const name of ['basis23-recipes.js','palette-export.js','image-sampling.js','pkl-image-binding.js','print-handoff.js','print-preview-ui.js','print-ui.js','app.js']) w.eval(fs.readFileSync(`browser-bundle/src/${name}`, 'utf8'));
 const input = (selector, value) => { const el = $(selector); el.value = value; el.dispatchEvent(new w.Event('input', { bubbles: true })); };
 async function waitFor(check) {
   const end = Date.now() + 5000;
