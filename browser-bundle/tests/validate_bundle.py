@@ -49,7 +49,7 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert manifest['version']==VERSION
     assert manifest['master_sha256']==MASTER
     assert manifest['master_rows']==13283
-    assert manifest['status']=='PROFILE_BOUND_DEVICECMYK_PDF_CANDIDATE'
+    assert manifest['status']=='PROFILE_BOUND_DEVICECMYK_AND_DEVICEN_PDF_CANDIDATE'
     assert manifest['primary_user_path']=='PICKER_HOVER_PALETTE_CLARUS_JSON'
     assert manifest['max_palettes']==50 and manifest['max_palette_colours']==64
     assert manifest['reproducible_zip'] is True
@@ -78,8 +78,8 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert 'COMPUTATIONAL PREVIEW · NOT PHYSICALLY VERIFIED' in html
 
     assert manifest['print_paths']==['4C','ECG']
-    assert manifest['print_device_calculation']=='SINGLE_REFERENCE_DEVICE16_WITH_PROFILE_BOUND_DEVICECMYK_PDF'
-    assert manifest['print_exports']==['PARALLEL_PRINT_JSON','READABLE_HTML_REPORT','PROFILED_REFERENCE_JSON','DEVICECMYK_REFERENCE_PDF']
+    assert manifest['print_device_calculation']=='SINGLE_REFERENCE_DEVICE16_WITH_PROFILE_BOUND_DEVICECMYK_AND_DEVICEN_PDF'
+    assert manifest['print_exports']==['PARALLEL_PRINT_JSON','READABLE_HTML_REPORT','PROFILED_REFERENCE_JSON','DEVICECMYK_REFERENCE_PDF','DEVICEN_CMYKOGV_REFERENCE_PDF']
     assert 'ATLAS_CLARUS_PARALLEL_PRINT_HANDOFF' in html
     assert manifest['image_preview']=='INDEPENDENT_ICC_ROUND_TRIPS_FROM_SAME_SRGB_IMAGE'
     assert manifest['image_preview_max_edge']==1200

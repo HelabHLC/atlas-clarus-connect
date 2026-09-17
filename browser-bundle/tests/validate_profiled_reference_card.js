@@ -34,7 +34,23 @@ assert.match(pdfLatin, /\/FontFile2 13 0 R/);
 assert.match(pdfLatin, /\/FontFile2 15 0 R/);
 assert.match(pdfLatin, /0 Tc 100 Tz/);
 assert.ok(Buffer.from(pdf).includes(Buffer.from(icc)), 'Exact ICC bytes must be embedded');
+
+const ecgProfile = { ...profile, file_name: 'Ref-ECG-CMYKOGV_FOGRA55_TAC300.icc', device_space: '7CLR' };
+const ecgSettings = { ...settings, path_id: 'ECG', printing_condition: '-ECG-CMYKOGV_FOGRA55_TAC300' };
+const ecgSeparation = { ...separation, path: 'ECG', channels: 7, channel_order: ['C','M','Y','K','O','G','V'],
+  device_values_16bit: [53947,6414,1984,7765,0,0,19502], device_values_normalized: [0.82317845,0.09787137,0.0302739,0.11848631,0,0,0.29758145] };
+const ecg = P.create({ entry: colors[7], colors, master: R.MASTER, profile: ecgProfile, settings: ecgSettings,
+  separation: ecgSeparation, createdAt: '2026-09-17T02:13:55.802Z' });
+assert.equal(ecg.production.printing_condition, 'ECG-CMYKOGV_FOGRA55_TAC300');
+assert.equal(ecg.production.printable_device_file, 'DEVICEN_CMYKOGV_PDF_GENERATED_NOT_PDFX');
+const deviceN = P.deviceNPdf(ecg, icc), deviceNLatin = Buffer.from(deviceN).toString('latin1');
+assert.match(deviceNLatin, /\/DeviceN \[\/Cyan \/Magenta \/Yellow \/Black \/Orange \/Green \/Violet\]/);
+assert.match(deviceNLatin, /0\.82317845 0\.09787137 0\.03027390 0\.11848631 0\.00000000 0\.00000000 0\.29758145 scn/);
+assert.match(deviceNLatin, /\/N 7/);
+assert.match(deviceNLatin, /DEVICEN CMYKOGV - PROFILE-BOUND - NOT MEASURED - NOT PDF\/X CERTIFIED/);
+assert.ok(Buffer.from(deviceN).includes(Buffer.from(icc)), 'Exact ECG ICC bytes must be embedded');
 fs.mkdirSync('tmp/pdfs', { recursive: true });
+fs.writeFileSync('tmp/pdfs/profiled-reference-ecg-test.pdf', deviceN);
 fs.writeFileSync('tmp/pdfs/profiled-reference-test.pdf', pdf);
 assert.equal(JSON.stringify(P.validate(JSON.parse(JSON.stringify(card)), colors, R.MASTER)), JSON.stringify(card));
 for (const mutate of [x => x.reference.atlas_row_id++, x => x.production.measured_qc_status = 'PASS',

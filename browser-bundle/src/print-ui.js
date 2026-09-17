@@ -81,8 +81,11 @@
         if (id === '4C') {
           const pdf = root.ATLAS_CLARUS_PROFILED_REFERENCE_CARD.deviceCmykPdf(data, profileBytes(s.profile));
           context.download(stem + '.device-cmyk-reference.pdf', pdf, 'application/pdf');
+        } else {
+          const pdf = root.ATLAS_CLARUS_PROFILED_REFERENCE_CARD.deviceNPdf(data, profileBytes(s.profile));
+          context.download(stem + '.device-n-cmykogv-reference.pdf', pdf, 'application/pdf');
         }
-        message(`${id} reference separated and exported. ${id === '4C' ? 'DeviceCMYK PDF generated; not PDF/X-certified, not measured.' : 'Profile-bound, not measured, not certified.'}`);
+        message(`${id} reference separated and exported. ${id === '4C' ? 'DeviceCMYK' : 'DeviceN CMYKOGV'} PDF generated; not PDF/X-certified, not measured.`);
       } catch (error) { message(`Profile-bound reference blocked: ${error.message}`, true); }
       finally { lock(false); P.PATHS.forEach(renderPath); }
     }
@@ -118,6 +121,13 @@
           if (file.size > P.MAX_PROFILE_BYTES) throw Error('ICC files must be no larger than 16 MiB.');
           const profile = await P.readProfile(new Uint8Array(await file.arrayBuffer()), file.name, id);
           settings[id].profile = profile; preview?.invalidate(id);
+          if (id === 'ECG' && profile.device_space === '7CLR' && /FOGRA55/i.test(file.name)) {
+            const condition = card.querySelector('[data-setting="printing_condition"]');
+            if (!settings[id].printing_condition.trim() || /^-+ECG-CMYKOGV_FOGRA55_TAC300$/i.test(settings[id].printing_condition.trim())) {
+              settings[id].printing_condition = 'FOGRA55 CMYKOGV exchange colour space (TAC 300)';
+              condition.value = settings[id].printing_condition;
+            }
+          }
           message(`${id} profile attached. The other path is unchanged. No device values have been calculated.`);
         } catch (error) { message(`${id} profile rejected: ${error.message}`, true); }
         finally { lock(false); renderPath(id); }
