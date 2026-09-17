@@ -151,6 +151,7 @@
     requireThat(names.join(',') === 'C,M,Y,K,O,G,V', 'Confirmed DeviceN channel order must be C,M,Y,K,O,G,V.');
     const device = values.map(v => (v / 65535).toFixed(8));
     const percent = values.map(v => (v / 655.35).toFixed(2));
+    const alternateRgb = r.master_rgb.map(v => (v / 255).toFixed(8));
     const pdfNames = ['/Cyan','/Magenta','/Yellow','/Black','/Orange','/Green','/Violet'];
     const line = (y, size, text, font = 'F1', x = 50) =>
       `BT /${font} ${size} Tf 0 Tc 100 Tz ${x} ${y} Td (${pdfText(text)}) Tj ET\n`;
@@ -201,8 +202,9 @@
     object(8, `<< /Type /Metadata /Subtype /XML /Length ${enc.encode(xmp).length} >>\nstream\n${xmp}\nendstream`);
     fontObject(9, 14, 13, PDF_FONTS.bold);
     fontObject(10, 16, 15, PDF_FONTS.mono);
-    object(17, `[/DeviceN [${pdfNames.join(' ')}] /DeviceCMYK 18 0 R << /Subtype /NChannel /Process << /ColorSpace /DeviceCMYK /Components [/Cyan /Magenta /Yellow /Black] >> >>]`);
-    object(18, '<< /FunctionType 4 /Domain [0 1 0 1 0 1 0 1 0 1 0 1 0 1] /Range [0 1 0 1 0 1 0 1] /Length 16 >>\nstream\n{ pop pop pop }\nendstream');
+    const tintCode = `{ pop pop pop pop pop pop pop ${alternateRgb.join(' ')} }\n`;
+    object(17, `[/DeviceN [${pdfNames.join(' ')}] /DeviceRGB 18 0 R << /Subtype /NChannel /Process << /ColorSpace /DeviceCMYK /Components [/Cyan /Magenta /Yellow /Black] >> >>]`);
+    object(18, `<< /FunctionType 4 /Domain [0 1 0 1 0 1 0 1 0 1 0 1 0 1] /Range [0 1 0 1 0 1] /Length ${enc.encode(tintCode).length} >>\nstream\n${tintCode}endstream`);
     const xref = length; add('xref\n0 19\n0000000000 65535 f \n');
     for (let i = 1; i <= 18; i++) add(String(offsets[i]).padStart(10, '0') + ' 00000 n \n');
     add(`trailer\n<< /Size 19 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);

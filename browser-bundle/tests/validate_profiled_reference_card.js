@@ -46,6 +46,9 @@ assert.equal(ecg.production.printable_device_file, 'DEVICEN_CMYKOGV_PDF_GENERATE
 const deviceN = P.deviceNPdf(ecg, icc), deviceNLatin = Buffer.from(deviceN).toString('latin1');
 assert.match(deviceNLatin, /\/DeviceN \[\/Cyan \/Magenta \/Yellow \/Black \/Orange \/Green \/Violet\]/);
 assert.match(deviceNLatin, /0\.82317845 0\.09787137 0\.03027390 0\.11848631 0\.00000000 0\.00000000 0\.29758145 scn/);
+assert.match(deviceNLatin, /\/DeviceRGB 18 0 R/);
+assert.match(deviceNLatin, /\{ pop pop pop pop pop pop pop 0\.02745098 0\.00784314 0\.01176471 \}/);
+assert.doesNotMatch(deviceNLatin, /\/DeviceCMYK 18 0 R/);
 assert.match(deviceNLatin, /\/N 7/);
 assert.match(deviceNLatin, /DEVICEN CMYKOGV - PROFILE-BOUND - NOT MEASURED - NOT PDF\/X CERTIFIED/);
 assert.ok(Buffer.from(deviceN).includes(Buffer.from(icc)), 'Exact ECG ICC bytes must be embedded');
