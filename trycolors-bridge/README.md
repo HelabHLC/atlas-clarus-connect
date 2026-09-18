@@ -13,6 +13,8 @@ The palette must contain 2–64 paints. Use the exact, fixed paint palette inten
 
 If neither a constant nor an environment variable is supplied, the confirmed 14-colour **Lascaux Primär** palette bundled with the plugin is used. The API key can then be entered on the dedicated settings page without editing `wp-config.php`. Constants and environment variables retain priority for installations that require configuration outside the database.
 
+Version 0.1.2 adds privacy-safe diagnostics to the settings page and the administrator-only `GET /wp-json/atlas-clarus/v1/trycolors/status` endpoint. It records only UTC time, diagnostic category, upstream HTTP status, and a sanitized error summary of at most 240 characters. API keys, authorization headers, request payloads, and full upstream response bodies are never written to the diagnostic record.
+
 The result is evidence JSON marked `SIMULATED_NOT_PHYSICALLY_VERIFIED`. It is not an ALFA dispenser command, a measured result, or a change to PKL identity. The existing offline, 4C, and ECG workflows remain independent.
 
 ## Confirmed Lascaux palette
