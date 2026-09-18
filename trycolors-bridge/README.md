@@ -1,6 +1,6 @@
 # ATLAS Clarus TryColors Bridge
 
-This optional WordPress plugin keeps the TryColors API key on the server and exposes an authenticated, administrator-only recipe endpoint.
+This optional WordPress plugin keeps the TryColors API key on the server and exposes an authenticated, administrator-only recipe endpoint. Version 0.1.1 also provides **Settings → ATLAS TryColors Bridge**: the key is encrypted with a key derived from the existing WordPress authentication salts, stored with autoload disabled, and never displayed back to the browser.
 
 Add both constants to `wp-config.php` (outside the public repository):
 
@@ -10,6 +10,8 @@ define('ATLAS_CLARUS_TRYCOLORS_PALETTE_JSON', '[{"name":"Paint name","hex":"#RRG
 ```
 
 The palette must contain 2–64 paints. Use the exact, fixed paint palette intended for repeatable comparisons. The browser submits only the frozen ATLAS reference and target HEX. The bridge calls `POST https://api.trycolors.com/v1/unmix-color` with `mixerMode=pro`, `engine=2025`, `maxColorsCount=4`, and `maxDropsCount=50`.
+
+If neither a constant nor an environment variable is supplied, the confirmed 14-colour **Lascaux Primär** palette bundled with the plugin is used. The API key can then be entered on the dedicated settings page without editing `wp-config.php`. Constants and environment variables retain priority for installations that require configuration outside the database.
 
 The result is evidence JSON marked `SIMULATED_NOT_PHYSICALLY_VERIFIED`. It is not an ALFA dispenser command, a measured result, or a change to PKL identity. The existing offline, 4C, and ECG workflows remain independent.
 
