@@ -2,22 +2,70 @@
 /**
  * Plugin Name: ATLAS Clarus TryColors Bridge
  * Description: Admin-only server bridge from an ATLAS PKL target to a TryColors recipe candidate.
- * Version: 0.1.0
+ * Version: 0.1.1
  * License: GPL-2.0-or-later
  */
 defined('ABSPATH') || exit;
 
 const ATLAS_TRYCOLORS_STATUS = 'SIMULATED_NOT_PHYSICALLY_VERIFIED';
+const ATLAS_TRYCOLORS_KEY_OPTION = 'atlas_clarus_trycolors_api_key_encrypted';
+
+function atlas_trycolors_crypto_key() {
+    return hash('sha256', wp_salt('auth').'|'.wp_salt('secure_auth').'|atlas-clarus-trycolors-v1', true);
+}
+
+function atlas_trycolors_encrypt($plain) {
+    $plain = trim((string) $plain);
+    if ($plain === '') return '';
+    $key = atlas_trycolors_crypto_key();
+    if (function_exists('sodium_crypto_secretbox')) {
+        $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        return 'sodium:'.base64_encode($nonce.sodium_crypto_secretbox($plain, $nonce, $key));
+    }
+    if (function_exists('openssl_encrypt')) {
+        $iv = random_bytes(12); $tag = '';
+        $cipher = openssl_encrypt($plain, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
+        if ($cipher !== false) return 'openssl:'.base64_encode($iv.$tag.$cipher);
+    }
+    return '';
+}
+
+function atlas_trycolors_decrypt($stored) {
+    $stored = (string) $stored; $key = atlas_trycolors_crypto_key();
+    if (str_starts_with($stored, 'sodium:') && function_exists('sodium_crypto_secretbox_open')) {
+        $raw = base64_decode(substr($stored, 7), true);
+        if ($raw === false || strlen($raw) <= SODIUM_CRYPTO_SECRETBOX_NONCEBYTES) return '';
+        $plain = sodium_crypto_secretbox_open(substr($raw, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES), substr($raw, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES), $key);
+        return $plain === false ? '' : $plain;
+    }
+    if (str_starts_with($stored, 'openssl:') && function_exists('openssl_decrypt')) {
+        $raw = base64_decode(substr($stored, 8), true);
+        if ($raw === false || strlen($raw) <= 28) return '';
+        $plain = openssl_decrypt(substr($raw, 28), 'aes-256-gcm', $key, OPENSSL_RAW_DATA, substr($raw, 0, 12), substr($raw, 12, 16));
+        return $plain === false ? '' : $plain;
+    }
+    return '';
+}
 
 function atlas_trycolors_api_key() {
     if (defined('ATLAS_CLARUS_TRYCOLORS_API_KEY')) return trim((string) ATLAS_CLARUS_TRYCOLORS_API_KEY);
-    return trim((string) getenv('ATLAS_CLARUS_TRYCOLORS_API_KEY'));
+    $environment = trim((string) getenv('ATLAS_CLARUS_TRYCOLORS_API_KEY'));
+    if ($environment !== '') return $environment;
+    return atlas_trycolors_decrypt(get_option(ATLAS_TRYCOLORS_KEY_OPTION, ''));
 }
 
 function atlas_trycolors_palette() {
     $raw = defined('ATLAS_CLARUS_TRYCOLORS_PALETTE_JSON') ? ATLAS_CLARUS_TRYCOLORS_PALETTE_JSON : getenv('ATLAS_CLARUS_TRYCOLORS_PALETTE_JSON');
     $rows = json_decode((string) $raw, true);
-    if (!is_array($rows)) return array();
+    if (!is_array($rows)) $rows = array(
+        array('name'=>'Primary Colour yellow','hex'=>'#F8E722'), array('name'=>'Bright red','hex'=>'#DB282A'),
+        array('name'=>'Carmine red','hex'=>'#A8273A'), array('name'=>'Primary Colour magenta','hex'=>'#C13277'),
+        array('name'=>'Ultramarine blue','hex'=>'#1D20A3'), array('name'=>'Prussian blue','hex'=>'#084583'),
+        array('name'=>'Primary Colour cyan','hex'=>'#005CA2'), array('name'=>'Emerald green','hex'=>'#006C59'),
+        array('name'=>'Yellow ochre','hex'=>'#C88A2A'), array('name'=>'Light brown','hex'=>'#6F4A3B'),
+        array('name'=>'Bordeaux red','hex'=>'#84283B'), array('name'=>'White','hex'=>'#FBF9F6'),
+        array('name'=>'Silver','hex'=>'#C7CACB'), array('name'=>'Black','hex'=>'#30302F')
+    );
     $out = array();
     foreach ($rows as $row) {
         if (!is_array($row)) continue;
@@ -54,6 +102,55 @@ function atlas_trycolors_unmix(WP_REST_Request $request) {
 }
 
 add_action('rest_api_init', function(){ register_rest_route('atlas-clarus/v1','/trycolors/unmix',array('methods'=>'POST','callback'=>'atlas_trycolors_unmix','permission_callback'=>'atlas_trycolors_permission','args'=>array('target_hex'=>array('required'=>true),'atlas_ref'=>array('required'=>true),'atlas_row_id'=>array('required'=>true)))); });
+
+add_action('admin_menu', function(){
+    add_options_page('ATLAS TryColors Bridge', 'ATLAS TryColors Bridge', 'manage_options', 'atlas-trycolors-bridge', 'atlas_trycolors_settings_page');
+});
+
+add_action('admin_post_atlas_trycolors_save', function(){
+    if (!current_user_can('manage_options')) wp_die('Insufficient permissions.');
+    check_admin_referer('atlas_trycolors_save');
+    if (!empty($_POST['clear_key'])) {
+        delete_option(ATLAS_TRYCOLORS_KEY_OPTION);
+        wp_safe_redirect(add_query_arg('atlas_status', 'cleared', admin_url('options-general.php?page=atlas-trycolors-bridge'))); exit;
+    }
+    $submitted = isset($_POST['trycolors_api_key']) ? trim(wp_unslash((string) $_POST['trycolors_api_key'])) : '';
+    if ($submitted !== '') {
+        $encrypted = atlas_trycolors_encrypt($submitted);
+        if ($encrypted === '') {
+            wp_safe_redirect(add_query_arg('atlas_status', 'crypto_error', admin_url('options-general.php?page=atlas-trycolors-bridge'))); exit;
+        }
+        update_option(ATLAS_TRYCOLORS_KEY_OPTION, $encrypted, false);
+    }
+    wp_safe_redirect(add_query_arg('atlas_status', 'saved', admin_url('options-general.php?page=atlas-trycolors-bridge'))); exit;
+});
+
+function atlas_trycolors_settings_page() {
+    if (!current_user_can('manage_options')) return;
+    $configured = atlas_trycolors_api_key() !== ''; $status = sanitize_key($_GET['atlas_status'] ?? '');
+    $messages = array('saved'=>'API key stored in encrypted form.','cleared'=>'Stored API key removed.','crypto_error'=>'No supported server-side encryption method is available.');
+    ?>
+    <div class="wrap"><h1>ATLAS Clarus · TryColors Bridge</h1>
+      <?php if (isset($messages[$status])): ?><div class="notice <?php echo $status==='crypto_error'?'notice-error':'notice-success'; ?> is-dismissible"><p><?php echo esc_html($messages[$status]); ?></p></div><?php endif; ?>
+      <p>Administrator-only connection to the official TryColors API. The fixed Lascaux Primär palette contains <strong><?php echo count(atlas_trycolors_palette()); ?> colours</strong>.</p>
+      <table class="widefat striped" style="max-width:760px"><tbody>
+        <tr><th>Connection</th><td><strong><?php echo $configured ? 'API key configured' : 'API key missing'; ?></strong></td></tr>
+        <tr><th>Mode</th><td>PRO · engine 2025 · Kubelka–Munk</td></tr>
+        <tr><th>Result status</th><td><code><?php echo esc_html(ATLAS_TRYCOLORS_STATUS); ?></code></td></tr>
+      </tbody></table>
+      <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="max-width:760px;margin-top:24px">
+        <?php wp_nonce_field('atlas_trycolors_save'); ?><input type="hidden" name="action" value="atlas_trycolors_save">
+        <table class="form-table"><tr><th><label for="trycolors-api-key">TryColors API key</label></th><td>
+          <input id="trycolors-api-key" name="trycolors_api_key" type="password" class="regular-text" value="" autocomplete="new-password" placeholder="<?php echo $configured ? 'Configured · leave blank to keep' : 'Enter current key'; ?>">
+          <p class="description">The key is encrypted before database storage and is never rendered back into this page.</p>
+        </td></tr></table>
+        <?php submit_button($configured ? 'Keep or replace key' : 'Save encrypted key'); ?>
+        <?php if ($configured): ?><button class="button" type="submit" name="clear_key" value="1" onclick="return confirm('Remove the stored TryColors API key?')">Remove stored key</button><?php endif; ?>
+      </form>
+      <hr><p><strong>Boundary:</strong> Recipe candidates do not change PKL identity and are not physical measurements, ALFA dispenser commands, or production approvals.</p>
+    </div>
+    <?php
+}
 
 add_action('wp_head', function(){
     if (!atlas_trycolors_permission()) return;
