@@ -1,0 +1,92 @@
+{
+  "schema": "ATLAS_CLARUS_TRYCOLORS_PALETTE_V1",
+  "palette_name": "Lascaux Primär",
+  "source": "TryColors user palette; HEX values confirmed from individual TryColors mixer screens on 2026-09-18",
+  "status": "DIGITAL_INPUT_PALETTE_NOT_PHYSICALLY_MEASURED",
+  "colors": [
+    {
+      "name": "Primary Colour yellow",
+      "product_code": "30199",
+      "pigment": "PY3",
+      "hex": "#F8E722"
+    },
+    {
+      "name": "Bright red",
+      "product_code": "305",
+      "pigment": "PR112",
+      "hex": "#DB282A"
+    },
+    {
+      "name": "Carmine red",
+      "product_code": "306",
+      "pigment": "PR184",
+      "hex": "#A8273A"
+    },
+    {
+      "name": "Primary Colour magenta",
+      "product_code": "30999",
+      "pigment": "PR122",
+      "hex": "#C13277"
+    },
+    {
+      "name": "Ultramarine blue",
+      "product_code": "311",
+      "pigment": "PB29",
+      "hex": "#1D20A3"
+    },
+    {
+      "name": "Prussian blue",
+      "product_code": "313",
+      "pigment": "PB15:3",
+      "hex": "#084583"
+    },
+    {
+      "name": "Primary Colour cyan",
+      "product_code": "31399",
+      "pigment": "PB15:3",
+      "hex": "#005CA2"
+    },
+    {
+      "name": "Emerald green",
+      "product_code": "317",
+      "pigment": "PG7",
+      "hex": "#006C59"
+    },
+    {
+      "name": "Yellow ochre",
+      "product_code": "321",
+      "pigment": "PY42",
+      "hex": "#C88A2A"
+    },
+    {
+      "name": "Light brown",
+      "product_code": "323",
+      "pigment": "PBr6",
+      "hex": "#6F4A3B"
+    },
+    {
+      "name": "Bordeaux red",
+      "product_code": "307",
+      "pigment": "PR12",
+      "hex": "#84283B"
+    },
+    {
+      "name": "White",
+      "product_code": "327",
+      "pigment": "PW6",
+      "hex": "#FBF9F6"
+    },
+    {
+      "name": "Silver",
+      "product_code": "331",
+      "pigment": null,
+      "hex": "#C7CACB"
+    },
+    {
+      "name": "Black",
+      "product_code": "326",
+      "pigment": null,
+      "hex": "#30302F"
+    }
+  ]
+}
