@@ -41,6 +41,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add designer-layer/ATLAS_Clarus_Designer_Layer_Master_v0_1.json designer-layer/SHA256_DESIGNER_LAYER.txt designer-layer/R_sessionInfo.txt designer-layer/ISCC_NBS_267_COVERAGE_AUDIT.json designer-layer/ISCC_NBS_267_CATEGORY_COUNTS.csv designer-layer/ISCC_NBS_267_COVERAGE_REPORT.md
           git commit -m "Release ATLAS Designer Layer v0.1.0"
+          git pull --rebase origin chore/name-layer-iscc-nbs-pilot
           git push origin HEAD:chore/name-layer-iscc-nbs-pilot
       - uses: actions/upload-artifact@v4
         with:
