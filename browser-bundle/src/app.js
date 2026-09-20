@@ -3,7 +3,9 @@
   const MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4';
   const doc=window.ATLAS_CLARUS_DATA||{};
   const colors=doc.colors||[];
-  const libraryViews=doc.views||{};\n  let designerLayer=null;\n  try{designerLayer=window.ATLAS_CLARUS_DESIGNER.bind(window.ATLAS_CLARUS_DESIGNER_DATA,colors,doc.master_sha256)}catch(_){/* Fail closed: retain the unchanged PKL-only UI. */}
+  const libraryViews=doc.views||{};
+  let designerLayer=null;
+  try{designerLayer=window.ATLAS_CLARUS_DESIGNER.bind(window.ATLAS_CLARUS_DESIGNER_DATA,colors,doc.master_sha256)}catch(_){/* Fail closed: retain the unchanged PKL-only UI. */}
   let printWorkspace=null,referenceCardWorkspace=null;
   let recipeStore=null;
   try{recipeStore=window.ATLAS_CLARUS_RECIPES.create(window.ATLAS_BASIS23_DATA,colors,doc.master_sha256)}catch(_){/* Fail closed for recipes; retain the reference workflow. */}
