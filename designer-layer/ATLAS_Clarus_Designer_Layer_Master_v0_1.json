@@ -1,0 +1,161 @@
+{
+  "schema": "ATLAS_CLARUS_DESIGNER_LAYER",
+  "schema_version": "0.1",
+  "status": "PILOT_COMPUTED_CANDIDATES_NOT_RELEASED",
+  "source_master": {
+    "filename": "atlas_master__active_master__v2_illumext.pkl",
+    "sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+    "expected_records": 13283,
+    "identity_authority": "PKL_FULL_REFERENCE"
+  },
+  "join_contract": {
+    "cardinality": "PARTIAL_PILOT_PENDING_FULL_ONE_TO_ONE",
+    "primary_key": "atlas_row_id",
+    "secondary_key": "reference",
+    "identity_values_may_be_overwritten": false
+  },
+  "name_method": "LAB_D50_TO_MUNSELL_TO_ISCC_NBS",
+  "descriptor_method": "RULE_BASED_FROM_HLC_AND_STANDARD_NAME",
+  "records": [
+    {
+      "atlas_row_id": 1389,
+      "reference": "H040_L040_C035",
+      "standard_name_en": "Moderate reddish brown",
+      "standard_name_number": 43,
+      "designer_name_en": "Muted dark reddish brown",
+      "display_name": "Muted dark reddish brown · H040_L040_C035",
+      "colour_family": "Brown",
+      "hue_character": "Reddish brown",
+      "lightness_character": "Dark",
+      "chroma_character": "Muted",
+      "temperature": "Warm",
+      "search_terms_en": [
+        "brown",
+        "reddish",
+        "warm",
+        "muted",
+        "dark"
+      ],
+      "suggested_roles": [
+        "Grounding colour",
+        "Textile accent",
+        "Warm neutral"
+      ],
+      "calculation_status": "COMPUTED",
+      "review_status": "PILOT_CONFIRMED_NOT_INDEPENDENTLY_REVIEWED",
+      "public_release": false
+    },
+    {
+      "atlas_row_id": 2722,
+      "reference": "H075_L065_C070",
+      "standard_name_en": "Deep orange yellow",
+      "standard_name_number": 69,
+      "designer_name_en": "Deep warm golden yellow",
+      "display_name": "Deep warm golden yellow · H075_L065_C070",
+      "colour_family": "Yellow",
+      "hue_character": "Orange yellow",
+      "lightness_character": "Medium light",
+      "chroma_character": "Vivid",
+      "temperature": "Warm",
+      "search_terms_en": [
+        "yellow",
+        "orange",
+        "golden",
+        "warm",
+        "vivid"
+      ],
+      "suggested_roles": [
+        "Accent",
+        "Highlight",
+        "Attention"
+      ],
+      "calculation_status": "COMPUTED",
+      "review_status": "PILOT_CONFIRMED_NOT_INDEPENDENTLY_REVIEWED",
+      "public_release": false
+    },
+    {
+      "atlas_row_id": 2773,
+      "reference": "H075_L045_C010",
+      "standard_name_en": "Moderate olive brown",
+      "standard_name_number": 95,
+      "designer_name_en": "Soft medium olive brown",
+      "display_name": "Soft medium olive brown · H075_L045_C010",
+      "colour_family": "Brown",
+      "hue_character": "Olive brown",
+      "lightness_character": "Medium dark",
+      "chroma_character": "Soft",
+      "temperature": "Warm neutral",
+      "search_terms_en": [
+        "brown",
+        "olive",
+        "soft",
+        "neutral",
+        "medium dark"
+      ],
+      "suggested_roles": [
+        "Background",
+        "Natural neutral",
+        "Supporting colour"
+      ],
+      "calculation_status": "COMPUTED",
+      "review_status": "PILOT_CONFIRMED_NOT_INDEPENDENTLY_REVIEWED",
+      "public_release": false
+    },
+    {
+      "atlas_row_id": 3795,
+      "reference": "H100_L040_C045",
+      "standard_name_en": "Moderate olive",
+      "standard_name_number": 107,
+      "designer_name_en": "Muted dark olive",
+      "display_name": "Muted dark olive · H100_L040_C045",
+      "colour_family": "Olive",
+      "hue_character": "Yellow olive",
+      "lightness_character": "Dark",
+      "chroma_character": "Moderate",
+      "temperature": "Warm neutral",
+      "search_terms_en": [
+        "olive",
+        "yellow green",
+        "earthy",
+        "muted",
+        "dark"
+      ],
+      "suggested_roles": [
+        "Secondary colour",
+        "Grounding accent",
+        "Interface status"
+      ],
+      "calculation_status": "COMPUTED",
+      "review_status": "PILOT_CONFIRMED_NOT_INDEPENDENTLY_REVIEWED",
+      "public_release": false
+    },
+    {
+      "atlas_row_id": 9212,
+      "reference": "H245_L055_C020",
+      "standard_name_en": "Grayish blue",
+      "standard_name_number": 186,
+      "designer_name_en": "Muted cool medium blue",
+      "display_name": "Muted cool medium blue · H245_L055_C020",
+      "colour_family": "Blue",
+      "hue_character": "Cool blue",
+      "lightness_character": "Medium",
+      "chroma_character": "Muted",
+      "temperature": "Cool",
+      "search_terms_en": [
+        "blue",
+        "cool",
+        "muted",
+        "grayish",
+        "medium"
+      ],
+      "suggested_roles": [
+        "Secondary colour",
+        "Quiet background",
+        "Information accent"
+      ],
+      "calculation_status": "COMPUTED",
+      "review_status": "PILOT_CONFIRMED_NOT_INDEPENDENTLY_REVIEWED",
+      "public_release": false
+    }
+  ]
+}
