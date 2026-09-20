@@ -48,7 +48,7 @@ utils::write.csv(category_table, out_csv, row.names = FALSE, fileEncoding = "UTF
 missing_numbers <- which(counts == 0L)
 centroid_lab <- suppressWarnings(munsellinterpol::MunsellToLab(
   centroid_hvc[missing_numbers, , drop = FALSE], white = "D50", adapt = "Bradford",
-  xyC = "NBS", hcinterp = "bicubic", vinterp = "cubic", VfromY = "ASTM"
+  xyC = "NBS", hcinterp = "bicubic", vinterp = "cubic"
 ))
 
 # Delta E 76 is used only to identify a nearby Atlas reference for human review.
@@ -140,4 +140,3 @@ report <- c(
   "See `ISCC_NBS_267_COVERAGE_AUDIT.json` for exact block boundaries and nearest-reference evidence, and `ISCC_NBS_267_CATEGORY_COUNTS.csv` for all category counts."
 )
 writeLines(report, out_md, useBytes = TRUE)
-
