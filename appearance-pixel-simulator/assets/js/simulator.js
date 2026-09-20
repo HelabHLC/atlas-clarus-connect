@@ -70,6 +70,11 @@
   function decodeJson(buffer) {
     return JSON.parse(new TextDecoder('utf-8').decode(buffer));
   }
+  async function decodeGzipJson(buffer) {
+    if (!('DecompressionStream' in window)) throw new Error('This browser cannot open the compressed Name Search Index.');
+    const stream = new Blob([buffer]).stream().pipeThrough(new DecompressionStream('gzip'));
+    return JSON.parse(await new Response(stream).text());
+  }
 
   async function init(root) {
     if (root.dataset.initialized === 'true') return;
@@ -91,7 +96,7 @@
     buttons.forEach((button) => { button.disabled = true; });
     const state = {
       ready: false, selectedX: 20, selectedY: 12, cells: [], columns: 40, rows: 25,
-      selectedRowId: Number(root.dataset.rowId), manifest: null, index: null,
+      selectedRowId: Number(root.dataset.rowId), manifest: null, index: null, nameIndex: null,
       numeric: null, illuminant: null, spectral: null, cie: null,
       numericFields: {}, illuminantFields: {}, spectralCache: new Map(),
       bridgeDocument: null, materialAsset: null, objectPreview: null
@@ -336,7 +341,9 @@
       }
       for (let rowId = 0; rowId < state.index.rows.length && matches.length < 30; rowId += 1) {
         const row = state.index.rows[rowId];
-        if (!normalized || row[1].includes(normalized) || row[2].includes(normalized)) {
+        const name = state.nameIndex.get(rowId);
+        const nameText = name ? [name.d, name.s, name.f].concat(name.t || []).join(' ').toUpperCase() : '';
+        if (!normalized || row[1].includes(normalized) || row[2].includes(normalized) || nameText.includes(normalized)) {
           if (!matches.some((candidate) => candidate[0] === row[0])) matches.push(row);
         }
       }
@@ -344,7 +351,8 @@
       controls['master-row'].replaceChildren(...matches.map((row) => {
         const option = document.createElement('option');
         option.value = String(row[0]);
-        option.textContent = row[0] + ' · ' + row[1] + ' · ' + row[2];
+        const name = state.nameIndex.get(row[0]);
+        option.textContent = row[0] + ' · ' + (name ? name.d + ' · ' : '') + row[1] + ' · ' + row[2];
         option.selected = row[0] === state.selectedRowId;
         return option;
       }));
@@ -896,6 +904,11 @@
         return fetchVerified(baseUrl + record.path + '?ver=' + root.dataset.version, record.sha256);
       }));
       state.index = decodeJson(buffers[0]);
+      const nameDocument = await decodeGzipJson(await fetchVerified(root.dataset.nameIndexUrl + '?ver=' + root.dataset.version, root.dataset.nameIndexSha256));
+      if (nameDocument.schema !== 'ATLAS_CLARUS_NAME_SEARCH_INDEX' || nameDocument.master_sha256 !== root.dataset.masterSha256 ||
+          nameDocument.entry_count !== 13283 || nameDocument.records.length !== 13283) throw new Error('Name Search Index validation failed.');
+      state.nameIndex = new Map(nameDocument.records.map((row) => [Number(row.i), row]));
+      if (state.nameIndex.size !== 13283 || state.index.rows.some((row) => state.nameIndex.get(Number(row[0])).r !== row[1])) throw new Error('Name Search Index identity binding failed.');
       state.numeric = new Float64Array(buffers[1]);
       state.illuminant = new Float64Array(buffers[2]);
       state.spectral = new Float32Array(buffers[3]);

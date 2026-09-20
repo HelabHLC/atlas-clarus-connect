@@ -130,13 +130,14 @@ function atlas_clarus_hover_shortcode($atts=array()) {
     wp_enqueue_style('atlas-clarus-hover-library'); wp_enqueue_script('atlas-clarus-hover-library');
     $instance = wp_unique_id('atlas-clarus-');
     return sprintf(
-        '<section id="%1$s" class="atlas-clarus-library" aria-label="%9$s" data-colors-url="%2$s" data-views-url="%3$s" data-default-view="%4$s" data-per-page="%5$d" data-show-status="%6$s" data-show-search="%7$s" data-show-library-selector="%8$s" data-wheel-url="%11$s" data-basis23-url="%12$s" data-basis23-version="%13$s"><div class="atlas-clarus-loading" role="status">%10$s</div></section>',
+        '<section id="%1$s" class="atlas-clarus-library" aria-label="%9$s" data-colors-url="%2$s" data-views-url="%3$s" data-default-view="%4$s" data-per-page="%5$d" data-show-status="%6$s" data-show-search="%7$s" data-show-library-selector="%8$s" data-wheel-url="%11$s" data-basis23-url="%12$s" data-basis23-version="%13$s" data-name-index-url="%14$s"><div class="atlas-clarus-loading" role="status">%10$s</div></section>',
         esc_attr($instance),esc_url(ATLAS_CLARUS_HOVER_URL.'data/colors.json'),esc_url(ATLAS_CLARUS_HOVER_URL.'data/views.json'),esc_attr($view),$per_page,
         atlas_clarus_hover_yesno($atts['show_status'],true)?'1':'0',atlas_clarus_hover_yesno($atts['show_search'],true)?'1':'0',atlas_clarus_hover_yesno($atts['show_library_selector'],true)?'1':'0',
         esc_attr__('ATLAS Clarus colour reference library','atlas-clarus-hover-library'),esc_html__('Loading ATLAS Clarus library…','atlas-clarus-hover-library'),
         esc_url(apply_filters('atlas_clarus_hover_wheel_url', ATLAS_CLARUS_WHEEL_URL)),
         esc_url(ATLAS_CLARUS_HOVER_URL.'data/basis23-recipes/'),
-        esc_attr(ATLAS_CLARUS_BASIS23_VERSION)
+        esc_attr(ATLAS_CLARUS_BASIS23_VERSION),
+        esc_url(ATLAS_CLARUS_HOVER_URL.'data/atlas-name-search-index-v1.json.gz')
     );
 }
 add_shortcode('atlas_clarus_library','atlas_clarus_hover_shortcode');
