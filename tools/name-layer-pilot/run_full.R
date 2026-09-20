@@ -12,8 +12,8 @@ hvc_matrix <- function(x){if(is.data.frame(x)&&"HVC"%in%names(x))x<-x$HVC;if(is.
 cap <- function(fun){w<-character();e<-NULL;v<-tryCatch(withCallingHandlers(fun(),warning=function(x){w<<-c(w,conditionMessage(x));invokeRestart("muffleWarning")}),error=function(x){e<<-conditionMessage(x);NULL});list(v=v,w=unique(w),e=e)}
 lightness <- function(L)if(L<20)"Very dark" else if(L<35)"Dark" else if(L<50)"Medium dark" else if(L<65)"Medium" else if(L<80)"Medium light" else if(L<90)"Light" else "Very light"
 chroma <- function(C)if(C<=5)"Neutral" else if(C<=15)"Soft" else if(C<=35)"Muted" else if(C<=60)"Moderate" else "Vivid"
-temperature <- function(H)if(H>=330||H<115)"Warm" else if(H<145)"Warm neutral" else if(H<=295)"Cool" else "Cool neutral"
-family <- function(name,H){n<-tolower(name);keys<-c("purple","violet","blue","green","olive","yellow","orange","brown","red","pink","gray","white","black");hit<-keys[vapply(keys,function(k)grepl(k,n,fixed=TRUE),logical(1))];if(length(hit))tools::toTitleCase(tail(hit,1)) else if(H<30||H>=345)"Red" else if(H<75)"Orange" else if(H<115)"Yellow" else if(H<170)"Green" else if(H<260)"Blue" else if(H<310)"Violet" else "Purple"}
+temperature <- function(H,C)if(C<=5)"Neutral" else if(H>=330||H<115)"Warm" else if(H<145)"Warm neutral" else if(H<=295)"Cool" else "Cool neutral"
+family <- function(name,H){n<-tolower(name);keys<-c("purple","violet","blue","green","olive","yellow","orange","brown","red","pink","gray","white","black");words<-strsplit(n," +")[[1]];hit<-rev(words)[rev(words)%in%keys];if(length(hit))tools::toTitleCase(hit[1]) else if(H<30||H>=345)"Red" else if(H<75)"Orange" else if(H<115)"Yellow" else if(H<170)"Green" else if(H<260)"Blue" else if(H<310)"Violet" else "Purple"}
 role <- function(L,C){unique(c(if(L>=80)"Light background" else if(L<=30)"Dark foundation" else "Secondary colour",if(C>=60)"Attention accent" else if(C<=15)"Quiet neutral" else "Supporting colour"))}
 base_hue <- function(name){
  x<-tolower(name)
@@ -30,7 +30,7 @@ one <- function(s, expected_id){
  block<-if(is.null(hvc))list(v=NULL,w=character(),e="No finite HVC") else cap(function()munsellinterpol::ColorBlockFromMunsell(hvc))
  ok<-is.data.frame(block$v)&&nrow(block$v)==1L&&all(c("Number","Name")%in%names(block$v))&&!is.na(block$v$Number[1])&&!is.na(block$v$Name[1])&&length(conv$w)==0L&&length(block$w)==0L&&is.null(conv$e)&&is.null(block$e)
  std<-if(ok)tools::toTitleCase(tolower(as.character(block$v$Name[1]))) else NULL
- lc<-lightness(L);cc<-chroma(C);fam<-if(ok)family(std,H) else NULL;temp<-temperature(H)
+ lc<-lightness(L);cc<-chroma(C);fam<-if(ok)family(std,H) else NULL;temp<-temperature(H,C)
  dname<-if(ok)designer_name(std,L,C) else NULL
  list(atlas_row_id=id,reference=ref,standard_name_en=std,standard_name_number=if(ok)as.integer(block$v$Number[1])else NULL,designer_name_en=if(ok)tools::toTitleCase(dname)else NULL,display_name=if(ok)paste(tools::toTitleCase(dname),ref,sep=" · ")else ref,colour_family=fam,hue_character=if(ok)paste(temp,fam)else NULL,lightness_character=lc,chroma_character=cc,temperature=temp,neutrality=if(C<=5)"Neutral" else if(C<=20)"Near neutral" else "Chromatic",visual_weight=if(L<35||C>60)"Strong" else if(L>80&&C<20)"Light" else "Medium",search_terms_en=if(ok)unique(tolower(c(fam,temp,lc,cc,strsplit(std," ")[[1]])))else character(),suggested_roles=role(L,C),munsell_hvc=if(is.null(hvc))NULL else as.numeric(hvc[1,]),calculation_status=if(ok)"COMPUTED"else"OPEN",warnings=unique(c(conv$w,block$w)),error=conv$e%||%block$e,review_status="NOT_INDEPENDENTLY_REVIEWED",public_release=FALSE)
 }
@@ -46,7 +46,12 @@ ids<-vapply(check$records,function(x)as.integer(x$atlas_row_id),integer(1))
 refs<-vapply(check$records,function(x)as.character(x$reference),character(1))
 display<-vapply(check$records,function(x)as.character(x$display_name),character(1))
 designer<-vapply(check$records,function(x)as.character(x$designer_name_en),character(1))
+families<-vapply(check$records,function(x)as.character(x$colour_family),character(1))
+expected_families<-vapply(check$records,function(x)family(x$standard_name_en,0),character(1))
+chroma_labels<-vapply(check$records,function(x)as.character(x$chroma_character),character(1))
+temperatures<-vapply(check$records,function(x)as.character(x$temperature),character(1))
 stopifnot(length(check$records)==13283L,identical(ids,0:13282),!anyDuplicated(refs),!anyDuplicated(display))
 stopifnot(!any(vapply(strsplit(tolower(designer)," +"),function(words)anyDuplicated(words)>0L,logical(1))))
+stopifnot(identical(families,expected_families),all(temperatures[chroma_labels=="Neutral"]=="Neutral"))
 writeLines(paste(digest::digest(file=path,algo="sha256",serialize=FALSE),basename(path)),"designer-layer/SHA256_DESIGNER_LAYER.txt")
 writeLines(capture.output(utils::sessionInfo()),"designer-layer/R_sessionInfo.txt")
