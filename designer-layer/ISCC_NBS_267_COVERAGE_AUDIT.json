@@ -3,18 +3,14 @@
   "schema_version": "0.1",
   "status": "AUDIT_COMPLETE_LAYER_REMAINS_NOT_RELEASED",
   "source_master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
-  "designer_layer_sha256": "3a98fd3784fdb45b8b27e598f13721e88bade9df51161800b7dde17de877321e",
-  "evidence_source": {
-    "package": "munsellinterpol 3.6-0",
-    "package_tarball_sha256": "f21c1a0e115a95f045e0b57d8ce365a7a38f14e610fd74851d4da82ce8744790",
-    "boundary_table": "p.System_ISCCNBS (932 rows)",
-    "centroid_table": "CentroidsISCCNBS (267 rows)"
-  },
+  "designer_layer_sha256": "71383b0d8d6d5f6486d07a2ab13f73b52e2287cd50db531422a394544cadc1f2",
   "method": {
-    "assignment_check": "Independent reclassification of stored HVC against official six-boundary table",
-    "boundary_semantics": "lower inclusive, upper exclusive; H wrapped to [1,101)",
-    "centroid_check": "Each unrepresented official centroid reclassifies to its own category",
-    "nearest_reference_metric": "Euclidean distance to category block after scaling H/V/C by 2.5/1/2; diagnostic only, never used for assignment"
+    "assignment": "Stored Lab D50 -> Munsell HVC -> ColorBlockFromMunsell boundary lookup",
+    "package": "munsellinterpol 3.6-0",
+    "category_model": "267 revised ISCC-NBS Munsell color-name blocks",
+    "centroid_test": "All 267 official centroids reclassify to their own category number",
+    "full_reclassification_test": "All 13,283 stored HVC values reproduce the saved category number",
+    "nearest_reference_metric": "CIE 1976 Delta E ab; diagnostic only, never used for assignment"
   },
   "results": {
     "atlas_reference_count": 13283,
@@ -23,53 +19,45 @@
     "unrepresented_category_count": 5,
     "count_sum_verified": true,
     "all_atlas_assignments_reproduced": true,
-    "unrepresented_centroids_self_classify": true,
-    "unrepresented_numbers": [
-      67,
-      124,
-      157,
-      231,
-      246
-    ]
+    "all_centroids_self_classify": true,
+    "unrepresented_numbers": [67, 124, 157, 231, 246]
   },
   "unrepresented_categories": [
     {
       "number": 67,
       "name": "Brilliant Orange Yellow",
-      "official_centroid_munsell": "9.0YR 8.4/12.1",
-      "official_centroid_hvc": [
-        19.0,
-        8.4,
-        12.1
-      ],
+      "centroid_munsell": "9.0YR 8.4/12.1",
+      "centroid_hvc": [19, 8.4, 12.1],
+      "centroid_lab_d50": [85.0515736832707, 21.8802660301449, 74.669424019434],
       "centroid_self_classification_verified": true,
       "defining_blocks": [
-        {
-          "Hmin": 17.0,
-          "Hmax": 18.0,
-          "Vmin": 8.0,
-          "Vmax": 10.0,
-          "Cmin": 10.0,
-          "Cmax": 14.0
-        },
-        {
-          "Hmin": 18.0,
-          "Hmax": 21.0,
-          "Vmin": 8.0,
-          "Vmax": 10.0,
-          "Cmin": 10.0,
-          "Cmax": 14.0
-        }
+        [
+          {
+            "Hmin": 17,
+            "Hmax": 18,
+            "Vmin": 8,
+            "Vmax": 10,
+            "Cmin": 10,
+            "Cmax": 14
+          }
+        ],
+        [
+          {
+            "Hmin": 18,
+            "Hmax": 21,
+            "Vmin": 8,
+            "Vmax": 10,
+            "Cmin": 10,
+            "Cmax": 14
+          }
+        ]
       ],
       "nearest_atlas_reference": {
-        "atlas_row_id": 2660,
-        "reference": "H075_L080_C065",
-        "munsell_hvc": [
-          19.7781001572975,
-          7.88459545533636,
-          10.0202979676411
-        ],
-        "normalized_distance_to_nearest_block": 0.11540454466364025,
+        "atlas_row_id": 2663,
+        "reference": "H075_L080_C080",
+        "lab_d50": [80, 20.7055, 77.2741],
+        "munsell_hvc": [19.5320542888655, 7.87671236546929, 12.364120986654],
+        "delta_e_76_to_centroid": 5.80368924623232,
         "assigned_number": 68,
         "assigned_name": "Strong Orange Yellow"
       },
@@ -78,98 +66,96 @@
     {
       "number": 124,
       "name": "Deep Olive Green",
-      "official_centroid_munsell": "5.0GY 2.4/7.1",
-      "official_centroid_hvc": [
-        35.0,
-        2.4,
-        7.1
-      ],
+      "centroid_munsell": "5.0GY 2.4/7.1",
+      "centroid_hvc": [35, 2.4, 7.1],
+      "centroid_lab_d50": [24.4644945161457, -18.3834060430564, 40.6667186517292],
       "centroid_self_classification_verified": true,
       "defining_blocks": [
-        {
-          "Hmin": 32.0,
-          "Hmax": 34.0,
-          "Vmin": 0.0,
-          "Vmax": 2.5,
-          "Cmin": 7.0,
-          "Cmax": null
-        },
-        {
-          "Hmin": 34.0,
-          "Hmax": 38.0,
-          "Vmin": 0.0,
-          "Vmax": 2.5,
-          "Cmin": 7.0,
-          "Cmax": null
-        }
+        [
+          {
+            "Hmin": 32,
+            "Hmax": 34,
+            "Vmin": 0,
+            "Vmax": 2.5,
+            "Cmin": 7
+          }
+        ],
+        [
+          {
+            "Hmin": 34,
+            "Hmax": 38,
+            "Vmin": 0,
+            "Vmax": 2.5,
+            "Cmin": 7
+          }
+        ]
       ],
       "nearest_atlas_reference": {
-        "atlas_row_id": 5206,
-        "reference": "H135_L025_C035",
-        "munsell_hvc": [
-          38.5475378449128,
-          2.46156833628738,
-          6.69744495476612
-        ],
-        "normalized_distance_to_nearest_block": 0.26618136581473884,
-        "assigned_number": 138,
-        "assigned_name": "Very Dark Yellowish Green"
+        "atlas_row_id": 4796,
+        "reference": "H125_L030_C040",
+        "lab_d50": [30, -22.9431, 32.7661],
+        "munsell_hvc": [36.8802097387972, 2.94509894648784, 6.81789163129167],
+        "delta_e_76_to_centroid": 10.6701642453535,
+        "assigned_number": 125,
+        "assigned_name": "Moderate Olive Green"
       },
       "finding": "CATEGORY_DEFINED_BUT_NO_ATLAS_REFERENCE_FALLS_INSIDE_ITS_MUNSELL_BLOCKS"
     },
     {
       "number": 157,
       "name": "Greenish Black",
-      "official_centroid_munsell": "7.5G 0.9/0.7",
-      "official_centroid_hvc": [
-        47.5,
-        0.9,
-        0.7
-      ],
+      "centroid_munsell": "7.5G 0.9/0.7",
+      "centroid_hvc": [47.5, 0.9, 0.7],
+      "centroid_lab_d50": [9.37399099789519, -2.67784753392911, 0.513747452775832],
       "centroid_self_classification_verified": true,
       "defining_blocks": [
-        {
-          "Hmin": 34.0,
-          "Hmax": 38.0,
-          "Vmin": 0.0,
-          "Vmax": 1.5,
-          "Cmin": 0.5,
-          "Cmax": 1.0
-        },
-        {
-          "Hmin": 38.0,
-          "Hmax": 43.0,
-          "Vmin": 0.0,
-          "Vmax": 2.0,
-          "Cmin": 0.5,
-          "Cmax": 1.0
-        },
-        {
-          "Hmin": 43.0,
-          "Hmax": 49.0,
-          "Vmin": 0.0,
-          "Vmax": 2.0,
-          "Cmin": 0.5,
-          "Cmax": 1.0
-        },
-        {
-          "Hmin": 49.0,
-          "Hmax": 60.0,
-          "Vmin": 0.0,
-          "Vmax": 2.0,
-          "Cmin": 0.5,
-          "Cmax": 1.0
-        }
+        [
+          {
+            "Hmin": 34,
+            "Hmax": 38,
+            "Vmin": 0,
+            "Vmax": 1.5,
+            "Cmin": 0.5,
+            "Cmax": 1
+          }
+        ],
+        [
+          {
+            "Hmin": 38,
+            "Hmax": 43,
+            "Vmin": 0,
+            "Vmax": 2,
+            "Cmin": 0.5,
+            "Cmax": 1
+          }
+        ],
+        [
+          {
+            "Hmin": 43,
+            "Hmax": 49,
+            "Vmin": 0,
+            "Vmax": 2,
+            "Cmin": 0.5,
+            "Cmax": 1
+          }
+        ],
+        [
+          {
+            "Hmin": 49,
+            "Hmax": 60,
+            "Vmin": 0,
+            "Vmax": 2,
+            "Cmin": 0.5,
+            "Cmax": 1
+          }
+        ]
       ],
       "nearest_atlas_reference": {
-        "atlas_row_id": 8365,
-        "reference": "H215_L010_C005",
-        "munsell_hvc": [
-          59.4571870606259,
-          0.965102085342622,
-          1.0743111842281
-        ],
-        "normalized_distance_to_nearest_block": 0.03715559211404995,
+        "atlas_row_id": 6741,
+        "reference": "H170_L010_C005",
+        "lab_d50": [10, -4.924, 0.8682],
+        "munsell_hvc": [47.493105876792, 0.960686333428827, 1.30173971946965],
+        "delta_e_76_to_centroid": 2.35854293575213,
         "assigned_number": 152,
         "assigned_name": "Blackish Green"
       },
@@ -178,98 +164,96 @@
     {
       "number": 231,
       "name": "Purplish White",
-      "official_centroid_munsell": "9.0P 9.1/1.0",
-      "official_centroid_hvc": [
-        89.0,
-        9.1,
-        1.0
-      ],
+      "centroid_munsell": "9.0P 9.1/1.0",
+      "centroid_hvc": [89, 9.1, 1],
+      "centroid_lab_d50": [91.147110966289, 1.99696490376619, -1.03070496991695],
       "centroid_self_classification_verified": true,
       "defining_blocks": [
-        {
-          "Hmin": 79.0,
-          "Hmax": 83.0,
-          "Vmin": 8.5,
-          "Vmax": 10.0,
-          "Cmin": 0.5,
-          "Cmax": 1.5
-        },
-        {
-          "Hmin": 83.0,
-          "Hmax": 89.0,
-          "Vmin": 8.5,
-          "Vmax": 10.0,
-          "Cmin": 0.5,
-          "Cmax": 1.5
-        },
-        {
-          "Hmin": 89.0,
-          "Hmax": 93.0,
-          "Vmin": 8.5,
-          "Vmax": 10.0,
-          "Cmin": 0.5,
-          "Cmax": 1.5
-        },
-        {
-          "Hmin": 93.0,
-          "Hmax": 99.0,
-          "Vmin": 8.5,
-          "Vmax": 10.0,
-          "Cmin": 0.5,
-          "Cmax": 1.5
-        }
+        [
+          {
+            "Hmin": 79,
+            "Hmax": 83,
+            "Vmin": 8.5,
+            "Vmax": 10,
+            "Cmin": 0.5,
+            "Cmax": 1.5
+          }
+        ],
+        [
+          {
+            "Hmin": 83,
+            "Hmax": 89,
+            "Vmin": 8.5,
+            "Vmax": 10,
+            "Cmin": 0.5,
+            "Cmax": 1.5
+          }
+        ],
+        [
+          {
+            "Hmin": 89,
+            "Hmax": 93,
+            "Vmin": 8.5,
+            "Vmax": 10,
+            "Cmin": 0.5,
+            "Cmax": 1.5
+          }
+        ],
+        [
+          {
+            "Hmin": 93,
+            "Hmax": 99,
+            "Vmin": 8.5,
+            "Vmax": 10,
+            "Cmin": 0.5,
+            "Cmax": 1.5
+          }
+        ]
       ],
       "nearest_atlas_reference": {
-        "atlas_row_id": 187,
-        "reference": "H010_L090_C005",
-        "munsell_hvc": [
-          98.3299973419182,
-          8.97835661347196,
-          1.78654265283702
-        ],
-        "normalized_distance_to_nearest_block": 0.14327132641851004,
-        "assigned_number": 252,
-        "assigned_name": "Pale Purplish Pink"
+        "atlas_row_id": 1,
+        "reference": "H000_L090_C000",
+        "lab_d50": [90, 0, 0],
+        "munsell_hvc": [0, 8.98131375465391, 0],
+        "delta_e_76_to_centroid": 2.52311020981366,
+        "assigned_number": 263,
+        "assigned_name": "White"
       },
       "finding": "CATEGORY_DEFINED_BUT_NO_ATLAS_REFERENCE_FALLS_INSIDE_ITS_MUNSELL_BLOCKS"
     },
     {
       "number": 246,
       "name": "Brilliant Purplish Pink",
-      "official_centroid_munsell": "4.0RP 7.9/11",
-      "official_centroid_hvc": [
-        94.0,
-        7.9,
-        11.0
-      ],
+      "centroid_munsell": "4.0RP 7.9/11",
+      "centroid_hvc": [94, 7.9, 11],
+      "centroid_lab_d50": [79.6763766162124, 46.3276232480188, -5.81982936436511],
       "centroid_self_classification_verified": true,
       "defining_blocks": [
-        {
-          "Hmin": 89.0,
-          "Hmax": 93.0,
-          "Vmin": 7.5,
-          "Vmax": 10.0,
-          "Cmin": 9.0,
-          "Cmax": null
-        },
-        {
-          "Hmin": 93.0,
-          "Hmax": 99.0,
-          "Vmin": 7.5,
-          "Vmax": 10.0,
-          "Cmin": 9.0,
-          "Cmax": null
-        }
+        [
+          {
+            "Hmin": 89,
+            "Hmax": 93,
+            "Vmin": 7.5,
+            "Vmax": 10,
+            "Cmin": 9
+          }
+        ],
+        [
+          {
+            "Hmin": 93,
+            "Hmax": 99,
+            "Vmin": 7.5,
+            "Vmax": 10,
+            "Cmin": 9
+          }
+        ]
       ],
       "nearest_atlas_reference": {
-        "atlas_row_id": 12245,
-        "reference": "H335_L075_C045",
-        "munsell_hvc": [
-          90.1903003168058,
-          7.43746675656575,
-          11.1728928769186
-        ],
-        "normalized_distance_to_nearest_block": 0.06253324343424982,
+        "atlas_row_id": 12964,
+        "reference": "H355_L075_C045",
+        "lab_d50": [75, 44.8288, -3.922],
+        "munsell_hvc": [94.5351989561535, 7.41338839349565, 10.8259996867005],
+        "delta_e_76_to_centroid": 5.2646676705853,
         "assigned_number": 247,
         "assigned_name": "Strong Purplish Pink"
       },

@@ -1,268 +1,268 @@
-number,name,atlas_reference_count,coverage_status,centroid_munsell
-1,Vivid Pink,4,REPRESENTED,1.5R 7/13
-2,Strong Pink,17,REPRESENTED,1.5R 7.5/9.1
-3,Deep Pink,54,REPRESENTED,1.9R 6.0/11.1
-4,Light Pink,9,REPRESENTED,2.5R 8.6/5.2
-5,Moderate Pink,44,REPRESENTED,2.5R 7.2/5.2
-6,Dark Pink,14,REPRESENTED,2.5R 6.0/6.0
-7,Pale Pink,16,REPRESENTED,2.5R 8.8/2.3
-8,Grayish Pink,12,REPRESENTED,2.5R 7.2/2.3
-9,Pinkish White,7,REPRESENTED,7.6R 9.2/1.0
-10,Pinkish Gray,34,REPRESENTED,7.6R 7.5/1.0
-11,Vivid Red,99,REPRESENTED,5R 4/15
-12,Strong Red,30,REPRESENTED,4.0R 4.5/12.0
-13,Deep Red,26,REPRESENTED,5.0R 2.8/9.9
-14,Very Deep Red,10,REPRESENTED,5.0R 1.4/9.0
-15,Moderate Red,58,REPRESENTED,4.0R 4.5/9.1
-16,Dark Red,64,REPRESENTED,4.5R 2.8/6.8
-17,Very Dark Red,30,REPRESENTED,3.5R 1.2/4.9
-18,Light Grayish Red,29,REPRESENTED,4.9R 6.0/3.4
-19,Grayish Red,91,REPRESENTED,4.6R 4.5/4.7
-20,Dark Grayish Red,20,REPRESENTED,3.5R 2.7/2.2
-21,Blackish Red,12,REPRESENTED,3.5R 1.1/1.6
-22,Reddish Gray,24,REPRESENTED,6.5R 5.5/1.1
-23,Dark Reddish Gray,20,REPRESENTED,6.0R 3.5/1.1
-24,Reddish Black,21,REPRESENTED,6.0R 0.9/0.8
-25,Vivid Yellowish Pink,14,REPRESENTED,8.0R 7/13
-26,Strong Yellowish Pink,46,REPRESENTED,8.0R 7.5/9.0
-27,Deep Yellowish Pink,20,REPRESENTED,5.6R 6.0/12.4
-28,Light Yellowish Pink,25,REPRESENTED,0.7YR 8.6/4.8
-29,Moderate Yellowish Pink,82,REPRESENTED,0.7YR 7.2/4.8
-30,Dark Yellowish Pink,8,REPRESENTED,7.0R 6.0/6.0
-31,Pale Yellowish Pink,28,REPRESENTED,2.1YR 8.8/2.2
-32,Grayish Yellowish Pink,28,REPRESENTED,0.5YR 7.2/2.3
-33,Brownish Pink,12,REPRESENTED,6.5YR 7.2/2.2
-34,Vivid Reddish Orange,95,REPRESENTED,9.5R 5.5/15.5
-35,Strong Reddish Orange,31,REPRESENTED,9.5R 5.5/12.0
-36,Deep Reddish Orange,18,REPRESENTED,9.5R 4.0/12.0
-37,Moderate Reddish Orange,61,REPRESENTED,9.5R 5.5/9.1
-38,Dark Reddish Orange,29,REPRESENTED,9.5R 4.0/9.1
-39,Grayish Reddish Orange,30,REPRESENTED,0.5YR 5.5/6.0
-40,Strong Reddish Brown,22,REPRESENTED,0.5YR 3.0/11.2
-41,Deep Reddish Brown,32,REPRESENTED,9.8R 1.5/7.5
-42,Light Reddish Brown,26,REPRESENTED,0.5YR 5.5/4.1
-43,Moderate Reddish Brown,61,REPRESENTED,9.6R 3.4/5.2
-44,Dark Reddish Brown,55,REPRESENTED,9.5R 1.3/3.6
-45,Light Grayish Reddish Brown,23,REPRESENTED,3.0YR 5.5/2.3
-46,Grayish Reddish Brown,27,REPRESENTED,9.9R 3.4/2.3
-47,Dark Grayish Reddish Brown,25,REPRESENTED,9.5R 2.0/2.0
-48,Vivid Orange,34,REPRESENTED,4.5YR 6.6/16
-49,Brilliant Orange,2,REPRESENTED,4.5YR 8.0/12.1
-50,Strong Orange,56,REPRESENTED,4.5YR 6.5/12.1
-51,Deep Orange,24,REPRESENTED,4.5YR 5.0/12.1
-52,Light Orange,17,REPRESENTED,4.5YR 8/8.1
-53,Moderate Orange,59,REPRESENTED,4.6YR 6.5/8.1
-54,Brownish Orange,26,REPRESENTED,4.5YR 5.0/8.2
-55,Strong Brown,84,REPRESENTED,5.0YR 3.5/8
-56,Deep Brown,13,REPRESENTED,5.0YR 2.1/6
-57,Light Brown,49,REPRESENTED,5.5YR 5.5/4.6
-58,Moderate Brown,35,REPRESENTED,5.5YR 3.5/3.9
-59,Dark Brown,41,REPRESENTED,5.5YR 1.6/3.6
-60,Light Grayish Brown,12,REPRESENTED,6.5YR 5.5/2.2
-61,Grayish Brown,26,REPRESENTED,5.6YR 3.5/2.0
-62,Dark Grayish Brown,16,REPRESENTED,5.5YR 2.0/1.7
-63,Light Brownish Gray,29,REPRESENTED,6.8YR 5.5/1.0
-64,Brownish Gray,36,REPRESENTED,6.4YR 3.5/0.9
-65,Brownish Black,28,REPRESENTED,7.5YR 0.8/0.8
-66,Vivid Orange Yellow,11,REPRESENTED,9.0YR 7.2/16
-67,Brilliant Orange Yellow,0,DEFINED_NOT_SAMPLED,9.0YR 8.4/12.1
-68,Strong Orange Yellow,30,REPRESENTED,9.0YR 7.2/12.1
-69,Deep Orange Yellow,18,REPRESENTED,9.0YR 6.0/12.1
-70,Light Orange Yellow,8,REPRESENTED,9.0YR 8.6/8.1
-71,Moderate Orange Yellow,32,REPRESENTED,9.0YR 7.2/8.1
-72,Dark Orange Yellow,24,REPRESENTED,9.0YR 6.0/8.1
-73,Pale Orange Yellow,29,REPRESENTED,9.1YR 8.6/4.4
-74,Strong Yellowish Brown,57,REPRESENTED,9.0YR 4.6/9.6
-75,Deep Yellowish Brown,5,REPRESENTED,9.5YR 2.9/6
-76,Light Yellowish Brown,37,REPRESENTED,9.2YR 6.6/4.7
-77,Moderate Yellowish Brown,24,REPRESENTED,9.5YR 4.5/4.0
-78,Dark Yellowish Brown,25,REPRESENTED,9.5YR 2.2/3.7
-79,Light Grayish Yellowish Brown,17,REPRESENTED,9.5YR 6.4/2.4
-80,Grayish Yellowish Brown,19,REPRESENTED,9.5YR 4.6/2.1
-81,Dark Grayish Yellow Brown,23,REPRESENTED,9.5YR 2.4/1.8
-82,Vivid Yellow,71,REPRESENTED,4.0Y 7.8/14.5
-83,Brilliant Yellow,15,REPRESENTED,4.0Y 8.8/9.5
-84,Strong Yellow,36,REPRESENTED,4.0Y 7.2/9.5
-85,Deep Yellow,23,REPRESENTED,4.0Y 6.0/9.5
-86,Light Yellow,20,REPRESENTED,4.0Y 8.8/6.6
-87,Moderate Yellow,36,REPRESENTED,4.0Y 7.2/6.6
-88,Dark Yellow,25,REPRESENTED,4.0Y 6.0/6.6
-89,Pale Yellow,28,REPRESENTED,4.2Y 8.9/3.6
-90,Grayish Yellow,44,REPRESENTED,4.2Y 7.2/3.6
-91,Dark Grayish Yellow,16,REPRESENTED,4.0Y 6.0/4.1
-92,Yellowish White,24,REPRESENTED,4.1Y 9.2/1.3
-93,Yellowish Gray,59,REPRESENTED,4.1Y 7.5/1.3
-94,Light Olive Brown,48,REPRESENTED,2.5Y 5.0/8.4
-95,Moderate Olive Brown,58,REPRESENTED,2.5Y 3.5/6
-96,Dark Olive Brown,21,REPRESENTED,2.5Y 1.8/2.5
-97,Vivid Greenish Yellow,48,REPRESENTED,9.5Y 7.8/14.5
-98,Brilliant Greenish Yellow,17,REPRESENTED,9.5Y 8.8/9.5
-99,Strong Greenish Yellow,24,REPRESENTED,9.5Y 7.2/9.5
-100,Deep Greenish Yellow,16,REPRESENTED,9.5Y 6.0/9.5
-101,Light Greenish Yellow,18,REPRESENTED,9.5Y 8.8/6.6
-102,Moderate Greenish Yellow,27,REPRESENTED,9.5Y 7.2/6.6
-103,Dark Greenish Yellow,18,REPRESENTED,9.5Y 6.0/6.6
-104,Pale Greenish Yellow,15,REPRESENTED,9.5Y 8.9/4.1
-105,Grayish Greenish Yellow,24,REPRESENTED,9.5Y 7.2/4.1
-106,Light Olive,95,REPRESENTED,8.1Y 5.1/8.0
-107,Moderate Olive,88,REPRESENTED,8.0Y 3.5/5.8
-108,Dark Olive,16,REPRESENTED,8.0Y 1.7/3.2
-109,Light Grayish Olive,37,REPRESENTED,8.3Y 5.5/2.4
-110,Grayish Olive,46,REPRESENTED,8.1Y 3.5/2.3
-111,Dark Grayish Olive,31,REPRESENTED,8.0Y 2.0/2.0
-112,Light Olive Gray,22,REPRESENTED,7.4Y 5.5/1.3
-113,Olive Gray,36,REPRESENTED,8.1Y 3.5/1.0
-114,Olive Black,11,REPRESENTED,9.0Y 0.9/0.8
-115,Vivid Yellow Green,113,REPRESENTED,5.0GY 7.5/14.5
-116,Brilliant Yellow Green,53,REPRESENTED,5.0GY 8.5/9.1
-117,Strong Yellow Green,152,REPRESENTED,5.0GY 6.0/9.1
-118,Deep Yellow Green,23,REPRESENTED,5.0GY 4.0/9.1
-119,Light Yellow Green,66,REPRESENTED,5.0GY 8.6/5.2
-120,Moderate Yellow Green,135,REPRESENTED,5.0GY 6.0/5.2
-121,Pale Yellow Green,48,REPRESENTED,3.5GY 8.7/2.2
-122,Grayish Yellow Green,87,REPRESENTED,4.4GY 6.1/2.2
-123,Strong Olive Green,3,REPRESENTED,5.0GY 3.2/7.8
-124,Deep Olive Green,0,DEFINED_NOT_SAMPLED,5.0GY 2.4/7.1
-125,Moderate Olive Green,104,REPRESENTED,5.0GY 3.5/5.2
-126,Dark Olive Green,41,REPRESENTED,5.0GY 1.8/3.7
-127,Grayish Olive Green,42,REPRESENTED,5.0GY 3.5/2.2
-128,Dark Grayish Olive Green,30,REPRESENTED,5.0GY 2.0/2.0
-129,Vivid Yellowish Green,235,REPRESENTED,0.5G 7/15.5
-130,Brilliant Yellowish Green,77,REPRESENTED,0.5G 8.0/9.1
-131,Strong Yellowish Green,107,REPRESENTED,0.5G 5.5/9.1
-132,Deep Yellowish Green,142,REPRESENTED,0.5G 3.5/11.5
-133,Very Deep Yellowish Green,16,REPRESENTED,0.5G 2.0/9.2
-134,Very Light Yellowish Green,9,REPRESENTED,0.5G 9.1/5.1
-135,Light Yellowish Green,101,REPRESENTED,0.5G 7.5/5.1
-136,Moderate Yellowish Green,96,REPRESENTED,0.5G 5.5/5.1
-137,Dark Yellowish Green,108,REPRESENTED,0.5G 3.5/5.1
-138,Very Dark Yellowish Green,79,REPRESENTED,0.5G 1.5/4.9
-139,Vivid Green,168,REPRESENTED,6.5G 5.2/18
-140,Brilliant Green,85,REPRESENTED,6.0G 7.4/9.1
-141,Strong Green,60,REPRESENTED,6.0G 4.5/9.1
-142,Deep Green,49,REPRESENTED,6.0G 2.3/9.1
-143,Very Light Green,27,REPRESENTED,6.0G 8.6/5.1
-144,Light Green,67,REPRESENTED,6.0G 6.5/5.1
-145,Moderate Green,68,REPRESENTED,6.0G 4.5/5.1
-146,Dark Green,45,REPRESENTED,6.0G 2.7/5.0
-147,Very Dark Green,46,REPRESENTED,6.0G 1.3/4.9
-148,Very Pale Green,71,REPRESENTED,9.0G 8.7/1.8
-149,Pale Green,82,REPRESENTED,9.0G 6.5/1.8
-150,Grayish Green,61,REPRESENTED,9.0G 4.5/1.8
-151,Dark Grayish Green,45,REPRESENTED,9.0G 2.8/1.6
-152,Blackish Green,62,REPRESENTED,9.0G 1.1/1.4
-153,Greenish White,41,REPRESENTED,7.0G 9.2/0.8
-154,Light Greenish Gray,71,REPRESENTED,7.0G 7.5/0.8
-155,Greenish Gray,73,REPRESENTED,7.0G 5.5/0.8
-156,Dark Greenish Gray,73,REPRESENTED,7.0G 3.5/0.8
-157,Greenish Black,0,DEFINED_NOT_SAMPLED,7.5G 0.9/0.7
-158,Vivid Bluish Green,165,REPRESENTED,4.5BG 5.3/15.5
-159,Brilliant Bluish Green,96,REPRESENTED,4.5BG 7.3/9.0
-160,Strong Bluish Green,131,REPRESENTED,4.5BG 4.5/9.0
-161,Deep Bluish Green,85,REPRESENTED,4.5BG 2.3/9.0
-162,Very Light Bluish Green,50,REPRESENTED,4.5BG 8.5/5.0
-163,Light Bluish Green,125,REPRESENTED,4.5BG 6.5/5.0
-164,Moderate Bluish Green,139,REPRESENTED,4.5BG 4.5/5.0
-165,Dark Bluish Green,119,REPRESENTED,4.5BG 2.7/5.0
-166,Very Dark Bluish Green,109,REPRESENTED,4.5BG 1.3/4.9
-167,Vivid Greenish Blue,105,REPRESENTED,4.5B 5.2/13
-168,Brilliant Greenish Blue,107,REPRESENTED,4.5B 6.8/9.0
-169,Strong Greenish Blue,129,REPRESENTED,4.5B 4.5/9.0
-170,Deep Greenish Blue,43,REPRESENTED,4.5B 2.5/9.0
-171,Very Light Greenish Blue,42,REPRESENTED,4.5B 8.2/5.2
-172,Light Greenish Blue,107,REPRESENTED,4.5B 6.5/5.2
-173,Moderate Greenish Blue,103,REPRESENTED,4.5B 4.5/5.2
-174,Dark Greenish Blue,105,REPRESENTED,4.5B 2.7/5.0
-175,Very Dark Greenish Blue,58,REPRESENTED,4.5B 1.3/4.9
-176,Vivid Blue,175,REPRESENTED,3.0PB 4.2/15
-177,Brilliant Blue,48,REPRESENTED,3.0PB 6.4/11.0
-178,Strong Blue,165,REPRESENTED,3.0PB 4.2/11.0
-179,Deep Blue,70,REPRESENTED,3.0PB 2.0/9.0
-180,Very Light Blue,10,REPRESENTED,2.4PB 8.2/7.2
-181,Light Blue,91,REPRESENTED,2.7PB 6.5/7.3
-182,Moderate Blue,151,REPRESENTED,2.9PB 4.2/7.2
-183,Dark Blue,142,REPRESENTED,2.8PB 1.7/5.0
-184,Very Pale Blue,104,REPRESENTED,0.9PB 8.4/3.0
-185,Pale Blue,118,REPRESENTED,0.9PB 6.5/3.0
-186,Grayish Blue,147,REPRESENTED,0.9PB 4.2/3.0
-187,Dark Grayish Blue,45,REPRESENTED,9.5B 2.6/1.9
-188,Blackish Blue,66,REPRESENTED,9.5B 1.1/1.5
-189,Bluish White,13,REPRESENTED,9.5B 9.1/1.0
-190,Light Bluish Gray,34,REPRESENTED,9.5B 7.5/1.0
-191,Bluish Gray,67,REPRESENTED,9.5B 5.5/1.0
-192,Dark Bluish Gray,63,REPRESENTED,9.5B 3.5/1.0
-193,Bluish Black,33,REPRESENTED,9.5B 1.0/0.7
-194,Vivid Purplish Blue,84,REPRESENTED,8.0PB 2.5/22
-195,Brilliant Purplish Blue,14,REPRESENTED,8.0PB 6.0/10.8
-196,Strong Purplish Blue,39,REPRESENTED,8.0PB 4.1/11.4
-197,Deep Purplish Blue,26,REPRESENTED,8.0PB 1.6/9.1
-198,Very Light Purplish Blue,5,REPRESENTED,7.0PB 7.8/6.1
-199,Light Purplish Blue,72,REPRESENTED,7.5PB 6.0/6.8
-200,Moderate Purplish Blue,39,REPRESENTED,8.0PB 3.5/6.9
-201,Dark Purplish Blue,30,REPRESENTED,7.9PB 1.1/4.7
-202,Very Pale Purplish Blue,12,REPRESENTED,7.0PB 8.2/4.1
-203,Pale Purplish Blue,30,REPRESENTED,7.0PB 6.0/4.1
-204,Grayish Purplish Blue,41,REPRESENTED,7.2PB 3.3/4.0
-205,Vivid Violet,99,REPRESENTED,1.0P 2.7/21
-206,Brilliant Violet,38,REPRESENTED,1.0P 5.9/11.1
-207,Strong Violet,51,REPRESENTED,1.0P 3.5/11.1
-208,Deep Violet,28,REPRESENTED,1.0P 1.4/10.3
-209,Very Light Violet,4,REPRESENTED,1.0P 7.9/7
-210,Light Violet,69,REPRESENTED,1.0P 6.0/7.2
-211,Moderate Violet,56,REPRESENTED,1.0P 3.5/7.2
-212,Dark Violet,42,REPRESENTED,1.0P 1.3/5.0
-213,Very Pale Violet,15,REPRESENTED,1.0P 8.2/4.1
-214,Pale Violet,26,REPRESENTED,1.0P 6.0/4.1
-215,Grayish Violet,20,REPRESENTED,1.0P 3.3/4.1
-216,Vivid Purple,98,REPRESENTED,6.0P 3.5/20
-217,Brilliant Purple,35,REPRESENTED,6.0P 6.7/11.1
-218,Strong Purple,51,REPRESENTED,6.0P 4.5/11.1
-219,Deep Purple,66,REPRESENTED,6.0P 2.8/10.2
-220,Very Deep Purple,12,REPRESENTED,6.0P 1.2/10.2
-221,Very Light Purple,19,REPRESENTED,6.0P 8.0/7.2
-222,Light Purple,86,REPRESENTED,6.0P 6.5/7.2
-223,Moderate Purple,51,REPRESENTED,6.0P 4.5/7.2
-224,Dark Purple,42,REPRESENTED,6.0P 2.7/5.1
-225,Very Dark Purple,31,REPRESENTED,6.0P 1.1/4.9
-226,Very Pale Purple,70,REPRESENTED,5.4P 8.4/3.3
-227,Pale Purple,99,REPRESENTED,6.8P 6.4/3.0
-228,Grayish Purple,109,REPRESENTED,7.8P 4.5/2.9
-229,Dark Grayish Purple,96,REPRESENTED,10.0P 2.8/2.0
-230,Blackish Purple,50,REPRESENTED,10.0P 1.0/1.4
-231,Purplish White,0,DEFINED_NOT_SAMPLED,9.0P 9.1/1.0
-232,Light Purplish Gray,3,REPRESENTED,9.0P 7.5/1.0
-233,Purplish Gray,70,REPRESENTED,10.0P 5.5/1.0
-234,Dark Purplish Gray,68,REPRESENTED,10.0P 3.5/1.0
-235,Purplish Black,51,REPRESENTED,10.0P 1.0/0.7
-236,Vivid Reddish Purple,73,REPRESENTED,1.0RP 4/19
-237,Strong Reddish Purple,46,REPRESENTED,1.0RP 4.5/11.1
-238,Deep Reddish Purple,51,REPRESENTED,1.0RP 2.8/10.3
-239,Very Deep Reddish Purple,9,REPRESENTED,1.0RP 1.3/10.3
-240,Light Reddish Purple,32,REPRESENTED,1.0RP 6.0/7.2
-241,Moderate Reddish Purple,42,REPRESENTED,1.0RP 4.5/7.2
-242,Dark Reddish Purple,30,REPRESENTED,1.0RP 2.7/5.1
-243,Very Dark Reddish Purple,24,REPRESENTED,1.0RP 1.1/5.0
-244,Pale Reddish Purple,7,REPRESENTED,1.0RP 6.0/4.1
-245,Grayish Reddish Purple,28,REPRESENTED,1.0RP 4.5/4.1
-246,Brilliant Purplish Pink,0,DEFINED_NOT_SAMPLED,4.0RP 7.9/11
-247,Strong Purplish Pink,41,REPRESENTED,4.0RP 7/14.5
-248,Deep Purplish Pink,79,REPRESENTED,4.0RP 6.0/12.0
-249,Light Purplish Pink,34,REPRESENTED,4.0RP 8.3/7.1
-250,Moderate Purplish Pink,61,REPRESENTED,4.0RP 7.0/7.1
-251,Dark Purplish Pink,29,REPRESENTED,6.0RP 6.0/7.2
-252,Pale Purplish Pink,67,REPRESENTED,4.0RP 8.5/3.5
-253,Grayish Purplish Pink,48,REPRESENTED,4.0RP 7.0/3.5
-254,Vivid Purplish Red,116,REPRESENTED,7.0RP 4/17
-255,Strong Purplish Red,42,REPRESENTED,7.0RP 4.5/11.9
-256,Deep Purplish Red,47,REPRESENTED,7.0RP 2.8/11.0
-257,Very Deep Purplish Red,16,REPRESENTED,7.0RP 1.3/9.0
-258,Moderate Purplish Red,77,REPRESENTED,7.0RP 4.5/9.0
-259,Dark Purplish Red,90,REPRESENTED,7.0RP 2.7/6.3
-260,Very Dark Purplish Red,50,REPRESENTED,7.0RP 1.2/4.9
-261,Light Grayish Purplish Red,22,REPRESENTED,7.0RP 6.0/4.0
-262,Grayish Purplish Red,89,REPRESENTED,7.0RP 4.5/5.2
-263,White,12,REPRESENTED,3.0Y 9.25/0.06
-264,Light Gray,24,REPRESENTED,3.0Y 7.5/0.06
-265,Medium Gray,18,REPRESENTED,3.0Y 5.5/0.06
-266,Dark Gray,4,REPRESENTED,N 3.5/
-267,Black,5,REPRESENTED,N 1.25/
+"number","name","atlas_reference_count","coverage_status","centroid_munsell"
+1,"Vivid Pink",4,"REPRESENTED","1.5R 7/13"
+2,"Strong Pink",17,"REPRESENTED","1.5R 7.5/9.1"
+3,"Deep Pink",54,"REPRESENTED","1.9R 6.0/11.1"
+4,"Light Pink",9,"REPRESENTED","2.5R 8.6/5.2"
+5,"Moderate Pink",44,"REPRESENTED","2.5R 7.2/5.2"
+6,"Dark Pink",14,"REPRESENTED","2.5R 6.0/6.0"
+7,"Pale Pink",16,"REPRESENTED","2.5R 8.8/2.3"
+8,"Grayish Pink",12,"REPRESENTED","2.5R 7.2/2.3"
+9,"Pinkish White",7,"REPRESENTED","7.6R 9.2/1.0"
+10,"Pinkish Gray",34,"REPRESENTED","7.6R 7.5/1.0"
+11,"Vivid Red",99,"REPRESENTED","5R 4/15"
+12,"Strong Red",30,"REPRESENTED","4.0R 4.5/12.0"
+13,"Deep Red",26,"REPRESENTED","5.0R 2.8/9.9"
+14,"Very Deep Red",10,"REPRESENTED","5.0R 1.4/9.0"
+15,"Moderate Red",58,"REPRESENTED","4.0R 4.5/9.1"
+16,"Dark Red",64,"REPRESENTED","4.5R 2.8/6.8"
+17,"Very Dark Red",30,"REPRESENTED","3.5R 1.2/4.9"
+18,"Light Grayish Red",29,"REPRESENTED","4.9R 6.0/3.4"
+19,"Grayish Red",91,"REPRESENTED","4.6R 4.5/4.7"
+20,"Dark Grayish Red",20,"REPRESENTED","3.5R 2.7/2.2"
+21,"Blackish Red",12,"REPRESENTED","3.5R 1.1/1.6"
+22,"Reddish Gray",24,"REPRESENTED","6.5R 5.5/1.1"
+23,"Dark Reddish Gray",20,"REPRESENTED","6.0R 3.5/1.1"
+24,"Reddish Black",21,"REPRESENTED","6.0R 0.9/0.8"
+25,"Vivid Yellowish Pink",14,"REPRESENTED","8.0R 7/13"
+26,"Strong Yellowish Pink",46,"REPRESENTED","8.0R 7.5/9.0"
+27,"Deep Yellowish Pink",20,"REPRESENTED","5.6R 6.0/12.4"
+28,"Light Yellowish Pink",25,"REPRESENTED","0.7YR 8.6/4.8"
+29,"Moderate Yellowish Pink",82,"REPRESENTED","0.7YR 7.2/4.8"
+30,"Dark Yellowish Pink",8,"REPRESENTED","7.0R 6.0/6.0"
+31,"Pale Yellowish Pink",28,"REPRESENTED","2.1YR 8.8/2.2"
+32,"Grayish Yellowish Pink",28,"REPRESENTED","0.5YR 7.2/2.3"
+33,"Brownish Pink",12,"REPRESENTED","6.5YR 7.2/2.2"
+34,"Vivid Reddish Orange",95,"REPRESENTED","9.5R 5.5/15.5"
+35,"Strong Reddish Orange",31,"REPRESENTED","9.5R 5.5/12.0"
+36,"Deep Reddish Orange",18,"REPRESENTED","9.5R 4.0/12.0"
+37,"Moderate Reddish Orange",61,"REPRESENTED","9.5R 5.5/9.1"
+38,"Dark Reddish Orange",29,"REPRESENTED","9.5R 4.0/9.1"
+39,"Grayish Reddish Orange",30,"REPRESENTED","0.5YR 5.5/6.0"
+40,"Strong Reddish Brown",22,"REPRESENTED","0.5YR 3.0/11.2"
+41,"Deep Reddish Brown",32,"REPRESENTED","9.8R 1.5/7.5"
+42,"Light Reddish Brown",26,"REPRESENTED","0.5YR 5.5/4.1"
+43,"Moderate Reddish Brown",61,"REPRESENTED","9.6R 3.4/5.2"
+44,"Dark Reddish Brown",55,"REPRESENTED","9.5R 1.3/3.6"
+45,"Light Grayish Reddish Brown",23,"REPRESENTED","3.0YR 5.5/2.3"
+46,"Grayish Reddish Brown",27,"REPRESENTED","9.9R 3.4/2.3"
+47,"Dark Grayish Reddish Brown",25,"REPRESENTED","9.5R 2.0/2.0"
+48,"Vivid Orange",34,"REPRESENTED","4.5YR 6.6/16"
+49,"Brilliant Orange",2,"REPRESENTED","4.5YR 8.0/12.1"
+50,"Strong Orange",56,"REPRESENTED","4.5YR 6.5/12.1"
+51,"Deep Orange",24,"REPRESENTED","4.5YR 5.0/12.1"
+52,"Light Orange",17,"REPRESENTED","4.5YR 8/8.1"
+53,"Moderate Orange",59,"REPRESENTED","4.6YR 6.5/8.1"
+54,"Brownish Orange",26,"REPRESENTED","4.5YR 5.0/8.2"
+55,"Strong Brown",84,"REPRESENTED","5.0YR 3.5/8"
+56,"Deep Brown",13,"REPRESENTED","5.0YR 2.1/6"
+57,"Light Brown",49,"REPRESENTED","5.5YR 5.5/4.6"
+58,"Moderate Brown",35,"REPRESENTED","5.5YR 3.5/3.9"
+59,"Dark Brown",41,"REPRESENTED","5.5YR 1.6/3.6"
+60,"Light Grayish Brown",12,"REPRESENTED","6.5YR 5.5/2.2"
+61,"Grayish Brown",26,"REPRESENTED","5.6YR 3.5/2.0"
+62,"Dark Grayish Brown",16,"REPRESENTED","5.5YR 2.0/1.7"
+63,"Light Brownish Gray",29,"REPRESENTED","6.8YR 5.5/1.0"
+64,"Brownish Gray",36,"REPRESENTED","6.4YR 3.5/0.9"
+65,"Brownish Black",28,"REPRESENTED","7.5YR 0.8/0.8"
+66,"Vivid Orange Yellow",11,"REPRESENTED","9.0YR 7.2/16"
+67,"Brilliant Orange Yellow",0,"DEFINED_NOT_SAMPLED","9.0YR 8.4/12.1"
+68,"Strong Orange Yellow",30,"REPRESENTED","9.0YR 7.2/12.1"
+69,"Deep Orange Yellow",18,"REPRESENTED","9.0YR 6.0/12.1"
+70,"Light Orange Yellow",8,"REPRESENTED","9.0YR 8.6/8.1"
+71,"Moderate Orange Yellow",32,"REPRESENTED","9.0YR 7.2/8.1"
+72,"Dark Orange Yellow",24,"REPRESENTED","9.0YR 6.0/8.1"
+73,"Pale Orange Yellow",29,"REPRESENTED","9.1YR 8.6/4.4"
+74,"Strong Yellowish Brown",57,"REPRESENTED","9.0YR 4.6/9.6"
+75,"Deep Yellowish Brown",5,"REPRESENTED","9.5YR 2.9/6"
+76,"Light Yellowish Brown",37,"REPRESENTED","9.2YR 6.6/4.7"
+77,"Moderate Yellowish Brown",24,"REPRESENTED","9.5YR 4.5/4.0"
+78,"Dark Yellowish Brown",25,"REPRESENTED","9.5YR 2.2/3.7"
+79,"Light Grayish Yellowish Brown",17,"REPRESENTED","9.5YR 6.4/2.4"
+80,"Grayish Yellowish Brown",19,"REPRESENTED","9.5YR 4.6/2.1"
+81,"Dark Grayish Yellow Brown",23,"REPRESENTED","9.5YR 2.4/1.8"
+82,"Vivid Yellow",71,"REPRESENTED","4.0Y 7.8/14.5"
+83,"Brilliant Yellow",15,"REPRESENTED","4.0Y 8.8/9.5"
+84,"Strong Yellow",36,"REPRESENTED","4.0Y 7.2/9.5"
+85,"Deep Yellow",23,"REPRESENTED","4.0Y 6.0/9.5"
+86,"Light Yellow",20,"REPRESENTED","4.0Y 8.8/6.6"
+87,"Moderate Yellow",36,"REPRESENTED","4.0Y 7.2/6.6"
+88,"Dark Yellow",25,"REPRESENTED","4.0Y 6.0/6.6"
+89,"Pale Yellow",28,"REPRESENTED","4.2Y 8.9/3.6"
+90,"Grayish Yellow",44,"REPRESENTED","4.2Y 7.2/3.6"
+91,"Dark Grayish Yellow",16,"REPRESENTED","4.0Y 6.0/4.1"
+92,"Yellowish White",24,"REPRESENTED","4.1Y 9.2/1.3"
+93,"Yellowish Gray",59,"REPRESENTED","4.1Y 7.5/1.3"
+94,"Light Olive Brown",48,"REPRESENTED","2.5Y 5.0/8.4"
+95,"Moderate Olive Brown",58,"REPRESENTED","2.5Y 3.5/6"
+96,"Dark Olive Brown",21,"REPRESENTED","2.5Y 1.8/2.5"
+97,"Vivid Greenish Yellow",48,"REPRESENTED","9.5Y 7.8/14.5"
+98,"Brilliant Greenish Yellow",17,"REPRESENTED","9.5Y 8.8/9.5"
+99,"Strong Greenish Yellow",24,"REPRESENTED","9.5Y 7.2/9.5"
+100,"Deep Greenish Yellow",16,"REPRESENTED","9.5Y 6.0/9.5"
+101,"Light Greenish Yellow",18,"REPRESENTED","9.5Y 8.8/6.6"
+102,"Moderate Greenish Yellow",27,"REPRESENTED","9.5Y 7.2/6.6"
+103,"Dark Greenish Yellow",18,"REPRESENTED","9.5Y 6.0/6.6"
+104,"Pale Greenish Yellow",15,"REPRESENTED","9.5Y 8.9/4.1"
+105,"Grayish Greenish Yellow",24,"REPRESENTED","9.5Y 7.2/4.1"
+106,"Light Olive",95,"REPRESENTED","8.1Y 5.1/8.0"
+107,"Moderate Olive",88,"REPRESENTED","8.0Y 3.5/5.8"
+108,"Dark Olive",16,"REPRESENTED","8.0Y 1.7/3.2"
+109,"Light Grayish Olive",37,"REPRESENTED","8.3Y 5.5/2.4"
+110,"Grayish Olive",46,"REPRESENTED","8.1Y 3.5/2.3"
+111,"Dark Grayish Olive",31,"REPRESENTED","8.0Y 2.0/2.0"
+112,"Light Olive Gray",22,"REPRESENTED","7.4Y 5.5/1.3"
+113,"Olive Gray",36,"REPRESENTED","8.1Y 3.5/1.0"
+114,"Olive Black",11,"REPRESENTED","9.0Y 0.9/0.8"
+115,"Vivid Yellow Green",113,"REPRESENTED","5.0GY 7.5/14.5"
+116,"Brilliant Yellow Green",53,"REPRESENTED","5.0GY 8.5/9.1"
+117,"Strong Yellow Green",152,"REPRESENTED","5.0GY 6.0/9.1"
+118,"Deep Yellow Green",23,"REPRESENTED","5.0GY 4.0/9.1"
+119,"Light Yellow Green",66,"REPRESENTED","5.0GY 8.6/5.2"
+120,"Moderate Yellow Green",135,"REPRESENTED","5.0GY 6.0/5.2"
+121,"Pale Yellow Green",48,"REPRESENTED","3.5GY 8.7/2.2"
+122,"Grayish Yellow Green",87,"REPRESENTED","4.4GY 6.1/2.2"
+123,"Strong Olive Green",3,"REPRESENTED","5.0GY 3.2/7.8"
+124,"Deep Olive Green",0,"DEFINED_NOT_SAMPLED","5.0GY 2.4/7.1"
+125,"Moderate Olive Green",104,"REPRESENTED","5.0GY 3.5/5.2"
+126,"Dark Olive Green",41,"REPRESENTED","5.0GY 1.8/3.7"
+127,"Grayish Olive Green",42,"REPRESENTED","5.0GY 3.5/2.2"
+128,"Dark Grayish Olive Green",30,"REPRESENTED","5.0GY 2.0/2.0"
+129,"Vivid Yellowish Green",235,"REPRESENTED","0.5G 7/15.5"
+130,"Brilliant Yellowish Green",77,"REPRESENTED","0.5G 8.0/9.1"
+131,"Strong Yellowish Green",107,"REPRESENTED","0.5G 5.5/9.1"
+132,"Deep Yellowish Green",142,"REPRESENTED","0.5G 3.5/11.5"
+133,"Very Deep Yellowish Green",16,"REPRESENTED","0.5G 2.0/9.2"
+134,"Very Light Yellowish Green",9,"REPRESENTED","0.5G 9.1/5.1"
+135,"Light Yellowish Green",101,"REPRESENTED","0.5G 7.5/5.1"
+136,"Moderate Yellowish Green",96,"REPRESENTED","0.5G 5.5/5.1"
+137,"Dark Yellowish Green",108,"REPRESENTED","0.5G 3.5/5.1"
+138,"Very Dark Yellowish Green",79,"REPRESENTED","0.5G 1.5/4.9"
+139,"Vivid Green",168,"REPRESENTED","6.5G 5.2/18"
+140,"Brilliant Green",85,"REPRESENTED","6.0G 7.4/9.1"
+141,"Strong Green",60,"REPRESENTED","6.0G 4.5/9.1"
+142,"Deep Green",49,"REPRESENTED","6.0G 2.3/9.1"
+143,"Very Light Green",27,"REPRESENTED","6.0G 8.6/5.1"
+144,"Light Green",67,"REPRESENTED","6.0G 6.5/5.1"
+145,"Moderate Green",68,"REPRESENTED","6.0G 4.5/5.1"
+146,"Dark Green",45,"REPRESENTED","6.0G 2.7/5.0"
+147,"Very Dark Green",46,"REPRESENTED","6.0G 1.3/4.9"
+148,"Very Pale Green",71,"REPRESENTED","9.0G 8.7/1.8"
+149,"Pale Green",82,"REPRESENTED","9.0G 6.5/1.8"
+150,"Grayish Green",61,"REPRESENTED","9.0G 4.5/1.8"
+151,"Dark Grayish Green",45,"REPRESENTED","9.0G 2.8/1.6"
+152,"Blackish Green",62,"REPRESENTED","9.0G 1.1/1.4"
+153,"Greenish White",41,"REPRESENTED","7.0G 9.2/0.8"
+154,"Light Greenish Gray",71,"REPRESENTED","7.0G 7.5/0.8"
+155,"Greenish Gray",73,"REPRESENTED","7.0G 5.5/0.8"
+156,"Dark Greenish Gray",73,"REPRESENTED","7.0G 3.5/0.8"
+157,"Greenish Black",0,"DEFINED_NOT_SAMPLED","7.5G 0.9/0.7"
+158,"Vivid Bluish Green",165,"REPRESENTED","4.5BG 5.3/15.5"
+159,"Brilliant Bluish Green",96,"REPRESENTED","4.5BG 7.3/9.0"
+160,"Strong Bluish Green",131,"REPRESENTED","4.5BG 4.5/9.0"
+161,"Deep Bluish Green",85,"REPRESENTED","4.5BG 2.3/9.0"
+162,"Very Light Bluish Green",50,"REPRESENTED","4.5BG 8.5/5.0"
+163,"Light Bluish Green",125,"REPRESENTED","4.5BG 6.5/5.0"
+164,"Moderate Bluish Green",139,"REPRESENTED","4.5BG 4.5/5.0"
+165,"Dark Bluish Green",119,"REPRESENTED","4.5BG 2.7/5.0"
+166,"Very Dark Bluish Green",109,"REPRESENTED","4.5BG 1.3/4.9"
+167,"Vivid Greenish Blue",105,"REPRESENTED","4.5B 5.2/13"
+168,"Brilliant Greenish Blue",107,"REPRESENTED","4.5B 6.8/9.0"
+169,"Strong Greenish Blue",129,"REPRESENTED","4.5B 4.5/9.0"
+170,"Deep Greenish Blue",43,"REPRESENTED","4.5B 2.5/9.0"
+171,"Very Light Greenish Blue",42,"REPRESENTED","4.5B 8.2/5.2"
+172,"Light Greenish Blue",107,"REPRESENTED","4.5B 6.5/5.2"
+173,"Moderate Greenish Blue",103,"REPRESENTED","4.5B 4.5/5.2"
+174,"Dark Greenish Blue",105,"REPRESENTED","4.5B 2.7/5.0"
+175,"Very Dark Greenish Blue",58,"REPRESENTED","4.5B 1.3/4.9"
+176,"Vivid Blue",175,"REPRESENTED","3.0PB 4.2/15"
+177,"Brilliant Blue",48,"REPRESENTED","3.0PB 6.4/11.0"
+178,"Strong Blue",165,"REPRESENTED","3.0PB 4.2/11.0"
+179,"Deep Blue",70,"REPRESENTED","3.0PB 2.0/9.0"
+180,"Very Light Blue",10,"REPRESENTED","2.4PB 8.2/7.2"
+181,"Light Blue",91,"REPRESENTED","2.7PB 6.5/7.3"
+182,"Moderate Blue",151,"REPRESENTED","2.9PB 4.2/7.2"
+183,"Dark Blue",142,"REPRESENTED","2.8PB 1.7/5.0"
+184,"Very Pale Blue",104,"REPRESENTED","0.9PB 8.4/3.0"
+185,"Pale Blue",118,"REPRESENTED","0.9PB 6.5/3.0"
+186,"Grayish Blue",147,"REPRESENTED","0.9PB 4.2/3.0"
+187,"Dark Grayish Blue",45,"REPRESENTED","9.5B 2.6/1.9"
+188,"Blackish Blue",66,"REPRESENTED","9.5B 1.1/1.5"
+189,"Bluish White",13,"REPRESENTED","9.5B 9.1/1.0"
+190,"Light Bluish Gray",34,"REPRESENTED","9.5B 7.5/1.0"
+191,"Bluish Gray",67,"REPRESENTED","9.5B 5.5/1.0"
+192,"Dark Bluish Gray",63,"REPRESENTED","9.5B 3.5/1.0"
+193,"Bluish Black",33,"REPRESENTED","9.5B 1.0/0.7"
+194,"Vivid Purplish Blue",84,"REPRESENTED","8.0PB 2.5/22"
+195,"Brilliant Purplish Blue",14,"REPRESENTED","8.0PB 6.0/10.8"
+196,"Strong Purplish Blue",39,"REPRESENTED","8.0PB 4.1/11.4"
+197,"Deep Purplish Blue",26,"REPRESENTED","8.0PB 1.6/9.1"
+198,"Very Light Purplish Blue",5,"REPRESENTED","7.0PB 7.8/6.1"
+199,"Light Purplish Blue",72,"REPRESENTED","7.5PB 6.0/6.8"
+200,"Moderate Purplish Blue",39,"REPRESENTED","8.0PB 3.5/6.9"
+201,"Dark Purplish Blue",30,"REPRESENTED","7.9PB 1.1/4.7"
+202,"Very Pale Purplish Blue",12,"REPRESENTED","7.0PB 8.2/4.1"
+203,"Pale Purplish Blue",30,"REPRESENTED","7.0PB 6.0/4.1"
+204,"Grayish Purplish Blue",41,"REPRESENTED","7.2PB 3.3/4.0"
+205,"Vivid Violet",99,"REPRESENTED","1.0P 2.7/21"
+206,"Brilliant Violet",38,"REPRESENTED","1.0P 5.9/11.1"
+207,"Strong Violet",51,"REPRESENTED","1.0P 3.5/11.1"
+208,"Deep Violet",28,"REPRESENTED","1.0P 1.4/10.3"
+209,"Very Light Violet",4,"REPRESENTED","1.0P 7.9/7"
+210,"Light Violet",69,"REPRESENTED","1.0P 6.0/7.2"
+211,"Moderate Violet",56,"REPRESENTED","1.0P 3.5/7.2"
+212,"Dark Violet",42,"REPRESENTED","1.0P 1.3/5.0"
+213,"Very Pale Violet",15,"REPRESENTED","1.0P 8.2/4.1"
+214,"Pale Violet",26,"REPRESENTED","1.0P 6.0/4.1"
+215,"Grayish Violet",20,"REPRESENTED","1.0P 3.3/4.1"
+216,"Vivid Purple",98,"REPRESENTED","6.0P 3.5/20"
+217,"Brilliant Purple",35,"REPRESENTED","6.0P 6.7/11.1"
+218,"Strong Purple",51,"REPRESENTED","6.0P 4.5/11.1"
+219,"Deep Purple",66,"REPRESENTED","6.0P 2.8/10.2"
+220,"Very Deep Purple",12,"REPRESENTED","6.0P 1.2/10.2"
+221,"Very Light Purple",19,"REPRESENTED","6.0P 8.0/7.2"
+222,"Light Purple",86,"REPRESENTED","6.0P 6.5/7.2"
+223,"Moderate Purple",51,"REPRESENTED","6.0P 4.5/7.2"
+224,"Dark Purple",42,"REPRESENTED","6.0P 2.7/5.1"
+225,"Very Dark Purple",31,"REPRESENTED","6.0P 1.1/4.9"
+226,"Very Pale Purple",70,"REPRESENTED","5.4P 8.4/3.3"
+227,"Pale Purple",99,"REPRESENTED","6.8P 6.4/3.0"
+228,"Grayish Purple",109,"REPRESENTED","7.8P 4.5/2.9"
+229,"Dark Grayish Purple",96,"REPRESENTED","10.0P 2.8/2.0"
+230,"Blackish Purple",50,"REPRESENTED","10.0P 1.0/1.4"
+231,"Purplish White",0,"DEFINED_NOT_SAMPLED","9.0P 9.1/1.0"
+232,"Light Purplish Gray",3,"REPRESENTED","9.0P 7.5/1.0"
+233,"Purplish Gray",70,"REPRESENTED","10.0P 5.5/1.0"
+234,"Dark Purplish Gray",68,"REPRESENTED","10.0P 3.5/1.0"
+235,"Purplish Black",51,"REPRESENTED","10.0P 1.0/0.7"
+236,"Vivid Reddish Purple",73,"REPRESENTED","1.0RP 4/19"
+237,"Strong Reddish Purple",46,"REPRESENTED","1.0RP 4.5/11.1"
+238,"Deep Reddish Purple",51,"REPRESENTED","1.0RP 2.8/10.3"
+239,"Very Deep Reddish Purple",9,"REPRESENTED","1.0RP 1.3/10.3"
+240,"Light Reddish Purple",32,"REPRESENTED","1.0RP 6.0/7.2"
+241,"Moderate Reddish Purple",42,"REPRESENTED","1.0RP 4.5/7.2"
+242,"Dark Reddish Purple",30,"REPRESENTED","1.0RP 2.7/5.1"
+243,"Very Dark Reddish Purple",24,"REPRESENTED","1.0RP 1.1/5.0"
+244,"Pale Reddish Purple",7,"REPRESENTED","1.0RP 6.0/4.1"
+245,"Grayish Reddish Purple",28,"REPRESENTED","1.0RP 4.5/4.1"
+246,"Brilliant Purplish Pink",0,"DEFINED_NOT_SAMPLED","4.0RP 7.9/11"
+247,"Strong Purplish Pink",41,"REPRESENTED","4.0RP 7/14.5"
+248,"Deep Purplish Pink",79,"REPRESENTED","4.0RP 6.0/12.0"
+249,"Light Purplish Pink",34,"REPRESENTED","4.0RP 8.3/7.1"
+250,"Moderate Purplish Pink",61,"REPRESENTED","4.0RP 7.0/7.1"
+251,"Dark Purplish Pink",29,"REPRESENTED","6.0RP 6.0/7.2"
+252,"Pale Purplish Pink",67,"REPRESENTED","4.0RP 8.5/3.5"
+253,"Grayish Purplish Pink",48,"REPRESENTED","4.0RP 7.0/3.5"
+254,"Vivid Purplish Red",116,"REPRESENTED","7.0RP 4/17"
+255,"Strong Purplish Red",42,"REPRESENTED","7.0RP 4.5/11.9"
+256,"Deep Purplish Red",47,"REPRESENTED","7.0RP 2.8/11.0"
+257,"Very Deep Purplish Red",16,"REPRESENTED","7.0RP 1.3/9.0"
+258,"Moderate Purplish Red",77,"REPRESENTED","7.0RP 4.5/9.0"
+259,"Dark Purplish Red",90,"REPRESENTED","7.0RP 2.7/6.3"
+260,"Very Dark Purplish Red",50,"REPRESENTED","7.0RP 1.2/4.9"
+261,"Light Grayish Purplish Red",22,"REPRESENTED","7.0RP 6.0/4.0"
+262,"Grayish Purplish Red",89,"REPRESENTED","7.0RP 4.5/5.2"
+263,"White",12,"REPRESENTED","3.0Y 9.25/0.06"
+264,"Light Gray",24,"REPRESENTED","3.0Y 7.5/0.06"
+265,"Medium Gray",18,"REPRESENTED","3.0Y 5.5/0.06"
+266,"Dark Gray",4,"REPRESENTED","N 3.5/"
+267,"Black",5,"REPRESENTED","N 1.25/"

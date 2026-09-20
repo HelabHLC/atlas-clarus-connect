@@ -8,22 +8,22 @@ This is not a requirement that every standard category must occur. ISCC-NBS cate
 
 ## Unrepresented standard categories
 
-| No. | ISCC-NBS name | Official centroid | Nearest Atlas reference | Actual category | Block distance* |
-|---:|---|---|---|---|---:|
-| 67 | Brilliant Orange Yellow | `9.0YR 8.4/12.1` | `H075_L080_C065` (row 2660) | 68 Strong Orange Yellow | 0.1154 |
-| 124 | Deep Olive Green | `5.0GY 2.4/7.1` | `H135_L025_C035` (row 5206) | 138 Very Dark Yellowish Green | 0.2662 |
-| 157 | Greenish Black | `7.5G 0.9/0.7` | `H215_L010_C005` (row 8365) | 152 Blackish Green | 0.0372 |
-| 231 | Purplish White | `9.0P 9.1/1.0` | `H010_L090_C005` (row 187) | 252 Pale Purplish Pink | 0.1433 |
-| 246 | Brilliant Purplish Pink | `4.0RP 7.9/11` | `H335_L075_C045` (row 12245) | 247 Strong Purplish Pink | 0.0625 |
+| No. | ISCC-NBS name | Official centroid | Nearest Atlas reference / actual category | Delta E 76* |
+|---:|---|---|---|---:|
+| 67 | Brilliant Orange Yellow | `9.0YR 8.4/12.1` | `H075_L080_C080` / 68 Strong Orange Yellow | 5.804 |
+| 124 | Deep Olive Green | `5.0GY 2.4/7.1` | `H125_L030_C040` / 125 Moderate Olive Green | 10.670 |
+| 157 | Greenish Black | `7.5G 0.9/0.7` | `H170_L010_C005` / 152 Blackish Green | 2.359 |
+| 231 | Purplish White | `9.0P 9.1/1.0` | `H000_L090_C000` / 263 White | 2.523 |
+| 246 | Brilliant Purplish Pink | `4.0RP 7.9/11` | `H355_L075_C045` / 247 Strong Purplish Pink | 5.265 |
 
-\* Normalized HVC distance is a review aid only. Category assignment uses the official Munsell block boundaries.
+\* Delta E 76 is a review aid only. Category assignment uses the official Munsell block boundaries.
 
 ## Verification
 
 - All 13,283 saved assignments were independently reproduced from their stored Munsell HVC values.
-- Every unrepresented category centroid classified back to its own ISCC-NBS number.
+- All 267 official category centroids classified back to their own ISCC-NBS number.
 - Category counts sum to 13,283.
 - No missing name was forced onto an Atlas reference.
-- PKL identity values and Designer Layer records were not modified.
+- PKL identity values and the existing Designer Layer records were not modified.
 
-See `ISCC_NBS_267_COVERAGE_AUDIT.json` for exact block boundaries and evidence, and `ISCC_NBS_267_CATEGORY_COUNTS.csv` for all 267 counts.
+See `ISCC_NBS_267_COVERAGE_AUDIT.json` for exact block boundaries and nearest-reference evidence, and `ISCC_NBS_267_CATEGORY_COUNTS.csv` for all category counts.
