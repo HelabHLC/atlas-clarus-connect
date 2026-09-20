@@ -25,7 +25,7 @@ def sha(path:Path)->str:
 if DIST.exists(): shutil.rmtree(DIST)
 (DIST/'assets').mkdir(parents=True)
 (DIST/'docs').mkdir()
-for name in ('index.html','app.css','basis23-recipes.js','palette-export.js','image-sampling.js','pkl-image-binding.js','print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js','profiled-reference-card.js','app.js'):
+for name in ('index.html','app.css','designer-layer.js','basis23-recipes.js','palette-export.js','image-sampling.js','pkl-image-binding.js','print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js','profiled-reference-card.js','app.js'):
     target=DIST/('assets/'+name if name!='index.html' else name)
     shutil.copy2(HERE/'src'/name,target)
 
@@ -37,6 +37,18 @@ assert view_source['master_sha256']==MASTER and len(view_source['views']['core']
 source['views']=view_source['views']
 payload='window.ATLAS_CLARUS_DATA='+json.dumps(source,separators=(',',':'),ensure_ascii=False)+';\n'
 (DIST/'assets/atlas-data.js').write_text(payload,encoding='utf-8')
+
+designer=json.loads((ROOT/'designer-layer/ATLAS_Clarus_Designer_Layer_Master_v0_1.json').read_text(encoding='utf-8'))
+assert designer['schema']=='ATLAS_CLARUS_DESIGNER_LAYER'
+assert designer['source_master']['sha256']==MASTER and designer['source_master']['expected_records']==13283
+seen=set()
+for row in designer['records']:
+    row_id=row['atlas_row_id']
+    assert row_id not in seen and source['colors'][row_id]['ref']==row['reference']
+    assert not ({'lab','rgb','hex','master_rgb'} & set(row))
+    seen.add(row_id)
+designer_payload='window.ATLAS_CLARUS_DESIGNER_DATA='+json.dumps(designer,separators=(',',':'),ensure_ascii=False)+';\\n'
+(DIST/'assets/designer-layer-data.js').write_text(designer_payload,encoding='utf-8')
 
 registry=json.loads((ROOT/'hover-library/data/basis23-source-registry.json').read_text(encoding='utf-8'))
 recipes=[]
@@ -62,12 +74,15 @@ basis_payload='window.ATLAS_BASIS23_DATA='+json.dumps({'registry':registry,'rows
 html=(DIST/'index.html').read_text(encoding='utf-8')
 css=(DIST/'assets/app.css').read_text(encoding='utf-8')
 app=(DIST/'assets/app.js').read_text(encoding='utf-8')
+designer_app=(DIST/'assets/designer-layer.js').read_text(encoding='utf-8')
 recipe_app=(DIST/'assets/basis23-recipes.js').read_text(encoding='utf-8')
 palette_export=(DIST/'assets/palette-export.js').read_text(encoding='utf-8')
 image_sampling=(DIST/'assets/image-sampling.js').read_text(encoding='utf-8')
 pkl_image_binding=(DIST/'assets/pkl-image-binding.js').read_text(encoding='utf-8')
 html=html.replace('<link rel="stylesheet" href="assets/app.css">','<style>'+css+'</style>')
 html=html.replace('<script src="assets/atlas-data.js"></script>','<script>'+payload.replace('</script','<\\/script')+'</script>')
+html=html.replace('<script src="assets/designer-layer-data.js"></script>','<script>'+designer_payload.replace('</script','<\\/script')+'</script>')
+html=html.replace('<script src="assets/designer-layer.js"></script>','<script>'+designer_app.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/basis23-data.js"></script>','<script>'+basis_payload.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/basis23-recipes.js"></script>','<script>'+recipe_app.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/palette-export.js"></script>','<script>'+palette_export.replace('</script','<\\/script')+'</script>')
