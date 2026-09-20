@@ -3,7 +3,7 @@
   "schema_version": "0.1",
   "status": "AUDIT_COMPLETE_LAYER_REMAINS_NOT_RELEASED",
   "source_master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
-  "designer_layer_sha256": "71383b0d8d6d5f6486d07a2ab13f73b52e2287cd50db531422a394544cadc1f2",
+  "designer_layer_sha256": "c7736a98bbaf6ddd8c50942ef11ab45200b43736f9e1ebf7480988b03a8293d2",
   "method": {
     "assignment": "Stored Lab D50 -> Munsell HVC -> ColorBlockFromMunsell boundary lookup",
     "package": "munsellinterpol 3.6-0",
@@ -28,7 +28,7 @@
       "name": "Brilliant Orange Yellow",
       "centroid_munsell": "9.0YR 8.4/12.1",
       "centroid_hvc": [19, 8.4, 12.1],
-      "centroid_lab_d50": [85.0515736832707, 21.8802660301449, 74.669424019434],
+      "centroid_lab_d50": [85.0515736832707, 21.880266030145, 74.669424019434],
       "centroid_self_classification_verified": true,
       "defining_blocks": [
         [
@@ -56,8 +56,8 @@
         "atlas_row_id": 2663,
         "reference": "H075_L080_C080",
         "lab_d50": [80, 20.7055, 77.2741],
-        "munsell_hvc": [19.5320542888655, 7.87671236546929, 12.364120986654],
-        "delta_e_76_to_centroid": 5.80368924623232,
+        "munsell_hvc": [19.5320542888738, 7.87671236546929, 12.3641209865777],
+        "delta_e_76_to_centroid": 5.80368924623234,
         "assigned_number": 68,
         "assigned_name": "Strong Orange Yellow"
       },
@@ -94,7 +94,7 @@
         "atlas_row_id": 4796,
         "reference": "H125_L030_C040",
         "lab_d50": [30, -22.9431, 32.7661],
-        "munsell_hvc": [36.8802097387972, 2.94509894648784, 6.81789163129167],
+        "munsell_hvc": [36.880209738804, 2.94509894648784, 6.81789163128488],
         "delta_e_76_to_centroid": 10.6701642453535,
         "assigned_number": 125,
         "assigned_name": "Moderate Olive Green"
@@ -106,7 +106,7 @@
       "name": "Greenish Black",
       "centroid_munsell": "7.5G 0.9/0.7",
       "centroid_hvc": [47.5, 0.9, 0.7],
-      "centroid_lab_d50": [9.37399099789519, -2.67784753392911, 0.513747452775832],
+      "centroid_lab_d50": [9.37399099789519, -2.67784753392911, 0.51374745277582],
       "centroid_self_classification_verified": true,
       "defining_blocks": [
         [
@@ -154,8 +154,8 @@
         "atlas_row_id": 6741,
         "reference": "H170_L010_C005",
         "lab_d50": [10, -4.924, 0.8682],
-        "munsell_hvc": [47.493105876792, 0.960686333428827, 1.30173971946965],
-        "delta_e_76_to_centroid": 2.35854293575213,
+        "munsell_hvc": [47.4931059265274, 0.960686333428827, 1.30173971905729],
+        "delta_e_76_to_centroid": 2.35854293575214,
         "assigned_number": 152,
         "assigned_name": "Blackish Green"
       },
@@ -166,7 +166,7 @@
       "name": "Purplish White",
       "centroid_munsell": "9.0P 9.1/1.0",
       "centroid_hvc": [89, 9.1, 1],
-      "centroid_lab_d50": [91.147110966289, 1.99696490376619, -1.03070496991695],
+      "centroid_lab_d50": [91.147110966289, 1.99696490376625, -1.03070496991702],
       "centroid_self_classification_verified": true,
       "defining_blocks": [
         [
@@ -215,7 +215,7 @@
         "reference": "H000_L090_C000",
         "lab_d50": [90, 0, 0],
         "munsell_hvc": [0, 8.98131375465391, 0],
-        "delta_e_76_to_centroid": 2.52311020981366,
+        "delta_e_76_to_centroid": 2.52311020981373,
         "assigned_number": 263,
         "assigned_name": "White"
       },
@@ -226,7 +226,7 @@
       "name": "Brilliant Purplish Pink",
       "centroid_munsell": "4.0RP 7.9/11",
       "centroid_hvc": [94, 7.9, 11],
-      "centroid_lab_d50": [79.6763766162124, 46.3276232480188, -5.81982936436511],
+      "centroid_lab_d50": [79.6763766162124, 46.3276232480189, -5.81982936436511],
       "centroid_self_classification_verified": true,
       "defining_blocks": [
         [
@@ -252,8 +252,8 @@
         "atlas_row_id": 12964,
         "reference": "H355_L075_C045",
         "lab_d50": [75, 44.8288, -3.922],
-        "munsell_hvc": [94.5351989561535, 7.41338839349565, 10.8259996867005],
-        "delta_e_76_to_centroid": 5.2646676705853,
+        "munsell_hvc": [94.5351989561766, 7.41338839349565, 10.8259996867449],
+        "delta_e_76_to_centroid": 5.26466767058532,
         "assigned_number": 247,
         "assigned_name": "Strong Purplish Pink"
       },
