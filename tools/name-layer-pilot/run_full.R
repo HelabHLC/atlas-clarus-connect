@@ -15,9 +15,9 @@ chroma <- function(C)if(C<=5)"Neutral" else if(C<=15)"Soft" else if(C<=35)"Muted
 temperature <- function(H)if(H>=330||H<115)"Warm" else if(H<145)"Warm neutral" else if(H<=295)"Cool" else "Cool neutral"
 family <- function(name,H){n<-tolower(name);keys<-c("purple","violet","blue","green","olive","yellow","orange","brown","red","pink","gray","white","black");hit<-keys[vapply(keys,function(k)grepl(k,n,fixed=TRUE),logical(1))];if(length(hit))tools::toTitleCase(tail(hit,1)) else if(H<30||H>=345)"Red" else if(H<75)"Orange" else if(H<115)"Yellow" else if(H<170)"Green" else if(H<260)"Blue" else if(H<310)"Violet" else "Purple"}
 role <- function(L,C){unique(c(if(L>=80)"Light background" else if(L<=30)"Dark foundation" else "Secondary colour",if(C>=60)"Attention accent" else if(C<=15)"Quiet neutral" else "Supporting colour"))}
-one <- function(s){
+one <- function(s, expected_id){
  id<-as.integer(s$id);ref<-as.character(s$ref);m<-regexec("^H([0-9]{3})_L([0-9]{3})_C([0-9]{3})$",ref);q<-as.numeric(regmatches(ref,m)[[1]][2:4]);H<-q[1];L<-q[2];C<-q[3]
- stopifnot(id>=0L,id<13283L,id==which(vapply(source$colors,function(x)as.integer(x$id)==id,logical(1)))-1L)
+ stopifnot(id>=0L,id<13283L,id==expected_id)
  conv<-cap(function()do.call(munsellinterpol::LabToMunsell,c(list(Lab=matrix(as.numeric(unlist(s$lab)),nrow=1L),white="D50",adapt="Bradford"),settings)));hvc<-hvc_matrix(conv$v)
  block<-if(is.null(hvc))list(v=NULL,w=character(),e="No finite HVC") else cap(function()munsellinterpol::ColorBlockFromMunsell(hvc))
  ok<-is.data.frame(block$v)&&nrow(block$v)==1L&&all(c("Number","Name")%in%names(block$v))&&!is.na(block$v$Number[1])&&!is.na(block$v$Name[1])&&length(conv$w)==0L&&length(block$w)==0L&&is.null(conv$e)&&is.null(block$e)
@@ -28,7 +28,7 @@ one <- function(s){
 }
 `%||%` <- function(a,b)if(is.null(a))b else a
 records<-vector("list",13283L)
-for(i in seq_along(source$colors)){records[[i]]<-one(source$colors[[i]]);if(i%%250L==0L)message(i," / 13283")}
+for(i in seq_along(source$colors)){records[[i]]<-one(source$colors[[i]],i-1L);if(i%%250L==0L)message(i," / 13283")}
 counts<-table(vapply(records,function(x)x$calculation_status,character(1)))
 out<-list(schema="ATLAS_CLARUS_DESIGNER_LAYER",schema_version="0.1",status="COMPUTED_CANDIDATES_NOT_RELEASED",source_master=list(filename=source$master_file,sha256=MASTER,expected_records=13283L,identity_authority="PKL_FULL_REFERENCE"),join_contract=list(cardinality="ONE_TO_ONE",primary_key="atlas_row_id",secondary_key="reference",identity_values_may_be_overwritten=FALSE),name_method="LAB_D50_TO_MUNSELL_TO_ISCC_NBS",descriptor_method="RULE_BASED_FROM_HLC_AND_STANDARD_NAME",package_versions=list(munsellinterpol=as.character(utils::packageVersion("munsellinterpol"))),status_counts=as.list(counts),records=records)
 path<-"designer-layer/ATLAS_Clarus_Designer_Layer_Master_v0_1.json"
