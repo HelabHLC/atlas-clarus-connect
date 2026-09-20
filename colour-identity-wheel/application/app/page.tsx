@@ -179,10 +179,11 @@ export default function Home() {
       }
     });
     fetch("/profiles/sRGB-profile.json").then((r) => r.json()).then(setProfile);
-    fetchGzipJson<NameSearchIndex>("/atlas/name-search-index-v1.json.gz").then((data)=>{
+    fetchGzipJson<NameSearchIndex>("/atlas/name-search-index-v1.json.gz").then(async(data)=>{
       if(data.schema!=="ATLAS_CLARUS_NAME_SEARCH_INDEX"||data.master_sha256!==MASTER_SHA256||data.entry_count!==13283||data.records.length!==13283)throw new Error("Name Search Index validation failed");
       const names=new Map(data.records.map((row)=>[row.i,row]));
-      if(names.size!==13283||data.records.some((row)=>index.length>0&&index[row.i]?.sample!==row.r))throw new Error("Name Search Index identity binding failed");
+      const identities=await fetch("/atlas/search-index.json").then((response)=>response.json()) as AtlasIndex[];
+      if(names.size!==13283||identities.length!==13283||data.records.some((row)=>identities[row.i]?.sample!==row.r))throw new Error("Name Search Index identity binding failed");
       setNameIndex(names);
     });
   }, []);
