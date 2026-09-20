@@ -1,0 +1,26 @@
+{
+  "schema": "ATLAS_CLARUS_DESIGNER_LAYER_VERIFICATION",
+  "schema_version": "0.1",
+  "status": "COMPUTED_CANDIDATES_NOT_RELEASED",
+  "verified_artifact_sha256": "fdac590f512b11a09d8db759942bf865299bad0ab737361e1cc342070cd1ed18",
+  "source_master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "checks": {
+    "record_count": 13283,
+    "computed": 13283,
+    "open": 0,
+    "atlas_row_id_sequence": "0..13282",
+    "unique_references": 13283,
+    "reference_binding_mismatches": 0,
+    "forbidden_identity_value_fields": 0,
+    "computed_records_missing_descriptors": 0,
+    "unique_standard_names": 262,
+    "unique_designer_names": 808,
+    "unique_display_names": 13283,
+    "duplicate_display_names": 0,
+    "checksum_evidence_matches": true,
+    "join_cardinality": "ONE_TO_ONE"
+  },
+  "review_status": "NOT_INDEPENDENTLY_REVIEWED",
+  "public_release": false,
+  "note": "Automated structural and identity-binding verification. Editorial and independent colour-science review remain required before release."
+}
