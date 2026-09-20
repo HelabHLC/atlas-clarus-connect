@@ -37,7 +37,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add designer-layer/ATLAS_Clarus_Designer_Layer_Master_v0_1.json designer-layer/SHA256_DESIGNER_LAYER.txt designer-layer/R_sessionInfo.txt
-          git commit -m "Generate full Designer Layer candidate [skip ci]"
+          git commit -m "Generate full Designer Layer candidate"
           git push origin HEAD:chore/name-layer-iscc-nbs-pilot
       - uses: actions/upload-artifact@v4
         with:
