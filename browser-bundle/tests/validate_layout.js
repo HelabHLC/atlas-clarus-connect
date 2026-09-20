@@ -14,6 +14,6 @@ assert.doesNotMatch(responsiveFix, /\.topbar nav\{[^}]*background:#[0-9a-f]{8}[;
 assert.match(app, /requestAnimationFrame\(\(\)=>scrollTo\(/);
 assert.match(html, /SEARCH BY COLOUR NAME, HLC REFERENCE, ID OR HEX/);
 assert.match(html, /placeholder="Purple, H305_L015_C075, 12345, #2D0080"/);
-assert.match(app, /ATLAS_CLARUS_DESIGNER\?\.searchText\(d\)/);
+assert.match(app, /nameSearchById\.get\(c\.id\)/);
 
 console.log('PASS: opaque mobile navigation and sticky-header route offset');

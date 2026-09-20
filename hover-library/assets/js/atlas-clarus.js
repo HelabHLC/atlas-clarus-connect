@@ -11,6 +11,13 @@
     }
     return cache[url];
   };
+  const getGzipJson = async (url) => {
+    if (!('DecompressionStream' in window)) throw new Error('This browser cannot open the compressed Name Search Index.');
+    const response = await fetch(url, {credentials:'same-origin'});
+    if (!response.ok) throw new Error('HTTP '+response.status+' for '+url);
+    const stream = response.body.pipeThrough(new DecompressionStream('gzip'));
+    return JSON.parse(await new Response(stream).text());
+  };
 
   const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
   const yes = (v) => String(v) !== '0';
@@ -62,9 +69,10 @@
 
   async function init(root) {
     try {
-      const [colorDoc, viewDoc] = await Promise.all([
+      const [colorDoc, viewDoc, nameDoc] = await Promise.all([
         getJson(root.dataset.colorsUrl),
-        getJson(root.dataset.viewsUrl)
+        getJson(root.dataset.viewsUrl),
+        getGzipJson(root.dataset.nameIndexUrl)
       ]);
       const colors = colorDoc.colors || [];
       const views = viewDoc.views || {};
@@ -76,6 +84,14 @@
       }
       const byId = new Map(colors.map(c => [Number(c.id), c]));
       if (byId.size !== colors.length) throw new Error('Duplicate atlas_row_id detected');
+      if (nameDoc.schema !== 'ATLAS_CLARUS_NAME_SEARCH_INDEX' || nameDoc.master_sha256 !== MASTER_SHA256 ||
+          Number(nameDoc.entry_count) !== 13283 || !Array.isArray(nameDoc.records) || nameDoc.records.length !== 13283) {
+        throw new Error('Name Search Index validation failed');
+      }
+      const namesById = new Map(nameDoc.records.map(n => [Number(n.i), n]));
+      if (namesById.size !== colors.length || colors.some(c => namesById.get(Number(c.id))?.r !== c.ref)) {
+        throw new Error('Name Search Index identity binding failed');
+      }
       Object.entries(views).forEach(([key,view]) => {
         if (!Array.isArray(view.ids) || view.ids.some(id => !byId.has(Number(id)))) throw new Error('Invalid view references: '+key);
       });
@@ -120,10 +136,10 @@
       if (yes(root.dataset.showSearch)) {
         const field = document.createElement('div');
         field.className = 'atlas-clarus-field';
-        field.innerHTML = '<label>Search reference, ID or HEX</label>';
+        field.innerHTML = '<label>Search by colour name, HLC reference, ID or HEX</label>';
         search = document.createElement('input');
         search.type = 'search';
-        search.placeholder = 'H305_L015_C075, 12345, #2D0080';
+        search.placeholder = 'Purple, H305_L015_C075, 12345, #2D0080';
         field.appendChild(search);
         toolbar.appendChild(field);
       }
@@ -218,10 +234,13 @@
         if (!q) return v.ids;
         return v.ids.filter(id => {
           const c = byId.get(Number(id));
+          const n = namesById.get(Number(id));
+          const nameText = n ? [n.d,n.s,n.f,...(n.t||[])].join(' ').toUpperCase() : '';
           return c && (
             c.ref.toUpperCase().includes(q) ||
             String(c.id).includes(q) ||
-            c.hex.toUpperCase().includes(q)
+            c.hex.toUpperCase().includes(q) ||
+            nameText.includes(q)
           );
         });
       };

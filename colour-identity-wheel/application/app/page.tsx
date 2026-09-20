@@ -29,6 +29,8 @@ type MeasurementResult = { target:{id:number;sample:string;lab:[number,number,nu
 type Harmony = "none" | "complementary" | "analogous" | "triadic" | "split";
 type WheelView = "master" | "icc";
 type IdentityHandoff = { state:"none"|"verifying"|"verified"|"blocked"; message:string; requestedId?:number; source?:string };
+type NameIndexRecord = { i:number; r:string; d:string; s:string; f:string; t:string[] };
+type NameSearchIndex = { schema:string; master_sha256:string; entry_count:number; records:NameIndexRecord[] };
 
 const LEVELS = Array.from({ length: 19 }, (_, i) => (i + 1) * 5);
 const MASTER_SHA256 = "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4";
@@ -84,6 +86,7 @@ function simulateCvd(rgb: [number, number, number], type: keyof typeof CVD_MATRI
   return mapped.map((value) => Math.round(255*(value<=.0031308?12.92*value:1.055*value**(1/2.4)-.055))) as [number,number,number];
 }
 function rgbHex(rgb: [number,number,number]) { return `#${rgb.map((value)=>value.toString(16).padStart(2,"0")).join("")}`; }
+async function fetchGzipJson<T>(url:string):Promise<T>{const response=await fetch(url);if(!response.ok)throw new Error(`HTTP ${response.status} for ${url}`);if(!response.body||typeof DecompressionStream==="undefined")throw new Error("Compressed Name Search Index is not supported by this browser");return JSON.parse(await new Response(response.body.pipeThrough(new DecompressionStream("gzip"))).text()) as T;}
 function iccAscii(bytes: Uint8Array, start: number, length: number) { return String.fromCharCode(...bytes.slice(start,start+length)).trim(); }
 function iccVersion(bytes: Uint8Array) { return `${bytes[8]}.${bytes[9]>>4}.${bytes[9]&15}`; }
 const ICC_CLASSES: Record<string,string> = { scnr:"Input device", mntr:"Display device", prtr:"Output device", link:"Device link", spac:"Colour space", abst:"Abstract", nmcl:"Named colour" };
@@ -122,6 +125,7 @@ export default function Home() {
   const [lightness, setLightness] = useState(65);
   const [records, setRecords] = useState<AtlasRecord[]>([]);
   const [index, setIndex] = useState<AtlasIndex[]>([]);
+  const [nameIndex, setNameIndex] = useState<Map<number,NameIndexRecord>>(new Map());
   const [selected, setSelected] = useState<AtlasRecord | null>(null);
   const [palette, setPalette] = useState<AtlasRecord[]>([]);
   const [harmony, setHarmony] = useState<Harmony>("none");
@@ -175,6 +179,12 @@ export default function Home() {
       }
     });
     fetch("/profiles/sRGB-profile.json").then((r) => r.json()).then(setProfile);
+    fetchGzipJson<NameSearchIndex>("/atlas/name-search-index-v1.json.gz").then((data)=>{
+      if(data.schema!=="ATLAS_CLARUS_NAME_SEARCH_INDEX"||data.master_sha256!==MASTER_SHA256||data.entry_count!==13283||data.records.length!==13283)throw new Error("Name Search Index validation failed");
+      const names=new Map(data.records.map((row)=>[row.i,row]));
+      if(names.size!==13283||data.records.some((row)=>index.length>0&&index[row.i]?.sample!==row.r))throw new Error("Name Search Index identity binding failed");
+      setNameIndex(names);
+    });
   }, []);
   useEffect(() => {
     let active = true;
@@ -196,8 +206,12 @@ export default function Home() {
   const searchResults = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (q.length < 2) return [];
-    return index.filter((item) => item.sample.toLowerCase().includes(q) || item.hex.toLowerCase() === q || String(item.id) === q).slice(0, 7);
-  }, [index, query]);
+    return index.filter((item) => {
+      const name=nameIndex.get(item.id);
+      const names=name?[name.d,name.s,name.f,...name.t].join(" ").toLowerCase():"";
+      return item.sample.toLowerCase().includes(q)||item.hex.toLowerCase()===q||String(item.id)===q||names.includes(q);
+    }).slice(0, 7);
+  }, [index, nameIndex, query]);
   const harmonyRecords = useMemo(() => {
     if (!selected) return [];
     return targetAngles(harmony).map((offset) => {
@@ -323,9 +337,9 @@ export default function Home() {
 
     <section className="pro-toolbar" aria-label="Professional colour controls">
       <div className="search-wrap">
-        <label htmlFor="atlas-search">Find Atlas reference</label>
-        <input id="atlas-search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="H120_L065_C040, #hex or row ID" autoComplete="off" />
-        {searchResults.length > 0 && <div className="search-results">{searchResults.map((item) => <button key={item.id} onClick={() => chooseIndex(item)}><span style={{ background: item.hex }} /><strong>{item.sample}</strong><small>row {item.id} · {item.hex}</small></button>)}</div>}
+        <label htmlFor="atlas-search">Search by colour name, HLC reference, ID or HEX</label>
+        <input id="atlas-search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Purple, H120_L065_C040, #hex or row ID" autoComplete="off" />
+        {searchResults.length > 0 && <div className="search-results">{searchResults.map((item) => <button key={item.id} onClick={() => chooseIndex(item)}><span style={{ background: item.hex }} /><strong>{nameIndex.get(item.id)?.d??item.sample}</strong><small>{item.sample} · row {item.id} · {item.hex}</small></button>)}</div>}
       </div>
       <div><label htmlFor="harmony">Harmony rule</label><select id="harmony" value={harmony} onChange={(e) => setHarmony(e.target.value as Harmony)}>{HARMONIES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></div>
       <div className="toggle-stack"><label className="guide-toggle"><input type="checkbox" checked={showGuides} onChange={(e) => setShowGuides(e.target.checked)} /> H/C guides</label><label className="guide-toggle"><input type="checkbox" checked={showGamut} onChange={(e) => setShowGamut(e.target.checked)} /> ICC gamut overlay</label></div>

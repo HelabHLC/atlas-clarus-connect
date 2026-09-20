@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the deterministic, file:// compatible ATLAS Clarus browser ZIP."""
 from __future__ import annotations
-import argparse, hashlib, json, shutil, zipfile
+import argparse, gzip, hashlib, json, shutil, zipfile
 from pathlib import Path
 from build_lcms import worker_source
 
@@ -49,6 +49,12 @@ for row in designer['records']:
     seen.add(row_id)
 designer_payload='window.ATLAS_CLARUS_DESIGNER_DATA='+json.dumps(designer,separators=(',',':'),ensure_ascii=False)+';\\n'
 (DIST/'assets/designer-layer-data.js').write_text(designer_payload,encoding='utf-8')
+name_search=json.loads(gzip.decompress((ROOT/'name-search/atlas-name-search-index-v1.json.gz').read_bytes()))
+assert name_search['schema']=='ATLAS_CLARUS_NAME_SEARCH_INDEX'
+assert name_search['master_sha256']==MASTER and name_search['entry_count']==13283
+assert all(source['colors'][row['i']]['ref']==row['r'] for row in name_search['records'])
+name_search_payload='window.ATLAS_CLARUS_NAME_SEARCH_DATA='+json.dumps(name_search,separators=(',',':'),ensure_ascii=False)+';\\n'
+(DIST/'assets/name-search-index.js').write_text(name_search_payload,encoding='utf-8')
 
 registry=json.loads((ROOT/'hover-library/data/basis23-source-registry.json').read_text(encoding='utf-8'))
 recipes=[]
@@ -82,6 +88,7 @@ pkl_image_binding=(DIST/'assets/pkl-image-binding.js').read_text(encoding='utf-8
 html=html.replace('<link rel="stylesheet" href="assets/app.css">','<style>'+css+'</style>')
 html=html.replace('<script src="assets/atlas-data.js"></script>','<script>'+payload.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/designer-layer-data.js"></script>','<script>'+designer_payload.replace('</script','<\\/script')+'</script>')
+html=html.replace('<script src="assets/name-search-index.js"></script>','<script>'+name_search_payload.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/designer-layer.js"></script>','<script>'+designer_app.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/basis23-data.js"></script>','<script>'+basis_payload.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/basis23-recipes.js"></script>','<script>'+recipe_app.replace('</script','<\\/script')+'</script>')

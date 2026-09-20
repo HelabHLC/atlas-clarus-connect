@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'ATLAS_CLARUS_APS_VERSION', '0.4.0' );
 define( 'ATLAS_CLARUS_APS_URL', plugin_dir_url( __FILE__ ) );
 define( 'ATLAS_CLARUS_APS_MASTER_SHA256', '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4' );
+define( 'ATLAS_CLARUS_APS_NAME_INDEX_SHA256', 'c09d6eae483a0df8b298781765ce80f2a6398131a2dfbb3e01d10dcbc74d7ce5' );
 define( 'ATLAS_CLARUS_APS_PROJECTION_MANIFEST_SHA256', '561adb75debc920a5071e017e9de98abdbd517fb522d2bd4fa60aef2b85dc9ec' );
 define( 'ATLAS_CLARUS_APS_CIE_ENGINE_SHA256', '6e989630a7e1592a4a627542f52d0fb2882effc43af62552c2f5cfde8d750c75' );
 
@@ -229,6 +230,8 @@ function atlas_clarus_aps_shortcode() {
 		data-version="<?php echo esc_attr( ATLAS_CLARUS_APS_VERSION ); ?>"
 		data-master-base="<?php echo esc_url( ATLAS_CLARUS_APS_URL . 'assets/master/' ); ?>"
 		data-master-sha256="<?php echo esc_attr( ATLAS_CLARUS_APS_MASTER_SHA256 ); ?>"
+		data-name-index-url="<?php echo esc_url( ATLAS_CLARUS_APS_URL . 'assets/name-search/atlas-name-search-index-v1.json.gz' ); ?>"
+		data-name-index-sha256="<?php echo esc_attr( ATLAS_CLARUS_APS_NAME_INDEX_SHA256 ); ?>"
 		data-projection-manifest-sha256="<?php echo esc_attr( ATLAS_CLARUS_APS_PROJECTION_MANIFEST_SHA256 ); ?>"
 		data-cie-engine-url="<?php echo esc_url( ATLAS_CLARUS_APS_URL . 'assets/spectral/cie-spectral-engine-v0.2.0.json' ); ?>"
 		data-cie-engine-sha256="<?php echo esc_attr( ATLAS_CLARUS_APS_CIE_ENGINE_SHA256 ); ?>"
@@ -253,7 +256,7 @@ function atlas_clarus_aps_shortcode() {
 
 		<div class="atlas-clarus-aps__layout">
 			<div class="atlas-clarus-aps__controls">
-				<label class="atlas-clarus-aps__wide"><?php esc_html_e( 'Master search', 'atlas-clarus-appearance-pixel-simulator' ); ?><input data-control="master-search" type="search" placeholder="H125_L075_C080, #76CD27 or row 4665"><select data-control="master-row" size="5" aria-label="<?php esc_attr_e( 'Master search results', 'atlas-clarus-appearance-pixel-simulator' ); ?>"></select></label>
+				<label class="atlas-clarus-aps__wide"><?php esc_html_e( 'Search by colour name, HLC reference, ID or HEX', 'atlas-clarus-appearance-pixel-simulator' ); ?><input data-control="master-search" type="search" placeholder="Purple, H125_L075_C080, #76CD27 or row 4665"><select data-control="master-row" size="5" aria-label="<?php esc_attr_e( 'Master search results', 'atlas-clarus-appearance-pixel-simulator' ); ?>"></select></label>
 				<label><?php esc_html_e( 'Material', 'atlas-clarus-appearance-pixel-simulator' ); ?>
 					<select data-control="material">
 						<option value="paper"><?php esc_html_e( 'Coated paperboard', 'atlas-clarus-appearance-pixel-simulator' ); ?></option>
