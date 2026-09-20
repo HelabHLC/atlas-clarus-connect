@@ -1,0 +1,48 @@
+{
+  "schema": "ATLAS_CLARUS_DESIGNER_LAYER_VERIFICATION",
+  "schema_version": "0.2",
+  "status": "AI_ASSISTED_TECHNICAL_AND_EDITORIAL_QA_PASSED_NOT_RELEASED",
+  "verified_artifact_sha256": "3a98fd3784fdb45b8b27e598f13721e88bade9df51161800b7dde17de877321e",
+  "source_master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "checks": {
+    "record_count": 13283,
+    "computed": 13283,
+    "open": 0,
+    "atlas_row_id_sequence": "0..13282",
+    "unique_references": 13283,
+    "reference_binding_mismatches": 0,
+    "forbidden_identity_value_fields": 0,
+    "computed_records_missing_descriptors": 0,
+    "unique_standard_names": 262,
+    "unique_designer_names": 505,
+    "unique_display_names": 13283,
+    "duplicate_display_names": 0,
+    "checksum_evidence_matches": true,
+    "join_cardinality": "ONE_TO_ONE",
+    "name_number_conflicts": 0,
+    "number_name_conflicts": 0,
+    "invalid_munsell_hvc_records": 0,
+    "conversion_warnings_or_errors": 0,
+    "duplicate_descriptor_words": 0,
+    "colour_family_mismatches": 0,
+    "achromatic_temperature_mismatches": 0,
+    "stratified_review_cells": 207,
+    "stratified_review_sample_records": 217,
+    "rogers_reference_examples_matched": 5
+  },
+  "corrections_applied": [
+    "Removed redundant ISCC-NBS modifiers from generated designer names.",
+    "Derived colour_family from the final lexical hue family in compound standard names.",
+    "Assigned Neutral temperature to HLC references with C <= 5."
+  ],
+  "unused_iscc_nbs_category_numbers": [
+    67,
+    124,
+    157,
+    231,
+    246
+  ],
+  "review_status": "AI_ASSISTED_TECHNICAL_AND_EDITORIAL_QA_PASSED",
+  "independent_colour_science_review": "NOT_PERFORMED",
+  "public_release": false
+}

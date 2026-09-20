@@ -70,3 +70,5 @@ html{scroll-padding-top:var(--topbar-height)}
 .preview-comparison [data-preview-status]{overflow-wrap:anywhere;font-size:14px}
 #print-image-preview button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:650px){.print-image-preview{padding:14px}.preview-pair{grid-template-columns:1fr}.preview-actions button{width:100%}}
+
+.designer-traits{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.designer-traits span{padding:6px 9px;border-radius:999px;background:#162331;color:var(--text);font-size:.72rem}.designer-roles{margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:8px;background:#0b1018}.designer-roles p{margin:5px 0 0;color:var(--muted)}

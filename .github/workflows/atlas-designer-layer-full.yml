@@ -1,0 +1,50 @@
+name: Build full ATLAS Designer Layer
+
+on:
+  push:
+    branches: [chore/name-layer-iscc-nbs-pilot]
+    paths:
+      - "tools/name-layer-pilot/run_full.R"
+      - "tools/name-layer-pilot/audit_267_coverage.R"
+      - ".github/workflows/atlas-designer-layer-full.yml"
+      - "hover-library/data/colors.json"
+
+permissions:
+  contents: write
+
+jobs:
+  full-layer:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chore/name-layer-iscc-nbs-pilot
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.4"
+          use-public-rspm: true
+      - name: Install pinned dependencies
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          remotes::install_version("munsellinterpol",version="3.6-0",repos="https://cloud.r-project.org",upgrade="never")
+          install.packages(c("jsonlite","digest"),repos="https://cloud.r-project.org")
+      - name: Build 13,283-record candidate
+        run: Rscript tools/name-layer-pilot/run_full.R
+      - name: Audit all 267 ISCC-NBS categories
+        run: Rscript tools/name-layer-pilot/audit_267_coverage.R
+      - name: Commit released layer and evidence
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add designer-layer/ATLAS_Clarus_Designer_Layer_Master_v0_1.json designer-layer/SHA256_DESIGNER_LAYER.txt designer-layer/R_sessionInfo.txt designer-layer/ISCC_NBS_267_COVERAGE_AUDIT.json designer-layer/ISCC_NBS_267_CATEGORY_COUNTS.csv designer-layer/ISCC_NBS_267_COVERAGE_REPORT.md
+          git commit -m "Release ATLAS Designer Layer v0.1.0"
+          git pull --rebase origin chore/name-layer-iscc-nbs-pilot
+          git push origin HEAD:chore/name-layer-iscc-nbs-pilot
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ATLAS_Designer_Layer_v0.1.0_RELEASED
+          path: designer-layer/
+          retention-days: 30
