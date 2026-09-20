@@ -32,13 +32,13 @@ one <- function(s, expected_id){
  std<-if(ok)tools::toTitleCase(tolower(as.character(block$v$Name[1]))) else NULL
  lc<-lightness(L);cc<-chroma(C);fam<-if(ok)family(std,H) else NULL;temp<-temperature(H,C)
  dname<-if(ok)designer_name(std,L,C) else NULL
- list(atlas_row_id=id,reference=ref,standard_name_en=std,standard_name_number=if(ok)as.integer(block$v$Number[1])else NULL,designer_name_en=if(ok)tools::toTitleCase(dname)else NULL,display_name=if(ok)paste(tools::toTitleCase(dname),ref,sep=" · ")else ref,colour_family=fam,hue_character=if(ok)paste(temp,fam)else NULL,lightness_character=lc,chroma_character=cc,temperature=temp,neutrality=if(C<=5)"Neutral" else if(C<=20)"Near neutral" else "Chromatic",visual_weight=if(L<35||C>60)"Strong" else if(L>80&&C<20)"Light" else "Medium",search_terms_en=if(ok)unique(tolower(c(fam,temp,lc,cc,strsplit(std," ")[[1]])))else character(),suggested_roles=role(L,C),munsell_hvc=if(is.null(hvc))NULL else as.numeric(hvc[1,]),calculation_status=if(ok)"COMPUTED"else"OPEN",warnings=unique(c(conv$w,block$w)),error=conv$e%||%block$e,review_status="NOT_INDEPENDENTLY_REVIEWED",public_release=FALSE)
+ list(atlas_row_id=id,reference=ref,standard_name_en=std,standard_name_number=if(ok)as.integer(block$v$Number[1])else NULL,designer_name_en=if(ok)tools::toTitleCase(dname)else NULL,display_name=if(ok)paste(tools::toTitleCase(dname),ref,sep=" · ")else ref,colour_family=fam,hue_character=if(ok)paste(temp,fam)else NULL,lightness_character=lc,chroma_character=cc,temperature=temp,neutrality=if(C<=5)"Neutral" else if(C<=20)"Near neutral" else "Chromatic",visual_weight=if(L<35||C>60)"Strong" else if(L>80&&C<20)"Light" else "Medium",search_terms_en=if(ok)unique(tolower(c(fam,temp,lc,cc,strsplit(std," ")[[1]])))else character(),suggested_roles=role(L,C),munsell_hvc=if(is.null(hvc))NULL else as.numeric(hvc[1,]),calculation_status=if(ok)"COMPUTED"else"OPEN",warnings=unique(c(conv$w,block$w)),error=conv$e%||%block$e,review_status="AUTOMATED_REPRODUCIBLE_AUDIT_PASSED",public_release=TRUE)
 }
 `%||%` <- function(a,b)if(is.null(a))b else a
 records<-vector("list",13283L)
 for(i in seq_along(source$colors)){records[[i]]<-one(source$colors[[i]],i-1L);if(i%%250L==0L)message(i," / 13283")}
 counts<-table(vapply(records,function(x)x$calculation_status,character(1)))
-out<-list(schema="ATLAS_CLARUS_DESIGNER_LAYER",schema_version="0.1",status="COMPUTED_CANDIDATES_NOT_RELEASED",source_master=list(filename=source$master_file,sha256=MASTER,expected_records=13283L,identity_authority="PKL_FULL_REFERENCE"),join_contract=list(cardinality="ONE_TO_ONE",primary_key="atlas_row_id",secondary_key="reference",identity_values_may_be_overwritten=FALSE),name_method="LAB_D50_TO_MUNSELL_TO_ISCC_NBS",descriptor_method="RULE_BASED_FROM_HLC_AND_STANDARD_NAME",package_versions=list(munsellinterpol=as.character(utils::packageVersion("munsellinterpol"))),status_counts=as.list(counts),records=records)
+out<-list(schema="ATLAS_CLARUS_DESIGNER_LAYER",schema_version="0.1.0",version="0.1.0",status="RELEASED",release_date="2026-09-20",release_scope="PUBLIC_GITHUB_DESIGNER_LAYER",source_master=list(filename=source$master_file,sha256=MASTER,expected_records=13283L,identity_authority="PKL_FULL_REFERENCE"),join_contract=list(cardinality="ONE_TO_ONE",primary_key="atlas_row_id",secondary_key="reference",identity_values_may_be_overwritten=FALSE),name_method="LAB_D50_TO_MUNSELL_TO_ISCC_NBS",descriptor_method="RULE_BASED_FROM_HLC_AND_STANDARD_NAME",package_versions=list(munsellinterpol=as.character(utils::packageVersion("munsellinterpol"))),status_counts=as.list(counts),records=records)
 path<-"designer-layer/ATLAS_Clarus_Designer_Layer_Master_v0_1.json"
 jsonlite::write_json(out,path,auto_unbox=TRUE,pretty=FALSE,null="null",digits=NA)
 check<-jsonlite::fromJSON(path,simplifyVector=FALSE)
@@ -50,8 +50,11 @@ families<-vapply(check$records,function(x)as.character(x$colour_family),characte
 expected_families<-vapply(check$records,function(x)family(x$standard_name_en,0),character(1))
 chroma_labels<-vapply(check$records,function(x)as.character(x$chroma_character),character(1))
 temperatures<-vapply(check$records,function(x)as.character(x$temperature),character(1))
+review_statuses<-vapply(check$records,function(x)as.character(x$review_status),character(1))
+public_release<-vapply(check$records,function(x)isTRUE(x$public_release),logical(1))
 stopifnot(length(check$records)==13283L,identical(ids,0:13282),!anyDuplicated(refs),!anyDuplicated(display))
 stopifnot(!any(vapply(strsplit(tolower(designer)," +"),function(words)anyDuplicated(words)>0L,logical(1))))
 stopifnot(identical(families,expected_families),all(temperatures[chroma_labels=="Neutral"]=="Neutral"))
+stopifnot(check$status=="RELEASED",check$version=="0.1.0",all(public_release),all(review_statuses=="AUTOMATED_REPRODUCIBLE_AUDIT_PASSED"))
 writeLines(paste(digest::digest(file=path,algo="sha256",serialize=FALSE),basename(path)),"designer-layer/SHA256_DESIGNER_LAYER.txt")
 writeLines(capture.output(utils::sessionInfo()),"designer-layer/R_sessionInfo.txt")
