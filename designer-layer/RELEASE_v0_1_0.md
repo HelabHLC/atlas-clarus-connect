@@ -16,7 +16,8 @@ The project owner approved the release after completion of the reproducible full
 - All 13,283 saved ISCC-NBS assignments were reproduced from their stored Munsell HVC values.
 - 262 of the 267 revised ISCC-NBS categories are represented by at least one Atlas reference.
 - Categories 67, 124, 157, 231 and 246 are valid but not sampled by the Atlas reference grid; no names were forced.
-- GitHub Actions full build and audit run `35503770964` completed successfully.
+- Released layer SHA-256: `c7736a98bbaf6ddd8c50942ef11ab45200b43736f9e1ebf7480988b03a8293d2`.
+- GitHub Actions full build and audit run `35504260229` completed successfully.
 
 ## Release boundary
 
