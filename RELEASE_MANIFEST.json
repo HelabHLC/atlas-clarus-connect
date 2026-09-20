@@ -9,6 +9,19 @@
     "atlas_row_id_basis": "ZERO_BASED"
   },
   "components": {
+    "designer_layer": {
+      "version": "0.1.0",
+      "path": "designer-layer/ATLAS_Clarus_Designer_Layer_Master_v0_1.json",
+      "status": "RELEASED",
+      "release_date": "2026-09-20",
+      "record_count": 13283,
+      "represented_iscc_nbs_categories": 262,
+      "defined_iscc_nbs_categories": 267,
+      "source_master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "identity_values_modified": false,
+      "assignment_audit": "PASS",
+      "github_actions_run": 35503770964
+    },
     "browser_bundle": {
       "version": "0.2.0-rc11",
       "path": "browser-bundle/",
@@ -68,6 +81,8 @@
     }
   },
   "publication_gates": {
+    "designer_layer_full_r_build": "PASS",
+    "designer_layer_267_category_audit": "PASS",
     "plugin_data_validation": "PASS_PYTHON_EQUIVALENT",
     "plugin_php_validation": "PENDING_PHP_RUNTIME_UNAVAILABLE",
     "plugin_javascript_syntax": "PASS",
