@@ -317,7 +317,8 @@
       const cell = state.cells[state.selectedY] && state.cells[state.selectedY][state.selectedX];
       const diagnostics = masterDiagnostics();
       const spectralResult = spectralAppearance();
-      outputs.pkl.textContent = row[1];
+      const selectedName = state.nameIndex.get(row[0]);
+      outputs.pkl.textContent = selectedName ? selectedName.d + ' · ' + row[1] : row[1];
       outputs.identity.textContent = row[2] + ' · RGB ' + base.join(' / ') + ' · source_atlas_row_id ' + row[0] + ' · Lab ' + [numericValue('lab_L'), numericValue('lab_a'), numericValue('lab_b')].map((value) => formatNumber(value, 2)).join(' / ');
       root.querySelector('.atlas-clarus-aps__swatch').style.setProperty('--atlas-clarus-reference', row[2]);
       outputs.angle.textContent = controls.angle.value + '°';

@@ -1,11 +1,15 @@
 # ATLAS Clarus Appearance Pixel Simulator
 
-**v0.4.0 — MATERIALX RENDER SERVICE CONNECTOR**
+**v0.4.1 — ATLAS CLARUS TONE SYSTEM v0.1**
 
 A WordPress plugin for exploring pixel-addressable appearance variants while
 keeping the ATLAS Clarus colour reference identity frozen and separately
 verifiable. APF provides the identity, status and evidence envelope above the
 simulation and its exported assets.
+
+Version 0.4.1 adds the shared ATLAS Clarus Tone System v0.1 names to master
+search and the selected identity display. HLC, `atlas_row_id`, PKL values,
+spectral data and appearance calculations remain unchanged.
 
 Version 0.4.0 connects the APF Material Bridge to the separate ATLAS Clarus
 MaterialX Render Service. The service invokes MaterialXView and returns a

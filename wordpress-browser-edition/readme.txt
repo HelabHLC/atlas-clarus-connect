@@ -2,19 +2,19 @@
 Contributors: HelabHLC
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.12-beta1
+Stable tag: 0.1.13-beta1
 
-WordPress / IONOS delivery wrapper for ATLAS Clarus Browser Bundle RC22.
+WordPress / IONOS delivery wrapper for ATLAS Clarus Browser Bundle RC23.
 STATUS: TEST CANDIDATE. Visual, real press-profile and IONOS acceptance pending.
 
 == Installation / update ==
 
 1. Export important palettes as Clarus JSON and print jobs as Print JSON before closing the page. Save image comparisons separately as B/A PNG and preview details JSON.
 2. WordPress > Plugins > Add New > Upload Plugin: upload this ZIP and replace the existing ATLAS Clarus Browser Edition. Do not delete/uninstall the old plugin first.
-3. Tools > ATLAS Clarus Browser Edition: the existing runtime stays active until you explicitly switch it. The supplied version must show v0.2.0-rc22-parallel-image-preview.
-4. First test on your IONOS staging installation: select "Mitgeliefertes RC22 prüfen und aktiv schalten". This immediately switches the served runtime after verification.
-5. Open /atlas-clarus-browser-bundle/ and follow IONOS_RC22_ABNAHME.md. Clear any enabled IONOS/WordPress page cache for this route if the old version remains visible.
-6. "Zur vorherigen Laufzeit zurückwechseln" restores the runtime active before RC22 was switched on, retaining its files.
+3. Tools > ATLAS Clarus Browser Edition: the existing runtime stays active until you explicitly switch it. The supplied version must show v0.2.0-rc23-tone-system-v0-1.
+4. First test on your IONOS staging installation: select "Mitgeliefertes RC23 prüfen und aktiv schalten". This immediately switches the served runtime after verification.
+5. Open /atlas-clarus-browser-bundle/ and follow IONOS_RC23_ABNAHME.md. Clear any enabled IONOS/WordPress page cache for this route if the old version remains visible.
+6. "Zur vorherigen Laufzeit zurückwechseln" restores the runtime active before RC23 was switched on, retaining its files.
 
 The plugin folder, options, routes and shortcode [atlas_clarus_browser_edition] remain compatible. The homepage link stays in normal ATLAS navigation. WordPress needs a writable uploads directory and ZIP extraction support.
 
@@ -39,6 +39,11 @@ The pinned bundle version, size and SHA-256 appear in the plugin admin page and 
 Automated coverage includes native/WASM ICC vectors, actual worker execution through DOM controls, independent invalidation, unchanged ATLAS identities, reproducible builds and PHP 7.4/8.3 install/rollback tests using a WordPress API shim. Canvas IO in DOM tests is stubbed. These tests do not replace real browser/IONOS or physical press acceptance. Test profiles are artificial software fixtures and are not shipped as end-user profiles.
 
 == Changelog ==
+
+= 0.1.13-beta1 =
+* Embed RC23 with ATLAS Clarus Tone System v0.1 visible names across search, cards, Wheel, Hover, Appearance and reference cards.
+* Keep PKL identity, HLC, RGB/HEX/Lab, A-prime and parallel 4C/ECG paths unchanged.
+* Retain ISCC-NBS assignments as metadata.
 
 = 0.1.12-beta1 =
 * Embed RC22 with two independent profile-driven B/A image comparisons and PNG/metadata exports.

@@ -3,7 +3,7 @@ Contributors: atlasclarus
 Tags: colour, color, appearance, pixel, simulation, PKL
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.4.0
+Stable tag: 0.4.1
 License: GPLv2 or later
 
 Master-bound, pixel-addressable appearance engineering simulator for WordPress.
@@ -45,6 +45,10 @@ reported in the UI and APF evidence. ALS LED and STR scenarios remain disabled
 until their authoritative spectral power distributions are available.
 
 == Changelog ==
+
+= 0.4.1 =
+* Displays ATLAS Clarus Tone System v0.1 names beside the unchanged HLC reference.
+* Updates the verified 13,283-row shared name index and its SHA-256 pin.
 
 = 0.4.0 =
 * Adds compatibility with the external ATLAS Clarus MaterialX Render Service.
