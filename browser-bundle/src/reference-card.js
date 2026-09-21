@@ -36,8 +36,9 @@
     };
   }
 
-  function create({ entry, colors, master = MASTER, createdAt = new Date().toISOString() }) {
+  function create({ entry, colors, master = MASTER, designerLayer = null, createdAt = new Date().toISOString() }) {
     const reference = canonicalReference(entry, colors, master);
+    const descriptor = root.ATLAS_CLARUS_DESIGNER?.get(designerLayer,entry) || null;
     requireThat(typeof createdAt === 'string' && Number.isFinite(Date.parse(createdAt)) &&
       new Date(createdAt).toISOString() === createdAt, 'Invalid creation timestamp.');
     return freeze({
@@ -48,6 +49,7 @@
       row_id_base: 0,
       freeze_status: 'FROZEN',
       reference,
+      designer_layer: descriptor ? { schema_version: designerLayer.document.schema_version, status: designerLayer.document.status, standard_name_en: descriptor.standard_name_en, standard_name_number: descriptor.standard_name_number, designer_name_en: descriptor.designer_name_en, display_name: descriptor.display_name, descriptors: [descriptor.colour_family,descriptor.temperature,descriptor.lightness_character,descriptor.chroma_character], suggested_roles: descriptor.suggested_roles, public_release: false } : null,
       reproduction: {
         source_representation: 'MASTER_SRGB_8BIT',
         output_kind: 'PRINTABLE_REFERENCE_CARD',
@@ -61,7 +63,7 @@
     });
   }
 
-  function validate(data, colors, master = MASTER) {
+  function validate(data, colors, master = MASTER, designerLayer = null) {
     requireThat(data && data.format === FORMAT && data.version === VERSION &&
       data.master_sha256 === MASTER && master === MASTER, 'Not a compatible ATLAS reference card.');
     const entry = {
@@ -71,7 +73,7 @@
       hex: data.reference?.master_hex,
       lab: data.reference?.master_lab
     };
-    const rebuilt = create({ entry, colors, master, createdAt: data.created_at });
+    const rebuilt = create({ entry, colors, master, designerLayer, createdAt: data.created_at });
     requireThat(stable(rebuilt) === stable(data),
       'Reference card rejected: identity, reproduction status or evidence fields have changed.');
     return rebuilt;
@@ -92,9 +94,9 @@ dl{display:grid;grid-template-columns:42mm 1fr;margin:0}dt,dd{border-bottom:1px 
 .notice{padding:5mm;border:2px solid #111;font-weight:700}details{font-size:8pt}pre{white-space:pre-wrap;overflow-wrap:anywhere}
 .controls{position:fixed;right:12px;top:12px}button{padding:10px 16px}@media print{body{background:#fff}.sheet{margin:0}.controls{display:none}details{display:none}}
 </style><div class="controls"><button onclick="window.print()">Print / Save PDF</button></div><main class="sheet">
-<header><h1><small>ATLAS CLARUS · REFERENCE CARD</small>${escape(r.atlas_address)}</h1><div class="status">PRINTED_NOT_MEASURED</div></header>
+<header><h1><small>ATLAS CLARUS · REFERENCE CARD</small>${data.designer_layer?escape(data.designer_layer.designer_name_en):escape(r.atlas_address)}${data.designer_layer?`<small>${escape(data.designer_layer.standard_name_en)} · ISCC–NBS ${data.designer_layer.standard_name_number}</small>`:''}</h1><div class="status">PRINTED_NOT_MEASURED</div></header>
 <div class="patch" role="img" aria-label="sRGB representation ${escape(r.master_hex)}"></div>
-<dl><dt>atlas_row_id</dt><dd>${r.atlas_row_id}</dd><dt>Master SHA-256</dt><dd>${escape(data.master_sha256)}</dd>
+<dl><dt>Exact identity</dt><dd>${escape(r.atlas_address)}</dd><dt>atlas_row_id</dt><dd>${r.atlas_row_id}</dd><dt>Master SHA-256</dt><dd>${escape(data.master_sha256)}</dd>
 <dt>Master RGB</dt><dd>${r.master_rgb.join(' / ')}</dd><dt>Master HEX</dt><dd>${escape(r.master_hex)}</dd>
 <dt>Master CIELAB</dt><dd>${lab}</dd><dt>Identity change</dt><dd>NONE</dd>
 <dt>ICC transform</dt><dd>NOT_APPLIED</dd><dt>Measured QC</dt><dd>NOT_MEASURED</dd></dl>
@@ -105,7 +107,7 @@ dl{display:grid;grid-template-columns:42mm 1fr;margin:0}dt,dd{border-bottom:1px 
 
   function init(context) {
     function open(entry) {
-      const data = create({ entry, colors: context.colors, master: context.master });
+      const data = create({ entry, colors: context.colors, master: context.master, designerLayer: context.designerLayer });
       const stem = `ATLAS_Reference_Card_${data.reference.atlas_address}`;
       context.download(stem + '.reference-card.json', JSON.stringify(data, null, 2), 'application/json');
       const target = root.open('', '_blank');

@@ -50,7 +50,7 @@
 
     <section id="library" class="view">
       <div class="section-head"><div><p class="eyebrow">DISCOVER</p><h2>Hover Library</h2></div><div class="master-badge">MASTER <code>8283ab91…747c4</code></div></div>
-      <div class="toolbar library-toolbar"><label><span>LIBRARY / VIEW</span><select id="library-view"></select></label><label class="search-field"><span>SEARCH REFERENCE, ID OR HEX</span><input id="search" type="search" placeholder="H305_L015_C075, 12345, #2D0080" autocomplete="off"></label><label><span>LIGHTNESS</span><select id="lightness"><option value="all">All L* levels</option></select></label><button id="clear-search">Clear</button></div>
+      <div class="toolbar library-toolbar"><label><span>LIBRARY / VIEW</span><select id="library-view"></select></label><label class="search-field"><span>SEARCH BY COLOUR NAME, HLC REFERENCE, ID OR HEX</span><input id="search" type="search" placeholder="Purple, H305_L015_C075, 12345, #2D0080" autocomplete="off"></label><label><span>LIGHTNESS</span><select id="lightness"><option value="all">All L* levels</option></select></label><button id="clear-search">Clear</button></div>
       <div class="library-layout"><div><div id="library-status" class="status"></div><div id="colour-grid" class="colour-grid"></div><div class="pager"><button id="prev-page">← Previous</button><span id="page-info"></span><button id="next-page">Next →</button></div></div><aside id="selection" class="selection"><p>Select a colour to inspect its frozen reference identity.</p></aside></div>
     </section>
 
@@ -177,7 +177,8 @@
   </main>
   <aside id="palette-drawer" class="palette-drawer" aria-label="ATLAS Clarus palettes"><div class="drawer-head"><div><p class="eyebrow">LOCAL PALETTE WORKSPACE</p><h2>My Palettes</h2></div><button id="palette-close" aria-label="Close palettes">×</button></div><p>The active palette is shared by Hover and Wheel. Export Clarus JSON as your portable backup; import it to restore the same references. Browser storage alone is not a backup.</p><div class="palette-manager"><label>ACTIVE PALETTE<select id="palette-select"></select></label><label>PALETTE NAME<input id="palette-name" maxlength="60" autocomplete="off"></label><div class="palette-manager-actions"><button id="palette-new">New</button><button id="palette-rename">Rename</button><button id="palette-duplicate">Duplicate</button><button id="palette-delete">Delete</button></div><button id="palette-import">Import Clarus JSON</button><input id="palette-import-file" type="file" accept=".json,application/json" hidden></div><div id="drawer-palette-list" class="drawer-palette-list"></div><div class="drawer-exports"><button data-palette-export="ase">Adobe / Affinity ASE</button><button data-palette-export="gpl">GIMP / Inkscape GPL</button><button data-palette-export="tokens">Figma Tokens</button><button data-palette-export="css">CSS</button><button data-palette-export="clarus">Export Clarus JSON · backup</button><button data-print-palette>Prepare palette for print</button></div><div id="export-status" class="export-status" aria-live="polite"></div><button id="drawer-clear">Clear active palette</button></aside>
   <footer><span>ATLAS Clarus Connect · HLC reference data © freieFarbe e.V.</span><b>EVERY COLOUR HAS AN ADDRESS.</b><span id="version">v0.2.0-rc1</span></footer>
-  <script src="assets/atlas-data.js"></script>
+  <script src="assets/atlas-data.js"></script>\n  <script src="assets/designer-layer-data.js"></script>\n  <script src="assets/designer-layer.js"></script>
+  <script src="assets/name-search-index.js"></script>
   <script src="assets/basis23-data.js"></script>
   <script src="assets/basis23-recipes.js"></script>
   <script src="assets/palette-export.js"></script>
