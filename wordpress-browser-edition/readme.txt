@@ -2,7 +2,7 @@
 Contributors: HelabHLC
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.13-beta1
+Stable tag: 0.1.13-beta3
 
 WordPress / IONOS delivery wrapper for ATLAS Clarus Browser Bundle RC23.
 STATUS: TEST CANDIDATE. Visual, real press-profile and IONOS acceptance pending.
@@ -40,7 +40,7 @@ Automated coverage includes native/WASM ICC vectors, actual worker execution thr
 
 == Changelog ==
 
-= 0.1.13-beta1 =
+= 0.1.13-beta3 =
 * Embed RC23 with ATLAS Clarus Tone System v0.1 visible names across search, cards, Wheel, Hover, Appearance and reference cards.
 * Keep PKL identity, HLC, RGB/HEX/Lab, A-prime and parallel 4C/ECG paths unchanged.
 * Retain ISCC-NBS assignments as metadata.
