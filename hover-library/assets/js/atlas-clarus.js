@@ -37,9 +37,10 @@
     if (!ok) throw new Error('Copy command failed');
   }
 
-  function detailHtml(c, view) {
+  function detailHtml(c, view, name) {
     return `
-      <div class="acl-title">${esc(c.ref)}</div>
+      <div class="acl-title">${esc(name?.d || c.ref)}</div>
+      <div class="atlas-clarus-detail-row"><span class="atlas-clarus-detail-key">Exact identity</span><span>${esc(c.ref)}</span></div>
       <div class="atlas-clarus-detail-row"><span class="atlas-clarus-detail-key">atlas_row_id</span><span>${c.id}</span></div>
       <div class="atlas-clarus-detail-row"><span class="atlas-clarus-detail-key">RGB</span><span>${c.rgb.join(', ')}</span></div>
       <div class="atlas-clarus-detail-row"><span class="atlas-clarus-detail-key">HEX</span><span>${esc(c.hex)}</span></div>
@@ -204,6 +205,7 @@
 
       const nearest = (c, count=6) => colors.filter(x=>x.id!==c.id).map(x=>({c:x,d:(x.lab[0]-c.lab[0])**2+(x.lab[1]-c.lab[1])**2+(x.lab[2]-c.lab[2])**2})).sort((a,b)=>a.d-b.d||a.c.id-b.c.id).slice(0,count).map(x=>x.c);
       const showSelection = (c, view) => {
+        const name = namesById.get(Number(c.id));
         const wheelUrl = new URL(root.dataset.wheelUrl);
         wheelUrl.searchParams.set('atlas_row_id', String(c.id));
         wheelUrl.searchParams.set('hlc', c.ref);
@@ -211,7 +213,7 @@
         wheelUrl.searchParams.set('source', 'hover-library');
         const body=sidebar.querySelector('.atlas-clarus-selection-body');
         body.className='atlas-clarus-selection-body';
-        body.innerHTML=`<div class="atlas-clarus-selected-swatch" style="background:${esc(c.hex)}"></div>${detailHtml(c,view)}<div class="atlas-clarus-actions"><button type="button" class="atlas-clarus-button acl-copy-ref">Copy reference</button><button type="button" class="atlas-clarus-button acl-copy-hex">Copy HEX</button><button type="button" class="atlas-clarus-button acl-add-palette">Add to palette</button><a class="atlas-clarus-button acl-open-wheel" href="${esc(wheelUrl.href)}" target="_blank" rel="noopener noreferrer">Open in Colour Identity Wheel ↗</a></div><div class="atlas-clarus-copy-status" role="status" aria-live="polite"></div><section class="atlas-clarus-recipe" aria-live="polite"><p class="atlas-clarus-recipe-loading">Loading Basis-23 recipe…</p></section>`;
+        body.innerHTML=`<div class="atlas-clarus-selected-swatch" style="background:${esc(c.hex)}"></div>${detailHtml(c,view,name)}<div class="atlas-clarus-actions"><button type="button" class="atlas-clarus-button acl-copy-ref">Copy reference</button><button type="button" class="atlas-clarus-button acl-copy-hex">Copy HEX</button><button type="button" class="atlas-clarus-button acl-add-palette">Add to palette</button><a class="atlas-clarus-button acl-open-wheel" href="${esc(wheelUrl.href)}" target="_blank" rel="noopener noreferrer">Open in Colour Identity Wheel ↗</a></div><div class="atlas-clarus-copy-status" role="status" aria-live="polite"></div><section class="atlas-clarus-recipe" aria-live="polite"><p class="atlas-clarus-recipe-loading">Loading Basis-23 recipe…</p></section>`;
         const recipeBox=body.querySelector('.atlas-clarus-recipe');
         const request=++selectionRequest;
         getRecipe(c).then(recipe=>{if(request===selectionRequest)recipeBox.innerHTML=recipeHtml(recipe);}).catch(err=>{if(request===selectionRequest)recipeBox.innerHTML='<p class="atlas-clarus-boundary">Basis-23 recipe unavailable or failed its identity check.</p>';console.error('ATLAS Clarus Basis-23:',err);});
@@ -288,10 +290,11 @@
         idsPage.forEach(id => {
           const c = byId.get(Number(id));
           if (!c) return;
+          const name = namesById.get(Number(c.id));
           const card = document.createElement('button');
           card.className = 'atlas-clarus-card';
           card.type = 'button';
-          card.setAttribute('aria-label', `${c.ref}, atlas row ${c.id}, ${c.hex}`);
+          card.setAttribute('aria-label', `${name?.d || c.ref}, ${c.ref}, atlas row ${c.id}, ${c.hex}`);
           card.dataset.atlasId = c.id;
           card.dataset.ref = c.ref;
           card.dataset.rgb = c.rgb.join(',');
@@ -305,16 +308,16 @@
 
           const ref = document.createElement('div');
           ref.className = 'atlas-clarus-ref';
-          ref.textContent = c.ref;
+          ref.textContent = name?.d || c.ref;
 
           const idline = document.createElement('div');
           idline.className = 'atlas-clarus-id';
-          idline.textContent = `ID ${c.id} · ${c.hex}`;
+          idline.textContent = `${c.ref} · ID ${c.id} · ${c.hex}`;
 
           card.append(chip,ref,idline);
           card.addEventListener('mouseenter', () => {
             card.classList.add('atlas-clarus-hovered');
-            tip.innerHTML = detailHtml(c,view);
+            tip.innerHTML = detailHtml(c,view,name);
             tip.style.display = 'block';
             requestAnimationFrame(() => placeTip(card));
           });
@@ -324,7 +327,7 @@
           });
           card.addEventListener('focus', () => {
             card.classList.add('atlas-clarus-hovered');
-            tip.innerHTML = detailHtml(c,view);
+            tip.innerHTML = detailHtml(c,view,name);
             tip.style.display='block';
             requestAnimationFrame(() => placeTip(card));
           });

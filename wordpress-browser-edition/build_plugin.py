@@ -1,4 +1,4 @@
-"""Build the installable WordPress candidate from the pinned RC22 bundle."""
+"""Build the installable WordPress candidate from the pinned RC23 bundle."""
 from pathlib import Path
 import argparse
 import hashlib
@@ -13,10 +13,10 @@ from verify_package import verify
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent
-NAME = "ATLAS_Clarus_Browser_Edition_v0.1.12-beta1_RC22.zip"
-BUNDLE = "ATLAS_Clarus_Browser_Bundle_v0.2.0-rc22-parallel-image-preview.zip"
+NAME = "ATLAS_Clarus_Browser_Edition_v0.1.13-beta1_RC23.zip"
+BUNDLE = "ATLAS_Clarus_Browser_Bundle_v0.2.0-rc23-tone-system-v0-1.zip"
 FILES = ("atlas-clarus-browser-edition.php", "index.php", "readme.txt",
-         "IONOS_RC22_ABNAHME.md", "verify_package.py")
+         "IONOS_RC23_ABNAHME.md", "verify_package.py")
 
 
 def build(bundle, output):
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     if args.bundle:
         build(args.bundle.resolve(), args.output_dir.resolve())
     else:
-        with tempfile.TemporaryDirectory(prefix="atlas-rc22-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="atlas-rc23-") as tmp:
             subprocess.run([sys.executable, str(REPO / "browser-bundle/build_bundle.py"),
                             "--output-dir", tmp], check=True)
             build(Path(tmp) / BUNDLE, args.output_dir.resolve())

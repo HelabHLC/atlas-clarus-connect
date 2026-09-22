@@ -3,7 +3,7 @@ Contributors: atlas-clarus
 Tags: color, colour, hlc, atlas, swatches
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.2.0-beta1
+Stable tag: 0.2.0-beta2
 License: GPLv2 or later
 
 Interactive ATLAS Clarus HLC reference library with exact active-PKL RGB swatches and hover details.
@@ -35,6 +35,11 @@ Spectral source data: Cultural Heritage Science Open Source (CHSOS), published b
 4. Add `[atlas_clarus_library]` to a page or post.
 
 == Changelog ==
+
+= 0.2.0-beta2 =
+* Displays ATLAS Clarus Tone System v0.1 names while retaining exact HLC identity details.
+* Searches the shared 13,283-row Tone System index with ISCC-NBS terms retained as metadata.
+* Adds cache-safe delivery of the updated name index.
 
 = 0.2.0-beta1 =
 * Added lazy-loaded Basis-23 computational recipes for all 13,283 ATLAS references.

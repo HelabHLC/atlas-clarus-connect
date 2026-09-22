@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 BUNDLE=ROOT/'browser-bundle'
-VERSION='0.2.0-rc22-parallel-image-preview'
+VERSION='0.2.0-rc23-tone-system-v0-1'
 temp_output=tempfile.TemporaryDirectory(prefix='atlas-print-bundle-')
 OUTPUT=Path(temp_output.name)
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
@@ -50,6 +50,10 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert manifest['version']==VERSION
     assert manifest['master_sha256']==MASTER
     assert manifest['master_rows']==13283
+    assert manifest['tone_system_version']=='0.1'
+    assert manifest['visible_name_source']=='ATLAS_CLARUS_TONE_SYSTEM'
+    assert manifest['iscc_nbs_role']=='METADATA_ONLY'
+    assert len(manifest['tone_system_sha256'])==64 and len(manifest['name_search_index_sha256'])==64
     assert manifest['status']=='PROFILE_BOUND_DEVICECMYK_AND_DEVICEN_PDF_CANDIDATE'
     assert manifest['primary_user_path']=='PICKER_HOVER_PALETTE_CLARUS_JSON'
     assert manifest['max_palettes']==50 and manifest['max_palette_colours']==64

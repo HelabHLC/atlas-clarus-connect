@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ATLAS Clarus Appearance Pixel Simulator
  * Description: Open, master-bound appearance preview with APF material identity and evidence binding.
- * Version: 0.4.0
+ * Version: 0.4.1
  * Author: Norbert / ATLAS Clarus
  * License: GPL-2.0-or-later
  * Text Domain: atlas-clarus-appearance-pixel-simulator
@@ -14,10 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ATLAS_CLARUS_APS_VERSION', '0.4.0' );
+define( 'ATLAS_CLARUS_APS_VERSION', '0.4.1' );
 define( 'ATLAS_CLARUS_APS_URL', plugin_dir_url( __FILE__ ) );
 define( 'ATLAS_CLARUS_APS_MASTER_SHA256', '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4' );
-define( 'ATLAS_CLARUS_APS_NAME_INDEX_SHA256', 'c09d6eae483a0df8b298781765ce80f2a6398131a2dfbb3e01d10dcbc74d7ce5' );
+define( 'ATLAS_CLARUS_APS_NAME_INDEX_SHA256', '562a133e965766dc199d753391c9ec2db7bf091793b5358e6604ab22bc96e9db' );
 define( 'ATLAS_CLARUS_APS_PROJECTION_MANIFEST_SHA256', '561adb75debc920a5071e017e9de98abdbd517fb522d2bd4fa60aef2b85dc9ec' );
 define( 'ATLAS_CLARUS_APS_CIE_ENGINE_SHA256', '6e989630a7e1592a4a627542f52d0fb2882effc43af62552c2f5cfde8d750c75' );
 

@@ -44,7 +44,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          source_zip="$RUNNER_TEMP/atlas-browser-release/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc22-parallel-image-preview.zip"
+          source_zip="$RUNNER_TEMP/atlas-browser-release/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc23-tone-system-v0-1.zip"
           test -f "$source_zip"
           asset="ATLAS_Clarus_Browser_Bundle_current.zip"
           cp "$source_zip" "$asset"

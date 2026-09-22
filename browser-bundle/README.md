@@ -2,12 +2,12 @@
 
 This directory builds a standalone offline HTML edition of ATLAS Clarus Connect.
 
-Development candidate: **v0.2.0-rc22-parallel-image-preview**.
+Development candidate: **v0.2.0-rc23-tone-system-v0-1**.
 
 Adds offline preparation of **parallel 4C and ECG paths** from the same frozen
 references. Each path carries its own ICC file and print settings. The complete
 JSON can be exported and re-imported with identity and embedded-profile checks.
-RC22 adds a PKL-first image chain: browser-sRGB source → PKL Full Reference → independent 4C and ECG ICC previews, with B/A PNG export. Reference-job device values and physical QC remain open. See [image previews](PRINT_IMAGE_PREVIEW.md). See [print handoff](PRINT_HANDOFF.md).
+RC22 added a PKL-first image chain: browser-sRGB source → PKL Full Reference → independent 4C and ECG ICC previews, with B/A PNG export. RC23 adds the independent ATLAS Clarus Tone System v0.1 as the visible naming layer while preserving the PKL and print paths. Reference-job device values and physical QC remain open. See [image previews](PRINT_IMAGE_PREVIEW.md). See [print handoff](PRINT_HANDOFF.md).
 The checked-in `dist/` remains the RC20 baseline; development builds use `build/`.
 
 ## Primary user path

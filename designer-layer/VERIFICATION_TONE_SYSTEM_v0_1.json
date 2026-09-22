@@ -1,0 +1,25 @@
+{
+  "schema": "ATLAS_CLARUS_TONE_SYSTEM_VERIFICATION",
+  "schema_version": "0.1",
+  "status": "RELEASE_CANDIDATE_VALIDATION_PASSED",
+  "tone_system_sha256": "848d3731524b6ab4658a4a340c0cd3cf5677465ed3368572c237f6e220d6fa06",
+  "name_search_index_sha256": "562a133e965766dc199d753391c9ec2db7bf091793b5358e6604ab22bc96e9db",
+  "designer_layer_sha256_unchanged": "c7736a98bbaf6ddd8c50942ef11ab45200b43736f9e1ebf7480988b03a8293d2",
+  "source_master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "checks": {
+    "record_count": 13283,
+    "chromatic_records": 13264,
+    "neutral_records": 19,
+    "family_count": 72,
+    "tone_term_count": 12,
+    "tone_family_phrases_present": 798,
+    "atlas_row_id_sequence": "0..13282",
+    "unique_references": 13283,
+    "forbidden_identity_value_fields": 0,
+    "name_index_copies_byte_identical": 4,
+    "iscc_nbs_role": "METADATA_ONLY"
+  },
+  "identity_changes": "NONE",
+  "merge_status": "NOT_MERGED",
+  "deployment_status": "NOT_DEPLOYED"
+}

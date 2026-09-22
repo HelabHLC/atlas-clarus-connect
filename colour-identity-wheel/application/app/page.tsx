@@ -298,6 +298,7 @@ export default function Home() {
   const outputRgb: [number, number, number] = selected ? selected.icc.rgb : [0,0,0];
   const outputHex = selected?.icc.hex ?? selected?.hex ?? "#000000";
   const selectedDisplayHex = selected ? (wheelView === "master" ? selected.hex : selected.icc.hex) : "#000000";
+  const selectedName = selected ? nameIndex.get(selected.id) : undefined;
   const whiteContrast = selected ? contrast(outputRgb, true) : 0;
   const blackContrast = selected ? contrast(outputRgb, false) : 0;
   const previewInk = whiteContrast >= blackContrast ? "#ffffff" : "#05090c";
@@ -377,7 +378,7 @@ export default function Home() {
       </section>
 
       <aside className="detail-panel" aria-live="polite">{selected ? <>
-        <div className="selection-heading"><span className="selected-chip" style={{ backgroundColor: selectedDisplayHex }} /><div><p>SELECTED IDENTITY</p><h2>{selected.sample}</h2><small>Atlas row {selected.id.toLocaleString("en-US")}</small></div></div>
+        <div className="selection-heading"><span className="selected-chip" style={{ backgroundColor: selectedDisplayHex }} /><div><p>SELECTED IDENTITY</p><h2>{selectedName?.d ?? selected.sample}</h2><small>{selected.sample} · Atlas row {selected.id.toLocaleString("en-US")}</small></div></div>
         <div className="identity-strip"><span>H {selected.h}</span><span>L* {selected.l}</span><span>C* {selected.c}</span><span>{selected.hex}</span></div>
         <dl className="facts"><div><dt>Master CIELAB</dt><dd>{selected.lab.map((v) => v.toFixed(2)).join(" · ")}</dd></div><div><dt>Master RGB</dt><dd>{selected.rgb.join(" · ")}</dd></div><div><dt>Master HEX</dt><dd>{selected.hex}</dd></div><div><dt>ICC sRGB</dt><dd>{selected.icc.rgb.join(" · ")}</dd></div><div><dt>ICC HEX</dt><dd>{selected.icc.hex}</dd></div><div><dt>Round-trip ΔE00</dt><dd>{selected.icc.deltaE00.toFixed(3)}</dd></div><div><dt>λ*</dt><dd>{selected.lambda.toFixed(3)} nm</dd></div><div><dt>Gamut status</dt><dd className={selected.icc.status}>{selected.icc.status === "within-tolerance" ? "Within tolerance" : "Profile-mapped"}</dd></div></dl>
         <Spectrum record={selected} />

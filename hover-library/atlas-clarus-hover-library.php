@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ATLAS Clarus Hover Library
  * Description: Interactive ATLAS Clarus HLC reference library with hover details, search, pagination, and documented observed-coverage views.
- * Version: 0.2.0-beta1
+ * Version: 0.2.0-beta2
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: ATLAS Clarus
@@ -12,7 +12,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('ATLAS_CLARUS_HOVER_VERSION', '0.2.0-beta1');
+define('ATLAS_CLARUS_HOVER_VERSION', '0.2.0-beta2');
 define('ATLAS_CLARUS_HOVER_FILE', __FILE__);
 define('ATLAS_CLARUS_HOVER_DIR', plugin_dir_path(__FILE__));
 define('ATLAS_CLARUS_HOVER_URL', plugin_dir_url(__FILE__));
@@ -137,7 +137,7 @@ function atlas_clarus_hover_shortcode($atts=array()) {
         esc_url(apply_filters('atlas_clarus_hover_wheel_url', ATLAS_CLARUS_WHEEL_URL)),
         esc_url(ATLAS_CLARUS_HOVER_URL.'data/basis23-recipes/'),
         esc_attr(ATLAS_CLARUS_BASIS23_VERSION),
-        esc_url(ATLAS_CLARUS_HOVER_URL.'data/atlas-name-search-index-v1.json.gz')
+        esc_url(add_query_arg('ver', atlas_clarus_hover_asset_version('data/atlas-name-search-index-v1.json.gz'), ATLAS_CLARUS_HOVER_URL.'data/atlas-name-search-index-v1.json.gz'))
     );
 }
 add_shortcode('atlas_clarus_library','atlas_clarus_hover_shortcode');
