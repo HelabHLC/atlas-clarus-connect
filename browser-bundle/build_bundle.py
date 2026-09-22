@@ -47,13 +47,13 @@ for row in designer['records']:
     assert row_id not in seen and source['colors'][row_id]['ref']==row['reference']
     assert not ({'lab','rgb','hex','master_rgb'} & set(row))
     seen.add(row_id)
-designer_payload='window.ATLAS_CLARUS_DESIGNER_DATA='+json.dumps(designer,separators=(',',':'),ensure_ascii=False)+';\\n'
+designer_payload='window.ATLAS_CLARUS_DESIGNER_DATA='+json.dumps(designer,separators=(',',':'),ensure_ascii=False)+';\n'
 (DIST/'assets/designer-layer-data.js').write_text(designer_payload,encoding='utf-8')
 name_search=json.loads(gzip.decompress((ROOT/'name-search/atlas-name-search-index-v1.json.gz').read_bytes()))
 assert name_search['schema']=='ATLAS_CLARUS_NAME_SEARCH_INDEX'
 assert name_search['master_sha256']==MASTER and name_search['entry_count']==13283
 assert all(source['colors'][row['i']]['ref']==row['r'] for row in name_search['records'])
-name_search_payload='window.ATLAS_CLARUS_NAME_SEARCH_DATA='+json.dumps(name_search,separators=(',',':'),ensure_ascii=False)+';\\n'
+name_search_payload='window.ATLAS_CLARUS_NAME_SEARCH_DATA='+json.dumps(name_search,separators=(',',':'),ensure_ascii=False)+';\n'
 (DIST/'assets/name-search-index.js').write_text(name_search_payload,encoding='utf-8')
 
 registry=json.loads((ROOT/'hover-library/data/basis23-source-registry.json').read_text(encoding='utf-8'))

@@ -5,6 +5,7 @@ import json
 import subprocess
 import tempfile
 import zipfile
+from html.parser import HTMLParser
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -14,6 +15,30 @@ temp_output=tempfile.TemporaryDirectory(prefix='atlas-print-bundle-')
 OUTPUT=Path(temp_output.name)
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
+
+class InlineScriptParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.capture=False
+        self.parts=[]
+        self.scripts=[]
+
+    def handle_starttag(self,tag,attrs):
+        if tag.lower()!='script':
+            return
+        attributes=dict(attrs)
+        script_type=attributes.get('type','').lower()
+        self.capture='src' not in attributes and script_type not in {'application/json','application/ld+json'}
+        self.parts=[]
+
+    def handle_data(self,data):
+        if self.capture:
+            self.parts.append(data)
+
+    def handle_endtag(self,tag):
+        if tag.lower()=='script' and self.capture:
+            self.scripts.append(''.join(self.parts))
+            self.capture=False
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -59,6 +84,14 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert manifest['max_palettes']==50 and manifest['max_palette_colours']==64
     assert manifest['reproducible_zip'] is True
     html=archive.read(prefix+'index.html').decode('utf-8')
+    parser=InlineScriptParser()
+    parser.feed(html)
+    assert parser.scripts, 'no inline JavaScript found'
+    for number,script in enumerate(parser.scripts,1):
+        script_path=OUTPUT/f'inline-{number}.js'
+        script_path.write_text(script,encoding='utf-8')
+        syntax=subprocess.run(['node','--check',str(script_path)],capture_output=True,text=True)
+        assert syntax.returncode==0, f'inline script {number} syntax error: {syntax.stderr}'
     assert 'v'+VERSION in html
     assert 'id="picker-loupe"' in html
     assert 'id="picker-sample-size"' in html

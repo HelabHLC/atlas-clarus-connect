@@ -3,7 +3,7 @@
  * Plugin Name: ATLAS Clarus Browser Edition
  * Plugin URI: https://arbe-lambda-star.com/
  * Description: Local Browser Edition with Image Picker, Hover, Wheel, palettes, parallel 4C/ECG print preparation and local ICC image previews. Explicit runtime switch; shortcode [atlas_clarus_browser_edition] preserved. Staging beta.
- * Version: 0.1.13-beta3
+ * Version: 0.1.13-beta4
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: ARBE Lambda Star / ATLAS Clarus
@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class ATLAS_Clarus_Browser_Edition {
-    const VERSION              = '0.1.13-beta3';
+    const VERSION              = '0.1.13-beta4';
     const BUNDLE_VERSION       = 'v0.2.0-rc23-tone-system-v0-1';
-    const BUNDLE_SIZE          = 4217913;
-    const BUNDLE_SHA256        = '1b62f34123e225c64aa0c5206b4b57b6c39aec411191c3a3f6085dd3fdf408fd';
+    const BUNDLE_SIZE          = 4217904;
+    const BUNDLE_SHA256        = 'dcfad34501b3717449a88db8046af28d83aa43de317f94b31b18bcfefb81e119';
     const OPTION_PREVIOUS_RUNTIME = 'atlas_clarus_browser_edition_previous_runtime';
     const OPTION_RUNTIME_PATH  = 'atlas_clarus_browser_edition_runtime_path';
     const OPTION_RUNTIME_SHA   = 'atlas_clarus_browser_edition_runtime_sha256';
