@@ -1,6 +1,6 @@
 # IONOS acceptance — RC23
 
-**Browser Edition v0.1.13-beta1 — RC23 test candidate.**
+**Browser Edition v0.1.13-beta4 — RC23 test candidate.**
 
 RC23 adds the ATLAS Clarus Tone System v0.1 to visible names and search results. The existing PKL identity, HLC address, `atlas_row_id`, RGB, HEX, Lab, A′ v0.4 and parallel 4C/ECG paths remain unchanged.
 
