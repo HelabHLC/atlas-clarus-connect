@@ -15,5 +15,8 @@ assert.match(app, /requestAnimationFrame\(\(\)=>scrollTo\(/);
 assert.match(html, /SEARCH BY COLOUR NAME, HLC REFERENCE, ID OR HEX/);
 assert.match(html, /placeholder="Purple, H305_L015_C075, 12345, #2D0080"/);
 assert.match(app, /nameSearchById\.get\(c\.id\)/);
+assert.match(app, /function chromaLabel\(c\)/);
+assert.match(app, /class="colour-card__chroma"/);
+assert.match(css, /\.colour-card__chroma\{/);
 
 console.log('PASS: opaque mobile navigation and sticky-header route offset');
