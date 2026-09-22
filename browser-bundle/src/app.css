@@ -72,3 +72,8 @@ html{scroll-padding-top:var(--topbar-height)}
 @media(max-width:650px){.print-image-preview{padding:14px}.preview-pair{grid-template-columns:1fr}.preview-actions button{width:100%}}
 
 .designer-traits{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.designer-traits span{padding:6px 9px;border-radius:999px;background:#162331;color:var(--text);font-size:.72rem}.designer-roles{margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:8px;background:#0b1018}.designer-roles p{margin:5px 0 0;color:var(--muted)}
+
+/* Keep the shared customer name while making adjacent chroma steps scannable. */
+.colour-card__chroma{display:inline-flex;align-self:flex-start;margin:7px 0 5px;padding:3px 7px;border:1px solid currentColor;border-radius:999px;background:#0005;font-size:1rem;font-weight:800;line-height:1;letter-spacing:.03em;text-shadow:none}
+.colour-card.dark-text .colour-card__chroma{background:#fff7}
+.colour-card small{opacity:.88}
