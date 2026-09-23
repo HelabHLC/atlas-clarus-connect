@@ -18,7 +18,7 @@
   }
   function renderResult(box,envelope){
     const r=envelope.recipe||{},parts=(r.structure||[]).filter(x=>Number(x.wholeParts)>0);
-    box.innerHTML=`<p class="trycolors-match"><b>Practical match ${Number(r.matchResult||0).toFixed(1)}%</b> · ${esc(r.mixedColor||'—')}</p><ol>${parts.map(x=>`<li><i style="background:${esc(x.hex)}"></i><b>${Number(x.wholeParts)} parts</b> ${esc(x.name||x.hex)} <small>${(Number(x.count||0)*100).toFixed(2)}%</small></li>`).join('')}</ol><p class="boundary">${STATUS}. Digital recipe candidate only; not a physical measurement, ALFA dispenser command, production approval or change to PKL identity.</p><div class="trycolors-actions"><button data-trycolors-json>Export evidence JSON</button><button data-trycolors-copy>Copy recipe</button></div>`;
+    box.innerHTML=`<p class="trycolors-match"><b>Practical match ${Number(r.matchResult||0).toFixed(1)}%</b> · ${esc(r.mixedColor||'—')}</p><ol>${parts.map(x=>`<li><i style="background:${esc(x.hex)}"></i><b>${Number(x.wholeParts)} parts</b> ${esc(x.name||x.hex)} <small>${(Number(x.count||0)*100).toFixed(2)}%</small></li>`).join('')}</ol><p><a href="https://trycolors.com" target="_blank" rel="noopener noreferrer">Recipe computed by Trycolors</a></p><p class="boundary">${STATUS}. Digital recipe candidate only; not a physical measurement, ALFA dispenser command, production approval or change to PKL identity.</p><div class="trycolors-actions"><button data-trycolors-json>Export evidence JSON</button><button data-trycolors-copy>Copy recipe</button></div>`;
     box.querySelector('[data-trycolors-json]').onclick=()=>saveJson(`trycolors-${envelope.target.atlas_ref}.json`,envelope);
     box.querySelector('[data-trycolors-copy]').onclick=()=>navigator.clipboard?.writeText(parts.map(x=>`${x.wholeParts} parts ${x.name||x.hex}`).join(' + '));
   }
@@ -37,7 +37,7 @@
   function mount(root){
     const selection=selectedFrom(root);if(!selection||root.querySelector('.trycolors-recipe'))return;
     const panel=document.createElement('section');panel.className='trycolors-recipe';
-    panel.innerHTML=`<p class="eyebrow">OPTIONAL ONLINE RECIPE</p><h3>TryColors candidate</h3><p>Target: <b>${esc(selection.ref)}</b> · ${selection.targetHex}</p><button data-trycolors-create ${CONFIG.endpoint?'':'disabled'}>Create PRO Advanced recipe</button><div data-trycolors-result>${CONFIG.endpoint?'<p>Uses the server-defined paint palette. The API key never enters this browser.</p>':'<p>Offline mode: no recipe server is configured. All existing ATLAS tools remain available.</p>'}</div>`;
+    panel.innerHTML=`<p class="eyebrow">OPTIONAL ONLINE RECIPE</p><h3>TryColors candidate</h3><p>Target: <b>${esc(selection.ref)}</b> · ${selection.targetHex}</p><button data-trycolors-create ${CONFIG.endpoint?'':'disabled'}>Create PRO Advanced recipe</button><div data-trycolors-result>${CONFIG.endpoint?'<p>Uses the fixed Golden Heavy Body 59-paint measured palette. The API key never enters this browser.</p>':'<p>Offline mode: no recipe server is configured. All existing ATLAS tools remain available.</p>'}</div>`;
     root.append(panel);const button=panel.querySelector('[data-trycolors-create]');button.onclick=()=>requestRecipe(selection,panel.querySelector('[data-trycolors-result]'),button);
   }
   function scan(){document.querySelectorAll('#selection,#wheel-selection').forEach(mount)}
