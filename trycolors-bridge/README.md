@@ -1,24 +1,29 @@
 # ATLAS Clarus TryColors Bridge
 
-This optional WordPress plugin keeps the TryColors API key on the server and exposes an authenticated, administrator-only recipe endpoint. Version 0.1.1 also provides **Settings → ATLAS TryColors Bridge**: the key is encrypted with a key derived from the existing WordPress authentication salts, stored with autoload disabled, and never displayed back to the browser.
+Version 0.1.3 switches the controlled pilot from HEX-only palette entries to the confirmed **Golden Heavy Body 59** measured-paint palette.
 
-Add both constants to `wp-config.php` (outside the public repository):
+Each upstream palette entry is sent as:
 
-```php
-define('ATLAS_CLARUS_TRYCOLORS_API_KEY', 'your-current-key');
-define('ATLAS_CLARUS_TRYCOLORS_PALETTE_JSON', '[{"name":"Paint name","hex":"#RRGGBB"}]');
+```json
+{"hex":"#RRGGBB","name":"Paint name","paint_id":1234}
 ```
 
-The palette must contain 2–64 paints. Use the exact, fixed paint palette intended for repeatable comparisons. The browser submits only the frozen ATLAS reference and target HEX. The bridge calls `POST https://api.trycolors.com/v1/unmix-color` with `mixerMode=pro`, `engine=2025`, `maxColorsCount=4`, and `maxDropsCount=50`.
+The `paint_id` selects TryColors' measured mixing data. The pilot request is fixed to:
 
-If neither a constant nor an environment variable is supplied, the confirmed 14-colour **Lascaux Primär** palette bundled with the plugin is used. The API key can then be entered on the dedicated settings page without editing `wp-config.php`. Constants and environment variables retain priority for installations that require configuration outside the database.
+- `POST /v1/unmix-color`
+- `maxColorsCount: 3`
+- `maxDropsCount: 20`
+- `mixerMode: "pro"`
+- `engine: "2025"`
 
-Version 0.1.2 adds privacy-safe diagnostics to the settings page and the administrator-only `GET /wp-json/atlas-clarus/v1/trycolors/status` endpoint. It records only UTC time, diagnostic category, upstream HTTP status, and a sanitized error summary of at most 240 characters. API keys, authorization headers, request payloads, and full upstream response bodies are never written to the diagnostic record.
+The bundled file `golden-heavy-body-59-palette.json` is the default palette. An installation-specific JSON override remains possible through `ATLAS_CLARUS_TRYCOLORS_PALETTE_JSON`, but every accepted entry must contain a valid HEX value and positive integer `paint_id`.
 
-The result is evidence JSON marked `SIMULATED_NOT_PHYSICALLY_VERIFIED`. It is not an ALFA dispenser command, a measured result, or a change to PKL identity. The existing offline, 4C, and ECG workflows remain independent.
+The API key remains server-side, encrypted in WordPress when entered through **Settings → ATLAS TryColors Bridge**, and is never returned to the browser.
 
-## Confirmed Lascaux palette
+Every result is marked `SIMULATED_NOT_PHYSICALLY_VERIFIED` and displays the required linked attribution **Recipe computed by Trycolors**. It is not a physical measurement, production approval, ALFA dispenser command, or change to PKL identity.
 
-The repository includes `lascaux-primaer-palette.example.json` with all 14 product names, product codes, pigments where shown, and HEX inputs confirmed from the individual TryColors mixer screens. Use the value of its `colors` array for `ATLAS_CLARUS_TRYCOLORS_PALETTE_JSON`; keep the API key outside the repository.
+Controlled pilot target:
 
-Control target used during validation: `#F4E46A`. The repeated TryColors UI result was `#F3E16A`, 99.2% displayed match, using 48% Primary Colour yellow, 48% White, and 4% Yellow ochre. This is a digital repeatability control, not physical verification.
+- PKL reference: `H095_L090_C060`
+- target HEX: `#F4E46A`
+- run limit: one live request before any wider calculation
