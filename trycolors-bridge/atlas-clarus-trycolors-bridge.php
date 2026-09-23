@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ATLAS Clarus TryColors Bridge
  * Description: Admin-only server bridge from an ATLAS PKL target to a TryColors recipe candidate.
- * Version: 0.1.2
+ * Version: 0.1.3
  * License: GPL-2.0-or-later
  */
 defined('ABSPATH') || exit;
@@ -10,6 +10,8 @@ defined('ABSPATH') || exit;
 const ATLAS_TRYCOLORS_STATUS = 'SIMULATED_NOT_PHYSICALLY_VERIFIED';
 const ATLAS_TRYCOLORS_KEY_OPTION = 'atlas_clarus_trycolors_api_key_encrypted';
 const ATLAS_TRYCOLORS_DIAGNOSTIC_OPTION = 'atlas_clarus_trycolors_last_diagnostic';
+const ATLAS_TRYCOLORS_PALETTE_ID = 'ATLAS_GOLDEN_HB_59_V0_1';
+const ATLAS_TRYCOLORS_MASTER_SHA256 = '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4';
 
 function atlas_trycolors_record_diagnostic($category, $http_status=0, $message='') {
     $record = array(
@@ -49,13 +51,13 @@ function atlas_trycolors_encrypt($plain) {
 
 function atlas_trycolors_decrypt($stored) {
     $stored = (string) $stored; $key = atlas_trycolors_crypto_key();
-    if (str_starts_with($stored, 'sodium:') && function_exists('sodium_crypto_secretbox_open')) {
+    if (strpos($stored, 'sodium:') === 0 && function_exists('sodium_crypto_secretbox_open')) {
         $raw = base64_decode(substr($stored, 7), true);
         if ($raw === false || strlen($raw) <= SODIUM_CRYPTO_SECRETBOX_NONCEBYTES) return '';
         $plain = sodium_crypto_secretbox_open(substr($raw, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES), substr($raw, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES), $key);
         return $plain === false ? '' : $plain;
     }
-    if (str_starts_with($stored, 'openssl:') && function_exists('openssl_decrypt')) {
+    if (strpos($stored, 'openssl:') === 0 && function_exists('openssl_decrypt')) {
         $raw = base64_decode(substr($stored, 8), true);
         if ($raw === false || strlen($raw) <= 28) return '';
         $plain = openssl_decrypt(substr($raw, 28), 'aes-256-gcm', $key, OPENSSL_RAW_DATA, substr($raw, 0, 12), substr($raw, 12, 16));
@@ -73,22 +75,24 @@ function atlas_trycolors_api_key() {
 
 function atlas_trycolors_palette() {
     $raw = defined('ATLAS_CLARUS_TRYCOLORS_PALETTE_JSON') ? ATLAS_CLARUS_TRYCOLORS_PALETTE_JSON : getenv('ATLAS_CLARUS_TRYCOLORS_PALETTE_JSON');
-    $rows = json_decode((string) $raw, true);
-    if (!is_array($rows)) $rows = array(
-        array('name'=>'Primary Colour yellow','hex'=>'#F8E722'), array('name'=>'Bright red','hex'=>'#DB282A'),
-        array('name'=>'Carmine red','hex'=>'#A8273A'), array('name'=>'Primary Colour magenta','hex'=>'#C13277'),
-        array('name'=>'Ultramarine blue','hex'=>'#1D20A3'), array('name'=>'Prussian blue','hex'=>'#084583'),
-        array('name'=>'Primary Colour cyan','hex'=>'#005CA2'), array('name'=>'Emerald green','hex'=>'#006C59'),
-        array('name'=>'Yellow ochre','hex'=>'#C88A2A'), array('name'=>'Light brown','hex'=>'#6F4A3B'),
-        array('name'=>'Bordeaux red','hex'=>'#84283B'), array('name'=>'White','hex'=>'#FBF9F6'),
-        array('name'=>'Silver','hex'=>'#C7CACB'), array('name'=>'Black','hex'=>'#30302F')
-    );
+    if (trim((string) $raw) === '') {
+        $path = plugin_dir_path(__FILE__).'golden-heavy-body-59-palette.json';
+        $raw = is_readable($path) ? file_get_contents($path) : '';
+    }
+    $decoded = json_decode((string) $raw, true);
+    $rows = isset($decoded['colors']) && is_array($decoded['colors']) ? $decoded['colors'] : $decoded;
+    if (!is_array($rows)) return array();
     $out = array();
     foreach ($rows as $row) {
         if (!is_array($row)) continue;
         $hex = strtoupper((string) ($row['hex'] ?? ''));
-        if (!preg_match('/^#[0-9A-F]{6}$/', $hex)) continue;
-        $out[] = array('hex'=>$hex, 'name'=>sanitize_text_field((string) ($row['name'] ?? $hex)));
+        $paint_id = filter_var($row['paint_id'] ?? null, FILTER_VALIDATE_INT);
+        if (!preg_match('/^#[0-9A-F]{6}$/', $hex) || $paint_id === false || $paint_id < 1) continue;
+        $out[] = array(
+            'hex'=>$hex,
+            'name'=>sanitize_text_field((string) ($row['name'] ?? $hex)),
+            'paint_id'=>(int) $paint_id,
+        );
     }
     return array_slice($out, 0, 64);
 }
@@ -109,7 +113,7 @@ function atlas_trycolors_unmix(WP_REST_Request $request) {
         atlas_trycolors_record_diagnostic('not_configured', 503, 'API key or fixed palette missing.');
         return new WP_Error('atlas_trycolors_not_configured', 'TryColors server credentials or the fixed paint palette are not configured.', array('status'=>503));
     }
-    $payload = array('colors'=>array_column($palette, 'hex'),'targetHex'=>$target,'maxColorsCount'=>4,'maxDropsCount'=>50,'mixerMode'=>'pro','engine'=>'2025','tintingStrengthMode'=>'uniform');
+    $payload = array('colors'=>$palette,'targetHex'=>$target,'maxColorsCount'=>3,'maxDropsCount'=>20,'mixerMode'=>'pro','engine'=>'2025');
     $upstream = wp_remote_post('https://api.trycolors.com/v1/unmix-color', array('timeout'=>45,'redirection'=>0,'headers'=>array('X-API-KEY'=>$key,'Content-Type'=>'application/json','Accept'=>'application/json'),'body'=>wp_json_encode($payload)));
     if (is_wp_error($upstream)) {
         atlas_trycolors_record_diagnostic('transport_error', 0, $upstream->get_error_code().': '.$upstream->get_error_message());
@@ -122,17 +126,27 @@ function atlas_trycolors_unmix(WP_REST_Request $request) {
         return new WP_Error('atlas_trycolors_rejected', 'TryColors rejected the recipe request.', array('status'=>502,'upstream_status'=>$code));
     }
     atlas_trycolors_record_diagnostic('success', $code, 'Recipe response accepted.');
-    $names = array_column($palette, 'name', 'hex');
-    if (isset($recipe['structure']) && is_array($recipe['structure'])) foreach ($recipe['structure'] as &$part) { $h=strtoupper((string)($part['hex']??'')); if(isset($names[$h]))$part['name']=$names[$h]; } unset($part);
-    return rest_ensure_response(array('schema'=>'ATLAS_CLARUS_TRYCOLORS_RECIPE_V1','status'=>ATLAS_TRYCOLORS_STATUS,'provider'=>array('name'=>'TryColors','mode'=>'pro','engine'=>'2025'),'target'=>array('atlas_ref'=>$ref,'atlas_row_id'=>(int)$row_id,'hex'=>$target),'palette'=>array('count'=>count($palette),'colors'=>$palette),'recipe'=>$recipe,'boundaries'=>array('pkl_identity_changed'=>false,'physical_measurement'=>false,'alfa_dispenser_command'=>false,'production_approval'=>false),'created_at'=>gmdate('c')));
+    $names_by_hex = array_column($palette, 'name', 'hex');
+    $names_by_id = array_column($palette, 'name', 'paint_id');
+    if (isset($recipe['structure']) && is_array($recipe['structure'])) foreach ($recipe['structure'] as &$part) {
+        $paint_id = isset($part['paint_id']) ? (int) $part['paint_id'] : 0;
+        $h = strtoupper((string) ($part['hex'] ?? ''));
+        if ($paint_id && isset($names_by_id[$paint_id])) $part['name'] = $names_by_id[$paint_id];
+        elseif (isset($names_by_hex[$h])) $part['name'] = $names_by_hex[$h];
+    } unset($part);
+    return rest_ensure_response(array('schema'=>'ATLAS_CLARUS_TRYCOLORS_RECIPE_V2','status'=>ATLAS_TRYCOLORS_STATUS,'provider'=>array('name'=>'TryColors','url'=>'https://trycolors.com','attribution'=>'Recipe computed by Trycolors','mode'=>'pro','engine'=>'2025'),'target'=>array('atlas_ref'=>$ref,'atlas_row_id'=>(int)$row_id,'hex'=>$target,'master_sha256'=>ATLAS_TRYCOLORS_MASTER_SHA256,'binding'=>'CLIENT_SUPPLIED_NOT_SERVER_VERIFIED'),'request_settings'=>array('maxColorsCount'=>3,'maxDropsCount'=>20),'palette'=>array('id'=>ATLAS_TRYCOLORS_PALETTE_ID,'count'=>count($palette),'paint_id_mode'=>true,'colors'=>$palette),'recipe'=>$recipe,'boundaries'=>array('pkl_identity_changed'=>false,'physical_measurement'=>false,'alfa_dispenser_command'=>false,'production_approval'=>false),'created_at'=>gmdate('c')));
 }
 
 function atlas_trycolors_status() {
     return rest_ensure_response(array(
         'schema'=>'ATLAS_CLARUS_TRYCOLORS_STATUS_V1',
-        'plugin_version'=>'0.1.2',
+        'plugin_version'=>'0.1.3',
         'api_key_configured'=>atlas_trycolors_api_key() !== '',
+        'palette_id'=>ATLAS_TRYCOLORS_PALETTE_ID,
         'palette_count'=>count(atlas_trycolors_palette()),
+        'paint_id_mode'=>true,
+        'maxColorsCount'=>3,
+        'maxDropsCount'=>20,
         'endpoint'=>'https://api.trycolors.com/v1/unmix-color',
         'mode'=>'pro',
         'engine'=>'2025',
@@ -175,10 +189,11 @@ function atlas_trycolors_settings_page() {
     ?>
     <div class="wrap"><h1>ATLAS Clarus · TryColors Bridge</h1>
       <?php if (isset($messages[$status])): ?><div class="notice <?php echo $status==='crypto_error'?'notice-error':'notice-success'; ?> is-dismissible"><p><?php echo esc_html($messages[$status]); ?></p></div><?php endif; ?>
-      <p>Administrator-only connection to the official TryColors API. The fixed Lascaux Primär palette contains <strong><?php echo count(atlas_trycolors_palette()); ?> colours</strong>.</p>
+      <p>Administrator-only connection to the official TryColors API. The fixed Golden Heavy Body measured pilot palette contains <strong><?php echo count(atlas_trycolors_palette()); ?> colours</strong>.</p>
       <table class="widefat striped" style="max-width:760px"><tbody>
         <tr><th>Connection</th><td><strong><?php echo $configured ? 'API key configured' : 'API key missing'; ?></strong></td></tr>
-        <tr><th>Mode</th><td>PRO · engine 2025 · Kubelka–Munk</td></tr>
+        <tr><th>Palette</th><td><code><?php echo esc_html(ATLAS_TRYCOLORS_PALETTE_ID); ?></code> · measured <code>paint_id</code> mode</td></tr>
+        <tr><th>Mode</th><td>PRO · engine 2025 · maximum 3 paints / 20 drops</td></tr>
         <tr><th>Result status</th><td><code><?php echo esc_html(ATLAS_TRYCOLORS_STATUS); ?></code></td></tr>
       </tbody></table>
       <h2>Safe diagnostics</h2>
