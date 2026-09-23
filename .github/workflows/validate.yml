@@ -8,6 +8,21 @@ permissions:
   contents: read
 
 jobs:
+  trycolors-bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+      - name: Validate Golden-59 measured paint contract
+        run: |
+          php -l trycolors-bridge/atlas-clarus-trycolors-bridge.php
+          python trycolors-bridge/tests/validate_golden59_bridge.py
+
   checked-in-archives:
     runs-on: ubuntu-latest
     steps:
@@ -60,6 +75,7 @@ jobs:
           node --check browser-bundle/src/print-preview-worker.js
           node --check browser-bundle/src/reference-card.js
           node --check browser-bundle/src/profiled-reference-card.js
+          node --check browser-bundle/src/trycolors-recipe.js
       - name: Validate reference card handoff and rejection vectors
         run: node browser-bundle/tests/validate_reference_card.js
       - name: Validate profile-bound reference card contract
