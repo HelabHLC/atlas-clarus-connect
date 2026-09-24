@@ -78,7 +78,7 @@
   function mount(){
     for(const parent of document.querySelectorAll('#selection,#wheel-selection')){
       const terms=[...parent.querySelectorAll('dl dt')];
-      const ref=terms.find(term=>term.textContent.trim()==='Exact identity')?.nextElementSibling?.textContent?.trim();
+      const ref=terms.find(term=>['Exact identity','Exact PKL identity'].includes(term.textContent.trim()))?.nextElementSibling?.textContent?.trim();
       if(!/^H\d{3}_L\d{3}_C\d{3}$/.test(ref))continue;
       const old=parent.querySelector('.atlas-offline-mixer');if(old?.dataset.reference===ref)continue;old?.remove();
       const section=document.createElement('section');section.className='atlas-offline-mixer';section.dataset.reference=ref;
