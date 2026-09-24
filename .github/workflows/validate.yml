@@ -122,6 +122,8 @@ jobs:
         run: python browser-bundle/build_bundle.py
       - name: Install DOM test dependencies
         run: npm ci --prefix browser-bundle/tests --ignore-scripts
+      - name: Validate named-selection mixer panel
+        run: node browser-bundle/tests/validate_offline_mixer_ui.js
       - name: Validate shipped print preparation UI
         run: node browser-bundle/tests/validate_print_ui.js
       - name: Validate native and WASM image preview vectors
