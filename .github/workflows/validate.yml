@@ -167,8 +167,8 @@ jobs:
           actual_size="$(wc -c < "$package")"
           actual_sha="$(sha256sum "$package" | cut -d " " -f 1)"
           echo "Package identity: size=${actual_size} sha256=${actual_sha}"
-          test "$actual_size" -eq 4176718
-          echo "354c633adb8f5d3ae6e7bc9623b73773b3a6c6c1b58c3ec6c4b84b53a2a7e380  $package" | sha256sum -c -
+          test "$actual_size" -eq 4180458
+          echo "7e19619e220869abfcc0f66a522198f1d2d7591d0bf31a46a964e9a4a633b150  $package" | sha256sum -c -
       - name: Reproduce installable package
         run: |
           python wordpress-browser-edition/build_plugin.py --output-dir "$RUNNER_TEMP/atlas-plugin-repeat"
