@@ -8,4 +8,4 @@ It derives K/S from individual-pigment reflectance and searches one to three com
 
 Source credit: Cultural Heritage Science Open Source (CHSOS), https://chsopensource.org/products/pigments-checker/. Computational processing by ATLAS Clarus. CHSOS has not validated derived mixtures.
 
-Validation: `node browser-bundle/tests/validate_offline_mixer.js` when run from repository root with the module path adjusted to `../src/atlas-offline-mixer.js` in the test.
+Validation: `node browser-bundle/tests/validate_offline_mixer.js` from the repository root.
