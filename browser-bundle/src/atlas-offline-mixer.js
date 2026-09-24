@@ -62,7 +62,7 @@
         if(trial.rmse<best.rmse)best=trial;
       }
     }
-    return {reference,rmse:best.rmse,de76:best.de76,recipe:best.parts.map(p=>({basis_id:p.base.id,name:p.base.name,fraction:p.weight})),opacity_status:'NOT_VERIFIED',measured_qc_status:'NOT_MEASURED',selection_metric:'SPECTRAL_RMSE_HEURISTIC'};
+    return {reference,rmse:best.rmse,de76:best.de76,recipe:best.parts.map(p=>({basis_id:p.base.id,name:p.base.name,fraction:p.weight,opacity_marker:'UNKNOWN'})),opacity_status:'NOT_VERIFIED',measured_qc_status:'NOT_MEASURED',selection_metric:'SPECTRAL_RMSE_HEURISTIC'};
   }
   function mount(){
     for(const parent of document.querySelectorAll('#selection,#wheel-selection')){
@@ -79,7 +79,7 @@
         box.textContent='Checking files and calculating…';await new Promise(resolve=>setTimeout(resolve,0));
         try{
           const result=solve(await load(af,cf),ref);
-          box.innerHTML=`<p>Computed candidate · spectral RMSE ${result.rmse.toFixed(5)} · ΔE76 ${result.de76.toFixed(2)}</p><ol>${result.recipe.map(p=>`<li>${esc(p.name)} · ${(p.fraction*100).toFixed(1)}% <small>${esc(p.basis_id)}</small></li>`).join('')}</ol><p>Mixture opacity: NOT VERIFIED · physical QC: NOT MEASURED. Model weights are not dispensing instructions.</p>`;
+          box.innerHTML=`<p>Computed candidate · spectral RMSE ${result.rmse.toFixed(5)} · ΔE76 ${result.de76.toFixed(2)}</p><ol>${result.recipe.map(p=>`<li>${esc(p.name)} · ${(p.fraction*100).toFixed(1)}% <small>${esc(p.basis_id)} · opacity ${p.opacity_marker}</small></li>`).join('')}</ol><p>Mixture opacity: NOT VERIFIED · physical QC: NOT MEASURED. Model weights are not dispensing instructions.</p>`;
         }catch(e){box.textContent=`Mixer unavailable: ${e.message}`}
       };
     }
