@@ -2,19 +2,19 @@
 Contributors: HelabHLC
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.13-beta4
+Stable tag: 0.1.14-beta1
 
-WordPress / IONOS delivery wrapper for ATLAS Clarus Browser Bundle RC23.
+WordPress / IONOS delivery wrapper for ATLAS Clarus Browser Bundle RC24.
 STATUS: TEST CANDIDATE. Visual, real press-profile and IONOS acceptance pending.
 
 == Installation / update ==
 
 1. Export important palettes as Clarus JSON and print jobs as Print JSON before closing the page. Save image comparisons separately as B/A PNG and preview details JSON.
 2. WordPress > Plugins > Add New > Upload Plugin: upload this ZIP and replace the existing ATLAS Clarus Browser Edition. Do not delete/uninstall the old plugin first.
-3. Tools > ATLAS Clarus Browser Edition: the existing runtime stays active until you explicitly switch it. The supplied version must show v0.2.0-rc23-tone-system-v0-1.
-4. First test on your IONOS staging installation: select "Mitgeliefertes RC23 prüfen und aktiv schalten". This immediately switches the served runtime after verification.
-5. Open /atlas-clarus-browser-bundle/ and follow IONOS_RC23_ABNAHME.md. Clear any enabled IONOS/WordPress page cache for this route if the old version remains visible.
-6. "Zur vorherigen Laufzeit zurückwechseln" restores the runtime active before RC23 was switched on, retaining its files.
+3. Tools > ATLAS Clarus Browser Edition: the existing runtime stays active until you explicitly switch it. The supplied version must show v0.2.0-rc24-offline-chsos-mixer.
+4. First test on your IONOS staging installation: select "Mitgeliefertes RC24 prüfen und aktiv schalten". This immediately switches the served runtime after verification.
+5. Open /atlas-clarus-browser-bundle/ and follow IONOS_RC24_ABNAHME.md. Clear any enabled IONOS/WordPress page cache for this route if the old version remains visible.
+6. "Zur vorherigen Laufzeit zurückwechseln" restores the runtime active before RC24 was switched on, retaining its files.
 
 The plugin folder, options, routes and shortcode [atlas_clarus_browser_edition] remain compatible. The homepage link stays in normal ATLAS navigation. WordPress needs a writable uploads directory and ZIP extraction support.
 
@@ -34,11 +34,14 @@ Select a reference in Hover/Wheel and choose "Prepare for print", or prepare a p
 
 == Integrity / validation ==
 
-The pinned bundle version, size and SHA-256 appear in the plugin admin page and PACKAGE_VALIDATION.json. The installer checks ZIP integrity, manifest identity and listed file hashes before switching. The source tree and CI results are reviewable at https://github.com/HelabHLC/atlas-clarus-connect/compare/main...feature%2Fpkl-first-production-previews.
+The pinned bundle version, size and SHA-256 appear in the plugin admin page and PACKAGE_VALIDATION.json. The installer checks ZIP integrity, manifest identity and listed file hashes before switching. The source tree and CI results are reviewable at https://github.com/HelabHLC/atlas-clarus-connect/pull/50.
 
 Automated coverage includes native/WASM ICC vectors, actual worker execution through DOM controls, independent invalidation, unchanged ATLAS identities, reproducible builds and PHP 7.4/8.3 install/rollback tests using a WordPress API shim. Canvas IO in DOM tests is stubbed. These tests do not replace real browser/IONOS or physical press acceptance. Test profiles are artificial software fixtures and are not shipped as end-user profiles.
 
 == Changelog ==
+
+= 0.1.14-beta1 =
+* Add optional offline CHSOS spectral mixer pilot with opacity evidence and 0/5/10% PW6 comparison. Source spectra are supplied locally by the user. Mixtures are NOT_MEASURED.
 
 = 0.1.13-beta4 =
 * Fix generated inline Tone System and name-search JavaScript syntax and validate every inline script during the reproducible bundle build.

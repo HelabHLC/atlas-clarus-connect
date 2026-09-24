@@ -3,7 +3,7 @@
  * Plugin Name: ATLAS Clarus Browser Edition
  * Plugin URI: https://arbe-lambda-star.com/
  * Description: Local Browser Edition with Image Picker, Hover, Wheel, palettes, parallel 4C/ECG print preparation and local ICC image previews. Explicit runtime switch; shortcode [atlas_clarus_browser_edition] preserved. Staging beta.
- * Version: 0.1.13-beta4
+ * Version: 0.1.14-beta1
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: ARBE Lambda Star / ATLAS Clarus
@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class ATLAS_Clarus_Browser_Edition {
-    const VERSION              = '0.1.13-beta4';
-    const BUNDLE_VERSION       = 'v0.2.0-rc23-tone-system-v0-1';
-    const BUNDLE_SIZE          = 4230120;
-    const BUNDLE_SHA256        = 'f7a956d34c1f8630fbf8b935e4347f095e1a42a24e72959ab5b64773c78b5d40';
+    const VERSION              = '0.1.14-beta1';
+    const BUNDLE_VERSION       = 'v0.2.0-rc24-offline-chsos-mixer';
+    const BUNDLE_SIZE          = 4231651;
+    const BUNDLE_SHA256        = 'c8efd5601eae61eba23dbab75fcca668452a57d0037d0a51803056bf2e879a23';
     const OPTION_PREVIOUS_RUNTIME = 'atlas_clarus_browser_edition_previous_runtime';
     const OPTION_RUNTIME_PATH  = 'atlas_clarus_browser_edition_runtime_path';
     const OPTION_RUNTIME_SHA   = 'atlas_clarus_browser_edition_runtime_sha256';
@@ -204,7 +204,7 @@ final class ATLAS_Clarus_Browser_Edition {
                 return sprintf(
                     '<div class="atlas-clarus-browser-message"><strong>%s</strong> %s <a href="%s">%s</a></div>',
                     esc_html__( 'ATLAS Clarus Browser Edition:', 'atlas-clarus-browser-edition' ),
-                    esc_html__( 'RC23 ist noch nicht lokal installiert.', 'atlas-clarus-browser-edition' ),
+                    esc_html__( 'RC24 ist noch nicht lokal installiert.', 'atlas-clarus-browser-edition' ),
                     esc_url( admin_url( 'tools.php?page=atlas-clarus-browser-edition' ) ),
                     esc_html__( 'Jetzt einrichten', 'atlas-clarus-browser-edition' )
                 );
@@ -282,13 +282,13 @@ final class ATLAS_Clarus_Browser_Edition {
             <p>Die Browser-Anwendung wird nach der Einrichtung lokal von dieser WordPress-Installation ausgeliefert. Es wird kein <code>chatgpt.site</code>-iframe verwendet.</p>
             <p><strong>Navigation v0.1.2:</strong> Ein WordPress-Menülink auf diese Full-Canvas-Adresse öffnet automatisch in einem neuen Tab. In der App selbst wird zusätzlich ein dezenter Button <code>← Zur Homepage</code> eingeblendet.</p>
 
-            <p><strong>Neu in RC23: ATLAS Clarus Tone System v0.1.</strong> Verständliche Namen werden sichtbar, während HLC-Adresse und PKL-Identität unverändert bleiben. Die vorhandene Druckvorbereitung behält dieselben unabhängigen 4C- und ECG-Wege und ICC-Bildvorschauen.</p>
+            <p><strong>Neu in RC24: optionaler CHSOS-Mixer-Pilot.</strong> Lokale Spektrendateien werden erst nach Auswahl im Browser gelesen. Die Vorschläge sind berechnet und nicht gemessen; Deckkraft der Mischung ist nicht verifiziert. PKL-Identität, Farbnamen und die unabhängigen 4C- und ECG-Wege bleiben erhalten.</p>
 
-            <p><strong>RC23-Testkandidat – Browser-Abnahme offen:</strong> Desktop-/Mobilprüfung, WordPress-Laufzeittest und Quellenfreigabe sind vor öffentlichem Einsatz erforderlich. Das Plugin-Update allein schaltet das Bundle nicht um. Der folgende Knopf ändert die öffentlich ausgelieferte Laufzeit sofort.</p>
+            <p><strong>RC24-Testkandidat – Browser-Abnahme offen:</strong> Desktop-/Mobilprüfung, WordPress-Laufzeittest und Quellenfreigabe sind vor öffentlichem Einsatz erforderlich. Das Plugin-Update allein schaltet das Bundle nicht um. Der folgende Knopf ändert die öffentlich ausgelieferte Laufzeit sofort.</p>
             <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin:20px 0;">
                 <input type="hidden" name="action" value="atlas_clarus_browser_install">
                 <?php wp_nonce_field( 'atlas_clarus_browser_install', 'atlas_clarus_browser_nonce' ); ?>
-                <?php submit_button( 'Mitgeliefertes RC23 prüfen und aktiv schalten', 'primary', 'submit', false ); ?>
+                <?php submit_button( 'Mitgeliefertes RC24 prüfen und aktiv schalten', 'primary', 'submit', false ); ?>
             </form>
             <?php if ( get_option( self::OPTION_PREVIOUS_RUNTIME, false ) ) : ?>
             <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -335,7 +335,7 @@ final class ATLAS_Clarus_Browser_Edition {
         }
 
         if ( ! self::runtime_ready() && isset( $_GET['page'] ) && 'atlas-clarus-browser-edition' === $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-            echo '<div class="notice notice-info"><p>' . esc_html__( 'RC23 muss einmalig lokal installiert werden. Danach läuft die Browser Edition von deinem eigenen WordPress-Webspace.', 'atlas-clarus-browser-edition' ) . '</p></div>';
+            echo '<div class="notice notice-info"><p>' . esc_html__( 'RC24 muss einmalig lokal installiert werden. Danach läuft die Browser Edition von deinem eigenen WordPress-Webspace.', 'atlas-clarus-browser-edition' ) . '</p></div>';
         }
     }
 
@@ -358,9 +358,9 @@ final class ATLAS_Clarus_Browser_Edition {
 
         $result = self::install_bundle();
         if ( is_wp_error( $result ) ) {
-            self::set_notice( false, 'RC23 wurde nicht umgeschaltet: ' . $result->get_error_message() );
+            self::set_notice( false, 'RC24 wurde nicht umgeschaltet: ' . $result->get_error_message() );
         } else {
-            self::set_notice( true, 'Mitgeliefertes RC23 wurde geprüft und aktiv geschaltet. Die vorherige Laufzeit bleibt erhalten.' );
+            self::set_notice( true, 'Mitgeliefertes RC24 wurde geprüft und aktiv geschaltet. Die vorherige Laufzeit bleibt erhalten.' );
         }
 
         wp_safe_redirect( admin_url( 'tools.php?page=atlas-clarus-browser-edition' ) );
@@ -406,11 +406,11 @@ final class ATLAS_Clarus_Browser_Edition {
 
             $sha = hash_file( 'sha256', $tmp );
             if ( ! is_string( $sha ) || ! hash_equals( self::BUNDLE_SHA256, strtolower( $sha ) ) ) {
-                return new WP_Error( 'atlas_sha_mismatch', 'SHA-256-Prüfung fehlgeschlagen. Das RC23-Paket wird nicht installiert.' );
+                return new WP_Error( 'atlas_sha_mismatch', 'SHA-256-Prüfung fehlgeschlagen. Das RC24-Paket wird nicht installiert.' );
             }
 
             if ( ! wp_mkdir_p( $target ) ) {
-                return new WP_Error( 'atlas_target_mkdir', 'RC23-Zielordner konnte nicht erstellt werden.' );
+                return new WP_Error( 'atlas_target_mkdir', 'RC24-Zielordner konnte nicht erstellt werden.' );
             }
 
             $unzipped = unzip_file( $tmp, $target );
@@ -474,9 +474,9 @@ final class ATLAS_Clarus_Browser_Edition {
         if ( ! is_array( $manifest ) ) {
             return new WP_Error( 'atlas_manifest', 'Bundle-Manifest fehlt oder ist kein JSON-Objekt.' );
         }
-        // Strict values from the pinned RC23 manifest; never coerce identity fields.
+        // Strict values from the pinned RC24 manifest; never coerce identity fields.
         $expected = array(
-            'version' => '0.2.0-rc23-tone-system-v0-1',
+            'version' => '0.2.0-rc24-offline-chsos-mixer',
             'status' => 'PROFILE_BOUND_DEVICECMYK_AND_DEVICEN_PDF_CANDIDATE',
             'master_rows' => 13283,
             'master_sha256' => '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4',
@@ -586,7 +586,7 @@ final class ATLAS_Clarus_Browser_Edition {
             }
         }
 
-        return new WP_Error( 'atlas_runtime_missing', 'Das geprüfte RC23-ZIP enthält keinen erkennbaren Browser-Runtime-Ordner mit index.html.' );
+        return new WP_Error( 'atlas_runtime_missing', 'Das geprüfte RC24-ZIP enthält keinen erkennbaren Browser-Runtime-Ordner mit index.html.' );
     }
 
     private static function remove_tree( $path, $allowed_base ) {
@@ -724,7 +724,7 @@ final class ATLAS_Clarus_Browser_Edition {
             $html = self::inject_canvas_exit_button( $html );
             header( 'Cache-Control: no-cache, must-revalidate' );
             header( 'Content-Length: ' . (string) strlen( $html ) );
-            echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted local RC23 HTML plus escaped plugin markup.
+            echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted local RC24 HTML plus escaped plugin markup.
             exit;
         }
 

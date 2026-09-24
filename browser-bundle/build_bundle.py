@@ -11,7 +11,7 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output-dir', type=Path, default=HERE/'build', help='Development output directory (keeps the checked-in RC20 distribution intact).')
 OUTPUT=parser.parse_args().output_dir.resolve()
 DIST=OUTPUT/'atlas-clarus-browser-bundle'
-VERSION='0.2.0-rc23-tone-system-v0-1'
+VERSION='0.2.0-rc24-offline-chsos-mixer'
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 ZIP_TIMESTAMP=(2026, 1, 1, 0, 0, 0)

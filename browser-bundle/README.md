@@ -2,7 +2,7 @@
 
 This directory builds a standalone offline HTML edition of ATLAS Clarus Connect.
 
-Development candidate: **v0.2.0-rc23-tone-system-v0-1**.
+Development candidate: **v0.2.0-rc24-offline-chsos-mixer**.
 
 Adds offline preparation of **parallel 4C and ECG paths** from the same frozen
 references. Each path carries its own ICC file and print settings. The complete
