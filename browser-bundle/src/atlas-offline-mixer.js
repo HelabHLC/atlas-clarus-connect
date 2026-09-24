@@ -66,7 +66,9 @@
   }
   function mount(){
     for(const parent of document.querySelectorAll('#selection,#wheel-selection')){
-      const ref=parent.querySelector('h2')?.textContent?.trim();if(!/^H\d{3}_L\d{3}_C\d{3}$/.test(ref))continue;
+      const terms=[...parent.querySelectorAll('dl dt')];
+      const ref=terms.find(term=>term.textContent.trim()==='Exact identity')?.nextElementSibling?.textContent?.trim();
+      if(!/^H\d{3}_L\d{3}_C\d{3}$/.test(ref))continue;
       const old=parent.querySelector('.atlas-offline-mixer');if(old?.dataset.reference===ref)continue;old?.remove();
       const section=document.createElement('section');section.className='atlas-offline-mixer';section.dataset.reference=ref;
       section.innerHTML=`<details><summary>Offline pigment mixer · ${esc(ref)}</summary><p>Choose the verified atlas .rs and CHSOS research JSON. Files are read locally in this browser.</p><label>Atlas spectra <input data-atlas type="file" accept=".rs"></label> <label>CHSOS pigment data <input data-chsos type="file" accept=".json"></label> <button type="button" data-calculate>Calculate candidate</button><div data-result role="status">No mixture calculated.</div></details>`;
