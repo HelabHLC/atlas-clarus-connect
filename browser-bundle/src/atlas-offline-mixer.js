@@ -32,7 +32,7 @@
     if(atlas.size!==13283)throw Error('Atlas must have 13,283 unique references');
     const model=JSON.parse(await chsosFile.text());
     if(model.registry?.atlas_master_sha256!==MASTER_SHA||model.basis_registry?.length!==87)throw Error('CHSOS dataset/master mismatch');
-    const bases=model.basis_registry.filter(b=>['CHSOS','CHSOS_GORGIAS_FORS'].includes(b.source_family)&&!b.basis_id.startsWith('PAINTMIXING_KIMERA_')).map(b=>({id:b.basis_id,name:b.sample_title,ks:spectrum(b.reflectance_400_700).map(ks)}));
+    const bases=model.basis_registry.filter(b=>['CHSOS','CHSOS_GORGIAS_FORS'].includes(b.source_family)&&!b.basis_id.startsWith('PAINTMIXING_KIMERA_')).map(b=>({id:b.basis_id,name:b.sample_title,ks:spectrum(b.reflectance_400_700).map(ks),opacity_marker:'UNKNOWN',opacity_source:null}));
     if(bases.length!==84||new Set(bases.map(b=>b.id)).size!==84)throw Error('Unexpected CHSOS basis');
     return {atlas,bases};
   }
@@ -62,7 +62,7 @@
         if(trial.rmse<best.rmse)best=trial;
       }
     }
-    return {reference,rmse:best.rmse,de76:best.de76,recipe:best.parts.map(p=>({basis_id:p.base.id,name:p.base.name,fraction:p.weight,opacity_marker:'UNKNOWN'})),opacity_status:'NOT_VERIFIED',measured_qc_status:'NOT_MEASURED',selection_metric:'SPECTRAL_RMSE_HEURISTIC'};
+    return {reference,rmse:best.rmse,de76:best.de76,recipe:best.parts.map(p=>({basis_id:p.base.id,name:p.base.name,fraction:p.weight,opacity_marker:p.base.opacity_marker||'UNKNOWN',opacity_source:p.base.opacity_source||null})),opacity_status:'NOT_VERIFIED',measured_qc_status:'NOT_MEASURED',selection_metric:'SPECTRAL_RMSE_HEURISTIC'};
   }
   function mount(){
     for(const parent of document.querySelectorAll('#selection,#wheel-selection')){
@@ -79,7 +79,7 @@
         box.textContent='Checking files and calculating…';await new Promise(resolve=>setTimeout(resolve,0));
         try{
           const result=solve(await load(af,cf),ref);
-          box.innerHTML=`<p>Computed candidate · spectral RMSE ${result.rmse.toFixed(5)} · ΔE76 ${result.de76.toFixed(2)}</p><ol>${result.recipe.map(p=>`<li>${esc(p.name)} · ${(p.fraction*100).toFixed(1)}% <small>${esc(p.basis_id)} · opacity ${p.opacity_marker}</small></li>`).join('')}</ol><p>Mixture opacity: NOT VERIFIED · physical QC: NOT MEASURED. Model weights are not dispensing instructions.</p>`;
+          box.innerHTML=`<p>Computed candidate · spectral RMSE ${result.rmse.toFixed(5)} · ΔE76 ${result.de76.toFixed(2)}</p><ol>${result.recipe.map(p=>`<li>${esc(p.name)} · ${(p.fraction*100).toFixed(1)}% <small>${esc(p.basis_id)} · basis paint opacity: ${esc(p.opacity_marker)}${p.opacity_source?` · source: ${esc(p.opacity_source)}`:''}</small></li>`).join('')}</ol><p>Basis opacity UNKNOWN means no verified product rating. Mixture opacity: NOT VERIFIED · physical QC: NOT MEASURED. Model weights are not dispensing instructions.</p>`;
         }catch(e){box.textContent=`Mixer unavailable: ${e.message}`}
       };
     }
