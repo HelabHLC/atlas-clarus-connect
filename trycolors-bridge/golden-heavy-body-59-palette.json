@@ -1,0 +1,481 @@
+{
+  "schema": "ATLAS_CLARUS_TRYCOLORS_PALETTE_V2",
+  "palette_id": "ATLAS_GOLDEN_HB_59_V0_1",
+  "palette_name": "Golden Heavy Body 59 measured single-pigment pilot",
+  "status": "MEASURED_MIXING_CURVES_CONFIRMED_BY_TRYCOLORS",
+  "source_manifest": "ATLAS_TryColors_Golden_59_Pilot_Manifest.json",
+  "colors": [
+    {
+      "hex": "#21192A",
+      "name": "Anthraquinone Blue",
+      "paint_id": 3655,
+      "product_code": "1005",
+      "pigments": "PB60",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#F8CF00",
+      "name": "Benzimidazolone Yellow Light",
+      "paint_id": 3569,
+      "product_code": "1009",
+      "pigments": "PY175",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#FFBD00",
+      "name": "Benzimidazolone Yellow Medium",
+      "paint_id": 3572,
+      "product_code": "1008",
+      "pigments": "PY154",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#FFE500",
+      "name": "Bismuth Vanadate Yellow",
+      "paint_id": 3578,
+      "product_code": "1007",
+      "pigments": "PY184",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#1C1B1C",
+      "name": "Bone Black",
+      "paint_id": 3638,
+      "product_code": "1010",
+      "pigments": "PBk9",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#673020",
+      "name": "Burnt Sienna",
+      "paint_id": 3610,
+      "product_code": "1020",
+      "pigments": "PBr7",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#352720",
+      "name": "Burnt Umber",
+      "paint_id": 3593,
+      "product_code": "1030",
+      "pigments": "PBr7",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#442B20",
+      "name": "Burnt Umber Light",
+      "paint_id": 3609,
+      "product_code": "1035",
+      "pigments": "PBr7",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#FF6200",
+      "name": "Cadmium Orange",
+      "paint_id": 3589,
+      "product_code": "1070",
+      "pigments": "PO20",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#9B0D21",
+      "name": "Cadmium Red Dark",
+      "paint_id": 3605,
+      "product_code": "1080",
+      "pigments": "PR108",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#DE290C",
+      "name": "Cadmium Red Light",
+      "paint_id": 3590,
+      "product_code": "1090",
+      "pigments": "PR108",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#B2101C",
+      "name": "Cadmium Red Medium",
+      "paint_id": 3591,
+      "product_code": "1100",
+      "pigments": "PR108",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#FEE100",
+      "name": "Cadmium Yellow Light",
+      "paint_id": 3570,
+      "product_code": "1120",
+      "pigments": "PY35",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#FFC500",
+      "name": "Cadmium Yellow Medium",
+      "paint_id": 3573,
+      "product_code": "1130",
+      "pigments": "PY35",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#F7EA06",
+      "name": "Cadmium Yellow Primrose",
+      "paint_id": 3577,
+      "product_code": "1135",
+      "pigments": "PY35",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#232222",
+      "name": "Carbon Black",
+      "paint_id": 3639,
+      "product_code": "1040",
+      "pigments": "PBk7",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#004D74",
+      "name": "Cerulean Blue Deep",
+      "paint_id": 3556,
+      "product_code": "1051",
+      "pigments": "PB36",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#00508D",
+      "name": "Cerulean Blue, Chromium",
+      "paint_id": 3564,
+      "product_code": "1050",
+      "pigments": "PB36",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#40683A",
+      "name": "Chromium Oxide Green",
+      "paint_id": 3566,
+      "product_code": "1060",
+      "pigments": "PG17",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#2C462A",
+      "name": "Chromium Oxide Green Dark",
+      "paint_id": 3664,
+      "product_code": "1061",
+      "pigments": "PG17",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#0F2E94",
+      "name": "Cobalt Blue",
+      "paint_id": 3557,
+      "product_code": "1140",
+      "pigments": "PB28",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#004C3C",
+      "name": "Cobalt Green",
+      "paint_id": 3662,
+      "product_code": "1142",
+      "pigments": "PG26",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#00A1A4",
+      "name": "Cobalt Teal",
+      "paint_id": 3630,
+      "product_code": "1145",
+      "pigments": "PG50",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#00656B",
+      "name": "Cobalt Turquoise",
+      "paint_id": 3633,
+      "product_code": "1144",
+      "pigments": "PB36",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#FF9A00",
+      "name": "Diarylide Yellow",
+      "paint_id": 3576,
+      "product_code": "1147",
+      "pigments": "PY83",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#281F1E",
+      "name": "Dioxazine Purple",
+      "paint_id": 3642,
+      "product_code": "1150",
+      "pigments": "PV23",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#545251",
+      "name": "Graphite Gray",
+      "paint_id": 3619,
+      "product_code": "1160",
+      "pigments": "PBk10",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#FFC700",
+      "name": "Hansa Yellow Opaque",
+      "paint_id": 3571,
+      "product_code": "1191",
+      "pigments": "PY74",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#232221",
+      "name": "Mars Black",
+      "paint_id": 3640,
+      "product_code": "1200",
+      "pigments": "PBk11",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#9F522D",
+      "name": "Mars Yellow",
+      "paint_id": 3596,
+      "product_code": "1202",
+      "pigments": "PBr6",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#C51E10",
+      "name": "Naphthol Red Light",
+      "paint_id": 3603,
+      "product_code": "1210",
+      "pigments": "PR112",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#921016",
+      "name": "Naphthol Red Medium",
+      "paint_id": 3608,
+      "product_code": "1220",
+      "pigments": "PR5",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#9F6706",
+      "name": "Nickel Azo Yellow",
+      "paint_id": 3580,
+      "product_code": "1225",
+      "pigments": "PY150",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#1E114A",
+      "name": "Phthalo Blue (Green Shade)",
+      "paint_id": 3562,
+      "product_code": "1255",
+      "pigments": "PB15:3",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#1C1434",
+      "name": "Phthalo Blue (Red Shade)",
+      "paint_id": 3561,
+      "product_code": "1260",
+      "pigments": "PB15:0",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#012831",
+      "name": "Phthalo Green (Blue Shade)",
+      "paint_id": 3667,
+      "product_code": "1270",
+      "pigments": "PG7",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#002E2A",
+      "name": "Phthalo Green (Yellow Shade)",
+      "paint_id": 3663,
+      "product_code": "1275",
+      "pigments": "PG36",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#A40E23",
+      "name": "Primary Magenta",
+      "paint_id": 3648,
+      "product_code": "1510",
+      "pigments": "PV19",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#EF3900",
+      "name": "Pyrrole Orange",
+      "paint_id": 3588,
+      "product_code": "1276",
+      "pigments": "PO73",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#B8000C",
+      "name": "Pyrrole Red",
+      "paint_id": 3601,
+      "product_code": "1277",
+      "pigments": "PR254",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#990017",
+      "name": "Pyrrole Red Dark",
+      "paint_id": 3604,
+      "product_code": "1278",
+      "pigments": "PR264",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#CC120B",
+      "name": "Pyrrole Red Light",
+      "paint_id": 3602,
+      "product_code": "1279",
+      "pigments": "PR255",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#5D162D",
+      "name": "Quinacridone Magenta",
+      "paint_id": 3650,
+      "product_code": "1305",
+      "pigments": "PR122",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#8E0925",
+      "name": "Quinacridone Red",
+      "paint_id": 3607,
+      "product_code": "1310",
+      "pigments": "PV19",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#621020",
+      "name": "Quinacridone Violet",
+      "paint_id": 3649,
+      "product_code": "1330",
+      "pigments": "PV19",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#9A6730",
+      "name": "Raw Sienna",
+      "paint_id": 3626,
+      "product_code": "1340",
+      "pigments": "PBr7",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#382F26",
+      "name": "Raw Umber",
+      "paint_id": 3627,
+      "product_code": "1350",
+      "pigments": "PBr7",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#8B311C",
+      "name": "Red Oxide",
+      "paint_id": 3612,
+      "product_code": "1360",
+      "pigments": "PR101",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#F0E36D",
+      "name": "Titanate Yellow",
+      "paint_id": 3586,
+      "product_code": "1375",
+      "pigments": "PY53",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#F7F5F1",
+      "name": "Titanium White",
+      "paint_id": 3554,
+      "product_code": "1380",
+      "pigments": "PW6",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#5A2F26",
+      "name": "Transparent Red Iron Oxide",
+      "paint_id": 3613,
+      "product_code": "1385",
+      "pigments": "PR101",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#7F5B32",
+      "name": "Transparent Yellow Iron Oxide",
+      "paint_id": 3582,
+      "product_code": "1386",
+      "pigments": "PY42",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#19123F",
+      "name": "Ultramarine Blue",
+      "paint_id": 3656,
+      "product_code": "1400",
+      "pigments": "PB29",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#211631",
+      "name": "Ultramarine Violet",
+      "paint_id": 3643,
+      "product_code": "1401",
+      "pigments": "PV15",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#E13C00",
+      "name": "Vat Orange",
+      "paint_id": 3592,
+      "product_code": "1403",
+      "pigments": "PO43",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#642724",
+      "name": "Violet Oxide",
+      "paint_id": 3611,
+      "product_code": "1405",
+      "pigments": "PR101",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#B17830",
+      "name": "Yellow Ochre",
+      "paint_id": 3583,
+      "product_code": "1407",
+      "pigments": "PY42",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#BE8931",
+      "name": "Yellow Oxide",
+      "paint_id": 3584,
+      "product_code": "1410",
+      "pigments": "PY42",
+      "mixing_data": "measured"
+    },
+    {
+      "hex": "#F5F7F2",
+      "name": "Zinc White",
+      "paint_id": 3553,
+      "product_code": "1415",
+      "pigments": "PW4",
+      "mixing_data": "measured"
+    }
+  ]
+}
