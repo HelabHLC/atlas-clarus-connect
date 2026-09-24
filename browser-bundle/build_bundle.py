@@ -25,7 +25,7 @@ def sha(path:Path)->str:
 if DIST.exists(): shutil.rmtree(DIST)
 (DIST/'assets').mkdir(parents=True)
 (DIST/'docs').mkdir()
-for name in ('index.html','app.css','designer-layer.js','basis23-recipes.js','palette-export.js','image-sampling.js','pkl-image-binding.js','print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js','profiled-reference-card.js','app.js','trycolors-recipe.js'):
+for name in ('index.html','app.css','designer-layer.js','basis23-recipes.js','atlas-offline-mixer.js','palette-export.js','image-sampling.js','pkl-image-binding.js','print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js','profiled-reference-card.js','app.js','trycolors-recipe.js'):
     target=DIST/('assets/'+name if name!='index.html' else name)
     shutil.copy2(HERE/'src'/name,target)
 
@@ -81,6 +81,7 @@ html=(DIST/'index.html').read_text(encoding='utf-8')
 css=(DIST/'assets/app.css').read_text(encoding='utf-8')
 app=(DIST/'assets/app.js').read_text(encoding='utf-8')
 designer_app=(DIST/'assets/designer-layer.js').read_text(encoding='utf-8')
+offline_mixer_app=(DIST/'assets/atlas-offline-mixer.js').read_text(encoding='utf-8')
 recipe_app=(DIST/'assets/basis23-recipes.js').read_text(encoding='utf-8')
 palette_export=(DIST/'assets/palette-export.js').read_text(encoding='utf-8')
 image_sampling=(DIST/'assets/image-sampling.js').read_text(encoding='utf-8')
@@ -92,6 +93,7 @@ html=html.replace('<script src="assets/name-search-index.js"></script>','<script
 html=html.replace('<script src="assets/designer-layer.js"></script>','<script>'+designer_app.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/basis23-data.js"></script>','<script>'+basis_payload.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/basis23-recipes.js"></script>','<script>'+recipe_app.replace('</script','<\\/script')+'</script>')
+html=html.replace('<script src="assets/atlas-offline-mixer.js"></script>','<script>'+offline_mixer_app.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/palette-export.js"></script>','<script>'+palette_export.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/image-sampling.js"></script>','<script>'+image_sampling.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/pkl-image-binding.js"></script>','<script>'+pkl_image_binding.replace('</script','<\\/script')+'</script>')
