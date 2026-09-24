@@ -95,6 +95,7 @@ jobs:
           node --check browser-bundle/src/reference-card.js
           node --check browser-bundle/src/profiled-reference-card.js
           node --check browser-bundle/src/trycolors-recipe.js
+          node --check browser-bundle/src/atlas-offline-mixer.js
       - name: Validate reference card handoff and rejection vectors
         run: node browser-bundle/tests/validate_reference_card.js
       - name: Validate profile-bound reference card contract
@@ -109,6 +110,8 @@ jobs:
         run: node browser-bundle/tests/validate_exports.js
       - name: Validate palette persistence failures and limits
         run: node browser-bundle/tests/validate_palette_workspace.js
+      - name: Validate offline CHSOS mixer model and status
+        run: node browser-bundle/tests/validate_offline_mixer.js
       - name: Validate Basis-23 before-after previews
         run: node browser-bundle/tests/validate_basis23_preview.js
       - name: Validate responsive layout safeguards
