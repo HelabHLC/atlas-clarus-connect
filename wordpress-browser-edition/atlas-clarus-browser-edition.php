@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class ATLAS_Clarus_Browser_Edition {
     const VERSION              = '0.1.13-beta4';
     const BUNDLE_VERSION       = 'v0.2.0-rc23-tone-system-v0-1';
-    const BUNDLE_SIZE          = 4223223;
-    const BUNDLE_SHA256        = '84078740fa93a49d155aa8d740b977cd2f06ebc8c145149a91fd64fb8b244654';
+    const BUNDLE_SIZE          = 4230120;
+    const BUNDLE_SHA256        = 'f7a956d34c1f8630fbf8b935e4347f095e1a42a24e72959ab5b64773c78b5d40';
     const OPTION_PREVIOUS_RUNTIME = 'atlas_clarus_browser_edition_previous_runtime';
     const OPTION_RUNTIME_PATH  = 'atlas_clarus_browser_edition_runtime_path';
     const OPTION_RUNTIME_SHA   = 'atlas_clarus_browser_edition_runtime_sha256';
