@@ -21,7 +21,15 @@ for required in (
     "'engine'=>'2025'",
     "ATLAS_GOLDEN_HB_59_V0_1",
     "Recipe computed by Trycolors",
+    "PKL Target",
+    "TryColors Simulated Mix",
+    "Measured Dry Sample",
+    "Physical value must never be inferred",
 ):
     assert required in php, required
 assert "array_column($palette, 'hex')" not in php
 print("Golden-59 paint_id bridge contract: PASS")
+
+js = (root.parent / "browser-bundle" / "src" / "trycolors-recipe.js").read_text(encoding="utf-8")
+for required in ("PKL Target", "TryColors Simulated Mix", "Measured Dry Sample", "NOT_MEASURED"):
+    assert required in js, required
