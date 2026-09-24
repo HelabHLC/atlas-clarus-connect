@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {JSDOM}=require('jsdom');
-const html='<div id="selection"><h2>Named colour</h2><dl><dt>Exact identity</dt><dd>H040_L055_C080</dd></dl></div><div id="wheel-selection"></div>';
+const html='<div id="selection"><h2>Named colour</h2><dl><dt>Exact PKL identity</dt><dd>H040_L055_C080</dd></dl></div><div id="wheel-selection"></div>';
 const dom=new JSDOM(html,{url:'https://example.invalid/',runScripts:'outside-only'});
 dom.window.eval(fs.readFileSync(require('node:path').join(__dirname,'../src/atlas-offline-mixer.js'),'utf8'));
 const panel=dom.window.document.querySelector('#selection .atlas-offline-mixer');
