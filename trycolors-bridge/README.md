@@ -1,6 +1,6 @@
 # ATLAS Clarus TryColors Bridge
 
-Version 0.1.3 switches the controlled pilot from HEX-only palette entries to the confirmed **Golden Heavy Body 59** measured-paint palette.
+Version 0.2.1 preserves the 0.2.0 recipe registry, cache and administrator test page while switching the controlled pilot from HEX-only palette entries to the confirmed **Golden Heavy Body 59** measured-paint palette.
 
 Each upstream palette entry is sent as:
 
