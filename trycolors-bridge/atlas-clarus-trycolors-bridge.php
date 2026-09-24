@@ -2,12 +2,12 @@
 /**
  * Plugin Name: ATLAS Clarus TryColors Bridge
  * Description: Secure administrator-only TryColors recipe bridge for frozen ATLAS PKL targets.
- * Version: 0.2.1
+ * Version: 0.2.2
  * License: GPL-2.0-or-later
  */
 defined('ABSPATH') || exit;
 
-const ATLAS_TRYCOLORS_VERSION = '0.2.1';
+const ATLAS_TRYCOLORS_VERSION = '0.2.2';
 const ATLAS_TRYCOLORS_STATUS = 'SIMULATED_NOT_PHYSICALLY_VERIFIED';
 const ATLAS_TRYCOLORS_KEY_OPTION = 'atlas_clarus_trycolors_api_key_encrypted';
 const ATLAS_TRYCOLORS_DIAGNOSTIC_OPTION = 'atlas_clarus_trycolors_last_diagnostic';
@@ -291,8 +291,30 @@ function atlas_trycolors_recipe_page() {
         </tbody></table>
         <?php submit_button('Calculate TryColors recipe'); ?>
       </form>
-      <?php if ($latest): $rh=atlas_trycolors_result_hex($latest['recipe']); ?>
-        <h2>Latest result</h2><table class="widefat striped" style="max-width:920px"><tbody>
+      <?php if ($latest):
+        $rh = atlas_trycolors_result_hex($latest['recipe']);
+        $target_swatch = sanitize_hex_color($latest['target']['hex'] ?? '') ?: '#FFFFFF';
+        $result_swatch = sanitize_hex_color($rh) ?: '#FFFFFF';
+        $match_numeric = atlas_trycolors_match_value($latest['recipe']);
+        $delta_e00 = is_numeric($match_numeric) ? max(0, 100 - (float) $match_numeric) : null;
+      ?>
+        <h2>Latest result</h2>
+        <div class="atlas-trycolors-swatch-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;max-width:920px;margin:16px 0 20px">
+          <figure style="margin:0;background:#fff;border:1px solid #c3c4c7;padding:12px">
+            <div role="img" aria-label="PKL Target <?php echo esc_attr(strtoupper($target_swatch)); ?>" style="height:138px;border:1px solid #8c8f94;background:<?php echo esc_attr($target_swatch); ?>"></div>
+            <figcaption style="margin-top:10px"><strong>PKL Target</strong><br><code><?php echo esc_html(strtoupper($target_swatch)); ?></code><br><small>Frozen reference identity</small></figcaption>
+          </figure>
+          <figure style="margin:0;background:#fff;border:1px solid #c3c4c7;padding:12px">
+            <div role="img" aria-label="TryColors Simulated Mix <?php echo esc_attr(strtoupper($result_swatch)); ?>" style="height:138px;border:1px solid #8c8f94;background:<?php echo esc_attr($result_swatch); ?>"></div>
+            <figcaption style="margin-top:10px"><strong>TryColors Simulated Mix</strong><br><code><?php echo esc_html(strtoupper($result_swatch)); ?></code><br><small><?php echo $delta_e00 === null ? 'Model comparison unavailable' : esc_html('Model ΔE00 ≈ '.number_format($delta_e00, 1)); ?></small></figcaption>
+          </figure>
+          <figure style="margin:0;background:#fff;border:1px dashed #8c8f94;padding:12px">
+            <div role="img" aria-label="Measured Dry Sample pending" style="height:138px;border:1px dashed #8c8f94;background:repeating-linear-gradient(135deg,#f6f7f7,#f6f7f7 12px,#e9eaeb 12px,#e9eaeb 24px);display:flex;align-items:center;justify-content:center;color:#50575e;font-weight:600">PENDING</div>
+            <figcaption style="margin-top:10px"><strong>Measured Dry Sample</strong><br><code>NOT_MEASURED</code><br><small>Physical value must never be inferred</small></figcaption>
+          </figure>
+        </div>
+        <p style="max-width:920px"><strong>Comparison boundary:</strong> Target identity, simulated recipe result and a future physical measurement are separate states.</p>
+        <table class="widefat striped" style="max-width:920px"><tbody>
           <tr><th>ATLAS recipe ID</th><td><code><?php echo esc_html($latest['atlas_recipe_id']); ?></code></td></tr>
           <tr><th>Target</th><td><code><?php echo esc_html($latest['target']['atlas_ref']); ?></code> · row <?php echo absint($latest['target']['atlas_row_id']); ?> · <code><?php echo esc_html($latest['target']['hex']); ?></code></td></tr>
           <tr><th>Result HEX</th><td><code><?php echo esc_html($rh ?: 'Not supplied'); ?></code></td></tr>
