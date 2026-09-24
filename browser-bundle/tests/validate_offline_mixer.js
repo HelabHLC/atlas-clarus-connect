@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
-const mixer=require('./atlas-offline-mixer.js');
+const mixer=require('../src/atlas-offline-mixer.js');
 const black=Array(31).fill(.1),white=Array(31).fill(.9);
 const basis=(id,r)=>({id,name:id,ks:r.map(x=>(1-x)**2/(2*x))});
 const data={atlas:new Map([['H000_L050_C000',Array(31).fill(.5)]]),bases:[basis('BLACK',black),basis('WHITE',white)]};
