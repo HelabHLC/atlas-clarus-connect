@@ -4,6 +4,11 @@
   const ATLAS_SHA = 'dfcac10e5cbe8401b438063294e5230145f155afe1cf7bb1cdb45541d5e78fe5';
   const CHSOS_SHA = 'd102c1f320ce080bfe84fe3f3c0bf255ddb53497ca90c65b19163df047524059';
   const MASTER_SHA = '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4';
+  const WHITE_ID = 'CHSOS_GORGIAS_PW_6_ANATASE';
+  const opacityNotes = {
+    CHSOS_GORGIAS_PY_139_ISOINDOLINE_YELLOW: {note:'CHSOS describes semi-opaque to transparent behavior depending on particle size and formulation; not a rating for this swatch.',source:'https://chsopensource.org/products/pigments-checker/pigments-checker-modern-and-contemporary-art-pigments-list/py-139-isoindoline-yellow/'},
+    CHSOS_GORGIAS_PO_73_PYRROLE_ORANGE: {note:'CHSOS describes high opacity qualitatively; no measured rating for this swatch.',source:'https://chsopensource.org/products/pigments-checker/pigments-checker-modern-and-contemporary-art-pigments-list/po-73-pyrrole-orange/'}
+  };
   const X=[.01431,.04351,.13438,.2839,.34828,.3362,.2908,.19536,.09564,.03201,.0049,.0093,.06327,.1655,.2904,.43345,.5945,.7621,.9163,1.0263,1.0622,1.0026,.85445,.6424,.4479,.2835,.1649,.0874,.04677,.0227,.011359];
   const Y=[.000396,.00121,.004,.0116,.023,.038,.06,.09098,.13902,.20802,.323,.503,.71,.862,.954,.99495,.995,.952,.87,.757,.631,.503,.381,.265,.175,.107,.061,.032,.017,.00821,.004102];
   const Z=[.06785,.2074,.6456,1.3856,1.74706,1.77211,1.6692,1.28764,.81295,.46518,.272,.1582,.07825,.04216,.0203,.00875,.0039,.0021,.00165,.0011,.0008,.00034,.00019,.00005,.00002,0,0,0,0,0,0];
@@ -32,25 +37,31 @@
     if(atlas.size!==13283)throw Error('Atlas must have 13,283 unique references');
     const model=JSON.parse(await chsosFile.text());
     if(model.registry?.atlas_master_sha256!==MASTER_SHA||model.basis_registry?.length!==87)throw Error('CHSOS dataset/master mismatch');
-    const bases=model.basis_registry.filter(b=>['CHSOS','CHSOS_GORGIAS_FORS'].includes(b.source_family)&&!b.basis_id.startsWith('PAINTMIXING_KIMERA_')).map(b=>({id:b.basis_id,name:b.sample_title,ks:spectrum(b.reflectance_400_700).map(ks),opacity_marker:'UNKNOWN',opacity_source:null}));
+    const bases=model.basis_registry.filter(b=>['CHSOS','CHSOS_GORGIAS_FORS'].includes(b.source_family)&&!b.basis_id.startsWith('PAINTMIXING_KIMERA_')).map(b=>({id:b.basis_id,name:b.sample_title,ks:spectrum(b.reflectance_400_700).map(ks),opacity_marker:'UNKNOWN',opacity_source:null,opacity_note:opacityNotes[b.basis_id]?.note||null,opacity_note_source:opacityNotes[b.basis_id]?.source||null}));
     if(bases.length!==84||new Set(bases.map(b=>b.id)).size!==84)throw Error('Unexpected CHSOS basis');
     return {atlas,bases};
   }
-  function evaluate(target,parts){
+  function evaluate(target,parts,whiteBase,whiteFraction){
+    if(whiteFraction)parts=[...parts.map(p=>({base:p.base,weight:p.weight*(1-whiteFraction)})),{base:whiteBase,weight:whiteFraction}];
     const total=parts.reduce((s,p)=>s+p.weight,0);
     const predicted=target.map((_,i)=>refl(parts.reduce((s,p)=>s+p.weight*p.base.ks[i],0)/total));
     const rmse=Math.sqrt(predicted.reduce((s,v,i)=>s+(v-target[i])**2,0)/31);
     return {parts,rmse,de76:de(lab(predicted),lab(target))};
   }
-  function solve(data,reference){
+  function solve(data,reference,options={}){
     const target=data.atlas.get(reference);if(!target)throw Error('PKL reference missing from atlas spectrum file');
+    const whiteFraction=options.whiteFraction||0;
+    if(![0,.05,.10].includes(whiteFraction))throw Error('Supported white fractions: 0%, 5%, 10%');
+    const whiteBase=whiteFraction?data.bases.find(b=>b.id===WHITE_ID):null;
+    if(whiteFraction&&!whiteBase)throw Error('CHSOS PW6 anatase white missing');
+    const candidates=whiteFraction?data.bases.filter(b=>b!==whiteBase):data.bases;
     // Spectral shortlist, then bounded 1–3-component grid/refinement; model weights are not dispense masses.
-    const singles=data.bases.map(base=>evaluate(target,[{base,weight:1}])).sort((a,b)=>a.rmse-b.rmse);
+    const singles=candidates.map(base=>evaluate(target,[{base,weight:1}],whiteBase,whiteFraction)).sort((a,b)=>a.rmse-b.rmse);
     let best=singles[0];const top=singles.slice(0,12).map(x=>x.parts[0].base);
-    for(let i=0;i<top.length;i++)for(const b of data.bases){
+    for(let i=0;i<top.length;i++)for(const b of candidates){
       if(b===top[i])continue;
       for(let step=1;step<20;step++){
-        const trial=evaluate(target,[{base:top[i],weight:step/20},{base:b,weight:1-step/20}]);
+        const trial=evaluate(target,[{base:top[i],weight:step/20},{base:b,weight:1-step/20}],whiteBase,whiteFraction);
         if(trial.rmse<best.rmse)best=trial;
       }
     }
@@ -58,11 +69,11 @@
     for(const a of leaders)for(const b of top)for(const c of top){
       if(a===b||a===c||b===c)continue;
       for(let i=1;i<10;i++)for(let j=1;j<10-i;j++){
-        const trial=evaluate(target,[{base:a,weight:i/10},{base:b,weight:j/10},{base:c,weight:(10-i-j)/10}]);
+        const trial=evaluate(target,[{base:a,weight:i/10},{base:b,weight:j/10},{base:c,weight:(10-i-j)/10}],whiteBase,whiteFraction);
         if(trial.rmse<best.rmse)best=trial;
       }
     }
-    return {reference,rmse:best.rmse,de76:best.de76,recipe:best.parts.map(p=>({basis_id:p.base.id,name:p.base.name,fraction:p.weight,opacity_marker:p.base.opacity_marker||'UNKNOWN',opacity_source:p.base.opacity_source||null})),opacity_status:'NOT_VERIFIED',measured_qc_status:'NOT_MEASURED',selection_metric:'SPECTRAL_RMSE_HEURISTIC'};
+    return {reference,white_fraction:whiteFraction,rmse:best.rmse,de76:best.de76,recipe:best.parts.map(p=>({basis_id:p.base.id,name:p.base.name,fraction:p.weight,opacity_marker:p.base.opacity_marker||'UNKNOWN',opacity_source:p.base.opacity_source||null,opacity_note:p.base.opacity_note||null,opacity_note_source:p.base.opacity_note_source||null})),opacity_status:'NOT_VERIFIED',measured_qc_status:'NOT_MEASURED',selection_metric:'SPECTRAL_RMSE_HEURISTIC'};
   }
   function mount(){
     for(const parent of document.querySelectorAll('#selection,#wheel-selection')){
@@ -78,8 +89,8 @@
         if(!af||!cf){box.textContent='Select both local data files.';return}
         box.textContent='Checking files and calculating…';await new Promise(resolve=>setTimeout(resolve,0));
         try{
-          const result=solve(await load(af,cf),ref);
-          box.innerHTML=`<p>Computed candidate · spectral RMSE ${result.rmse.toFixed(5)} · ΔE76 ${result.de76.toFixed(2)}</p><ol>${result.recipe.map(p=>`<li>${esc(p.name)} · ${(p.fraction*100).toFixed(1)}% <small>${esc(p.basis_id)} · basis paint opacity: ${esc(p.opacity_marker)}${p.opacity_source?` · source: ${esc(p.opacity_source)}`:''}</small></li>`).join('')}</ol><p>Basis opacity UNKNOWN means no verified product rating. Mixture opacity: NOT VERIFIED · physical QC: NOT MEASURED. Model weights are not dispensing instructions.</p>`;
+          const data=await load(af,cf),results=[0,.05,.10].map(whiteFraction=>solve(data,ref,{whiteFraction}));
+          box.innerHTML=results.map(result=>`<section><h4>PW6 anatase white ${(result.white_fraction*100).toFixed(0)}% · spectral RMSE ${result.rmse.toFixed(5)} · ΔE76 ${result.de76.toFixed(2)}</h4><ol>${result.recipe.map(p=>`<li>${esc(p.name)} · ${(p.fraction*100).toFixed(1)}% <small>${esc(p.basis_id)} · basis paint opacity: ${esc(p.opacity_marker)}${p.opacity_note?` · CHSOS qualitative note: ${esc(p.opacity_note)} <a href="${esc(p.opacity_note_source)}" target="_blank" rel="noopener noreferrer">CHSOS source</a>`:''}</small></li>`).join('')}</ol></section>`).join('')+'<p>White fractions are model weights, not dispensing instructions. Qualitative CHSOS notes are not opacity ratings. Mixture opacity: NOT VERIFIED · physical QC: NOT MEASURED.</p>';
         }catch(e){box.textContent=`Mixer unavailable: ${e.message}`}
       };
     }
