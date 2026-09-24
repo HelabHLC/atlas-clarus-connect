@@ -14,8 +14,10 @@ def verify(root):
     size = int(re.search(r"const BUNDLE_SIZE\s*=\s*(\d+)", source)[1])
     sha = re.search(r"const BUNDLE_SHA256\s*=\s*'([^']+)'", source)[1]
     version = re.search(r"const VERSION\s*=\s*'([^']+)'", source)[1]
-    assert len(bundle) == size, "Bundle size differs from pin"
-    assert hashlib.sha256(bundle).hexdigest() == sha, "Bundle SHA differs from pin"
+    actual_size = len(bundle)
+    actual_sha = hashlib.sha256(bundle).hexdigest()
+    assert actual_size == size, f"Bundle size differs from pin: actual={actual_size} pinned={size}"
+    assert actual_sha == sha, f"Bundle SHA differs from pin: actual={actual_sha} pinned={sha}"
     assert re.search(r"\* Version: (\S+)", source)[1] == version
     assert "Stable tag: " + version in (root / "readme.txt").read_text()
     with zipfile.ZipFile(io.BytesIO(bundle)) as z:
