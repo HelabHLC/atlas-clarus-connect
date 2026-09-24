@@ -1,6 +1,6 @@
 # ATLAS Clarus TryColors Bridge
 
-Version 0.2.1 preserves the 0.2.0 recipe registry, cache and administrator test page while switching the controlled pilot from HEX-only palette entries to the confirmed **Golden Heavy Body 59** measured-paint palette.
+Version 0.2.2 preserves the 0.2.0 recipe registry, cache and administrator test page while switching the controlled pilot from HEX-only palette entries to the confirmed **Golden Heavy Body 59** measured-paint palette.
 
 Each upstream palette entry is sent as:
 
@@ -27,3 +27,13 @@ Controlled pilot target:
 - PKL reference: `H095_L090_C060`
 - target HEX: `#F4E46A`
 - run limit: one live request before any wider calculation
+
+## Three-state colour comparison
+
+Every stored recipe now shows three deliberately separate swatches:
+
+1. **PKL Target** — the frozen ATLAS reference identity.
+2. **TryColors Simulated Mix** — the predicted `mixedColor` for the practical `wholeParts` recipe.
+3. **Measured Dry Sample** — a `NOT_MEASURED` placeholder until an actual dried sample is measured.
+
+The interface may display `100 - matchResult` as the model ΔE00 approximation confirmed by TryColors support. It never treats the simulated swatch as a physical measurement and never changes PKL identity.
