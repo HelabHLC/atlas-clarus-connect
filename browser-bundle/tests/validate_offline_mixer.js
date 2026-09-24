@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict');
+const mixer=require('./atlas-offline-mixer.js');
+const black=Array(31).fill(.1),white=Array(31).fill(.9);
+const basis=(id,r)=>({id,name:id,ks:r.map(x=>(1-x)**2/(2*x))});
+const data={atlas:new Map([['H000_L050_C000',Array(31).fill(.5)]]),bases:[basis('BLACK',black),basis('WHITE',white)]};
+const result=mixer.solve(data,'H000_L050_C000');
+assert.equal(result.reference,'H000_L050_C000');
+assert.equal(result.opacity_status,'NOT_VERIFIED');
+assert.equal(result.measured_qc_status,'NOT_MEASURED');
+assert.equal(result.selection_metric,'SPECTRAL_RMSE_HEURISTIC');
+assert(result.rmse < .1);
+assert(Math.abs(result.recipe.reduce((s,p)=>s+p.fraction,0)-1)<1e-9);
+assert.throws(()=>mixer.solve(data,'H001_L050_C000'),/missing/);
+assert(Math.abs(mixer.lab(Array(31).fill(.5))[0]-76.06926101415557)<1e-9);
+console.log('offline mixer: PASS');
