@@ -57,6 +57,7 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         prefix+'index.html',prefix+'BUNDLE_MANIFEST.json',prefix+'SHA256SUMS.txt',
         prefix+'assets/app.js',prefix+'assets/app.css',prefix+'assets/atlas-data.js',
         prefix+'assets/basis23-data.js',prefix+'assets/basis23-recipes.js',
+        prefix+'assets/atlas-offline-mixer.js',
         prefix+'assets/palette-export.js',prefix+'assets/image-sampling.js',
         prefix+'assets/pkl-image-binding.js',
         prefix+'assets/print-handoff.js',prefix+'assets/print-ui.js',
