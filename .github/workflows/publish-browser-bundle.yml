@@ -44,8 +44,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          source_zip="$RUNNER_TEMP/atlas-browser-release/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc23-tone-system-v0-1.zip"
-          test -f "$source_zip"
+          mapfile -t bundles < <(find "$RUNNER_TEMP/atlas-browser-release" -maxdepth 1 -type f -name "ATLAS_Clarus_Browser_Bundle_v*.zip" -print)
+          test "${#bundles[@]}" -eq 1
+          source_zip="${bundles[0]}"
           asset="ATLAS_Clarus_Browser_Bundle_current.zip"
           cp "$source_zip" "$asset"
           sha256sum "$asset" > "$asset.sha256"
