@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 BUNDLE=ROOT/'browser-bundle'
-VERSION='0.2.0-rc23-tone-system-v0-1'
+VERSION='0.2.0-rc26-names-v0-3-0-chsos-pilot-acms-spot-ba'
 temp_output=tempfile.TemporaryDirectory(prefix='atlas-print-bundle-')
 OUTPUT=Path(temp_output.name)
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
@@ -48,6 +48,7 @@ first=digest(ZIP)
 subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPUT)],check=True)
 second=digest(ZIP)
 assert first==second, f'non-reproducible ZIP: {first} != {second}'
+assert first=='b5d65c2a0bb39ccb0af59709ca8a1bac1ed2765b381e0714cb6ed6ce51112615', 'built bundle differs from deployed IONOS release'
 
 with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert archive.testzip() is None
@@ -57,6 +58,7 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         prefix+'index.html',prefix+'BUNDLE_MANIFEST.json',prefix+'SHA256SUMS.txt',
         prefix+'assets/app.js',prefix+'assets/app.css',prefix+'assets/atlas-data.js',
         prefix+'assets/basis23-data.js',prefix+'assets/basis23-recipes.js',
+        prefix+'assets/atlas-offline-mixer.js',prefix+'assets/acms-data.js',prefix+'assets/acms-recipes.js',prefix+'assets/name-search-index-v030.json.gz',
         prefix+'assets/palette-export.js',prefix+'assets/image-sampling.js',
         prefix+'assets/pkl-image-binding.js',
         prefix+'assets/print-handoff.js',prefix+'assets/print-ui.js',
@@ -76,10 +78,10 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert manifest['master_sha256']==MASTER
     assert manifest['master_rows']==13283
     assert manifest['tone_system_version']=='0.1'
-    assert manifest['visible_name_source']=='ATLAS_CLARUS_TONE_SYSTEM'
-    assert manifest['iscc_nbs_role']=='METADATA_ONLY'
+    assert manifest['visible_name_source']=='ATLAS_CLARUS_COMPLETE_NAME_LAYER'
+    assert manifest['iscc_nbs_role']=='INTERNAL_AUDIT_ONLY'
     assert len(manifest['tone_system_sha256'])==64 and len(manifest['name_search_index_sha256'])==64
-    assert manifest['status']=='PROFILE_BOUND_DEVICECMYK_AND_DEVICEN_PDF_CANDIDATE'
+    assert manifest['status']=='COMPLETE_NAMES_V0_3_0_WITH_OPTIONAL_CHSOS_PILOT'
     assert manifest['primary_user_path']=='PICKER_HOVER_PALETTE_CLARUS_JSON'
     assert manifest['max_palettes']==50 and manifest['max_palette_colours']==64
     assert manifest['reproducible_zip'] is True
@@ -92,6 +94,9 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         script_path.write_text(script,encoding='utf-8')
         syntax=subprocess.run(['node','--check',str(script_path)],capture_output=True,text=True)
         assert syntax.returncode==0, f'inline script {number} syntax error: {syntax.stderr}'
+    assert manifest['acms_spot_rows']==3653
+    assert manifest['name_search_index_sha256']==digest(ROOT/'name-search/atlas-name-search-index-v030.json.gz')
+    assert 'ATLAS_ACMS_RECIPES' in html and 'Download A/B PNG' in html
     assert 'v'+VERSION in html
     assert 'id="picker-loupe"' in html
     assert 'id="picker-sample-size"' in html

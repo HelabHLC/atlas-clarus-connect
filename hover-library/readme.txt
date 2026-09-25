@@ -3,7 +3,7 @@ Contributors: atlas-clarus
 Tags: color, colour, hlc, atlas, swatches
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.2.0-beta2
+Stable tag: 0.2.6-beta1
 License: GPLv2 or later
 
 Interactive ATLAS Clarus HLC reference library with exact active-PKL RGB swatches and hover details.
@@ -25,6 +25,8 @@ No 4C, ECG, device or measured-QC values are created by this plugin.
 
 The selected-colour panel can load a derived Basis-23 computational recipe for every ATLAS row. Recipe percentages and benchmark ΔE00 values are demo proxies, not measured paint recipes. The public payload contains no source reflectance spectra. Each component links to its CHSOS or PaintMixing/Kimera source.
 
+In the experimental Solid Coated and Solid Uncoated views, the selected-colour panel instead loads ACMS spot-colour candidates bound to the same immutable HLC reference. CHSOS research candidates contain no KIMERA components; Golden candidates may combine Heavy Body and OPEN within Golden; other named manufacturer candidates remain in their respective product lines. ACMS-C/U are provisional view labels, not measured paper-specific standards. No mixed recipe or substrate effect has been physically verified.
+
 Spectral source data: Cultural Heritage Science Open Source (CHSOS), published by Antonino Cosentino, https://chsopensource.org/. Used with permission. Computational processing and derived results by ATLAS Clarus. CHSOS has not reviewed or validated the derived mixtures. See repository issue #24 for the operational permission record; the original correspondence remains in the project owner's private records.
 
 == Installation ==
@@ -35,6 +37,16 @@ Spectral source data: Cultural Heritage Science Open Source (CHSOS), published b
 4. Add `[atlas_clarus_library]` to a page or post.
 
 == Changelog ==
+
+= 0.2.6-beta1 =
+* Adds paired ATLAS target and model mix screen previews to ACMS recipe candidates; both remain unmeasured.
+* ACMS-C/U spot colour candidates in the Solid views, preserving the staging 0.2.3-beta1 Image Picker handoff and recipe PDF features.
+* No KIMERA component in ACMS Solid recipes; all recipe QC unmeasured.
+
+= 0.2.0-beta3 =
+* Adds lazy-loaded ACMS-C/U spot-colour recipe candidates to the Solid views.
+* Keeps CHSOS research spectra separate from single-manufacturer product-line candidates.
+* Rejects mismatched row, HLC or master identity before showing a recipe.
 
 = 0.2.0-beta2 =
 * Displays ATLAS Clarus Tone System v0.1 names while retaining exact HLC identity details.

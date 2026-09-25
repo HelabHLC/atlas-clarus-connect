@@ -3,7 +3,7 @@
  * Plugin Name: ATLAS Clarus Browser Edition
  * Plugin URI: https://arbe-lambda-star.com/
  * Description: Local Browser Edition with Image Picker, Hover, Wheel, palettes, parallel 4C/ECG print preparation and local ICC image previews. Explicit runtime switch; shortcode [atlas_clarus_browser_edition] preserved. Staging beta.
- * Version: 0.1.15-beta6
+ * Version: 0.1.15-beta4
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: ARBE Lambda Star / ATLAS Clarus
@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class ATLAS_Clarus_Browser_Edition {
-    const VERSION              = '0.1.15-beta6';
-    const BUNDLE_VERSION       = 'v0.2.0-rc26-names-v0-3-0-chsos-pilot-acms-spot-ba';
-    const BUNDLE_SIZE          = 3903163;
-    const BUNDLE_SHA256        = 'b5d65c2a0bb39ccb0af59709ca8a1bac1ed2765b381e0714cb6ed6ce51112615';
+    const VERSION              = '0.1.15-beta4';
+    const BUNDLE_VERSION       = 'v0.2.0-rc25-names-v0-3-0-chsos-pilot-ui4';
+    const BUNDLE_SIZE          = 3304493;
+    const BUNDLE_SHA256        = '005ccb7d5356777e0bad6706bf922f726144f98ab8aaf78ee82c15293c39a0dd';
     const OPTION_PREVIOUS_RUNTIME = 'atlas_clarus_browser_edition_previous_runtime';
     const OPTION_RUNTIME_PATH  = 'atlas_clarus_browser_edition_runtime_path';
     const OPTION_RUNTIME_SHA   = 'atlas_clarus_browser_edition_runtime_sha256';
@@ -481,9 +481,9 @@ final class ATLAS_Clarus_Browser_Edition {
         if ( ! is_array( $manifest ) ) {
             return new WP_Error( 'atlas_manifest', 'Bundle-Manifest fehlt oder ist kein JSON-Objekt.' );
         }
-        // Strict values from the pinned RC26 manifest; never coerce identity fields.
+        // Strict values from the pinned RC25 manifest; never coerce identity fields.
         $expected = array(
-            'version' => '0.2.0-rc26-names-v0-3-0-chsos-pilot-acms-spot-ba',
+            'version' => '0.2.0-rc25-names-v0-3-0-chsos-pilot-ui4',
             'status' => 'COMPLETE_NAMES_V0_3_0_WITH_OPTIONAL_CHSOS_PILOT',
             'master_rows' => 13283,
             'master_sha256' => '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4',
@@ -506,10 +506,6 @@ final class ATLAS_Clarus_Browser_Edition {
             'publication_scope' => 'STORED_MASTER_SRGB_UNDER_ATLAS_0_3_0_RULES',
             'new_names_publication_allowed' => true,
             'deployment_allowed' => true,
-            'acms_spot_candidates' => 'SOLID_C_U_MODEL_ONLY_NOT_MEASURED',
-            'acms_spot_rows' => 3653,
-            'acms_preview_model' => 'K_S_OPAQUE_LIMIT_CIE1931_2DEG_D50_BRADFORD_SRGB',
-            'acms_source_sha256' => '3e824af59f5ddaa2555ac2959c14b927599c3fe02ef86190ffa0a3657bf53fb6',
             'basis23_recipes' => 'COMPUTATIONAL_ONLY_NOT_MEASURED',
             'pixel_loupe' => 'ADAPTIVE_PIXEL_GRID_WITH_MARKED_SAMPLE_AREA',
             'picker_handoff' => 'PICKER_TO_HOVER_TO_WHEEL_WITH_RETURN',

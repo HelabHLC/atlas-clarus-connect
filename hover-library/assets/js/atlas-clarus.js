@@ -37,10 +37,9 @@
     if (!ok) throw new Error('Copy command failed');
   }
 
-  function detailHtml(c, view, name) {
+  function detailHtml(c, view) {
     return `
-      <div class="acl-title">${esc(name?.d || c.ref)}</div>
-      <div class="atlas-clarus-detail-row"><span class="atlas-clarus-detail-key">Exact identity</span><span>${esc(c.ref)}</span></div>
+      <div class="acl-title">${esc(c.ref)}</div>
       <div class="atlas-clarus-detail-row"><span class="atlas-clarus-detail-key">atlas_row_id</span><span>${c.id}</span></div>
       <div class="atlas-clarus-detail-row"><span class="atlas-clarus-detail-key">RGB</span><span>${c.rgb.join(', ')}</span></div>
       <div class="atlas-clarus-detail-row"><span class="atlas-clarus-detail-key">HEX</span><span>${esc(c.hex)}</span></div>
@@ -63,9 +62,51 @@
       </div>
       <p class="atlas-clarus-recipe-score">Best found: <strong>ΔE00 ${Number(recipe.de00).toFixed(2)}</strong> · ${recipe.component_count} components</p>
       <ol class="atlas-clarus-recipe-components">${components}</ol>
-      <p class="atlas-clarus-attribution">Spectral source data: <a href="https://chsopensource.org/" target="_blank" rel="noopener noreferrer">Cultural Heritage Science Open Source (CHSOS)</a>, published by Antonino Cosentino. Used with permission. Computational processing and derived results by ATLAS Clarus. CHSOS has not reviewed or validated the derived mixtures.</p>
+      <button type="button" class="atlas-clarus-button acl-download-recipe-pdf">Download recipe PDF</button>
       <p class="atlas-clarus-boundary">Computational demo proxy only. Best-found heuristic, not a proof of global optimum. Physical mixing has not been validated; measured QC: NOT_MEASURED; no production approval or identity-equivalence claim.</p>
     `;
+  }
+
+  function acmsSpotHtml(entry, view, targetHex) {
+    const viewCode = view === 'solid_c' ? 'ACMS-C-' : 'ACMS-U-';
+    const candidates = entry.candidates.filter(r => Number.isFinite(Number(r.de00_model)) &&
+      (r.manufacturer_basis.startsWith('CHSOS_') || Number(r.de00_model) <= 5));
+    return `<div class="atlas-clarus-recipe-head"><h3>${esc(viewCode + entry.reference)} · Spot colour mixing recipes</h3></div>
+      <p class="atlas-clarus-recipe-score">Named source colours, ingredients and starting proportions are listed for each available source basis.</p>
+      <p class="atlas-clarus-boundary">Shared ATLAS target ${esc(entry.reference)}. ${view === 'solid_c' ? 'Coated' : 'Uncoated'} view membership is provisional; no paper-specific measurement has been made.</p>
+      ${candidates.map(r => `<div class="atlas-clarus-spot-candidate">
+        <p class="atlas-clarus-recipe-score"><strong>${esc(r.manufacturer_basis.startsWith('CHSOS_') ? 'CHSOS pigment-sample research basis' : r.manufacturer_basis)}</strong> · model ΔE00 ${Number(r.de00_model).toFixed(2)} · ${Number(r.de00_model) <= 5 ? 'within computational tolerance' : 'outside computational tolerance'}</p>
+        ${/^#[0-9A-F]{6}$/i.test(r.model_preview_hex || '') ? `<div class="atlas-clarus-ba" role="group" aria-label="ATLAS target and computational mix preview">
+          <div class="atlas-clarus-ba-item"><span class="atlas-clarus-ba-swatch" style="background:${esc(targetHex)}"></span><span>A · ATLAS target<br><code>${esc(targetHex)}</code></span></div>
+          <div class="atlas-clarus-ba-item"><span class="atlas-clarus-ba-swatch" style="background:${esc(r.model_preview_hex)}"></span><span>B · model mix<br><code>${esc(r.model_preview_hex)}</code>${r.model_preview_gamut_clipped ? '<br>RGB gamut clipped' : ''}</span></div>
+        </div>` : ''}
+        <ol class="atlas-clarus-recipe-components">${r.components.map(p => `<li><strong>${Number(p.fraction === undefined ? p.percent : 100 * p.fraction).toFixed(2)}%</strong> ${esc(p.name)}</li>`).join('')}</ol>
+      </div>`).join('')}
+      <p class="atlas-clarus-boundary">A/B swatches are screen previews: ATLAS reference HEX versus opaque-limit K/S model under D50, adapted to sRGB. The target HEX and model use different rendering paths. Screen appearance does not predict the dried paint or paper response. Source-colour names come from pinned spectral datasets; check product identity and availability before mixing. Named manufacturer recipes use colours from one manufacturer; Golden Heavy Body and OPEN may appear together. CHSOS is a pigment-sample research basis, not a single paint manufacturer. Model ratios are starting values, not validated dispense masses. Measured recipe QC: NOT_MEASURED; opacity and substrate response not verified.</p>`;
+  }
+
+  const pdfAscii=value=>String(value).normalize('NFKD').replace(/[^\x20-\x7E]/g,'?');
+  const pdfEsc=value=>pdfAscii(value).replace(/([\\()])/g,'\\$1');
+  function downloadRecipePdf(c,recipe){
+    const commands=[],annotations=[];
+    const text=(value,x,y,size=10,strong=false)=>commands.push(`BT /F1 ${strong?size+1:size} Tf 1 0 0 1 ${x} ${y} Tm (${pdfEsc(value)}) Tj ET`);
+    const link=(label,url,x,y)=>{text(`${label}: ${url}`,x,y,8);annotations.push({url,x1:x,y1:y-2,x2:535,y2:y+10});};
+    commands.push(`${(c.rgb[0]/255).toFixed(4)} ${(c.rgb[1]/255).toFixed(4)} ${(c.rgb[2]/255).toFixed(4)} rg 60 665 475 72 re f 0 0 0 rg`);
+    text('ATLAS CLARUS - COMPUTATIONAL RECIPE',60,792,15,true);text(c.ref,60,768,17,true);
+    text(`atlas_row_id ${c.id}`,60,748);text(`ATLAS target RGB ${c.rgb.join(' / ')}   HEX ${c.hex}`,60,730);
+    text(`Lab ${c.lab.map(n=>Number(n).toFixed(2)).join(' / ')}`,60,714);text(`Basis ${recipe.basis_version}   Delta E00 ${Number(recipe.de00).toFixed(3)}`,60,690);
+    text(recipe.computational_tolerance_status,60,648,10,true);let y=620;
+    recipe.components.forEach((component,index)=>{text(`${index+1}. ${component.name} - ${Number(component.percent).toFixed(3)}%`,60,y,11,true);y-=15;link('Spectral source',component.source_url,72,y);y-=15;text('Safety information/SDS: No verified product-specific SDS available',72,y,8);y-=24;});
+    text('COMPUTATIONAL RECIPE - NOT PHYSICALLY VALIDATED - NOT_MEASURED',60,y-2,9,true);text('No production approval or claim of physical colour equality.',60,y-18,9);
+    let attributionY=y-34;
+    if(recipe.components.some(component=>component.source_family==='CHSOS')){text('CHSOS source data used with permission and attribution. Derived results by ATLAS Clarus.',60,attributionY,8);attributionY-=14;text('CHSOS has not reviewed or validated the derived mixtures.',60,attributionY,8);attributionY-=14;}
+    if(recipe.components.some(component=>component.source_family==='KIMERA_PAINTMIXING')){text('PaintMixing / Kimera source dataset: CC BY 4.0 per source README.',60,attributionY,8);}
+    text(`Master SHA-256 ${MASTER_SHA256}`,60,48,7);
+    const stream=commands.join('\n'),objects=[];objects[1]='<< /Type /Catalog /Pages 2 0 R >>';objects[2]='<< /Type /Pages /Kids [3 0 R] /Count 1 >>';const refs=annotations.map((_,i)=>`${6+i} 0 R`).join(' ');
+    objects[3]=`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R /Annots [${refs}] >>`;objects[4]=`<< /Length ${new TextEncoder().encode(stream).length} >>\nstream\n${stream}\nendstream`;objects[5]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
+    annotations.forEach((a,i)=>{objects[6+i]=`<< /Type /Annot /Subtype /Link /Rect [${a.x1} ${a.y1} ${a.x2} ${a.y2}] /Border [0 0 0] /A << /S /URI /URI (${pdfEsc(a.url)}) >> >>`;});let pdf='%PDF-1.4\n',offsets=[0];for(let i=1;i<objects.length;i++){offsets[i]=new TextEncoder().encode(pdf).length;pdf+=`${i} 0 obj\n${objects[i]}\nendobj\n`;}
+    const xref=new TextEncoder().encode(pdf).length;pdf+=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;for(let i=1;i<objects.length;i++)pdf+=`${String(offsets[i]).padStart(10,'0')} 00000 n \n`;pdf+=`trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+    const url=URL.createObjectURL(new Blob([new TextEncoder().encode(pdf)],{type:'application/pdf'})),a=document.createElement('a');a.href=url;a.download=`ATLAS_Clarus_${c.ref}_Recipe.pdf`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
   }
 
   async function init(root) {
@@ -96,11 +137,28 @@
       Object.entries(views).forEach(([key,view]) => {
         if (!Array.isArray(view.ids) || view.ids.some(id => !byId.has(Number(id)))) throw new Error('Invalid view references: '+key);
       });
+      let pickerHandoff = null;
+      let pickerHandoffError = '';
+      const incoming = new URLSearchParams(location.search);
+      if (incoming.get('source') === 'pkl-image-picker') {
+        try {
+          const rawId=incoming.get('atlas_row_id') || '',ref=incoming.get('hlc') || '',sha=incoming.get('master_sha256') || '';
+          if (!/^\d+$/.test(rawId)) throw new Error('atlas_row_id is not a strict integer');
+          const color=byId.get(Number(rawId));
+          if (!color || color.ref !== ref || sha !== MASTER_SHA256) throw new Error('PKL identity or master mismatch');
+          const rawReturn=incoming.get('return_url') || '';
+          if (!rawReturn) throw new Error('return URL is missing');
+          const returnUrl=new URL(rawReturn, location.href);
+          if (returnUrl.origin !== location.origin || !/^https?:$/.test(returnUrl.protocol)) throw new Error('return URL is not same-origin');
+          pickerHandoff={color,returnUrl};
+        } catch (e) { pickerHandoffError=e.message; }
+      }
       let activeView = views[root.dataset.defaultView] ? root.dataset.defaultView : 'core';
       const perPage = Math.max(24, Math.min(480, parseInt(root.dataset.perPage || '120', 10) || 120));
       let page = 0;
       let query = '';
       let selectionRequest = 0;
+      if (pickerHandoff) { activeView='core'; query=pickerHandoff.color.ref; }
 
       const getRecipe = async (c) => {
         const shard = Math.floor(Number(c.id) / 256).toString().padStart(3, '0');
@@ -113,7 +171,28 @@
         return recipe;
       };
 
+      let acmsIndexPromise;
+      const getAcmsRecipe = async c => {
+        if (!acmsIndexPromise) acmsIndexPromise = getJson(root.dataset.acmsRecipesUrl).then(doc => {
+          if (doc.registry?.master_sha256 !== MASTER_SHA256 || doc.registry?.schema !== 'ACMS_SPOT_CANDIDATES_RESEARCH_V1' || doc.registry?.preview_model !== 'K_S_OPAQUE_LIMIT_CIE1931_2DEG_D50_BRADFORD_SRGB' || doc.rows?.length !== 3653) {
+            throw new Error('ACMS recipe registry mismatch');
+          }
+          const index = new Map(doc.rows.map(row => [Number(row.atlas_row_id), row]));
+          if (index.size !== 3653) throw new Error('Duplicate ACMS recipe identity');
+          return index;
+        });
+        const entry = (await acmsIndexPromise).get(Number(c.id));
+        if (!entry || entry.reference !== c.ref || entry.acms_id !== 'ACMS-'+c.ref) throw new Error('ACMS recipe binding mismatch');
+        return entry;
+      };
+
       root.innerHTML = '';
+      if (pickerHandoff || pickerHandoffError) {
+        const notice=document.createElement('div');
+        notice.className='atlas-clarus-handoff-notice'+(pickerHandoffError?' is-error':'');
+        notice.textContent=pickerHandoffError ? `Image Picker handoff blocked: ${pickerHandoffError}.` : `Image Picker identity verified: ${pickerHandoff.color.ref} · atlas_row_id ${pickerHandoff.color.id}`;
+        root.appendChild(notice);
+      }
       const toolbar = document.createElement('div');
       toolbar.className = 'atlas-clarus-toolbar';
 
@@ -141,6 +220,7 @@
         search = document.createElement('input');
         search.type = 'search';
         search.placeholder = 'Purple, H305_L015_C075, 12345, #2D0080';
+        if (query) search.value = query;
         field.appendChild(search);
         toolbar.appendChild(field);
       }
@@ -205,18 +285,28 @@
 
       const nearest = (c, count=6) => colors.filter(x=>x.id!==c.id).map(x=>({c:x,d:(x.lab[0]-c.lab[0])**2+(x.lab[1]-c.lab[1])**2+(x.lab[2]-c.lab[2])**2})).sort((a,b)=>a.d-b.d||a.c.id-b.c.id).slice(0,count).map(x=>x.c);
       const showSelection = (c, view) => {
-        const name = namesById.get(Number(c.id));
         const wheelUrl = new URL(root.dataset.wheelUrl);
         wheelUrl.searchParams.set('atlas_row_id', String(c.id));
         wheelUrl.searchParams.set('hlc', c.ref);
         wheelUrl.searchParams.set('master_sha256', MASTER_SHA256);
         wheelUrl.searchParams.set('source', 'hover-library');
+        wheelUrl.searchParams.set('return_url', location.href);
+        let pickerReturnHtml='';
+        if (pickerHandoff) {
+          const back=new URL(pickerHandoff.returnUrl.href);
+          back.searchParams.set('source','hover-library-return');
+          back.searchParams.set('atlas_row_id',String(pickerHandoff.color.id));
+          back.searchParams.set('hlc',pickerHandoff.color.ref);
+          back.searchParams.set('master_sha256',MASTER_SHA256);
+          pickerReturnHtml=`<a class="atlas-clarus-button acl-return-picker" href="${esc(back.href)}">← Zurück zum Image Picker</a>`;
+        }
         const body=sidebar.querySelector('.atlas-clarus-selection-body');
         body.className='atlas-clarus-selection-body';
-        body.innerHTML=`<div class="atlas-clarus-selected-swatch" style="background:${esc(c.hex)}"></div>${detailHtml(c,view,name)}<div class="atlas-clarus-actions"><button type="button" class="atlas-clarus-button acl-copy-ref">Copy reference</button><button type="button" class="atlas-clarus-button acl-copy-hex">Copy HEX</button><button type="button" class="atlas-clarus-button acl-add-palette">Add to palette</button><a class="atlas-clarus-button acl-open-wheel" href="${esc(wheelUrl.href)}" target="_blank" rel="noopener noreferrer">Open in Colour Identity Wheel ↗</a></div><div class="atlas-clarus-copy-status" role="status" aria-live="polite"></div><section class="atlas-clarus-recipe" aria-live="polite"><p class="atlas-clarus-recipe-loading">Loading Basis-23 recipe…</p></section>`;
+        const solidView = view === views.solid_c ? 'solid_c' : view === views.solid_u ? 'solid_u' : null;
+        body.innerHTML=`<div class="atlas-clarus-selected-swatch" style="background:${esc(c.hex)}"></div>${detailHtml(c,view)}<div class="atlas-clarus-actions">${pickerReturnHtml}<button type="button" class="atlas-clarus-button acl-copy-ref">Copy reference</button><button type="button" class="atlas-clarus-button acl-copy-hex">Copy HEX</button><button type="button" class="atlas-clarus-button acl-add-palette">Add to palette</button><a class="atlas-clarus-button acl-open-wheel" href="${esc(wheelUrl.href)}" target="_blank" rel="noopener noreferrer">Open in Colour Identity Wheel ↗</a></div><div class="atlas-clarus-copy-status" role="status" aria-live="polite"></div><section class="atlas-clarus-recipe" aria-live="polite"><p class="atlas-clarus-recipe-loading">Loading ${solidView ? 'ACMS spot colour candidates' : 'Basis-23 recipe'}…</p></section>`;
         const recipeBox=body.querySelector('.atlas-clarus-recipe');
         const request=++selectionRequest;
-        getRecipe(c).then(recipe=>{if(request===selectionRequest)recipeBox.innerHTML=recipeHtml(recipe);}).catch(err=>{if(request===selectionRequest)recipeBox.innerHTML='<p class="atlas-clarus-boundary">Basis-23 recipe unavailable or failed its identity check.</p>';console.error('ATLAS Clarus Basis-23:',err);});
+        (solidView ? getAcmsRecipe(c) : getRecipe(c)).then(recipe=>{if(request===selectionRequest){recipeBox.innerHTML=solidView ? acmsSpotHtml(recipe,solidView,c.hex) : recipeHtml(recipe);if(!solidView)recipeBox.querySelector('.acl-download-recipe-pdf').addEventListener('click',()=>downloadRecipePdf(c,recipe));}}).catch(err=>{if(request===selectionRequest)recipeBox.innerHTML='<p class="atlas-clarus-boundary">Recipe unavailable or failed its identity check.</p>';console.error('ATLAS Clarus recipe:',err);});
         const report=m=>{body.querySelector('.atlas-clarus-copy-status').textContent=m;};
         body.querySelector('.acl-copy-ref').addEventListener('click',()=>copyText(c.ref).then(()=>report('Reference copied.')).catch(()=>report('Copy failed.')));
         body.querySelector('.acl-copy-hex').addEventListener('click',()=>copyText(c.hex).then(()=>report('HEX copied.')).catch(()=>report('Copy failed.')));
@@ -290,11 +380,10 @@
         idsPage.forEach(id => {
           const c = byId.get(Number(id));
           if (!c) return;
-          const name = namesById.get(Number(c.id));
           const card = document.createElement('button');
           card.className = 'atlas-clarus-card';
           card.type = 'button';
-          card.setAttribute('aria-label', `${name?.d || c.ref}, ${c.ref}, atlas row ${c.id}, ${c.hex}`);
+          card.setAttribute('aria-label', `${c.ref}, atlas row ${c.id}, ${c.hex}`);
           card.dataset.atlasId = c.id;
           card.dataset.ref = c.ref;
           card.dataset.rgb = c.rgb.join(',');
@@ -308,16 +397,16 @@
 
           const ref = document.createElement('div');
           ref.className = 'atlas-clarus-ref';
-          ref.textContent = name?.d || c.ref;
+          ref.textContent = c.ref;
 
           const idline = document.createElement('div');
           idline.className = 'atlas-clarus-id';
-          idline.textContent = `${c.ref} · ID ${c.id} · ${c.hex}`;
+          idline.textContent = `ID ${c.id} · ${c.hex}`;
 
           card.append(chip,ref,idline);
           card.addEventListener('mouseenter', () => {
             card.classList.add('atlas-clarus-hovered');
-            tip.innerHTML = detailHtml(c,view,name);
+            tip.innerHTML = detailHtml(c,view);
             tip.style.display = 'block';
             requestAnimationFrame(() => placeTip(card));
           });
@@ -327,7 +416,7 @@
           });
           card.addEventListener('focus', () => {
             card.classList.add('atlas-clarus-hovered');
-            tip.innerHTML = detailHtml(c,view,name);
+            tip.innerHTML = detailHtml(c,view);
             tip.style.display='block';
             requestAnimationFrame(() => placeTip(card));
           });
@@ -365,6 +454,7 @@
       prev.addEventListener('click',()=>{if(page>0){page--;render();}});
       next.addEventListener('click',()=>{const n=Math.ceil(filteredIds().length/perPage);if(page<n-1){page++;render();}});
       render();
+      if (pickerHandoff) showSelection(pickerHandoff.color,views.core);
     } catch (err) {
       root.innerHTML = '<div class="atlas-clarus-error" role="alert">ATLAS Clarus library could not be loaded or did not pass its integrity checks.</div>';
       console.error('ATLAS Clarus Hover Library:', err);

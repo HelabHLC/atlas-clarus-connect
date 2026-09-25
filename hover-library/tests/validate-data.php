@@ -55,4 +55,34 @@ for ($shard = 0; $shard < $registry['shard_count']; $shard++) {
     }
 }
 $check($recipeCount === 13283 && $withinCount === 11593, 'Basis-23 validated totals');
+$acms = json_decode(file_get_contents($root.'/data/acms-solid-recipe-candidates.json'), true, 512, JSON_THROW_ON_ERROR);
+$check($acms['registry']['master_sha256'] === $expected, 'ACMS master binding');
+$check($acms['registry']['schema'] === 'ACMS_SPOT_CANDIDATES_RESEARCH_V1' && count($acms['rows']) === 3653, 'ACMS recipe registry coverage');
+$check($acms['registry']['preview_model'] === 'K_S_OPAQUE_LIMIT_CIE1931_2DEG_D50_BRADFORD_SRGB', 'ACMS preview provenance');
+$acmsIds = array(); $acmsViewCount = 0; $goldenCount = 0; $otherCount = 0;
+foreach ($acms['rows'] as $row) {
+    $id = $row['atlas_row_id'];
+    $check(!isset($acmsIds[$id]) && $row['reference'] === $colors['colors'][$id]['ref'], "ACMS row identity $id");
+    $check($row['acms_id'] === 'ACMS-'.$row['reference'], "ACMS colour identity $id");
+    $check(in_array('ACMS-C', $row['views'], true) === in_array($id, $views['views']['solid_c']['ids'], true), "ACMS C membership $id");
+    $check(in_array('ACMS-U', $row['views'], true) === in_array($id, $views['views']['solid_u']['ids'], true), "ACMS U membership $id");
+    $acmsIds[$id] = true; $acmsViewCount += count($row['views']);
+    $check($row['paper_specific_measurement'] === 'NOT_MEASURED', "ACMS substrate status $id");
+    foreach ($row['candidates'] as $candidate) {
+        $check($candidate['measured_qc_status'] === 'NOT_MEASURED', "ACMS recipe QC $id");
+        $check(preg_match('/^#[0-9A-F]{6}$/', $candidate['model_preview_hex'] ?? '') === 1 && is_bool($candidate['model_preview_gamut_clipped'] ?? null), "ACMS model preview $id");
+        if ($candidate['manufacturer_basis'] === 'GOLDEN_HB32_OPEN48') { $goldenCount++; }
+        if ($candidate['recipe_source'] === 'PIGMENTS_RS_289_PILOT') { $otherCount++; }
+        foreach ($candidate['components'] as $component) {
+            $check(strpos($component['basis_id'] ?? '', 'PAINTMIXING_KIMERA_') !== 0, "KIMERA ACMS component $id");
+            if ($candidate['manufacturer_basis'] === 'GOLDEN_HB32_OPEN48') {
+                $check(strpos($component['name'], ' Golden ') !== false, "cross-manufacturer Golden $id");
+            }
+            if ($candidate['recipe_source'] === 'PIGMENTS_RS_289_PILOT') {
+                $check(strpos($component['name'], ' '.$candidate['manufacturer_basis'].':') !== false, "cross-manufacturer line $id");
+            }
+        }
+    }
+}
+$check($acmsViewCount === 4100 && $goldenCount === 171 && $otherCount === 73*12, 'ACMS candidate totals');
 echo "PASS: 13283 colors, 17 views and 13283 derived Basis-23 recipes valid\n";

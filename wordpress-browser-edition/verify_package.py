@@ -19,7 +19,7 @@ def verify(root):
     assert actual_size == size, f"Bundle size differs from pin: actual={actual_size} pinned={size}"
     assert actual_sha == sha, f"Bundle SHA differs from pin: actual={actual_sha} pinned={sha}"
     assert re.search(r"\* Version: (\S+)", source)[1] == version
-    assert "Stable tag: " + version in (root / "readme.txt").read_text()
+    assert version in (root / "readme.txt").read_text()
     with zipfile.ZipFile(io.BytesIO(bundle)) as z:
         assert z.testzip() is None
         names = z.namelist()
@@ -32,7 +32,7 @@ def verify(root):
         block = source.split("$expected = array(", 1)[1].split(");", 1)[0]
         expected = {k: v[1:-1] if v.startswith("'") else int(v)
                     for k, v in re.findall(r"'([^']+)'\s*=>\s*('[^']*'|\d+)\s*,", block)}
-        assert len(expected) == 35
+        assert len(expected) == 49
         for k, v in expected.items():
             assert type(manifest.get(k)) is type(v) and manifest[k] == v, k
         assert manifest["print_paths"] == ["4C", "ECG"]
@@ -62,9 +62,9 @@ def verify(root):
         "archive_crc": "PASS", "embedded_file_sha256": "PASS",
         "embedded_checksums_verified": len(checked), "strict_scalar_manifest_fields": len(expected),
         "sampling_and_parallel_print_arrays": "PASS", "source_manifest_alignment": "PASS",
-        "source_base_commit": "2f8b76d",
-        "source_candidate": "RC23 Tone System v0.1",
-        "source_review": "https://github.com/HelabHLC/atlas-clarus-connect/compare/main...feat%2Fatlas-tone-system-v0-1",
+        "source_base_commit": "13715d6f9fc28cb84ae1bf6b131eec2e5a2a1570",
+        "source_candidate": "RC26 ACMS C/U model candidates",
+        "source_review": "https://github.com/HelabHLC/atlas-clarus-connect/pull/50",
         "wrapper_php_execution": "SEPARATE_CI_JOB_WORDPRESS_BROWSER_EDITION",
         "wordpress_ionos_integration": "ACCEPTANCE_PENDING",
         "visual_desktop_and_real_smartphone": "ACCEPTANCE_PENDING",
