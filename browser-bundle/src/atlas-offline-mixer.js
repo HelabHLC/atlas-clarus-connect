@@ -112,7 +112,7 @@
         const notice=document.createElement('section');
         notice.className='basis23-recipe';
         notice.setAttribute('role','status');
-        notice.innerHTML='<strong>Legacy Basis-23 recipe withheld</strong><p>This stored recipe contains a KIMERA basis paint. KIMERA is excluded from the CHSOS pilot. Its proportions and ΔE00 cannot be reused as a CHSOS-only recipe. Use the offline CHSOS mixer below for a separate computational candidate.</p>';
+        notice.innerHTML='<strong>No eligible stored mixing proposal for this colour</strong><p>The stored Basis-23 recipe contains KIMERA, which is excluded from the CHSOS pilot. To calculate a separate, unmeasured CHSOS candidate, open the offline pigment mixer below and choose your local data files.</p>';
         legacy.replaceWith(notice);
       }
       const terms=[...parent.querySelectorAll('dl dt')];
