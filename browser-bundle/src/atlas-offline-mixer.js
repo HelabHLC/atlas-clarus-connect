@@ -14,6 +14,23 @@
   const Z=[.06785,.2074,.6456,1.3856,1.74706,1.77211,1.6692,1.28764,.81295,.46518,.272,.1582,.07825,.04216,.0203,.00875,.0039,.0021,.00165,.0011,.0008,.00034,.00019,.00005,.00002,0,0,0,0,0,0];
   const D=[49.31,56.51,60.03,57.82,74.82,87.25,90.61,91.37,95.09,91.96,95.72,96.61,97.13,102.1,100.75,102.31,100,97.74,98.92,93.5,97.71,99.29,99.07,95.75,98.9,95.71,98.24,103.06,99.19,87.43,91.66];
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
+  const mixerStyle = `<style id="atlas-offline-mixer-style">
+    .atlas-offline-mixer { margin-top: 1rem; }
+    .atlas-offline-mixer summary { cursor: pointer; }
+    .atlas-offline-mixer details[open] { position: fixed; z-index: 1000; top: 5.5rem; right: 1rem; width: min(680px, calc(100vw - 2rem)); max-height: calc(100vh - 6.5rem); overflow: auto; padding: 1.25rem; border: 1px solid #718498; border-radius: 12px; background: #171f2a; color: #f4f7fb; box-shadow: 0 12px 36px #000b; box-sizing: border-box; }
+    .atlas-offline-mixer details[open] summary { position: sticky; top: -1.25rem; z-index: 1; margin: -1.25rem -1.25rem 1rem; padding: 1rem 1.25rem; background: #202b39; font-weight: 700; }
+    .atlas-offline-mixer label { display: block; margin: .75rem 0; }
+    .atlas-offline-mixer input[type=file] { display: block; max-width: 100%; margin-top: .3rem; }
+    .atlas-offline-mixer [data-result] section { margin-top: 1.25rem; padding: 1rem; border: 1px solid #394757; border-radius: 8px; }
+    .atlas-offline-mixer [data-result] h4 { margin: 0 0 .75rem; line-height: 1.4; }
+    .atlas-offline-mixer [data-result] li { margin: .5rem 0; overflow-wrap: anywhere; }
+    .atlas-offline-mixer [data-result] small { display: block; margin: .2rem 0 .5rem; color: #c4d0df; line-height: 1.5; overflow-wrap: anywhere; }
+    .atlas-offline-mixer [data-result] p { padding: .8rem; border-left: 3px solid #a4f764; line-height: 1.5; }
+    .atlas-offline-mixer .mix-before-after { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin: .75rem 0; }
+    .atlas-offline-mixer .mix-swatch { height: 80px; border: 1px solid #9aa7b5; border-radius: 5px; }
+    .atlas-offline-mixer .mix-before-after figcaption { margin-top: .35rem; font-size: .85rem; overflow-wrap: anywhere; }
+    @media(max-width:460px) { .atlas-offline-mixer details[open] { top: .5rem; max-height: calc(100vh - 1rem); } }
+  </style>`;
   const clamp=x=>Math.min(.999999,Math.max(.000001,x));
   const ks=r=>(1-clamp(r))**2/(2*clamp(r));
   const refl=k=>Math.max(0,Math.min(1,1+k-Math.sqrt(k*k+2*k)));
@@ -23,6 +40,18 @@
     return [116*yy-16,500*(xx-yy),200*(yy-zz)];
   }
   const de=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+  function previewHex(r){
+    const sum=(cmf)=>r.reduce((v,n,i)=>v+n*D[i]*cmf[i],0);
+    const yWhite=D.reduce((v,n,i)=>v+n*Y[i],0);
+    const xyz=[sum(X)/yWhite,sum(Y)/yWhite,sum(Z)/yWhite];
+    const matrix=[[3.2406,-1.5372,-.4986],[-.9689,1.8758,.0415],[.0557,-.204,1.057]];
+    return '#'+matrix.map(row=>{
+      const linear=row.reduce((v,n,i)=>v+n*xyz[i],0);
+      const clipped=Math.max(0,Math.min(1,linear));
+      const encoded=clipped<=.0031308?12.92*clipped:1.055*clipped**(1/2.4)-.055;
+      return Math.round(encoded*255).toString(16).padStart(2,'0');
+    }).join('').toUpperCase();
+  }
   async function digest(file){const b=await file.arrayBuffer(),h=await crypto.subtle.digest('SHA-256',b);return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('')}
   function spectrum(values){if(!Array.isArray(values)||values.length!==31||values.some(v=>!Number.isFinite(v)||v<0||v>1))throw Error('Invalid 400–700 nm spectrum');return values}
   async function load(atlasFile,chsosFile){
@@ -46,7 +75,7 @@
     const total=parts.reduce((s,p)=>s+p.weight,0);
     const predicted=target.map((_,i)=>refl(parts.reduce((s,p)=>s+p.weight*p.base.ks[i],0)/total));
     const rmse=Math.sqrt(predicted.reduce((s,v,i)=>s+(v-target[i])**2,0)/31);
-    return {parts,rmse,de76:de(lab(predicted),lab(target))};
+    return {parts,rmse,de76:de(lab(predicted),lab(target)),preview_hex:previewHex(predicted)};
   }
   function solve(data,reference,options={}){
     const target=data.atlas.get(reference);if(!target)throw Error('PKL reference missing from atlas spectrum file');
@@ -73,10 +102,19 @@
         if(trial.rmse<best.rmse)best=trial;
       }
     }
-    return {reference,white_fraction:whiteFraction,rmse:best.rmse,de76:best.de76,recipe:best.parts.map(p=>({basis_id:p.base.id,name:p.base.name,fraction:p.weight,opacity_marker:p.base.opacity_marker||'UNKNOWN',opacity_source:p.base.opacity_source||null,opacity_note:p.base.opacity_note||null,opacity_note_source:p.base.opacity_note_source||null})),opacity_status:'NOT_VERIFIED',measured_qc_status:'NOT_MEASURED',selection_metric:'SPECTRAL_RMSE_HEURISTIC'};
+    return {reference,white_fraction:whiteFraction,rmse:best.rmse,de76:best.de76,preview_hex:best.preview_hex,recipe:best.parts.map(p=>({basis_id:p.base.id,name:p.base.name,fraction:p.weight,opacity_marker:p.base.opacity_marker||'UNKNOWN',opacity_source:p.base.opacity_source||null,opacity_note:p.base.opacity_note||null,opacity_note_source:p.base.opacity_note_source||null})),opacity_status:'NOT_VERIFIED',measured_qc_status:'NOT_MEASURED',selection_metric:'SPECTRAL_RMSE_HEURISTIC'};
   }
   function mount(){
+    if(!document.getElementById('atlas-offline-mixer-style'))document.head.insertAdjacentHTML('beforeend',mixerStyle);
     for(const parent of document.querySelectorAll('#selection,#wheel-selection')){
+      const legacy=parent.querySelector('details.basis23-recipe');
+      if(legacy?.textContent.includes('PAINTMIXING_KIMERA_')){
+        const notice=document.createElement('section');
+        notice.className='basis23-recipe';
+        notice.setAttribute('role','status');
+        notice.innerHTML='<strong>Legacy Basis-23 recipe withheld</strong><p>This stored recipe contains a KIMERA basis paint. KIMERA is excluded from the CHSOS pilot. Its proportions and ΔE00 cannot be reused as a CHSOS-only recipe. Use the offline CHSOS mixer below for a separate computational candidate.</p>';
+        legacy.replaceWith(notice);
+      }
       const terms=[...parent.querySelectorAll('dl dt')];
       const ref=terms.find(term=>['Exact identity','Exact PKL identity'].includes(term.textContent.trim()))?.nextElementSibling?.textContent?.trim();
       if(!/^H\d{3}_L\d{3}_C\d{3}$/.test(ref))continue;
@@ -90,7 +128,9 @@
         box.textContent='Checking files and calculating…';await new Promise(resolve=>setTimeout(resolve,0));
         try{
           const data=await load(af,cf),results=[0,.05,.10].map(whiteFraction=>solve(data,ref,{whiteFraction}));
-          box.innerHTML=results.map(result=>`<section><h4>PW6 anatase white ${(result.white_fraction*100).toFixed(0)}% · spectral RMSE ${result.rmse.toFixed(5)} · ΔE76 ${result.de76.toFixed(2)}</h4><ol>${result.recipe.map(p=>`<li>${esc(p.name)} · ${(p.fraction*100).toFixed(1)}% <small>${esc(p.basis_id)} · basis paint opacity: ${esc(p.opacity_marker)}${p.opacity_note?` · CHSOS qualitative note: ${esc(p.opacity_note)} <a href="${esc(p.opacity_note_source)}" target="_blank" rel="noopener noreferrer">CHSOS source</a>`:''}</small></li>`).join('')}</ol></section>`).join('')+'<p>White fractions are model weights, not dispensing instructions. Qualitative CHSOS notes are not opacity ratings. Mixture opacity: NOT VERIFIED · physical QC: NOT MEASURED.</p>';
+          const hex=terms.find(term=>term.textContent.trim()==='HEX')?.nextElementSibling?.textContent?.trim();
+          if(!/^#[0-9a-f]{6}$/i.test(hex))throw Error('Selected PKL HEX unavailable');
+          box.innerHTML=results.map(result=>`<section><h4>PW6 anatase white ${(result.white_fraction*100).toFixed(0)}% · spectral RMSE ${result.rmse.toFixed(5)} · ΔE76 ${result.de76.toFixed(2)}</h4><div class="mix-before-after"><figure><div class="mix-swatch" style="background:${esc(hex)}"></div><figcaption>Before · PKL reference ${esc(hex)}</figcaption></figure><figure><div class="mix-swatch" style="background:${esc(result.preview_hex)}"></div><figcaption>After · model preview ${esc(result.preview_hex)}</figcaption></figure></div><ol>${result.recipe.map(p=>`<li>${esc(p.name)} · ${(p.fraction*100).toFixed(1)}% <small>${esc(p.basis_id)} · basis paint opacity: ${esc(p.opacity_marker)}${p.opacity_note?` · CHSOS qualitative note: ${esc(p.opacity_note)} <a href="${esc(p.opacity_note_source)}" target="_blank" rel="noopener noreferrer">CHSOS source</a>`:''}</small></li>`).join('')}</ol></section>`).join('')+'<p>Screen previews are approximate model colours, not measured wet or dry paint. White fractions are model weights, not dispensing instructions. Qualitative CHSOS notes are not opacity ratings. Mixture opacity: NOT VERIFIED · physical QC: NOT MEASURED.</p>';
         }catch(e){box.textContent=`Mixer unavailable: ${e.message}`}
       };
     }

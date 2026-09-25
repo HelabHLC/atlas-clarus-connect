@@ -49,7 +49,7 @@
       row_id_base: 0,
       freeze_status: 'FROZEN',
       reference,
-      designer_layer: descriptor ? { schema_version: designerLayer.document.schema_version, status: designerLayer.document.status, standard_name_en: descriptor.standard_name_en, standard_name_number: descriptor.standard_name_number, designer_name_en: descriptor.designer_name_en, display_name: descriptor.display_name, descriptors: [descriptor.colour_family,descriptor.temperature,descriptor.lightness_character,descriptor.chroma_character], suggested_roles: descriptor.suggested_roles, public_release: false } : null,
+      designer_layer: descriptor ? { schema_version: designerLayer.document.schema_version, status: designerLayer.document.status, designer_name_en: descriptor.designer_name_en, display_name: descriptor.display_name, descriptors: [descriptor.colour_family,descriptor.temperature,descriptor.lightness_character,descriptor.chroma_character].filter(Boolean), suggested_roles: descriptor.suggested_roles, public_release: descriptor.public_release === true } : null,
       reproduction: {
         source_representation: 'MASTER_SRGB_8BIT',
         output_kind: 'PRINTABLE_REFERENCE_CARD',
@@ -82,26 +82,33 @@
   function html(data) {
     const r = data.reference;
     const lab = r.master_lab.map(value => Number(value).toFixed(2)).join(' / ');
+    const chromaMatch = String(r.atlas_address).match(/_C(\d{3})$/);
+    const chroma = chromaMatch ? `C${Number(chromaMatch[1])}` : 'C–';
     const evidence = escape(JSON.stringify(data, null, 2));
     return `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ATLAS Reference Card · ${escape(r.atlas_address)}</title>
 <style>
-@page{size:A4;margin:12mm}*{box-sizing:border-box}body{margin:0;color:#111;background:#ddd;font:11pt/1.4 Arial,sans-serif}
-.sheet{width:186mm;min-height:273mm;margin:10mm auto;padding:14mm;background:#fff;display:grid;grid-template-rows:auto 112mm auto 1fr;gap:8mm}
-header{display:flex;justify-content:space-between;gap:12mm;border-bottom:1px solid #111;padding-bottom:5mm}h1{margin:0;font-size:24pt}h1 small{display:block;font-size:9pt;letter-spacing:.12em}
-.status{border:2px solid #111;padding:3mm;font-weight:700;align-self:start}.patch{background:${escape(r.master_hex)};border:1px solid #888}
-dl{display:grid;grid-template-columns:42mm 1fr;margin:0}dt,dd{border-bottom:1px solid #ccc;padding:2.2mm 0}dt{font-weight:700}dd{margin:0;overflow-wrap:anywhere}
-.notice{padding:5mm;border:2px solid #111;font-weight:700}details{font-size:8pt}pre{white-space:pre-wrap;overflow-wrap:anywhere}
+@page{size:A4;margin:12mm}*{box-sizing:border-box}body{margin:0;color:#101722;background:#d9dde2;font:11pt/1.4 Arial,sans-serif}
+.sheet{width:186mm;min-height:273mm;margin:10mm auto;background:#fff;display:grid;grid-template-rows:auto 106mm auto 1fr;gap:0;box-shadow:0 4mm 12mm #0002}
+header{display:grid;grid-template-columns:1fr auto;gap:10mm;padding:13mm 14mm 8mm;background:#101722;color:#fff;border-bottom:1.8mm solid ${escape(r.master_hex)}}
+.kicker{margin:0 0 2.5mm;color:#9cfe3a;font-size:8.5pt;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+h1{margin:0;font-size:24pt;line-height:1.08}h1 small{display:block;margin-top:2.5mm;color:#d7dde5;font-size:9pt;line-height:1.35;letter-spacing:.04em}
+.badges{display:flex;align-items:flex-start;gap:2.5mm}.chroma{min-width:18mm;padding:2.6mm 3mm;border:1px solid #fff9;border-radius:999px;text-align:center;font-size:15pt;font-weight:800}
+.status{padding:2.8mm 3.4mm;border:1px solid #fff7;border-radius:2mm;color:#fff;font-size:8.5pt;font-weight:700;letter-spacing:.06em;white-space:nowrap}
+.patch{margin:10mm 14mm 8mm;background:${escape(r.master_hex)};border:1px solid #aab1ba;border-radius:2mm}
+dl{display:grid;grid-template-columns:42mm 1fr;margin:0 14mm 8mm}dt,dd{border-bottom:1px solid #d8dde3;padding:2.2mm 0}dt{color:#465363;font-weight:700}dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.identity{font-size:13pt}.machine-status{font-family:Consolas,monospace;font-size:9pt}
+.notes{padding:0 14mm 12mm}.notice{padding:5mm;border-left:1.8mm solid ${escape(r.master_hex)};background:#f1f4f7;font-weight:700}.fineprint{color:#465363;font-size:9.5pt}details{font-size:8pt}pre{white-space:pre-wrap;overflow-wrap:anywhere}
 .controls{position:fixed;right:12px;top:12px}button{padding:10px 16px}@media print{body{background:#fff}.sheet{margin:0}.controls{display:none}details{display:none}}
 </style><div class="controls"><button onclick="window.print()">Print / Save PDF</button></div><main class="sheet">
-<header><h1><small>ATLAS CLARUS · REFERENCE CARD</small>${data.designer_layer?escape(data.designer_layer.designer_name_en):escape(r.atlas_address)}${data.designer_layer?`<small>${escape(data.designer_layer.standard_name_en)} · ISCC–NBS ${data.designer_layer.standard_name_number}</small>`:''}</h1><div class="status">PRINTED_NOT_MEASURED</div></header>
+<header><div><p class="kicker">ATLAS CLARUS · FROZEN REFERENCE CARD</p><h1>${data.designer_layer?escape(data.designer_layer.designer_name_en):escape(r.atlas_address)}</h1></div><div class="badges"><div class="chroma" aria-label="Chroma ${escape(chroma)}">${escape(chroma)}</div><div class="status">PRINTED — NOT MEASURED</div></div></header>
 <div class="patch" role="img" aria-label="sRGB representation ${escape(r.master_hex)}"></div>
-<dl><dt>Exact identity</dt><dd>${escape(r.atlas_address)}</dd><dt>atlas_row_id</dt><dd>${r.atlas_row_id}</dd><dt>Master SHA-256</dt><dd>${escape(data.master_sha256)}</dd>
+<dl><dt>Exact PKL identity</dt><dd class="identity">${escape(r.atlas_address)}</dd><dt>Chroma step</dt><dd>${escape(chroma)}</dd><dt>atlas_row_id</dt><dd>${r.atlas_row_id}</dd><dt>Master SHA-256</dt><dd>${escape(data.master_sha256)}</dd>
 <dt>Master RGB</dt><dd>${r.master_rgb.join(' / ')}</dd><dt>Master HEX</dt><dd>${escape(r.master_hex)}</dd>
 <dt>Master CIELAB</dt><dd>${lab}</dd><dt>Identity change</dt><dd>NONE</dd>
-<dt>ICC transform</dt><dd>NOT_APPLIED</dd><dt>Measured QC</dt><dd>NOT_MEASURED</dd></dl>
-<div><p class="notice">This print is an unmeasured reproduction of the frozen ATLAS reference. It is not a colour proof, measurement record, PDF/X approval or redefinition of the PKL identity.</p>
-<p>The colour patch uses the stored 8-bit sRGB master representation. The receiving print workflow remains responsible for its output profile, device conversion, substrate, process control and any later measurement.</p>
+<dt>ICC transform</dt><dd>NOT_APPLIED</dd><dt>Measured QC</dt><dd>NOT_MEASURED</dd><dt>Machine status</dt><dd class="machine-status">PRINTED_NOT_MEASURED</dd></dl>
+<div class="notes"><p class="notice">This print is an unmeasured reproduction of the frozen ATLAS reference. It is not a colour proof, measurement record, PDF/X approval or redefinition of the PKL identity.</p>
+<p class="fineprint">The colour patch uses the stored 8-bit sRGB master representation. The receiving print workflow remains responsible for its output profile, device conversion, substrate, process control and any later measurement.</p>
 <details><summary>Embedded evidence</summary><pre>${evidence}</pre></details></div></main></html>`;
   }
 

@@ -3,7 +3,7 @@
  * Plugin Name: ATLAS Clarus Browser Edition
  * Plugin URI: https://arbe-lambda-star.com/
  * Description: Local Browser Edition with Image Picker, Hover, Wheel, palettes, parallel 4C/ECG print preparation and local ICC image previews. Explicit runtime switch; shortcode [atlas_clarus_browser_edition] preserved. Staging beta.
- * Version: 0.1.14-beta1
+ * Version: 0.1.15-beta6
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: ARBE Lambda Star / ATLAS Clarus
@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class ATLAS_Clarus_Browser_Edition {
-    const VERSION              = '0.1.14-beta1';
-    const BUNDLE_VERSION       = 'v0.2.0-rc24-offline-chsos-mixer';
-    const BUNDLE_SIZE          = 4231651;
-    const BUNDLE_SHA256        = 'c8efd5601eae61eba23dbab75fcca668452a57d0037d0a51803056bf2e879a23';
+    const VERSION              = '0.1.15-beta6';
+    const BUNDLE_VERSION       = 'v0.2.0-rc26-names-v0-3-0-chsos-pilot-acms-spot-ba';
+    const BUNDLE_SIZE          = 3903163;
+    const BUNDLE_SHA256        = 'b5d65c2a0bb39ccb0af59709ca8a1bac1ed2765b381e0714cb6ed6ce51112615';
     const OPTION_PREVIOUS_RUNTIME = 'atlas_clarus_browser_edition_previous_runtime';
     const OPTION_RUNTIME_PATH  = 'atlas_clarus_browser_edition_runtime_path';
     const OPTION_RUNTIME_SHA   = 'atlas_clarus_browser_edition_runtime_sha256';
@@ -110,10 +110,11 @@ final class ATLAS_Clarus_Browser_Edition {
             return $atts;
         }
 
-        $target_path = untrailingslashit( wp_parse_url( self::canvas_url(), PHP_URL_PATH ) );
+        $target_path = untrailingslashit( wp_parse_url( home_url( '/' . self::CANVAS_ROUTE_BASE . '/' ), PHP_URL_PATH ) );
         $href_path   = untrailingslashit( wp_parse_url( $atts['href'], PHP_URL_PATH ) );
 
         if ( $target_path && $href_path && $target_path === $href_path ) {
+            $atts['href'] = self::canvas_url();
             $atts['target'] = '_blank';
             $rels = isset( $atts['rel'] ) ? preg_split( '/\s+/', trim( $atts['rel'] ) ) : array();
             $rels = array_filter( array_merge( $rels, array( 'noopener', 'noreferrer' ) ) );
@@ -168,10 +169,16 @@ final class ATLAS_Clarus_Browser_Edition {
     }
 
     private static function runtime_url() {
+        if ( ! get_option( 'permalink_structure' ) ) {
+            return home_url( '/index.php?atlas_clarus_browser_asset=index.html' );
+        }
         return home_url( '/' . self::ROUTE_BASE . '/' );
     }
 
     private static function canvas_url() {
+        if ( ! get_option( 'permalink_structure' ) ) {
+            return home_url( '/index.php?atlas_clarus_browser_asset=index.html&' . self::CANVAS_QUERY_VAR . '=1' );
+        }
         return home_url( '/' . self::CANVAS_ROUTE_BASE . '/' );
     }
 
@@ -204,7 +211,7 @@ final class ATLAS_Clarus_Browser_Edition {
                 return sprintf(
                     '<div class="atlas-clarus-browser-message"><strong>%s</strong> %s <a href="%s">%s</a></div>',
                     esc_html__( 'ATLAS Clarus Browser Edition:', 'atlas-clarus-browser-edition' ),
-                    esc_html__( 'RC24 ist noch nicht lokal installiert.', 'atlas-clarus-browser-edition' ),
+                    esc_html__( 'RC25 ist noch nicht lokal installiert.', 'atlas-clarus-browser-edition' ),
                     esc_url( admin_url( 'tools.php?page=atlas-clarus-browser-edition' ) ),
                     esc_html__( 'Jetzt einrichten', 'atlas-clarus-browser-edition' )
                 );
@@ -282,13 +289,13 @@ final class ATLAS_Clarus_Browser_Edition {
             <p>Die Browser-Anwendung wird nach der Einrichtung lokal von dieser WordPress-Installation ausgeliefert. Es wird kein <code>chatgpt.site</code>-iframe verwendet.</p>
             <p><strong>Navigation v0.1.2:</strong> Ein WordPress-Menülink auf diese Full-Canvas-Adresse öffnet automatisch in einem neuen Tab. In der App selbst wird zusätzlich ein dezenter Button <code>← Zur Homepage</code> eingeblendet.</p>
 
-            <p><strong>Neu in RC24: optionaler CHSOS-Mixer-Pilot.</strong> Lokale Spektrendateien werden erst nach Auswahl im Browser gelesen. Die Vorschläge sind berechnet und nicht gemessen; Deckkraft der Mischung ist nicht verifiziert. PKL-Identität, Farbnamen und die unabhängigen 4C- und ECG-Wege bleiben erhalten.</p>
+            <p><strong>Neu in RC25: ATLAS-Namensschicht v0.3.0.</strong> Alle 13.283 Namen folgen der abgeschlossenen Prüfung der gespeicherten sRGB-Farben. HLC-Adresse und PKL-Identität bleiben unverändert. Die vorhandene Druckvorbereitung behält dieselben unabhängigen 4C- und ECG-Wege und ICC-Bildvorschauen.</p>
 
-            <p><strong>RC24-Testkandidat – Browser-Abnahme offen:</strong> Desktop-/Mobilprüfung, WordPress-Laufzeittest und Quellenfreigabe sind vor öffentlichem Einsatz erforderlich. Das Plugin-Update allein schaltet das Bundle nicht um. Der folgende Knopf ändert die öffentlich ausgelieferte Laufzeit sofort.</p>
+            <p><strong>RC25 – geprüfte Namensschicht:</strong> Version, Masterbindung und Prüfsummen werden vor der Umschaltung kontrolliert. Das Plugin-Update allein schaltet das Bundle nicht um. Der folgende Knopf ändert die öffentlich ausgelieferte Laufzeit sofort.</p>
             <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin:20px 0;">
                 <input type="hidden" name="action" value="atlas_clarus_browser_install">
                 <?php wp_nonce_field( 'atlas_clarus_browser_install', 'atlas_clarus_browser_nonce' ); ?>
-                <?php submit_button( 'Mitgeliefertes RC24 prüfen und aktiv schalten', 'primary', 'submit', false ); ?>
+                <?php submit_button( 'Mitgeliefertes RC25 prüfen und aktiv schalten', 'primary', 'submit', false ); ?>
             </form>
             <?php if ( get_option( self::OPTION_PREVIOUS_RUNTIME, false ) ) : ?>
             <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -335,7 +342,7 @@ final class ATLAS_Clarus_Browser_Edition {
         }
 
         if ( ! self::runtime_ready() && isset( $_GET['page'] ) && 'atlas-clarus-browser-edition' === $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-            echo '<div class="notice notice-info"><p>' . esc_html__( 'RC24 muss einmalig lokal installiert werden. Danach läuft die Browser Edition von deinem eigenen WordPress-Webspace.', 'atlas-clarus-browser-edition' ) . '</p></div>';
+            echo '<div class="notice notice-info"><p>' . esc_html__( 'RC25 muss einmalig lokal installiert werden. Danach läuft die Browser Edition von deinem eigenen WordPress-Webspace.', 'atlas-clarus-browser-edition' ) . '</p></div>';
         }
     }
 
@@ -358,9 +365,9 @@ final class ATLAS_Clarus_Browser_Edition {
 
         $result = self::install_bundle();
         if ( is_wp_error( $result ) ) {
-            self::set_notice( false, 'RC24 wurde nicht umgeschaltet: ' . $result->get_error_message() );
+            self::set_notice( false, 'RC25 wurde nicht umgeschaltet: ' . $result->get_error_message() );
         } else {
-            self::set_notice( true, 'Mitgeliefertes RC24 wurde geprüft und aktiv geschaltet. Die vorherige Laufzeit bleibt erhalten.' );
+            self::set_notice( true, 'Mitgeliefertes RC25 wurde geprüft und aktiv geschaltet. Die vorherige Laufzeit bleibt erhalten.' );
         }
 
         wp_safe_redirect( admin_url( 'tools.php?page=atlas-clarus-browser-edition' ) );
@@ -406,11 +413,11 @@ final class ATLAS_Clarus_Browser_Edition {
 
             $sha = hash_file( 'sha256', $tmp );
             if ( ! is_string( $sha ) || ! hash_equals( self::BUNDLE_SHA256, strtolower( $sha ) ) ) {
-                return new WP_Error( 'atlas_sha_mismatch', 'SHA-256-Prüfung fehlgeschlagen. Das RC24-Paket wird nicht installiert.' );
+                return new WP_Error( 'atlas_sha_mismatch', 'SHA-256-Prüfung fehlgeschlagen. Das RC25-Paket wird nicht installiert.' );
             }
 
             if ( ! wp_mkdir_p( $target ) ) {
-                return new WP_Error( 'atlas_target_mkdir', 'RC24-Zielordner konnte nicht erstellt werden.' );
+                return new WP_Error( 'atlas_target_mkdir', 'RC25-Zielordner konnte nicht erstellt werden.' );
             }
 
             $unzipped = unzip_file( $tmp, $target );
@@ -474,18 +481,35 @@ final class ATLAS_Clarus_Browser_Edition {
         if ( ! is_array( $manifest ) ) {
             return new WP_Error( 'atlas_manifest', 'Bundle-Manifest fehlt oder ist kein JSON-Objekt.' );
         }
-        // Strict values from the pinned RC24 manifest; never coerce identity fields.
+        // Strict values from the pinned RC26 manifest; never coerce identity fields.
         $expected = array(
-            'version' => '0.2.0-rc24-offline-chsos-mixer',
-            'status' => 'PROFILE_BOUND_DEVICECMYK_AND_DEVICEN_PDF_CANDIDATE',
+            'version' => '0.2.0-rc26-names-v0-3-0-chsos-pilot-acms-spot-ba',
+            'status' => 'COMPLETE_NAMES_V0_3_0_WITH_OPTIONAL_CHSOS_PILOT',
             'master_rows' => 13283,
             'master_sha256' => '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4',
             'row_id_base' => 0,
             'tone_system_version' => '0.1',
-            'visible_name_source' => 'ATLAS_CLARUS_TONE_SYSTEM',
-            'iscc_nbs_role' => 'METADATA_ONLY',
+            'visible_name_source' => 'ATLAS_CLARUS_COMPLETE_NAME_LAYER',
+            'iscc_nbs_role' => 'INTERNAL_AUDIT_ONLY',
+            'iscc_nbs_public_placement' => 'NOT_PUBLIC',
+            'iscc_nbs_search_alias' => false,
             'tone_system_sha256' => '848d3731524b6ab4658a4a340c0cd3cf5677465ed3368572c237f6e220d6fa06',
-            'name_search_index_sha256' => '562a133e965766dc199d753391c9ec2db7bf091793b5358e6604ab22bc96e9db',
+            'name_search_index_sha256' => 'f9678f97f26e63717764307df4c0ba6c1da7fd5fa40288bb0411825e2750dc7f',
+            'naming_layer_version' => '0.3.0',
+            'naming_layer_sha256' => '5fd0e038b2ede03355975d9f45128bf6153b0163c88c6a8d6752a3c13c45f8e6',
+            'naming_rules_sha256' => '54fd4f55982fd04506453ea6324d4c078c768e1d9098cfae43dee99373138f6a',
+            'name_decisions_sha256' => '466bd7f23a12e9e9e8a3d035902e03e1090ad49105ac882fc96aa2aaab56b4d8',
+            'descriptor_sha256' => '40c3b758f356a33ccb5ee38d6505316f482af7dd8cd7c34c8818340798209ccd',
+            'changed_colour_names' => 6273,
+            'unchanged_colour_names' => 7010,
+            'semantic_review_status' => 'COMPLETE_EDITORIAL_NAMING_REVIEW',
+            'publication_scope' => 'STORED_MASTER_SRGB_UNDER_ATLAS_0_3_0_RULES',
+            'new_names_publication_allowed' => true,
+            'deployment_allowed' => true,
+            'acms_spot_candidates' => 'SOLID_C_U_MODEL_ONLY_NOT_MEASURED',
+            'acms_spot_rows' => 3653,
+            'acms_preview_model' => 'K_S_OPAQUE_LIMIT_CIE1931_2DEG_D50_BRADFORD_SRGB',
+            'acms_source_sha256' => '3e824af59f5ddaa2555ac2959c14b927599c3fe02ef86190ffa0a3657bf53fb6',
             'basis23_recipes' => 'COMPUTATIONAL_ONLY_NOT_MEASURED',
             'pixel_loupe' => 'ADAPTIVE_PIXEL_GRID_WITH_MARKED_SAMPLE_AREA',
             'picker_handoff' => 'PICKER_TO_HOVER_TO_WHEEL_WITH_RETURN',
@@ -586,7 +610,7 @@ final class ATLAS_Clarus_Browser_Edition {
             }
         }
 
-        return new WP_Error( 'atlas_runtime_missing', 'Das geprüfte RC24-ZIP enthält keinen erkennbaren Browser-Runtime-Ordner mit index.html.' );
+        return new WP_Error( 'atlas_runtime_missing', 'Das geprüfte RC25-ZIP enthält keinen erkennbaren Browser-Runtime-Ordner mit index.html.' );
     }
 
     private static function remove_tree( $path, $allowed_base ) {
@@ -724,7 +748,7 @@ final class ATLAS_Clarus_Browser_Edition {
             $html = self::inject_canvas_exit_button( $html );
             header( 'Cache-Control: no-cache, must-revalidate' );
             header( 'Content-Length: ' . (string) strlen( $html ) );
-            echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted local RC24 HTML plus escaped plugin markup.
+            echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted local RC25 HTML plus escaped plugin markup.
             exit;
         }
 

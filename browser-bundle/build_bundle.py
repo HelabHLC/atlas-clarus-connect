@@ -11,7 +11,7 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output-dir', type=Path, default=HERE/'build', help='Development output directory (keeps the checked-in RC20 distribution intact).')
 OUTPUT=parser.parse_args().output_dir.resolve()
 DIST=OUTPUT/'atlas-clarus-browser-bundle'
-VERSION='0.2.0-rc24-offline-chsos-mixer'
+VERSION='0.2.0-rc26-names-v0-3-0-chsos-pilot-acms-spot-ba'
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 ZIP_TIMESTAMP=(2026, 1, 1, 0, 0, 0)
@@ -25,7 +25,7 @@ def sha(path:Path)->str:
 if DIST.exists(): shutil.rmtree(DIST)
 (DIST/'assets').mkdir(parents=True)
 (DIST/'docs').mkdir()
-for name in ('index.html','app.css','designer-layer.js','basis23-recipes.js','atlas-offline-mixer.js','palette-export.js','image-sampling.js','pkl-image-binding.js','print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js','profiled-reference-card.js','app.js','trycolors-recipe.js'):
+for name in ('index.html','app.css','designer-layer.js','basis23-recipes.js','acms-recipes.js','atlas-offline-mixer.js','palette-export.js','image-sampling.js','pkl-image-binding.js','print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js','profiled-reference-card.js','app.js'):
     target=DIST/('assets/'+name if name!='index.html' else name)
     shutil.copy2(HERE/'src'/name,target)
 
@@ -38,8 +38,8 @@ source['views']=view_source['views']
 payload='window.ATLAS_CLARUS_DATA='+json.dumps(source,separators=(',',':'),ensure_ascii=False)+';\n'
 (DIST/'assets/atlas-data.js').write_text(payload,encoding='utf-8')
 
-designer=json.loads((ROOT/'designer-layer/ATLAS_Clarus_Designer_Layer_Master_v0_1.json').read_text(encoding='utf-8'))
-assert designer['schema']=='ATLAS_CLARUS_DESIGNER_LAYER'
+designer=json.loads(gzip.decompress((ROOT/'designer-layer/ATLAS_Clarus_Designer_Layer_Master_v0_3.json.gz').read_bytes()))
+assert designer['schema']=='ATLAS_CLARUS_DESIGNER_LAYER' and designer['schema_version']=='0.3.0' and designer['new_names_publication_allowed'] is True
 assert designer['source_master']['sha256']==MASTER and designer['source_master']['expected_records']==13283
 seen=set()
 for row in designer['records']:
@@ -49,12 +49,17 @@ for row in designer['records']:
     seen.add(row_id)
 designer_payload='window.ATLAS_CLARUS_DESIGNER_DATA='+json.dumps(designer,separators=(',',':'),ensure_ascii=False)+';\n'
 (DIST/'assets/designer-layer-data.js').write_text(designer_payload,encoding='utf-8')
-name_search=json.loads(gzip.decompress((ROOT/'name-search/atlas-name-search-index-v1.json.gz').read_bytes()))
+name_index=ROOT/'name-search/atlas-name-search-index-v030.json.gz'
+name_search=json.loads(gzip.decompress(name_index.read_bytes()))
 assert name_search['schema']=='ATLAS_CLARUS_NAME_SEARCH_INDEX'
 assert name_search['master_sha256']==MASTER and name_search['entry_count']==13283
 assert all(source['colors'][row['i']]['ref']==row['r'] for row in name_search['records'])
-name_search_payload='window.ATLAS_CLARUS_NAME_SEARCH_DATA='+json.dumps(name_search,separators=(',',':'),ensure_ascii=False)+';\n'
+name_keys=('schema','schema_version','master_sha256','entry_count','identity_key','public_search_scope','naming_layer_version','naming_layer_sha256','naming_rules_sha256','publication_scope','records')
+record_keys=('i','r','d','f','tone','t')
+name_search_ordered={key:([{k:row[k] for k in record_keys if k in row} for row in name_search['records']] if key=='records' else name_search[key]) for key in name_keys}
+name_search_payload='window.ATLAS_CLARUS_NAME_SEARCH_DATA='+json.dumps(name_search_ordered,separators=(',',':'),ensure_ascii=False)+';\n'
 (DIST/'assets/name-search-index.js').write_text(name_search_payload,encoding='utf-8')
+shutil.copyfile(name_index,DIST/'assets/name-search-index-v030.json.gz')
 
 registry=json.loads((ROOT/'hover-library/data/basis23-source-registry.json').read_text(encoding='utf-8'))
 recipes=[]
@@ -73,6 +78,12 @@ for expected_id,(recipe,display_row) in enumerate(zip(recipes,mix_display['displ
     recipe['mix_display']=display_row['mix_display']
 basis_payload='window.ATLAS_BASIS23_DATA='+json.dumps({'registry':registry,'rows':recipes},separators=(',',':'),ensure_ascii=False)+';\n'
 (DIST/'assets/basis23-data.js').write_text(basis_payload,encoding='utf-8')
+acms=json.loads((ROOT/'hover-library/data/acms-solid-recipe-candidates.json').read_text(encoding='utf-8'))
+assert acms['registry']['master_sha256']==MASTER and acms['registry']['schema']=='ACMS_SPOT_CANDIDATES_RESEARCH_V1'
+assert len(acms['rows'])==3653 and all(source['colors'][row['atlas_row_id']]['ref']==row['reference'] for row in acms['rows'])
+acms_payload='window.ATLAS_ACMS_DATA='+json.dumps(acms,separators=(',',':'),ensure_ascii=False)+';\n'
+(DIST/'assets/acms-data.js').write_text(acms_payload,encoding='utf-8')
+
 
 # Keep the normal asset files for inspection, but also produce one truly
 # self-contained entrypoint. This survives Windows opening only index.html from
@@ -83,6 +94,7 @@ app=(DIST/'assets/app.js').read_text(encoding='utf-8')
 designer_app=(DIST/'assets/designer-layer.js').read_text(encoding='utf-8')
 offline_mixer_app=(DIST/'assets/atlas-offline-mixer.js').read_text(encoding='utf-8')
 recipe_app=(DIST/'assets/basis23-recipes.js').read_text(encoding='utf-8')
+acms_app=(DIST/'assets/acms-recipes.js').read_text(encoding='utf-8')
 palette_export=(DIST/'assets/palette-export.js').read_text(encoding='utf-8')
 image_sampling=(DIST/'assets/image-sampling.js').read_text(encoding='utf-8')
 pkl_image_binding=(DIST/'assets/pkl-image-binding.js').read_text(encoding='utf-8')
@@ -93,6 +105,8 @@ html=html.replace('<script src="assets/name-search-index.js"></script>','<script
 html=html.replace('<script src="assets/designer-layer.js"></script>','<script>'+designer_app.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/basis23-data.js"></script>','<script>'+basis_payload.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/basis23-recipes.js"></script>','<script>'+recipe_app.replace('</script','<\\/script')+'</script>')
+html=html.replace('<script src="assets/acms-data.js"></script>','<script>'+acms_payload.replace('</script','<\\/script')+'</script>')
+html=html.replace('<script src="assets/acms-recipes.js"></script>','<script>'+acms_app.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/atlas-offline-mixer.js"></script>','<script>'+offline_mixer_app.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/palette-export.js"></script>','<script>'+palette_export.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/image-sampling.js"></script>','<script>'+image_sampling.replace('</script','<\\/script')+'</script>')
@@ -104,8 +118,6 @@ for module in ('print-handoff.js','print-preview-ui.js','reference-card.js','pro
     script=(DIST/'assets'/module).read_text(encoding='utf-8')
     html=html.replace(f'<script src="assets/{module}"></script>','<script>'+script.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/app.js"></script>','<script>'+app.replace('</script','<\\/script')+'</script>')
-trycolors_app=(DIST/'assets/trycolors-recipe.js').read_text(encoding='utf-8')
-html=html.replace('<script src="assets/trycolors-recipe.js"></script>','<script>'+trycolors_app.replace('</script','<\\/script')+'</script>')
 html=html.replace('v0.2.0-rc1','v'+VERSION)
 (DIST/'index.html').write_text(html,encoding='utf-8')
 
@@ -114,9 +126,14 @@ docs={
 'LICENSING.html':('<h1>Licensing and attribution</h1><p>Original software: <strong>GPL-2.0-or-later</strong>. Original ATLAS Clarus documentation: <strong>CC BY 4.0</strong>. HLC-derived reference data: <strong>zlib licence</strong>, subject to upstream notices.</p><h2>Upstream reference-data credit</h2><p><strong>Copyright (c) freieFarbe e.V.</strong></p><p>The reference files have been converted, indexed, reorganised or enriched for ATLAS Clarus. They are modified data products and are not presented as unchanged original freieFarbe distributions.</p><h2>Local ICC engine</h2><p>lcms-wasm 1.0.5 / LittleCMS 2.16, MIT. See LCMS-WASM-LICENSE.txt and LCMS-LICENSE.txt in this folder. <a href="https://github.com/mattdesl/lcms-wasm">Upstream project</a>.</p><h2>ATLAS Clarus</h2><p>Copyright © 2026 ATLAS Clarus contributors.</p><p>The repository files <code>LICENSING.md</code>, <code>LICENSES/</code> and <code>THIRD_PARTY_NOTICES.md</code> are the authoritative licence map. ATLAS Clarus Connect is not affiliated with, endorsed by or certified by Pantone. No Pantone identity or equivalence is asserted.</p><p><a href="../index.html#credits">Return to credits</a></p>'),
 'VALIDATION.html':(f'<h1>Validation record</h1><p>Status: <strong>READY_PENDING_VISUAL_AUDIT</strong></p><ul><li>Reference count: 13,283</li><li>Master SHA-256: <code>{MASTER}</code></li><li>Row IDs: zero-based and unique</li><li>Reproducible build and offline dependency scan: automated in GitHub Actions</li><li>A′ v0.4 selection logic: unchanged by this presentation bundle</li></ul><p><a href="../index.html">Return to ATLAS Clarus</a></p>')}
 style='<style>body{max-width:850px;margin:60px auto;padding:20px;background:#0a0d12;color:#eef2f6;font:17px/1.7 system-ui}a{color:#65dfff}code{color:#a4ff73}</style>'
+docs['VALIDATION.html']='<h1>ATLAS naming 0.3.0</h1><p>All 13,283 names follow the completed editorial review of stored master sRGB. 6,273 names changed; 7,010 names retained. PKL identities and colour values remain unchanged.</p><p>Master SHA-256: <code>'+MASTER+'</code></p><p>Names are ATLAS conventions. Physical print approval remains a separate measured process.</p><p><a href="../index.html">Return to ATLAS Clarus</a></p>'
 for name,body in docs.items():(DIST/'docs'/name).write_text('<!doctype html><meta charset="utf-8">'+style+body,encoding='utf-8')
 
-manifest={'bundle':'ATLAS Clarus Browser Bundle','version':VERSION,'status':'PROFILE_BOUND_DEVICECMYK_AND_DEVICEN_PDF_CANDIDATE','workflow':'ATLAS Clarus v3.4.0','master_sha256':MASTER,'master_rows':13283,'row_id_base':0,'tone_system_version':'0.1','visible_name_source':'ATLAS_CLARUS_TONE_SYSTEM','iscc_nbs_role':'METADATA_ONLY','tone_system_sha256':sha(ROOT/'designer-layer/ATLAS_Clarus_Tone_System_v0_1.json'),'name_search_index_sha256':sha(ROOT/'name-search/atlas-name-search-index-v1.json.gz'),'offline_entrypoint':'index.html','entrypoint_packaging':'SELF_CONTAINED_SINGLE_FILE','reproducible_zip':True,'observed_library_views':17,'image_picker':'ORIGINAL_8BIT_SRGB_PIXEL_OR_AREA_MEAN','sampling_modes':['PIXEL_RGB','AREA_MEAN_RGB_5_X_5','AREA_MEAN_RGB_11_X_11','AREA_MEAN_RGB_21_X_21'],'area_alpha_threshold':128,'area_edge_policy':'CLIP_TO_IMAGE_BOUNDS','area_variation':'PER_CHANNEL_POPULATION_STANDARD_DEVIATION_DIAGNOSTIC_ONLY','pixel_loupe':'ADAPTIVE_PIXEL_GRID_WITH_MARKED_SAMPLE_AREA','picker_binding':'RGB_SQUARED_DISTANCE_FULL_MASTER','picker_handoff':'PICKER_TO_HOVER_TO_WHEEL_WITH_RETURN','shared_palette_workspace':'HOVER_AND_WHEEL','palette_persistence':'MULTI_PALETTE_LOCAL_BROWSER_ONLY','palette_storage_failure':'VISIBLE_PERSISTENT_WARNING','palette_import_validation':'STRICT_TYPED_FULL_FILE_BEFORE_MUTATION','primary_user_path':'PICKER_HOVER_PALETTE_CLARUS_JSON','max_palettes':50,'max_palette_colours':64,'palette_management':['CREATE','NAME','SELECT','DUPLICATE','DELETE','REORDER','STRICT_CLARUS_JSON_IMPORT'],'palette_exports':['ASE','GPL','FIGMA_TOKENS_JSON','CSS','CLARUS_JSON'],'basis23_recipes':'COMPUTATIONAL_ONLY_NOT_MEASURED','faq_tab':True,'visible_credit_tab':True,'licensing_summary_self_contained':True,'mobile_navigation':'HAMBURGER_ACCESSIBLE','upstream_reference_credit':'Copyright (c) freieFarbe e.V.','app_connections_format':'CAN_VERIFIED_NEEDED','a_prime_v04_logic':'UNCHANGED','measured_qc_status':'NOT_MEASURED','production_approval':'NOT_SUPPORTED','reference_card_handoff_version':'0.1.0','reference_card_output_status':'PRINTED_NOT_MEASURED','reference_card_identity_change':'NONE','print_handoff_version':'0.1.0','print_topology':'PARALLEL_FROM_SAME_FROZEN_REFERENCE','print_paths':['4C','ECG'],'print_profile_transport':'EMBEDDED_ICC_WITH_SHA256','print_device_calculation':'SINGLE_REFERENCE_DEVICE16_WITH_PROFILE_BOUND_DEVICECMYK_AND_DEVICEN_PDF','print_exports':['PARALLEL_PRINT_JSON','READABLE_HTML_REPORT','PROFILED_REFERENCE_JSON','DEVICECMYK_REFERENCE_PDF','DEVICEN_CMYKOGV_REFERENCE_PDF'],'print_state_persistence':'IN_MEMORY_WITH_VERIFIED_JSON_IMPORT','image_preview':'PKL_FULL_REFERENCE_THEN_INDEPENDENT_4C_ECG_ICC_PREVIEWS','image_preview_identity_binding':'RGB_ONLY_NEAREST_MASTER_WITH_ATLAS_ROW_ID_TIEBREAK','image_preview_foreign_colors_required':0,'image_preview_engine':'LittleCMS 2.16 / lcms-wasm 1.0.5','image_preview_max_edge':1200,'image_preview_paper_white_simulation':False,'image_preview_exports':['BA_PNG','PREVIEW_METADATA_JSON'],'trycolors_recipe_candidate':'OPTIONAL_ONLINE_ADMIN_ONLY_SIMULATED_NOT_PHYSICALLY_VERIFIED'}
+manifest=json.loads((HERE/'manifest-rc26.json').read_text(encoding='utf-8'))
+assert manifest['version']==VERSION and manifest['master_sha256']==MASTER
+assert manifest['name_search_index_sha256']==sha(name_index)
+assert manifest['descriptor_sha256']==sha(DIST/'assets/designer-layer-data.js')
+assert manifest['acms_source_sha256']==sha(ROOT/'hover-library/data/acms-solid-recipe-candidates.json')
 (DIST/'BUNDLE_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
 for source_name,target_name in [('LICENSE.md','LCMS-WASM-LICENSE.txt'),('LCMS-LICENSE.txt','LCMS-LICENSE.txt'),('PROVENANCE.json','LCMS-PROVENANCE.json')]:
     shutil.copyfile(HERE/'vendor/lcms-wasm'/source_name,DIST/'docs'/target_name)

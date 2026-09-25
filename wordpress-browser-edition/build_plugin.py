@@ -1,4 +1,4 @@
-"""Build the installable WordPress candidate from the pinned RC24 bundle."""
+"""Build the installable WordPress candidate from the pinned RC26 bundle."""
 from pathlib import Path
 import argparse
 import hashlib
@@ -13,10 +13,9 @@ from verify_package import verify
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent
-NAME = "ATLAS_Clarus_Browser_Edition_v0.1.14-beta1_RC24.zip"
-BUNDLE = "ATLAS_Clarus_Browser_Bundle_v0.2.0-rc24-offline-chsos-mixer.zip"
-FILES = ("atlas-clarus-browser-edition.php", "index.php", "readme.txt",
-         "IONOS_RC24_ABNAHME.md", "verify_package.py")
+NAME = "ATLAS_Clarus_Browser_Edition_v0.1.15-beta6_RC26.zip"
+BUNDLE = "ATLAS_Clarus_Browser_Bundle_v0.2.0-rc26-names-v0-3-0-chsos-pilot-acms-spot-ba.zip"
+FILES = ("atlas-clarus-browser-edition.php", "index.php", "readme.txt")
 
 
 def build(bundle, output):
@@ -28,15 +27,14 @@ def build(bundle, output):
             shutil.copyfile(ROOT / name, stage / name)
         shutil.copyfile(bundle, stage / "assets/bundle.zip")
         report = verify(stage)
-        (stage / "PACKAGE_VALIDATION.json").write_text(
-            json.dumps(report, indent=2) + "\n", encoding="utf-8")
         target = output / NAME
         # Fixed metadata and ordering make the installable ZIP reproducible.
         with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
             for file in sorted(stage.rglob("*")):
                 if not file.is_file():
                     continue
-                info = zipfile.ZipInfo(file.relative_to(Path(tmp)).as_posix(), (2026, 1, 1, 0, 0, 0))
+                stamp = (2026, 9, 25, 5, 6, 14) if file.name == 'bundle.zip' else (2026, 9, 25, 5, 9, 10)
+                info = zipfile.ZipInfo(file.relative_to(Path(tmp)).as_posix(), stamp)
                 info.create_system = 3
                 info.external_attr = 0o100644 << 16
                 info.compress_type = zipfile.ZIP_DEFLATED
@@ -56,7 +54,7 @@ if __name__ == "__main__":
     if args.bundle:
         build(args.bundle.resolve(), args.output_dir.resolve())
     else:
-        with tempfile.TemporaryDirectory(prefix="atlas-rc24-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="atlas-rc26-") as tmp:
             subprocess.run([sys.executable, str(REPO / "browser-bundle/build_bundle.py"),
                             "--output-dir", tmp], check=True)
             build(Path(tmp) / BUNDLE, args.output_dir.resolve())

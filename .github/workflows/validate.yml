@@ -166,27 +166,27 @@ jobs:
           php -l wordpress-browser-edition/tests/validate_plugin.php
       - name: Build installable IONOS plugin
         run: python wordpress-browser-edition/build_plugin.py
-      - name: Verify documented RC24 package identity
+      - name: Verify documented RC26 package identity
         run: |
-          package=wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.14-beta1_RC24.zip
+          package=wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.15-beta6_RC26.zip
           actual_size="$(wc -c < "$package")"
           actual_sha="$(sha256sum "$package" | cut -d " " -f 1)"
           echo "Package identity: size=${actual_size} sha256=${actual_sha}"
-          test "$actual_size" -eq 4190110
-          echo "b4becd905343408983df69a252c858b545503e8e6d7d99f5e66422ded73240cb  $package" | sha256sum -c -
+          test "$actual_size" -eq 3815838
+          echo "882a6319fe9bc7abce5b95887b3412831a5656aeb985c5c222f0d1d9597cb5c3  $package" | sha256sum -c -
       - name: Reproduce installable package
         run: |
           python wordpress-browser-edition/build_plugin.py --output-dir "$RUNNER_TEMP/atlas-plugin-repeat"
-          cmp wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.14-beta1_RC24.zip "$RUNNER_TEMP/atlas-plugin-repeat/ATLAS_Clarus_Browser_Edition_v0.1.14-beta1_RC24.zip"
+          cmp wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.15-beta6_RC26.zip "$RUNNER_TEMP/atlas-plugin-repeat/ATLAS_Clarus_Browser_Edition_v0.1.15-beta6_RC26.zip"
       - name: Execute plugin install and rollback tests
         run: |
-          unzip -q wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.14-beta1_RC24.zip -d "$RUNNER_TEMP/atlas-plugin-test"
+          unzip -q wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.15-beta6_RC26.zip -d "$RUNNER_TEMP/atlas-plugin-test"
           php wordpress-browser-edition/tests/validate_plugin.php "$RUNNER_TEMP/atlas-plugin-test/atlas-clarus-browser-edition"
       - name: Upload installable IONOS candidate
         if: matrix.php == '8.3'
         uses: actions/upload-artifact@v7
         with:
-          name: atlas-clarus-ionos-rc24-plugin
+          name: atlas-clarus-ionos-rc26-plugin
           path: wordpress-browser-edition/build/*
           retention-days: 14
 
