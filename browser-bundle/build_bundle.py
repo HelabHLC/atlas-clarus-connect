@@ -11,7 +11,7 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output-dir', type=Path, default=HERE/'build', help='Development output directory (keeps the checked-in RC20 distribution intact).')
 OUTPUT=parser.parse_args().output_dir.resolve()
 DIST=OUTPUT/'atlas-clarus-browser-bundle'
-VERSION='0.2.0-rc26-names-v0-3-0-chsos-pilot-acms-spot-ba'
+VERSION='0.2.0-rc27-recipe-notice'
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 ZIP_TIMESTAMP=(2026, 1, 1, 0, 0, 0)
@@ -129,7 +129,7 @@ style='<style>body{max-width:850px;margin:60px auto;padding:20px;background:#0a0
 docs['VALIDATION.html']='<h1>ATLAS naming 0.3.0</h1><p>All 13,283 names follow the completed editorial review of stored master sRGB. 6,273 names changed; 7,010 names retained. PKL identities and colour values remain unchanged.</p><p>Master SHA-256: <code>'+MASTER+'</code></p><p>Names are ATLAS conventions. Physical print approval remains a separate measured process.</p><p><a href="../index.html">Return to ATLAS Clarus</a></p>'
 for name,body in docs.items():(DIST/'docs'/name).write_text('<!doctype html><meta charset="utf-8">'+style+body,encoding='utf-8')
 
-manifest=json.loads((HERE/'manifest-rc26.json').read_text(encoding='utf-8'))
+manifest=json.loads((HERE/'manifest-rc27.json').read_text(encoding='utf-8'))
 assert manifest['version']==VERSION and manifest['master_sha256']==MASTER
 assert manifest['name_search_index_sha256']==sha(name_index)
 assert manifest['descriptor_sha256']==sha(DIST/'assets/designer-layer-data.js')

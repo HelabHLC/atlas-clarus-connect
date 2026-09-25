@@ -63,7 +63,7 @@ def verify(root):
         "embedded_checksums_verified": len(checked), "strict_scalar_manifest_fields": len(expected),
         "sampling_and_parallel_print_arrays": "PASS", "source_manifest_alignment": "PASS",
         "source_base_commit": "13715d6f9fc28cb84ae1bf6b131eec2e5a2a1570",
-        "source_candidate": "RC26 ACMS C/U model candidates",
+        "source_candidate": "RC27 KIMERA recipe notice",
         "source_review": "https://github.com/HelabHLC/atlas-clarus-connect/pull/50",
         "wrapper_php_execution": "SEPARATE_CI_JOB_WORDPRESS_BROWSER_EDITION",
         "wordpress_ionos_integration": "ACCEPTANCE_PENDING",

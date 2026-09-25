@@ -2,7 +2,7 @@
 
 This directory builds a standalone offline HTML edition of ATLAS Clarus Connect.
 
-Current source build: **v0.2.0-rc26-names-v0-3-0-chsos-pilot-acms-spot-ba**. This rebuilds the IONOS runtime byte for byte. The Names v0.3.0 data, UI4 mixer and ACMS C/U A/B candidates are source inputs. Physical mixing is not measured.
+Current source build: **v0.2.0-rc27-recipe-notice**. This rebuilds the IONOS runtime byte for byte. The Names v0.3.0 data, UI4 mixer and ACMS C/U A/B candidates are source inputs. Physical mixing is not measured.
 
 Adds offline preparation of **parallel 4C and ECG paths** from the same frozen
 references. Each path carries its own ICC file and print settings. The complete

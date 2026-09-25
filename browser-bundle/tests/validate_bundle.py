@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 BUNDLE=ROOT/'browser-bundle'
-VERSION='0.2.0-rc26-names-v0-3-0-chsos-pilot-acms-spot-ba'
+VERSION='0.2.0-rc27-recipe-notice'
 temp_output=tempfile.TemporaryDirectory(prefix='atlas-print-bundle-')
 OUTPUT=Path(temp_output.name)
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
@@ -48,7 +48,7 @@ first=digest(ZIP)
 subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPUT)],check=True)
 second=digest(ZIP)
 assert first==second, f'non-reproducible ZIP: {first} != {second}'
-assert first=='b5d65c2a0bb39ccb0af59709ca8a1bac1ed2765b381e0714cb6ed6ce51112615', 'built bundle differs from deployed IONOS release'
+assert first=='3142adf2088734d34c98a3b0f337aab35a728d769e4b15bae420431178a140c7', 'built bundle differs from deployed IONOS release'
 
 with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert archive.testzip() is None
