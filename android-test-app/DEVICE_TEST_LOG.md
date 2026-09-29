@@ -19,6 +19,8 @@ stabilization phase; no Play Store release or production signing is implied.
 | 0.4.0-beta.1 signed beta | Installed on the phone; with airplane mode enabled, Connect opened on its home screen, then Colour ID opened with 14 tabs. A loaded image remained visible after switching language. | User reported “installiert”, “Startseite öffnet offline”, “14 Tabs”, and “Bild bleibt” on 2026-09-29. A Traceability JSON was also saved with airplane mode enabled (“gespeichert”); the file content and chain were not inspected. Returning from Colour ID to Connect kept the start screen visible (“Startseite bleibt”). Android offered and installed the in-place update to 0.4.0-beta.2; post-update launch succeeded in airplane mode, while retention of private app data remains untested. |
 | Colour ID TRACE view | A trace ID was displayed. | User supplied `Trace-20260929-082746-7FE50349`; its exported JSON and chain were not independently checked. A later HTML trace `TRACE-20260929-083827-DEFED737` was a different START_REFERENCE selection. |
 
+| 0.4.0-beta.2 local-data baseline | In Bundle → My Palettes, the user created “Update-Test” and added one colour; the selector displayed “Update-Test 1”. | User reported “Update-Test 0”, then answered “ja” when asked to verify “Update-Test 1” on 2026-09-29. Confirm the exact palette and colour count after installing beta 3; no backup/import was used for this check. |
+
 ## Verified outside the device
 
 | Target | Check | Result |
