@@ -25,8 +25,8 @@ stabilization phase; no Play Store release or production signing is implied.
 
 ## Open before a wider Android test
 
-- Install and check the 0.3.2-test Nachweis APK on a phone. Its provenance fix
-  has not yet been confirmed on the device.
+- Install and check the 0.3.3-test Navigationstest APK on a phone. Its provenance fix and native navigation guard
+  have not yet been confirmed on the device.
 - Check direct launch to Bundle home, Bundle↔Colour ID navigation, all 14 tabs,
   file import, each needed export, rotation and a narrow phone layout on this
   exact APK. Do not infer these from older test builds.
@@ -43,9 +43,10 @@ stabilization phase; no Play Store release or production signing is implied.
 
 ## Test artifact identifiers
 
-- Current Android test label: `ATLAS Clarus Connect Nachweis`.
-- Version: `0.3.2-test`; application ID:
-  `com.atlasclarus.browseredition.test.bilingual.provenancefix`.
+- Current Android test label: `ATLAS Clarus Connect Navigationstest`.
+- Version: `0.3.3-test`; application ID:
+  `com.atlasclarus.browseredition.test.bilingual.navguard`.
+- Prior 0.3.2-test Nachweis ID: `com.atlasclarus.browseredition.test.bilingual.provenancefix`.
 - Reproducible Browser Bundle RC27 ZIP SHA-256:
   `3142adf2088734d34c98a3b0f337aab35a728d769e4b15bae420431178a140c7`.
 - Shared Atlas master SHA-256:
