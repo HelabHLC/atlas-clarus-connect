@@ -7,11 +7,11 @@ android {
     compileSdk 36
 
     defaultConfig {
-        applicationId 'com.atlasclarus.browseredition.test'
+        applicationId 'com.atlasclarus.browseredition.test.exportfix'
         minSdk 26
         targetSdk 36
         versionCode 1
-        versionName '0.1.0-test'
+        versionName '0.1.1-test'
     }
 
     buildTypes {

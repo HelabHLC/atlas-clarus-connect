@@ -16,6 +16,13 @@ The separate 14-tab Colour Picker v5.3.3 is not copied into this first build.
 The Bundle's Image Picker is the entry point; the detailed Colour ID workbench
 can be integrated later without changing the reference identity.
 
+The second test APK fixes Android WebView's `blob:` export failure by reading
+the original generated Blob directly. It has a separate test application ID and
+appears as **ATLAS Clarus Test 2** alongside the initial prototype because CI
+debug builds use different signing keys. Existing palettes remain in the first
+app's private storage; export them there is affected by this bug, so add them
+again in Test 2 if needed.
+
 ## Source and build
 
 The asset preparation script rebuilds the bundle from repository source and
