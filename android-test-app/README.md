@@ -2,8 +2,8 @@
 
 This is an **offline, unsigned-for-release debug prototype**, not a Play Store
 submission. It packages the reproducible Browser Bundle RC27 and the standalone
-Colour ID v5.3.3 with its 14 analysis tabs as local Android assets. Colour ID
-opens first; the native top bar switches to the Bundle start page at `#home`.
+Colour ID v5.3.3 with its 14 analysis tabs as local Android assets. The Bundle
+start page opens first at `#home`; the native top bar switches to Colour ID.
 Picker → Hover → Wheel and all other bundle views retain the unchanged bundle
 code and reference data.
 
@@ -58,10 +58,10 @@ control. This build is not signed with a release key.
 
 ## Test checklist
 
-1. Launch offline; Colour ID and all 14 tabs should be available.
-2. Import a local PNG and sample a pixel. Check the HLC and `atlas_row_id`.
-3. Switch to Bundle · Startseite; confirm its home view opens. Select Image
-   Picker from the Bundle navigation, sample an image, then open Hover and Wheel.
+1. Launch offline; the Bundle start page should appear, not either picker.
+2. Select Image Picker from the Bundle navigation and sample a local PNG.
+3. Switch to Colour ID · 14 Tabs; check the tabs, import a PNG, and compare the
+   HLC and `atlas_row_id` to the shared Bundle reference.
 4. Export from both interfaces and save through Android's document picker.
 5. Rotate the device and repeat on a narrow phone screen.
 

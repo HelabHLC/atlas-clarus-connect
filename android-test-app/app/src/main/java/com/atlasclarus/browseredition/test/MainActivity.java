@@ -123,7 +123,7 @@ public final class MainActivity extends Activity {
                 }
             }
         });
-        webView.loadUrl(COLOUR_ID);
+        webView.loadUrl(BUNDLE);
     }
 
     private static WebResourceResponse missing() {
