@@ -70,5 +70,5 @@ jobs:
           apk=android-test-app/app/build/outputs/apk/release/app-release.apk
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify "$apk"
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
-            grep -E "^package: name='com.atlasclarus.connect' versionCode='2' versionName='0.4.0-beta.2'"
+            grep -E "^package: name='com.atlasclarus.connect' versionCode='3' versionName='0.4.0-beta.3'"
           rm -f "$ATLAS_CONNECT_KEYSTORE_PATH" "$apk"
