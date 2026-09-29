@@ -14,6 +14,7 @@ stabilization phase; no Play Store release or production signing is implied.
 | 0.3.1-test Bildfix | A tap on the loaded image still displayed a reference after switching language. | User answered “ja” to the specific question. The selected row and source image hash were not supplied from that build. |
 | 0.3.1-test Bildfix | Traceability JSON could be saved through Android. | User reported “gespeichert”. This does not verify Trace JSON import, HTML export, ASE, GPL, PDF, or other formats. |
 | 0.3.3-test Navigationstest | After loading an image in Colour ID, tapping the native Colour ID button again kept the image visible. | User reported “Bild bleibt” on 2026-09-29. This confirms the repeated-button navigation guard on the phone; it does not verify image provenance in an exported trace. |
+| 0.3.3-test Navigationstest | With airplane mode enabled, the app started and Colour ID opened. | User reported “öffnet offline” on 2026-09-29. This verifies the launch path; other offline workflows were not retested on this build. |
 | Colour ID TRACE view | A trace ID was displayed. | User supplied `Trace-20260929-082746-7FE50349`; its exported JSON and chain were not independently checked. A later HTML trace `TRACE-20260929-083827-DEFED737` was a different START_REFERENCE selection. |
 
 ## Verified outside the device
