@@ -1,9 +1,11 @@
 /* Offline presentation layer. The pinned workbench and evidence data are unchanged. */
 (function () {
   'use strict';
-  const language = __ATLAS_LANGUAGE__;
+  let language = __ATLAS_LANGUAGE__;
   const translations = __ATLAS_TRANSLATIONS__;
   const entries = Object.entries(translations).sort((a, b) => b[0].length - a[0].length);
+  const translatedText = new WeakMap();
+  const translatedAttributes = new WeakMap();
   const normalize = value => value.trim().replace(/\s+/g, ' ');
   function translate(value) {
     if (language !== 'en' || !value) return value;
@@ -18,14 +20,18 @@
     return result;
   }
   function translateTree(root) {
-    if (language !== 'en' || !root || root.closest?.('#atlas-language-bar')) return;
+    if (!root || root.closest?.('#atlas-language-bar')) return;
     if (root.nodeType === Node.TEXT_NODE) {
       const parent = root.parentElement;
       const reportText = parent?.closest('#reportPreview');
       const reportLabel = ['H1', 'H2', 'H3', 'TH', 'B', 'STRONG'].includes(parent?.tagName);
       if (!['SCRIPT', 'STYLE', 'CODE'].includes(parent?.tagName) &&
           (!reportText || reportLabel)) {
-        const result = translate(root.nodeValue);
+        const prior = translatedText.get(root);
+        const original = prior && root.nodeValue === prior.translated ? prior.original : root.nodeValue;
+        const result = translate(original);
+        if (language === 'en' && result !== original) translatedText.set(root, {original, translated: result});
+        else translatedText.delete(root);
         if (result !== root.nodeValue) root.nodeValue = result;
       }
       return;
@@ -34,8 +40,14 @@
     if (['SCRIPT', 'STYLE', 'CODE'].includes(root.tagName)) return;
     for (const name of ['placeholder', 'title', 'aria-label', 'alt']) {
       if (root.hasAttribute(name)) {
-        const original = root.getAttribute(name), result = translate(original);
-        if (original !== result) root.setAttribute(name, result);
+        const records = translatedAttributes.get(root) || {};
+        const value = root.getAttribute(name), prior = records[name];
+        const original = prior && value === prior.translated ? prior.original : value;
+        const result = translate(original);
+        if (language === 'en' && result !== original) records[name] = {original, translated: result};
+        else delete records[name];
+        translatedAttributes.set(root, records);
+        if (value !== result) root.setAttribute(name, result);
       }
     }
     for (const child of root.childNodes) translateTree(child);
@@ -53,12 +65,15 @@
     button.setAttribute('aria-current', String(selected === language));
     button.addEventListener('click', () => {
       if (selected === language) return;
+      language = selected;
       localStorage.setItem('atlasColourIdLanguage', selected);
-      location.href = selected === 'en' ? 'colour-id-en.html' : 'colour-id.html';
+      document.documentElement.lang = selected;
+      bar.querySelectorAll('button').forEach(item =>
+        item.setAttribute('aria-current', String(item.dataset.lang === selected)));
+      translateTree(document.body);
     });
   });
   document.documentElement.lang = language;
-  if (language !== 'en') return;
   const originalAlert = window.alert.bind(window), originalConfirm = window.confirm.bind(window);
   window.alert = message => originalAlert(translate(String(message)));
   window.confirm = message => originalConfirm(translate(String(message)));
