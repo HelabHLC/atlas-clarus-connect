@@ -31,7 +31,10 @@ jobs:
           test -n "$KEY_ALIAS"
           test -n "$KEY_PASSWORD"
           umask 077
-          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/atlas-connect-beta.jks"
+          if ! printf '%s' "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > "$RUNNER_TEMP/atlas-connect-beta.jks"; then
+            echo 'ATLAS_CONNECT_KEYSTORE_BASE64 is not valid Base64. Paste the complete contents of ATLAS-Clarus-Connect-Beta-KEYSTORE_BASE64.txt.'
+            exit 1
+          fi
           test -s "$RUNNER_TEMP/atlas-connect-beta.jks"
           actual_sha=$(sha256sum "$RUNNER_TEMP/atlas-connect-beta.jks" | cut -d' ' -f1)
           test "$actual_sha" = 'f35b7ba7881103948cb298d8abaaa64b2626b2d89580bb82fdeed2b1349e396e' || {
