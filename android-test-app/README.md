@@ -26,29 +26,19 @@ is required. Colour ID remains a separate workbench with its own local state;
 the top bar switches between the two interfaces rather than merging their
 palette records. Its spectral and ICC views are preserved as analysis only.
 
-The second test APK fixes Android WebView's `blob:` export failure by reading
-the original generated Blob directly. It has a separate test application ID and
-appears as **ATLAS Clarus Test 2** alongside the initial prototype because CI
-debug builds use different signing keys. Existing palettes remain in the first
-app's private storage; export them there is affected by this bug, so add them
-again in Test 2 if needed.
+The current test build is labeled **ATLAS Clarus Connect Nachweis**
+(`0.3.2-test`). The Android export adapter reads generated Blobs directly so
+the Save Document dialog works for detached download links. The language
+switch stays in the same Colour ID document. After a manual RGB/HEX binding,
+a later image-pixel selection restores the loaded image's file provenance;
+manual selections themselves record no source image. None of these adapters
+changes the pinned master or primary RGB assignment.
 
-The updated Colour ID test APK has another application ID and installs beside
-the earlier test builds. CI debug keys are not stable across runs. Use this APK
-for the 14-tab workbench and Bundle start page; a future updateable beta needs
-a stable signing key.
-
-The current test app is named **ATLAS Clarus Connect**. Its second native
-navigation item uses the same name. Colour ID has local Deutsch and English
-pages and remembers the selected language when returning from Connect.
-The image-preserving follow-up is labeled **ATLAS Clarus Connect Bildfix**
-(0.3.1-test). It installs alongside the earlier CI debug APK because its
-signing key may differ. Its local palettes start empty.
-The provenance follow-up is labeled **ATLAS Clarus Connect Nachweis**
-(0.3.2-test). It retains loaded image metadata when a later image pixel is
-selected after a manual RGB/HEX selection. Manual selections themselves still
-record no source image. This follows the observed IMAGE_PIXEL/source_image=null
-case without changing the pinned master or primary RGB assignment.
+Earlier CI debug builds used different application IDs and signing keys. They
+install alongside this test build; each app has separate private palette
+storage. A future updateable beta needs one stable application ID and signing
+process. The confirmed phone observations and remaining checks are recorded
+in [DEVICE_TEST_LOG.md](DEVICE_TEST_LOG.md).
 
 ## Source and build
 
@@ -93,7 +83,8 @@ control. This build is not signed with a release key.
 5. Rotate the device and repeat on a narrow phone screen.
 
 Known limits: there is no automated device test for the integrated 14-tab build
-yet; document import, worker-backed analysis, save, and layout need physical
-Android verification. The two workspaces have separate palette state. The
-Bundle interface is currently English. Store rights, privacy
+yet; the current 0.3.2-test APK has not been verified on a physical phone.
+Document import, worker-backed analysis, layout and additional exports need
+physical Android verification. The two workspaces have separate palette state.
+The Bundle interface is currently English. Store rights, privacy
 declarations, accessibility and release signing remain release gates.
