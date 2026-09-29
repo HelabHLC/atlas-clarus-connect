@@ -12,6 +12,23 @@ import json
 HERE = Path(__file__).resolve().parent
 
 
+def keep_loaded_image_provenance(html):
+    """Restore the loaded image metadata when a pixel is chosen after manual RGB."""
+    replacements = (
+        ('let sourceImage={name:null,sha256:null,x:null,y:null,width:null,height:null};',
+         'let sourceImage={name:null,sha256:null,x:null,y:null,width:null,height:null};\nlet loadedSourceImage=null;'),
+        ('sourceImage={name:file.name,sha256:sha,x:null,y:null,width:img.naturalWidth,height:img.naturalHeight};',
+         'loadedSourceImage={name:file.name,sha256:sha,x:null,y:null,width:img.naturalWidth,height:img.naturalHeight};sourceImage={...loadedSourceImage};'),
+        ('sourceImage.x=x;sourceImage.y=y;',
+         'sourceImage={...loadedSourceImage,x,y};'),
+    )
+    for original, updated in replacements:
+        if html.count(original) != 1:
+            raise ValueError('Pinned Colour ID image provenance code changed')
+        html = html.replace(original, updated, 1)
+    return html
+
+
 class VisibleText(HTMLParser):
     def __init__(self):
         super().__init__()
@@ -35,6 +52,7 @@ class VisibleText(HTMLParser):
 def localize(html, language):
     if language not in ('de', 'en'):
         raise ValueError(language)
+    html = keep_loaded_image_provenance(html)
     parser = VisibleText()
     parser.feed(html)
     if len(parser.values) != 349:
