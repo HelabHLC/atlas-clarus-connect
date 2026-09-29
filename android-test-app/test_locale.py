@@ -10,8 +10,8 @@ ASSETS = HERE / 'app/src/main/assets/bundle'
 de = (ASSETS / 'colour-id.html').read_text(encoding='utf-8')
 en = (ASSETS / 'colour-id-en.html').read_text(encoding='utf-8')
 assert de.count('class="tabbtn') == en.count('class="tabbtn') == 14
-assert 'const language = "de";' in de and 'const language = "en";' in en
-assert de.replace('const language = "de";', 'const language = "en";') == en
+assert 'let language = "de";' in de and 'let language = "en";' in en
+assert de.replace('let language = "de";', 'let language = "en";') == en
 assert de.count('const ATLAS=') == en.count('const ATLAS=') == 1
 for name, html in [('de', de), ('en', en)]:
     start = html.index('const ATLAS=') + len('const ATLAS=')
