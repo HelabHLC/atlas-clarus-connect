@@ -52,12 +52,12 @@ jobs:
             exit 1
           fi
           echo "ATLAS_CONNECT_KEYSTORE_PATH=$RUNNER_TEMP/atlas-connect-beta.jks" >> "$GITHUB_ENV"
-      - name: Build signed APK
+      - name: Build signed APK and AAB
         env:
           ATLAS_CONNECT_STORE_PASSWORD: ${{ secrets.ATLAS_CONNECT_STORE_PASSWORD }}
           ATLAS_CONNECT_KEY_ALIAS: atlas-connect-beta
           ATLAS_CONNECT_KEY_PASSWORD: ${{ secrets.ATLAS_CONNECT_STORE_PASSWORD }}
-        run: gradle -p android-test-app :app:assembleRelease --no-daemon
+        run: gradle -p android-test-app :app:assembleRelease :app:bundleRelease --no-daemon
       - name: Verify APK signature and identity
         run: |
           apk=android-test-app/app/build/outputs/apk/release/app-release.apk
@@ -68,6 +68,19 @@ jobs:
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
             grep -E "^package: name='com.atlasclarus.connect' versionCode='4' versionName='0.4.0-beta.4'"
           sha256sum "$apk"
+      - name: Verify Play bundle signature
+        run: |
+          aab=android-test-app/app/build/outputs/bundle/release/app-release.aab
+          test -s "$aab"
+          jarsigner -verify "$aab" >/dev/null
+          cert_sha=$(keytool -printcert -jarfile "$aab" | sed -n 's/.*SHA256: //p' | head -n 1 | tr -d ':' | tr 'A-F' 'a-f')
+          test "$cert_sha" = '986ca730efc54a20cfc88af4fb61018dfe7658f3165c5b6fb55eb9c59ccad63c'
+          sha256sum "$aab"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ATLAS-Clarus-Connect-Play-0.4.0-beta.4-AAB
+          path: android-test-app/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
           name: ATLAS-Clarus-Connect-Beta-0.4.0-beta.4
