@@ -1,0 +1,58 @@
+name: Android signed beta
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  signed-beta:
+    runs-on: ubuntu-24.04
+    environment: android-beta-signing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Check SDK and signing secrets
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ATLAS_CONNECT_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ATLAS_CONNECT_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ATLAS_CONNECT_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ATLAS_CONNECT_KEY_PASSWORD }}
+        run: |
+          test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          test -n "$KEYSTORE_BASE64"
+          test -n "$STORE_PASSWORD"
+          test -n "$KEY_ALIAS"
+          test -n "$KEY_PASSWORD"
+          umask 077
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/atlas-connect-beta.jks"
+          test -s "$RUNNER_TEMP/atlas-connect-beta.jks"
+          echo "ATLAS_CONNECT_KEYSTORE_PATH=$RUNNER_TEMP/atlas-connect-beta.jks" >> "$GITHUB_ENV"
+      - name: Build signed APK
+        env:
+          ATLAS_CONNECT_STORE_PASSWORD: ${{ secrets.ATLAS_CONNECT_STORE_PASSWORD }}
+          ATLAS_CONNECT_KEY_ALIAS: ${{ secrets.ATLAS_CONNECT_KEY_ALIAS }}
+          ATLAS_CONNECT_KEY_PASSWORD: ${{ secrets.ATLAS_CONNECT_KEY_PASSWORD }}
+        run: gradle -p android-test-app :app:assembleRelease --no-daemon
+      - name: Verify APK signature and identity
+        run: |
+          apk=android-test-app/app/build/outputs/apk/release/app-release.apk
+          test -s "$apk"
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$apk"
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
+            grep -E "^package: name='com.atlasclarus.connect' versionCode='1' versionName='0.4.0-beta.1'"
+          sha256sum "$apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ATLAS-Clarus-Connect-Beta-0.4.0-beta.1
+          path: android-test-app/app/build/outputs/apk/release/app-release.apk
+          retention-days: 14
+      - name: Remove temporary signing file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/atlas-connect-beta.jks"
