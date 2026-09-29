@@ -33,6 +33,13 @@ jobs:
           umask 077
           printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/atlas-connect-beta.jks"
           test -s "$RUNNER_TEMP/atlas-connect-beta.jks"
+          actual_sha=$(sha256sum "$RUNNER_TEMP/atlas-connect-beta.jks" | cut -d' ' -f1)
+          test "$actual_sha" = 'f35b7ba7881103948cb298d8abaaa64b2626b2d89580bb82fdeed2b1349e396e' || {
+            echo 'Keystore bytes do not match the reserved beta key'
+            exit 1
+          }
+          keytool -list -keystore "$RUNNER_TEMP/atlas-connect-beta.jks" \
+            -alias "$KEY_ALIAS" -storepass:env STORE_PASSWORD >/dev/null
           echo "ATLAS_CONNECT_KEYSTORE_PATH=$RUNNER_TEMP/atlas-connect-beta.jks" >> "$GITHUB_ENV"
       - name: Build signed APK
         env:
