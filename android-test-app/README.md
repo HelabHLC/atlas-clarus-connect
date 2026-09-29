@@ -1,10 +1,11 @@
 # ATLAS Clarus Android test app
 
 This is an **offline, unsigned-for-release debug prototype**, not a Play Store
-submission. It packages the reproducible Browser Bundle RC27 as local Android
-assets and opens its built-in Image Picker at `#picker`. Picker → Hover → Wheel,
-the frozen reference binding and all other bundle views use the unchanged
-bundle code and reference data.
+submission. It packages the reproducible Browser Bundle RC27 and the standalone
+Colour ID v5.3.3 with its 14 analysis tabs as local Android assets. Colour ID
+opens first; the native top bar switches to the Bundle Image Picker at `#picker`.
+Picker → Hover → Wheel and all other bundle views retain the unchanged bundle
+code and reference data.
 
 The app has no INTERNET permission. External credit links open the system
 browser. Image and JSON imports use Android's document picker. Generated ASE,
@@ -12,9 +13,15 @@ GPL, JSON, CSS, PDF and PNG exports are handed to Android's Save Document dialog
 the prototype limits a single export to 64 MB. Palettes use this app's private
 WebView storage, so a browser's palettes are not automatically imported.
 
-The separate 14-tab Colour Picker v5.3.3 is not copied into this first build.
-The Bundle's Image Picker is the entry point; the detailed Colour ID workbench
-can be integrated later without changing the reference identity.
+The Colour ID source is pinned to SHA-256
+`580d4447193a736ad47a04a876a7437f757b98491836f6a3e8abaa9714769bff`
+from the public WordPress plugin asset. At build time the source is checked
+against this digest and all 13,283 rows are compared to the Bundle master for
+`atlas_row_id`, HLC reference, RGB, HEX and Lab. The same master SHA
+`8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4`
+is required. Colour ID remains a separate workbench with its own local state;
+the top bar switches between the two interfaces rather than merging their
+palette records. Its spectral and ICC views are preserved as analysis only.
 
 The second test APK fixes Android WebView's `blob:` export failure by reading
 the original generated Blob directly. It has a separate test application ID and
@@ -23,13 +30,20 @@ debug builds use different signing keys. Existing palettes remain in the first
 app's private storage; export them there is affected by this bug, so add them
 again in Test 2 if needed.
 
+The Colour ID test APK has another application ID and installs beside the first
+two test builds. CI debug keys are not stable across runs. Use this APK for the
+14-tab workbench and Bundle switching; a future updateable beta needs a stable
+signing key.
+
 ## Source and build
 
 The asset preparation script rebuilds the bundle from repository source and
 checks its ZIP against SHA-256
 `3142adf2088734d34c98a3b0f337aab35a728d769e4b15bae420431178a140c7`.
-Only then does it add the Android export adapter to the HTML. This pin ensures
-that the app's reference data correspond to the published RC27 candidate.
+Only then does it add the Android export adapter to both HTML entry points.
+Colour ID is fetched at build time from the public asset URL above; a local
+file may be supplied through `ATLAS_COLOUR_ID_SOURCE` for an offline build,
+subject to the same digest and row validation. Runtime use needs no network.
 
 Use JDK 17, Android SDK Platform 36, Build Tools 36.0.0 and Gradle 8.13:
 
@@ -44,13 +58,14 @@ control. This build is not signed with a release key.
 
 ## Test checklist
 
-1. Launch offline; the Bundle Image Picker should appear.
+1. Launch offline; Colour ID and all 14 tabs should be available.
 2. Import a local PNG and sample a pixel. Check the HLC and `atlas_row_id`.
-3. Open the reference in Hover, add it to a palette, then navigate to Wheel.
-4. Export Clarus JSON, save it through Android, and import it again.
+3. Switch to Bundle · Picker; sample an image, open Hover and Wheel.
+4. Export from both interfaces and save through Android's document picker.
 5. Rotate the device and repeat on a narrow phone screen.
 
-Known limits: there is no automated device test yet; document picker and
-download bridge require testing on physical Android devices. The Bundle
-interface is currently English. App Store rights, privacy declarations,
-accessibility and release signing remain separate release gates.
+Known limits: there is no automated device test for the integrated 14-tab build
+yet; document import, worker-backed analysis, save, and layout need physical
+Android verification. The two workspaces have separate palette state. Colour ID
+is German and the Bundle interface is currently English. Store rights, privacy
+declarations, accessibility and release signing remain release gates.

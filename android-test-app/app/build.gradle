@@ -7,11 +7,11 @@ android {
     compileSdk 36
 
     defaultConfig {
-        applicationId 'com.atlasclarus.browseredition.test.exportfix'
+        applicationId 'com.atlasclarus.browseredition.test.colourid'
         minSdk 26
         targetSdk 36
         versionCode 1
-        versionName '0.1.1-test'
+        versionName '0.2.0-test'
     }
 
     buildTypes {
@@ -34,6 +34,7 @@ def prepareBundle = tasks.register('prepareBundle', Exec) {
             new File(rootProject.projectDir, '../browser-bundle/build_bundle.py'),
             new File(rootProject.projectDir, 'prepare_bundle.py'),
             new File(rootProject.projectDir, 'android-export.js')
+    inputs.property 'colourIdSha256', '580d4447193a736ad47a04a876a7437f757b98491836f6a3e8abaa9714769bff'
     outputs.dir file('src/main/assets/bundle')
 }
 tasks.named('preBuild').configure { dependsOn prepareBundle }

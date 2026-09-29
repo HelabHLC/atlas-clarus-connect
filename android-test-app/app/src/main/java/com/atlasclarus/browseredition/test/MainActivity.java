@@ -14,7 +14,9 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.ByteArrayInputStream;
@@ -25,7 +27,8 @@ import java.util.Collections;
 
 public final class MainActivity extends Activity {
     private static final String HOST = "appassets.androidplatform.net";
-    private static final String START = "https://" + HOST + "/index.html#picker";
+    private static final String BUNDLE = "https://" + HOST + "/index.html#picker";
+    private static final String COLOUR_ID = "https://" + HOST + "/colour-id.html";
     private static final int PICK_FILE = 101;
     private static final int SAVE_FILE = 102;
     private static final int MAX_EXPORT = 64 * 1024 * 1024;
@@ -42,8 +45,24 @@ public final class MainActivity extends Activity {
                     insets.getSystemWindowInsetBottom());
             return insets;
         });
+        LinearLayout shell = new LinearLayout(this);
+        shell.setOrientation(LinearLayout.VERTICAL);
+        root.addView(shell, new FrameLayout.LayoutParams(-1, -1));
+        LinearLayout navigation = new LinearLayout(this);
+        navigation.setBackgroundColor(0xff102638);
+        Button colourIdButton = new Button(this);
+        colourIdButton.setText("Colour ID · 14 Tabs");
+        colourIdButton.setAllCaps(false);
+        colourIdButton.setOnClickListener(view -> webView.loadUrl(COLOUR_ID));
+        navigation.addView(colourIdButton, new LinearLayout.LayoutParams(0, -2, 1));
+        Button bundleButton = new Button(this);
+        bundleButton.setText("Bundle · Picker");
+        bundleButton.setAllCaps(false);
+        bundleButton.setOnClickListener(view -> webView.loadUrl(BUNDLE));
+        navigation.addView(bundleButton, new LinearLayout.LayoutParams(0, -2, 1));
+        shell.addView(navigation);
         webView = new WebView(this);
-        root.addView(webView, new FrameLayout.LayoutParams(-1, -1));
+        shell.addView(webView, new LinearLayout.LayoutParams(-1, 0, 1));
         setContentView(root);
         getWindow().setStatusBarColor(0xff0a0d12);
         getWindow().setNavigationBarColor(0xff0a0d12);
@@ -104,7 +123,7 @@ public final class MainActivity extends Activity {
                 }
             }
         });
-        webView.loadUrl(START);
+        webView.loadUrl(COLOUR_ID);
     }
 
     private static WebResourceResponse missing() {
