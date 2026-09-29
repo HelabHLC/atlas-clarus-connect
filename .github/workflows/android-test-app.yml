@@ -37,6 +37,7 @@ jobs:
         run: |
           python3 android-test-app/test_locale.py
           node android-test-app/test-locale-runtime.js
+          node android-test-app/test-provenance-runtime.js
       - name: Verify packaged bundle and manifest
         run: |
           test -s android-test-app/app/build/outputs/apk/debug/app-debug.apk
