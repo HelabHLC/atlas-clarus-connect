@@ -26,8 +26,10 @@ is required. Colour ID remains a separate workbench with its own local state;
 the top bar switches between the two interfaces rather than merging their
 palette records. Its spectral and ICC views are preserved as analysis only.
 
-The current test build is labeled **ATLAS Clarus Connect Navigationstest**
-(`0.3.3-test`). The native Colour ID button does not reload an already open
+The last phone-tested APK is **ATLAS Clarus Connect Navigationstest**
+(`0.3.3-test`). The next signed beta has the fixed application ID
+`com.atlasclarus.connect` and starts at `0.4.0-beta.1` / version code 1.
+The native Colour ID button does not reload an already open
 Colour ID page, preserving its in-memory image. The Android export adapter reads generated Blobs directly so
 the Save Document dialog works for detached download links. The language
 switch stays in the same Colour ID document. After a manual RGB/HEX binding,
@@ -36,10 +38,11 @@ manual selections themselves record no source image. None of these adapters
 changes the pinned master or primary RGB assignment.
 
 Earlier CI debug builds used different application IDs and signing keys. They
-install alongside this test build; each app has separate private palette
-storage. A future updateable beta needs one stable application ID and signing
-process. The confirmed phone observations and remaining checks are recorded
-in [DEVICE_TEST_LOG.md](DEVICE_TEST_LOG.md).
+install alongside the new beta; each app has separate private palette storage.
+The release build requires the long-lived key described in
+[SIGNING.md](SIGNING.md). No signed beta has been distributed yet. Confirmed
+phone observations and remaining checks are recorded in
+[DEVICE_TEST_LOG.md](DEVICE_TEST_LOG.md).
 
 ## Source and build
 
@@ -83,8 +86,9 @@ control. This build is not signed with a release key.
 4. Export from both interfaces and save through Android's document picker.
 5. Rotate the device and repeat on a narrow phone screen.
 
-Known limits: there is no automated device test for the integrated 14-tab build
-yet; the current 0.3.3-test APK has not been verified on a physical phone.
+Known limits: there is no automated device test for the integrated 14-tab build.
+The 0.3.3-test APK was checked for image retention on repeated Colour ID
+selection, offline launch and a saved Traceability JSON export.
 Document import, worker-backed analysis, layout and additional exports need
 physical Android verification. The two workspaces have separate palette state.
 The Bundle interface is currently English. Store rights, privacy
