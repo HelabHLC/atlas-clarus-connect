@@ -5,3 +5,6 @@
 /local.properties
 *.apk
 *.aab
+*.jks
+*.keystore
+keystore.properties
