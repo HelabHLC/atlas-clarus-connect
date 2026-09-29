@@ -44,6 +44,11 @@ pages and remembers the selected language when returning from Connect.
 The image-preserving follow-up is labeled **ATLAS Clarus Connect Bildfix**
 (0.3.1-test). It installs alongside the earlier CI debug APK because its
 signing key may differ. Its local palettes start empty.
+The provenance follow-up is labeled **ATLAS Clarus Connect Nachweis**
+(0.3.2-test). It retains loaded image metadata when a later image pixel is
+selected after a manual RGB/HEX selection. Manual selections themselves still
+record no source image. This follows the observed IMAGE_PIXEL/source_image=null
+case without changing the pinned master or primary RGB assignment.
 
 ## Source and build
 
