@@ -54,9 +54,14 @@ public final class MainActivity extends Activity {
         Button colourIdButton = new Button(this);
         colourIdButton.setText("Colour ID");
         colourIdButton.setAllCaps(false);
-        colourIdButton.setOnClickListener(view -> webView.evaluateJavascript(
-                "localStorage.getItem('atlasColourIdLanguage')", value ->
-                        webView.loadUrl("\"en\"".equals(value) ? COLOUR_ID_EN : COLOUR_ID)));
+        colourIdButton.setOnClickListener(view -> {
+            // Re-selecting this native item must not discard an in-memory image or trace.
+            String currentUrl = webView.getUrl();
+            String currentPath = currentUrl == null ? null : Uri.parse(currentUrl).getPath();
+            if ("/colour-id.html".equals(currentPath) || "/colour-id-en.html".equals(currentPath)) return;
+            webView.evaluateJavascript("localStorage.getItem('atlasColourIdLanguage')", value ->
+                    webView.loadUrl("\"en\"".equals(value) ? COLOUR_ID_EN : COLOUR_ID));
+        });
         navigation.addView(colourIdButton, new LinearLayout.LayoutParams(0, -2, 1));
         Button bundleButton = new Button(this);
         bundleButton.setText("ATLAS Clarus Connect");
