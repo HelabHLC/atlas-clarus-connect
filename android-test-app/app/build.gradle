@@ -1,0 +1,87 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.atlasclarus.browseredition.test'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.atlasclarus.connect'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '0.4.0-beta.1'
+    }
+
+    def signingEnvironment = [
+            'ATLAS_CONNECT_KEYSTORE_PATH',
+            'ATLAS_CONNECT_STORE_PASSWORD',
+            'ATLAS_CONNECT_KEY_ALIAS',
+            'ATLAS_CONNECT_KEY_PASSWORD'
+    ]
+    def hasSigningEnvironment = signingEnvironment.every { System.getenv(it) }
+    if (hasSigningEnvironment) {
+        signingConfigs {
+            connect {
+                storeFile file(System.getenv('ATLAS_CONNECT_KEYSTORE_PATH'))
+                storePassword System.getenv('ATLAS_CONNECT_STORE_PASSWORD')
+                keyAlias System.getenv('ATLAS_CONNECT_KEY_ALIAS')
+                keyPassword System.getenv('ATLAS_CONNECT_KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.dev'
+            versionNameSuffix '-debug'
+        }
+        release {
+            minifyEnabled false
+            if (hasSigningEnvironment) {
+                signingConfig signingConfigs.connect
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+tasks.register('verifyReleaseSigning') {
+    doLast {
+        def names = ['ATLAS_CONNECT_KEYSTORE_PATH', 'ATLAS_CONNECT_STORE_PASSWORD',
+                     'ATLAS_CONNECT_KEY_ALIAS', 'ATLAS_CONNECT_KEY_PASSWORD']
+        def missing = names.findAll { !System.getenv(it) }
+        if (!missing.isEmpty()) {
+            throw new GradleException("Release signing is not configured: ${missing.join(', ')}")
+        }
+        if (!file(System.getenv('ATLAS_CONNECT_KEYSTORE_PATH')).isFile()) {
+            throw new GradleException('Release signing keystore file does not exist')
+        }
+    }
+}
+tasks.matching { it.name == 'preReleaseBuild' }
+        .configureEach { dependsOn tasks.named('verifyReleaseSigning') }
+
+def prepareBundle = tasks.register('prepareBundle', Exec) {
+    workingDir project.rootDir
+    commandLine 'python3', 'prepare_bundle.py'
+    inputs.files fileTree(new File(rootProject.projectDir, '../browser-bundle/src')),
+            fileTree(new File(rootProject.projectDir, '../hover-library/data')),
+            fileTree(new File(rootProject.projectDir, '../designer-layer')),
+            new File(rootProject.projectDir, '../browser-bundle/build_bundle.py'),
+            new File(rootProject.projectDir, 'prepare_bundle.py'),
+            new File(rootProject.projectDir, 'android-export.js')
+    inputs.files new File(rootProject.projectDir, 'build_colour_id_locale.py'),
+            new File(rootProject.projectDir, 'colour-id-en.json'),
+            new File(rootProject.projectDir, 'colour-id-dynamic-en.json'),
+            new File(rootProject.projectDir, 'colour-id-i18n.js')
+    inputs.property 'colourIdSha256', '580d4447193a736ad47a04a876a7437f757b98491836f6a3e8abaa9714769bff'
+    outputs.dir file('src/main/assets/bundle')
+}
+tasks.named('preBuild').configure { dependsOn prepareBundle }
+tasks.matching { it.name.startsWith('merge') && it.name.endsWith('Assets') }
+        .configureEach { dependsOn prepareBundle }

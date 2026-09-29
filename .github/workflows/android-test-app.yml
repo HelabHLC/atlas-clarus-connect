@@ -1,0 +1,74 @@
+name: Android test app
+
+on:
+  pull_request:
+    paths:
+      - 'android-test-app/**'
+      - 'browser-bundle/**'
+      - 'hover-library/data/**'
+      - 'designer-layer/**'
+      - '.github/workflows/android-test-app.yml'
+  workflow_dispatch:
+
+jobs:
+  debug-apk:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check preinstalled Android SDK
+        run: |
+          test -f "$ANDROID_HOME/platforms/android-36/android.jar"
+          test -x "$ANDROID_HOME/build-tools/36.0.0/aapt2"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Validate pinned offline bundle
+        run: python3 browser-bundle/tests/validate_bundle.py
+      - name: Check Android export adapter
+        run: node android-test-app/test-export-adapter.js
+      - name: Build debug APK
+        run: gradle -p android-test-app :app:assembleDebug --no-daemon
+      - name: Check DE/EN identity and scripts
+        run: |
+          python3 android-test-app/test_locale.py
+          node android-test-app/test-locale-runtime.js
+          node android-test-app/test-provenance-runtime.js
+      - name: Verify packaged bundle and manifest
+        run: |
+          test -s android-test-app/app/build/outputs/apk/debug/app-debug.apk
+          unzip -l android-test-app/app/build/outputs/apk/debug/app-debug.apk |
+            grep -q 'assets/bundle/index.html'
+          unzip -l android-test-app/app/build/outputs/apk/debug/app-debug.apk |
+            grep -q 'assets/bundle/colour-id.html'
+          unzip -l android-test-app/app/build/outputs/apk/debug/app-debug.apk |
+            grep -q 'assets/bundle/colour-id-en.html'
+          sha256sum android-test-app/app/build/outputs/apk/debug/app-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ATLAS-Clarus-Android-Test-APK
+          path: android-test-app/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+      - name: Verify release signing path with disposable CI key
+        env:
+          ATLAS_CONNECT_KEYSTORE_PATH: ${{ runner.temp }}/atlas-connect-ci.jks
+          ATLAS_CONNECT_STORE_PASSWORD: disposable-ci-only
+          ATLAS_CONNECT_KEY_ALIAS: ci-only
+          ATLAS_CONNECT_KEY_PASSWORD: disposable-ci-only
+        run: |
+          keytool -genkeypair -keystore "$ATLAS_CONNECT_KEYSTORE_PATH" \
+            -storetype PKCS12 -alias "$ATLAS_CONNECT_KEY_ALIAS" \
+            -keyalg RSA -keysize 3072 -validity 30 \
+            -dname 'CN=CI test only' \
+            -storepass "$ATLAS_CONNECT_STORE_PASSWORD" \
+            -keypass "$ATLAS_CONNECT_KEY_PASSWORD" -noprompt
+          gradle -p android-test-app :app:assembleRelease --no-daemon
+          apk=android-test-app/app/build/outputs/apk/release/app-release.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify "$apk"
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
+            grep -E "^package: name='com.atlasclarus.connect' versionCode='1' versionName='0.4.0-beta.1'"
+          rm -f "$ATLAS_CONNECT_KEYSTORE_PATH" "$apk"
