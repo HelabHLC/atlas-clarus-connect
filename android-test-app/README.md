@@ -5,9 +5,8 @@ submission. It packages the reproducible Browser Bundle RC27 and the standalone
 Colour ID v5.3.3 with its 14 analysis tabs as local Android assets in German
 and English. The Bundle start page opens first at `#home`; the native top bar
 labels it **ATLAS Clarus Connect** and switches to Colour ID in the last selected language.
-Colour ID's language bar
-switches between Deutsch and English while offline. Switching reloads the
-workbench, so import a transient image again after changing the language.
+Colour ID's language bar switches between Deutsch and English in place while
+offline. The loaded image, pixel selection and workbench state remain available.
 Picker → Hover → Wheel and all other bundle views retain the unchanged bundle
 code and reference data.
 
@@ -42,6 +41,9 @@ a stable signing key.
 The current test app is named **ATLAS Clarus Connect**. Its second native
 navigation item uses the same name. Colour ID has local Deutsch and English
 pages and remembers the selected language when returning from Connect.
+The image-preserving follow-up is labeled **ATLAS Clarus Connect Bildfix**
+(0.3.1-test). It installs alongside the earlier CI debug APK because its
+signing key may differ. Its local palettes start empty.
 
 ## Source and build
 
