@@ -27,7 +27,7 @@ import java.util.Collections;
 
 public final class MainActivity extends Activity {
     private static final String HOST = "appassets.androidplatform.net";
-    private static final String BUNDLE = "https://" + HOST + "/index.html#picker";
+    private static final String BUNDLE = "https://" + HOST + "/index.html#home";
     private static final String COLOUR_ID = "https://" + HOST + "/colour-id.html";
     private static final int PICK_FILE = 101;
     private static final int SAVE_FILE = 102;
@@ -56,7 +56,7 @@ public final class MainActivity extends Activity {
         colourIdButton.setOnClickListener(view -> webView.loadUrl(COLOUR_ID));
         navigation.addView(colourIdButton, new LinearLayout.LayoutParams(0, -2, 1));
         Button bundleButton = new Button(this);
-        bundleButton.setText("Bundle · Picker");
+        bundleButton.setText("Bundle · Startseite");
         bundleButton.setAllCaps(false);
         bundleButton.setOnClickListener(view -> webView.loadUrl(BUNDLE));
         navigation.addView(bundleButton, new LinearLayout.LayoutParams(0, -2, 1));
