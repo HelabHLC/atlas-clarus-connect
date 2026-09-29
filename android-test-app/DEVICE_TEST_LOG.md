@@ -23,7 +23,7 @@ stabilization phase; no Play Store release or production signing is implied.
 | Target | Check | Result |
 | --- | --- | --- |
 | 0.3.2-test Nachweis APK | GitHub Actions Android build, 14-tab DE/EN asset checks, 13,283 identical master identities, language runtime, export adapter, provenance regression. | Passed on commit `0793e72a6cb130c04b8739977aabcc3b28b318db`, workflow run `36545018904`. APK SHA-256 `d558c33828669fdc26aef789bdf05501a96b2347a07e945f65877e4def281e64`. |
-| 0.3.3-test Navigationstest APK | GitHub Actions Android build and shared bundle validation. | Passed on commit `4601cc3b15f38ea9bdf20f1589b177c68996ebf5`, Android run `36547502699`, validation run `36547502788`. APK SHA-256 `10d6f29ab13da9a5780945a1a15d685243521de99e76f1e08de35835c3952c33`. Device check pending. |
+| 0.3.3-test Navigationstest APK | GitHub Actions Android build and shared bundle validation. | Passed on commit `4601cc3b15f38ea9bdf20f1589b177c68996ebf5`, Android run `36547502699`, validation run `36547502788`. APK SHA-256 `10d6f29ab13da9a5780945a1a15d685243521de99e76f1e08de35835c3952c33`. The limited phone results are recorded above. |
 | Public WordPress Colour ID 0.2.2 | Load a synthetic 32×32 image, manually bind HEX, then select an image pixel. | `MANUAL_HEX` had `source_image: null` as intended; the later `IMAGE_PIXEL` retained filename, SHA-256, width, height, x and y. DE and EN each loaded 14 tabs with the patch. This is a browser test, not an Android device test. |
 | Primary reference assignment | Compare Colour ID against Bundle PKL binder for 1,212 exact, collision and deterministic RGB samples. | Same `atlas_row_id` and RGB squared distance; all 13,283 rows matched for ID, HLC, RGB, HEX and Lab. This does not validate the user's individual exported trace. |
 
@@ -34,8 +34,9 @@ stabilization phase; no Play Store release or production signing is implied.
   file import, each needed export, rotation and a narrow phone layout on this
   exact APK. Do not infer these from older test builds.
 - The CI debug key and package ID varied between prototypes. They therefore
-  install as separate apps and do not migrate private palettes. Choose one
-  application ID and a managed signing process before issuing an updateable beta.
+  install as separate apps and do not migrate private palettes. The next release
+  fixes `com.atlasclarus.connect` and has a long-lived keystore outside the repo;
+  its protected CI secrets and first signed APK are still pending.
 - The two workspaces maintain separate palette state. Switching native views
   reloads the selected document; loaded images are transient across that
   navigation. In-page DE/EN switching inside Colour ID now preserves its image.
