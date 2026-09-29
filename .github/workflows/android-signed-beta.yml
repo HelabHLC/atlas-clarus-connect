@@ -22,8 +22,8 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.ATLAS_CONNECT_KEYSTORE_BASE64 }}
           STORE_PASSWORD: ${{ secrets.ATLAS_CONNECT_STORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.ATLAS_CONNECT_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.ATLAS_CONNECT_KEY_PASSWORD }}
+          KEY_ALIAS: atlas-connect-beta
+          KEY_PASSWORD: ${{ secrets.ATLAS_CONNECT_STORE_PASSWORD }}
         run: |
           test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner"
           test -n "$KEYSTORE_BASE64"
@@ -55,8 +55,8 @@ jobs:
       - name: Build signed APK
         env:
           ATLAS_CONNECT_STORE_PASSWORD: ${{ secrets.ATLAS_CONNECT_STORE_PASSWORD }}
-          ATLAS_CONNECT_KEY_ALIAS: ${{ secrets.ATLAS_CONNECT_KEY_ALIAS }}
-          ATLAS_CONNECT_KEY_PASSWORD: ${{ secrets.ATLAS_CONNECT_KEY_PASSWORD }}
+          ATLAS_CONNECT_KEY_ALIAS: atlas-connect-beta
+          ATLAS_CONNECT_KEY_PASSWORD: ${{ secrets.ATLAS_CONNECT_STORE_PASSWORD }}
         run: gradle -p android-test-app :app:assembleRelease --no-daemon
       - name: Verify APK signature and identity
         run: |
