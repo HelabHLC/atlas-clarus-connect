@@ -2,8 +2,12 @@
 
 This is an **offline, unsigned-for-release debug prototype**, not a Play Store
 submission. It packages the reproducible Browser Bundle RC27 and the standalone
-Colour ID v5.3.3 with its 14 analysis tabs as local Android assets. The Bundle
-start page opens first at `#home`; the native top bar switches to Colour ID.
+Colour ID v5.3.3 with its 14 analysis tabs as local Android assets in German
+and English. The Bundle start page opens first at `#home`; the native top bar
+labels it **ATLAS Clarus Connect** and switches to Colour ID in the last selected language.
+Colour ID's language bar
+switches between Deutsch and English while offline. Switching reloads the
+workbench, so import a transient image again after changing the language.
 Picker → Hover → Wheel and all other bundle views retain the unchanged bundle
 code and reference data.
 
@@ -35,15 +39,29 @@ the earlier test builds. CI debug keys are not stable across runs. Use this APK
 for the 14-tab workbench and Bundle start page; a future updateable beta needs
 a stable signing key.
 
+The current test app is named **ATLAS Clarus Connect**. Its second native
+navigation item uses the same name. Colour ID has local Deutsch and English
+pages and remembers the selected language when returning from Connect.
+
 ## Source and build
 
 The asset preparation script rebuilds the bundle from repository source and
 checks its ZIP against SHA-256
 `3142adf2088734d34c98a3b0f337aab35a728d769e4b15bae420431178a140c7`.
-Only then does it add the Android export adapter to both HTML entry points.
+Only then does it add the Android export adapter to the HTML entry points.
+The bilingual presentation layer translates visible interface strings and
+human-readable HTML reports; canonical identifiers, numeric data, evidence
+JSON, and matching logic remain unchanged. The build checks that the German
+and English assets have identical 13,283-row reference data.
 Colour ID is fetched at build time from the public asset URL above; a local
 file may be supplied through `ATLAS_COLOUR_ID_SOURCE` for an offline build,
 subject to the same digest and row validation. Runtime use needs no network.
+
+The matching WordPress plugin can be rebuilt from the archived v0.1.0 ZIP and
+the same pinned source with `build_wordpress_plugin.py --base-zip ...
+--source-html ... --output ...`. Its shortcode accepts `lang="de"` or
+`lang="en"`; `auto` selects English only when the WordPress locale starts
+with `en`. The in-frame language switch remains available in either case.
 
 Use JDK 17, Android SDK Platform 36, Build Tools 36.0.0 and Gradle 8.13:
 
@@ -60,13 +78,13 @@ control. This build is not signed with a release key.
 
 1. Launch offline; the Bundle start page should appear, not either picker.
 2. Select Image Picker from the Bundle navigation and sample a local PNG.
-3. Switch to Colour ID · 14 Tabs; check the tabs, import a PNG, and compare the
+3. Switch to Colour ID; change Deutsch ↔ English, check all 14 tabs, import a PNG, and compare the
    HLC and `atlas_row_id` to the shared Bundle reference.
 4. Export from both interfaces and save through Android's document picker.
 5. Rotate the device and repeat on a narrow phone screen.
 
 Known limits: there is no automated device test for the integrated 14-tab build
 yet; document import, worker-backed analysis, save, and layout need physical
-Android verification. The two workspaces have separate palette state. Colour ID
-is German and the Bundle interface is currently English. Store rights, privacy
+Android verification. The two workspaces have separate palette state. The
+Bundle interface is currently English. Store rights, privacy
 declarations, accessibility and release signing remain release gates.

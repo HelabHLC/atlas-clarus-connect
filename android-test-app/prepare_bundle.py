@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 from urllib.request import urlopen
+from build_colour_id_locale import localize
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -65,5 +66,7 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     shutil.copytree(source, TARGET)
     index = TARGET / 'index.html'
     index.write_text(add_bridge(index.read_text(encoding='utf-8')), encoding='utf-8')
-    (TARGET / 'colour-id.html').write_text(add_bridge(colour_id_source()), encoding='utf-8')
-    print(f'Android assets: RC27 {digest}; Colour ID v5.3.3 {COLOUR_ID_SHA256}; 13,283 shared identities')
+    colour_html = add_bridge(colour_id_source())
+    (TARGET / 'colour-id.html').write_text(localize(colour_html, 'de'), encoding='utf-8')
+    (TARGET / 'colour-id-en.html').write_text(localize(colour_html, 'en'), encoding='utf-8')
+    print(f'Android assets: RC27 {digest}; Colour ID v5.3.3 DE/EN {COLOUR_ID_SHA256}; 13,283 shared identities')

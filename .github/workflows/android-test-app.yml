@@ -33,6 +33,10 @@ jobs:
         run: node android-test-app/test-export-adapter.js
       - name: Build debug APK
         run: gradle -p android-test-app :app:assembleDebug --no-daemon
+      - name: Check DE/EN identity and scripts
+        run: |
+          python3 android-test-app/test_locale.py
+          node android-test-app/test-locale-runtime.js
       - name: Verify packaged bundle and manifest
         run: |
           test -s android-test-app/app/build/outputs/apk/debug/app-debug.apk
@@ -40,6 +44,8 @@ jobs:
             grep -q 'assets/bundle/index.html'
           unzip -l android-test-app/app/build/outputs/apk/debug/app-debug.apk |
             grep -q 'assets/bundle/colour-id.html'
+          unzip -l android-test-app/app/build/outputs/apk/debug/app-debug.apk |
+            grep -q 'assets/bundle/colour-id-en.html'
           sha256sum android-test-app/app/build/outputs/apk/debug/app-debug.apk
       - uses: actions/upload-artifact@v4
         with:

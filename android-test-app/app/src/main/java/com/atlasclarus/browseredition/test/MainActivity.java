@@ -29,6 +29,7 @@ public final class MainActivity extends Activity {
     private static final String HOST = "appassets.androidplatform.net";
     private static final String BUNDLE = "https://" + HOST + "/index.html#home";
     private static final String COLOUR_ID = "https://" + HOST + "/colour-id.html";
+    private static final String COLOUR_ID_EN = "https://" + HOST + "/colour-id-en.html";
     private static final int PICK_FILE = 101;
     private static final int SAVE_FILE = 102;
     private static final int MAX_EXPORT = 64 * 1024 * 1024;
@@ -51,12 +52,14 @@ public final class MainActivity extends Activity {
         LinearLayout navigation = new LinearLayout(this);
         navigation.setBackgroundColor(0xff102638);
         Button colourIdButton = new Button(this);
-        colourIdButton.setText("Colour ID · 14 Tabs");
+        colourIdButton.setText("Colour ID");
         colourIdButton.setAllCaps(false);
-        colourIdButton.setOnClickListener(view -> webView.loadUrl(COLOUR_ID));
+        colourIdButton.setOnClickListener(view -> webView.evaluateJavascript(
+                "localStorage.getItem('atlasColourIdLanguage')", value ->
+                        webView.loadUrl("\"en\"".equals(value) ? COLOUR_ID_EN : COLOUR_ID)));
         navigation.addView(colourIdButton, new LinearLayout.LayoutParams(0, -2, 1));
         Button bundleButton = new Button(this);
-        bundleButton.setText("Bundle · Startseite");
+        bundleButton.setText("ATLAS Clarus Connect");
         bundleButton.setAllCaps(false);
         bundleButton.setOnClickListener(view -> webView.loadUrl(BUNDLE));
         navigation.addView(bundleButton, new LinearLayout.LayoutParams(0, -2, 1));
