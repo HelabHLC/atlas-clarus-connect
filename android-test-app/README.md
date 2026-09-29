@@ -61,7 +61,9 @@ The matching WordPress plugin can be rebuilt from the archived v0.1.0 ZIP and
 the same pinned source with `build_wordpress_plugin.py --base-zip ...
 --source-html ... --output ...`. Its shortcode accepts `lang="de"` or
 `lang="en"`; `auto` selects English only when the WordPress locale starts
-with `en`. The in-frame language switch remains available in either case.
+with `en`. A page URL with `?lang=de` or `?lang=en` takes precedence so its
+embedded picker and full-screen link use the same language. The in-frame
+language switch remains available in either case.
 
 Use JDK 17, Android SDK Platform 36, Build Tools 36.0.0 and Gradle 8.13:
 

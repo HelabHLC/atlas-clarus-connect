@@ -32,9 +32,11 @@ def main():
         files = {name: archive.read(name) for name in archive.namelist() if not name.endswith('/')}
     php_path = PREFIX + 'atlas-clarus-colour-picker.php'
     php = files[php_path].decode('utf-8')
-    php = php.replace('Version: 0.1.0', 'Version: 0.2.0').replace("'0.1.0'", "'0.2.0'")
+    php = php.replace('Version: 0.1.0', 'Version: 0.2.1').replace("'0.1.0'", "'0.2.1'")
     php = php.replace("'loading'          => 'lazy',", "'loading'          => 'lazy',\n\t\t\t'lang'             => 'auto',")
-    php = php.replace("$app_url = plugins_url( 'assets/atlas-clarus-app-v5.3.3.html', __FILE__ );", """$requested_lang = strtolower( (string) $atts['lang'] );
+    php = php.replace("$app_url = plugins_url( 'assets/atlas-clarus-app-v5.3.3.html', __FILE__ );", """$requested_lang = isset( $_GET['lang'] ) && is_string( $_GET['lang'] )
+		? sanitize_key( wp_unslash( $_GET['lang'] ) )
+		: strtolower( (string) $atts['lang'] );
 \tif ( ! in_array( $requested_lang, array( 'de', 'en' ), true ) ) {
 \t\t$requested_lang = 'en' === substr( get_locale(), 0, 2 ) ? 'en' : 'de';
 \t}
