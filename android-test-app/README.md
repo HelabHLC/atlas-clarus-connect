@@ -26,8 +26,9 @@ is required. Colour ID remains a separate workbench with its own local state;
 the top bar switches between the two interfaces rather than merging their
 palette records. Its spectral and ICC views are preserved as analysis only.
 
-The current test build is labeled **ATLAS Clarus Connect Nachweis**
-(`0.3.2-test`). The Android export adapter reads generated Blobs directly so
+The current test build is labeled **ATLAS Clarus Connect Navigationstest**
+(`0.3.3-test`). The native Colour ID button does not reload an already open
+Colour ID page, preserving its in-memory image. The Android export adapter reads generated Blobs directly so
 the Save Document dialog works for detached download links. The language
 switch stays in the same Colour ID document. After a manual RGB/HEX binding,
 a later image-pixel selection restores the loaded image's file provenance;
@@ -83,7 +84,7 @@ control. This build is not signed with a release key.
 5. Rotate the device and repeat on a narrow phone screen.
 
 Known limits: there is no automated device test for the integrated 14-tab build
-yet; the current 0.3.2-test APK has not been verified on a physical phone.
+yet; the current 0.3.3-test APK has not been verified on a physical phone.
 Document import, worker-backed analysis, layout and additional exports need
 physical Android verification. The two workspaces have separate palette state.
 The Bundle interface is currently English. Store rights, privacy
