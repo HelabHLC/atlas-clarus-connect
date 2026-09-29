@@ -37,6 +37,14 @@ a later image-pixel selection restores the loaded image's file provenance;
 manual selections themselves record no source image. None of these adapters
 changes the pinned master or primary RGB assignment.
 
+For an `IMAGE_PIXEL` selection, Traceability JSON now embeds the exact loaded
+image bytes in `source_image.bytes_base64`, alongside its MIME type and size.
+The exporter checks those bytes against `source_image.sha256` before saving.
+This makes the selected coordinate and RGB independently verifiable from one
+file. Images larger than 24 MiB are rejected with a clear message because the
+Android export adapter caps a single file at 64 MB. Other selection origins
+retain the existing JSON shape.
+
 Earlier CI debug builds used different application IDs and signing keys. They
 install alongside the new beta; each app has separate private palette storage.
 The release build requires the long-lived key described in

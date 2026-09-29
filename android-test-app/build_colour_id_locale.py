@@ -16,9 +16,9 @@ def keep_loaded_image_provenance(html):
     """Restore the loaded image metadata when a pixel is chosen after manual RGB."""
     replacements = (
         ('let sourceImage={name:null,sha256:null,x:null,y:null,width:null,height:null};',
-         'let sourceImage={name:null,sha256:null,x:null,y:null,width:null,height:null};\nlet loadedSourceImage=null;'),
+         'let sourceImage={name:null,sha256:null,x:null,y:null,width:null,height:null};\nlet loadedSourceImage=null;let loadedSourceFile=null;'),
         ('sourceImage={name:file.name,sha256:sha,x:null,y:null,width:img.naturalWidth,height:img.naturalHeight};',
-         'loadedSourceImage={name:file.name,sha256:sha,x:null,y:null,width:img.naturalWidth,height:img.naturalHeight};sourceImage={...loadedSourceImage};'),
+         'loadedSourceFile=file;loadedSourceImage={name:file.name,sha256:sha,x:null,y:null,width:img.naturalWidth,height:img.naturalHeight};sourceImage={...loadedSourceImage};'),
         ('sourceImage.x=x;sourceImage.y=y;',
          'sourceImage={...loadedSourceImage,x,y};'),
     )
@@ -26,6 +26,29 @@ def keep_loaded_image_provenance(html):
         if html.count(original) != 1:
             raise ValueError('Pinned Colour ID image provenance code changed')
         html = html.replace(original, updated, 1)
+    original = '$(' + '"exportTrace"' + ').onclick=()=>current&&download(`ATLAS_Clarus_${current.row[1]}_traceability_v2.json`,JSON.stringify(buildTrace(),null,2));'
+    updated = '''$("exportTrace").onclick=async()=>{
+  if(!current)return;
+  const trace=buildTrace();
+  if(trace.selection_origin==="IMAGE_PIXEL"){
+    if(!loadedSourceFile||!trace.source_image||trace.source_image.sha256!==loadedSourceImage?.sha256){
+      alert("Originalbild für diesen Pixelnachweis fehlt. Bild erneut laden.");return;
+    }
+    if(loadedSourceFile.size>24*1024*1024){alert("Originalbild ist für den JSON-Nachweis zu groß.");return;}
+    const file=loadedSourceFile;
+    const bytes=new Uint8Array(await file.arrayBuffer());
+    const hex=sha256ByteArrayHex(bytes);
+    if(hex!==trace.source_image.sha256){alert("Originalbild und Prüfsumme stimmen nicht überein.");return;}
+    let binary="";for(let i=0;i<bytes.length;i+=32768)binary+=String.fromCharCode(...bytes.subarray(i,i+32768));
+    trace.source_image.mime_type=loadedSourceFile.type||"application/octet-stream";
+    trace.source_image.size_bytes=bytes.length;
+    trace.source_image.bytes_base64=btoa(binary);
+  }
+  download(`ATLAS_Clarus_${current.row[1]}_traceability_v2.json`,JSON.stringify(trace,null,2));
+};'''
+    if html.count(original) != 1:
+        raise ValueError('Pinned Colour ID trace export code changed')
+    html = html.replace(original, updated, 1)
     return html
 
 
