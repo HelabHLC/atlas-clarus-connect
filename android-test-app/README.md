@@ -28,7 +28,7 @@ palette records. Its spectral and ICC views are preserved as analysis only.
 
 The last phone-tested APK is **ATLAS Clarus Connect Navigationstest**
 (`0.3.3-test`). The next signed beta has the fixed application ID
-`com.atlasclarus.connect`; the palette-retention update-test build is `0.4.0-beta.3` / version code 3. The first signed APK was `0.4.0-beta.1` / version code 1.
+`com.atlasclarus.connect`; the next image-trace build is `0.4.0-beta.4` / version code 4. The palette-retention update-test build was `0.4.0-beta.3` / version code 3.
 The native Colour ID button does not reload an already open
 Colour ID page, preserving its in-memory image. The Android export adapter reads generated Blobs directly so
 the Save Document dialog works for detached download links. The language

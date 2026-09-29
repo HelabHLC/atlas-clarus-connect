@@ -2,7 +2,7 @@
 
 The first signed beta used application ID `com.atlasclarus.connect`,
 `versionCode 1`, and `versionName 0.4.0-beta.1`. The palette-retention update-test build keeps the application ID and signing
-key, and increases the version to `versionCode 3` / `versionName 0.4.0-beta.3`. The debug variant uses
+key, and increases the version to `versionCode 4` / `versionName 0.4.0-beta.4`. The debug variant uses
 `com.atlasclarus.connect.dev` and its runner-generated debug certificate; it is
 never a substitute for a signed beta. The installed 0.3.3 Navigationstest has
 a different application ID, so this beta installs separately and does not
