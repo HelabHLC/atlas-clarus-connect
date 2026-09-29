@@ -38,8 +38,16 @@ jobs:
             echo 'Keystore bytes do not match the reserved beta key'
             exit 1
           }
-          keytool -list -keystore "$RUNNER_TEMP/atlas-connect-beta.jks" \
-            -alias "$KEY_ALIAS" -storepass:env STORE_PASSWORD >/dev/null
+          if ! keytool -list -keystore "$RUNNER_TEMP/atlas-connect-beta.jks" \
+            -storepass:env STORE_PASSWORD >/dev/null 2>&1; then
+            echo 'Reserved keystore matches, but the store password is incorrect'
+            exit 1
+          fi
+          if ! keytool -list -keystore "$RUNNER_TEMP/atlas-connect-beta.jks" \
+            -alias "$KEY_ALIAS" -storepass:env STORE_PASSWORD >/dev/null 2>&1; then
+            echo 'Store password is valid, but the key alias is incorrect'
+            exit 1
+          fi
           echo "ATLAS_CONNECT_KEYSTORE_PATH=$RUNNER_TEMP/atlas-connect-beta.jks" >> "$GITHUB_ENV"
       - name: Build signed APK
         env:
