@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.atlasclarus.browseredition.test'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.atlasclarus.browseredition.test'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '0.1.0-test'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+def prepareBundle = tasks.register('prepareBundle', Exec) {
+    workingDir project.rootDir
+    commandLine 'python3', 'prepare_bundle.py'
+    inputs.files fileTree(new File(rootProject.projectDir, '../browser-bundle/src')),
+            fileTree(new File(rootProject.projectDir, '../hover-library/data')),
+            fileTree(new File(rootProject.projectDir, '../designer-layer')),
+            new File(rootProject.projectDir, '../browser-bundle/build_bundle.py'),
+            new File(rootProject.projectDir, 'prepare_bundle.py'),
+            new File(rootProject.projectDir, 'android-export.js')
+    outputs.dir file('src/main/assets/bundle')
+}
+tasks.named('preBuild').configure { dependsOn prepareBundle }
+tasks.matching { it.name.startsWith('merge') && it.name.endsWith('Assets') }
+        .configureEach { dependsOn prepareBundle }
