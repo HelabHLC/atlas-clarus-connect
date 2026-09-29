@@ -1,7 +1,9 @@
 # Connect beta identity and signing
 
-The first updateable beta uses application ID `com.atlasclarus.connect`,
-`versionCode 1`, and `versionName 0.4.0-beta.1`. The debug variant uses
+The first signed beta used application ID `com.atlasclarus.connect`,
+`versionCode 1`, and `versionName 0.4.0-beta.1`. The update-test build
+keeps the application ID and signing key, and increases the version to
+`versionCode 2` / `versionName 0.4.0-beta.2`. The debug variant uses
 `com.atlasclarus.connect.dev` and its runner-generated debug certificate; it is
 never a substitute for a signed beta. The installed 0.3.3 Navigationstest has
 a different application ID, so this beta installs separately and does not
