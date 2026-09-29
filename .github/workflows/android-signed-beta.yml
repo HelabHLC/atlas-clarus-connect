@@ -66,11 +66,11 @@ jobs:
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs "$apk" |
             grep -Eiq 'certificate SHA-256 digest: 986ca730efc54a20cfc88af4fb61018dfe7658f3165c5b6fb55eb9c59ccad63c'
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
-            grep -E "^package: name='com.atlasclarus.connect' versionCode='1' versionName='0.4.0-beta.1'"
+            grep -E "^package: name='com.atlasclarus.connect' versionCode='2' versionName='0.4.0-beta.2'"
           sha256sum "$apk"
       - uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Connect-Beta-0.4.0-beta.1
+          name: ATLAS-Clarus-Connect-Beta-0.4.0-beta.2
           path: android-test-app/app/build/outputs/apk/release/app-release.apk
           retention-days: 14
       - name: Remove temporary signing file
