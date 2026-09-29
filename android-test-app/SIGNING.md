@@ -28,6 +28,10 @@ atlas-connect-beta.jks -alias atlas-connect-beta`. Keep the keystore and
 password recoverable for future updates. A new key with the same alias is not
 the same signing identity.
 
+The reserved beta certificate has SHA-256 fingerprint
+`98:6C:A7:30:EF:C5:4A:20:CF:C8:8A:F4:FB:61:01:8D:FE:76:58:F3:16:5C:5B:6F:B5:5E:B9:C5:9C:CA:D6:3C`.
+The private key and its password are held separately from this repository.
+
 To build locally, provide `ATLAS_CONNECT_KEYSTORE_PATH`,
 `ATLAS_CONNECT_STORE_PASSWORD`, `ATLAS_CONNECT_KEY_ALIAS`, and
 `ATLAS_CONNECT_KEY_PASSWORD` as environment variables, then run
@@ -47,3 +51,7 @@ workflow's identity assertion and artifact name, and sign with the *same*
 keystore. Check the certificate fingerprint against the first signed beta
 before distributing an update. Preserve the previous APK until an on-device
 update has been confirmed without losing local palettes.
+
+The pull-request CI builds a release APK with a disposable key, verifies it,
+and deletes it without uploading it. That check exercises the signing path
+but does not create an updateable beta artifact.
