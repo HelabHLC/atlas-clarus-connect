@@ -39,13 +39,24 @@ To build locally, provide `ATLAS_CONNECT_KEYSTORE_PATH`,
 `gradle -p android-test-app :app:assembleRelease`. Avoid putting passwords in
 the shell command or repository files.
 
-The manual **Android signed beta** workflow reads the same four values from
-GitHub Actions environment secrets in `android-beta-signing`; it expects the
-keystore bytes as `ATLAS_CONNECT_KEYSTORE_BASE64` instead of a local path.
-Base64 is transport encoding, not encryption. Restrict the environment to
-trusted maintainers/branches, store its secrets there, and run the workflow
-only for a reviewed commit. Its release artifact is verified with `apksigner`
-and checked for the exact application ID and version.
+The manual **Android signed beta** workflow reads the reserved keystore from
+`ATLAS_CONNECT_KEYSTORE_BASE64` and its password from
+`ATLAS_CONNECT_STORE_PASSWORD` in the `android-beta-signing` environment. The
+alias is fixed to `atlas-connect-beta`; this PKCS12 key uses the same key and
+store password. Base64 is transport encoding, not encryption. Restrict the
+environment to trusted maintainers/branches and run the workflow only for a
+reviewed commit. The workflow builds a signed APK for direct device testing
+and a signed AAB for the Google Play draft. It verifies the APK identity and
+certificate, and verifies that the AAB carries the reserved certificate.
+
+Before the first Google Play release, choose the Play App Signing key
+strategy explicitly. If Google signs Play-delivered APKs with a newly generated
+key, they will not be an in-place update for devices holding the directly
+installed beta signed with the reserved key. To preserve that update path,
+follow Play Console's official existing-key transfer flow for the app signing
+key; the AAB's upload certificate alone does not select the Play signing key.
+Do not upload the private keystore into this repository or an issue. The Play
+Console draft and signed AAB do not publish an app.
 
 For each later beta, increase `versionCode`, update `versionName`, adjust the
 workflow's identity assertion and artifact name, and sign with the *same*
