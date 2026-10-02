@@ -8,7 +8,11 @@ original_data=re.search(r'<script id="data" type="application/json">(.*?)</scrip
 translations=json.loads((root/'english-ui.json').read_text())
 def translate(value):
     for old in sorted(translations,key=len,reverse=True):
-        value=value.replace(old,translations[old])
+        if old == 'Liste':
+            # This UI word is also a substring of addEventListener.
+            value=re.sub(r'(?<!\w)Liste(?!\w)', translations[old], value)
+        else:
+            value=value.replace(old,translations[old])
     return value
 protected={}
 def protect(m):
@@ -33,6 +37,7 @@ def protect(m):
 text=re.sub(r'<script id="(data|uploadEngine|primaryKernel|exampleData|schemaData|displayConfig)" type="application/json">(.*?)</script>',protect,text,flags=re.S)
 text=translate(text).replace('lang="de"','lang="en"').replace("'de-DE'","'en-GB'")
 for token,original in protected.items():text=text.replace(token,original)
+assert 'addEventListner' not in text, 'Translation corrupted a JavaScript API name'
 before_data=re.search(r'<script id="data" type="application/json">(.*?)</script>',text,re.S).group(1)
 old_download=re.search(r'function download\(name,value\)\{.*?\}\nfunction select',text,re.S)
 assert old_download
