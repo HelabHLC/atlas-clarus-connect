@@ -2,6 +2,9 @@ name: Mischatlas package
 on:
   pull_request:
     paths: ['mischatlas/**', '.github/workflows/mischatlas.yml']
+  push:
+    branches: [main]
+    paths: ['mischatlas/**', '.github/workflows/mischatlas.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -16,3 +19,29 @@ jobs:
         with:
           name: atlas-clarus-mischatlas-0.1.2
           path: mischatlas/dist/atlas-clarus-mischatlas-0.1.2.zip
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 mischatlas/build.py
+      - name: Prepare public downloads
+        run: |
+          cp mischatlas/dist/atlas-clarus-mischatlas/assets/mischatlas.html mischatlas/dist/atlas-clarus-mixing-atlas-0.1.2.html
+          cd mischatlas/dist
+          sha256sum atlas-clarus-mischatlas-0.1.2.zip atlas-clarus-mixing-atlas-0.1.2.html > SHA256SUMS.txt
+      - name: Publish requested release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create atlas-mixing-v0.1.2 \
+            mischatlas/dist/atlas-clarus-mischatlas-0.1.2.zip \
+            mischatlas/dist/atlas-clarus-mixing-atlas-0.1.2.html \
+            mischatlas/dist/SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "ATLAS Clarus Mixing Atlas 0.1.2 — English" \
+            --notes-file mischatlas/RELEASE_NOTES_0.1.2.md
