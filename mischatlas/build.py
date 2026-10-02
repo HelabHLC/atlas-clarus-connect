@@ -18,3 +18,5 @@ print(archive)
 
 import runpy
 runpy.run_path(str(root/'patch-v011.py'),run_name='__main__')
+
+runpy.run_path(str(root/'patch-v012-en.py'),run_name='__main__')
