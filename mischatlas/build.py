@@ -15,3 +15,6 @@ with zipfile.ZipFile(archive) as z:
     assert z.testzip() is None
     z.extractall(out)
 print(archive)
+
+import runpy
+runpy.run_path(str(root/'patch-v011.py'),run_name='__main__')
