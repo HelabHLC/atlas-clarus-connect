@@ -1,0 +1,14 @@
+{
+  "archive": "atlas-clarus-mischatlas-0.1.0.zip",
+  "sha256": "7f4926dbee97e628ef7d1d26c86763c6f655ce7f764832307e2091289eab9cf1",
+  "parts": [
+    {
+      "name": "plugin.zip.part01",
+      "sha256": "76f35bb74fc19f55882b7adc76e069e1e9fca089e2d4dc46a5b83b4cf2ede978"
+    },
+    {
+      "name": "plugin.zip.part02",
+      "sha256": "0fb4706ab146935fe227fa190ff54375ac5e3c45d95de4cd0d7937ca6c3f4ba4"
+    }
+  ]
+}
