@@ -12,8 +12,14 @@ Upload `mischatlas/dist/atlas-clarus-mischatlas-0.1.2.zip` through WordPress Plu
 
 ## Verification boundary
 
-Package CRC, embedded reference count and JavaScript syntax were checked locally. PHP lint passed in CI. WordPress 0.1.2 is installed and active; page 5497 remains draft. Browser startup, page selection, synthetic palette import, selected-field calculation, B/A and cancellation passed. English startup, import and selected-field calculation passed. PNG and JSON preparation now produces visible download links. Actual download completion remains unverified in the cloud browser. See LIVE_TEST_2026-10-02.md. After installation test H005, H360 (158/168), synthetic JSON import, matching reference B/A, PNG download and cancellation of a search. User data stays in the browser.
+Package CRC, embedded reference count and JavaScript syntax were checked locally. PHP lint passed in CI. WordPress 0.1.2 is installed and active; page 5497 is the publication target. Browser startup, page selection, synthetic palette import, selected-field calculation, B/A and cancellation passed. English startup, import and selected-field calculation passed. PNG and JSON preparation now produces visible download links. The cloud browser could not verify actual file saving; Norbert Woiwod subsequently reported that import, calculation and PNG/JSON downloads all work. Manual acceptance is user-reported, not an independently inspected export audit. See LIVE_TEST_2026-10-02.md. After installation test H005, H360 (158/168), synthetic JSON import, matching reference B/A, PNG download and cancellation of a search. User data stays in the browser.
 
 ## Source-specific licensing
 
 See SOURCES-AND-LICENSES.txt. GPL applies only to the new PHP wrapper. Backes stated CC BY-SA in his 1 October 2026 reply without a version; no version is invented here. This does not settle source-specific rights for all included material data. No blanket licence applies to the archive.
+
+## Spot colours and public downloads
+
+See RELEASE_NOTES_0.1.2.md for the English companion text. The atlas supports development of spot colours from fixed HLC targets; recipes need material compatibility, dosing calibration and physical measurement before production use.
+
+The main-branch publication workflow builds a WordPress ZIP and standalone HTML and publishes them with SHA-256 checksums as release atlas-mixing-v0.1.2. Source-specific attribution remains in both distributions.
