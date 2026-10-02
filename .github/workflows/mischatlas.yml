@@ -14,5 +14,5 @@ jobs:
       - run: php -l mischatlas/dist/atlas-clarus-mischatlas/atlas-clarus-mischatlas.php
       - uses: actions/upload-artifact@v4
         with:
-          name: atlas-clarus-mischatlas-0.1.0
-          path: mischatlas/dist/atlas-clarus-mischatlas-0.1.0.zip
+          name: atlas-clarus-mischatlas-0.1.1
+          path: mischatlas/dist/atlas-clarus-mischatlas-0.1.1.zip
