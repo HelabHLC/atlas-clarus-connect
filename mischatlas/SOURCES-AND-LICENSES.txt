@@ -1,0 +1,19 @@
+ATLAS Clarus Mischatlas – Quellen und Lizenzhinweise
+
+Neuer PHP-WordPress-Wrapper: GPL-2.0-or-later.
+Diese Angabe bezieht sich auf atlas-clarus-mischatlas.php und erteilt keine pauschale neue Lizenz für die mitgelieferten Datensätze.
+
+ATLAS-Referenzen: bereitgestellter HLC Colour Atlas XL / freieFarbe e.V.-Master; ATLAS Clarus-Auswertung, Norbert Woiwod. https://freieFarbe.de/ und https://arbe-lambda-star.com/
+Master SHA256: 8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4
+Masterwerte, Referenzadressen und Rezepte wurden für das WordPress-Paket nicht verändert.
+
+CIE-Licht- und Beobachterdaten: CC BY-SA 4.0 gemäß den Metadaten der genutzten Tabellen. Attribution, Quelllinks und Kennzeichnung der Ableitungen stehen in der Atlas-HTML. Lizenz: https://creativecommons.org/licenses/by-sa/4.0/
+
+Sirius / Dr. Ulrich Backes: https://www.backes-art.de/
+Mitteilung vom 1. Oktober 2026: Umstellung auf CC BY-SA. Genaue Version nicht bestätigt; keine Versionsnummer wird ergänzt. Rezeptauswahl, Neusortierung, ATLAS-Zuordnung und zusätzliche Modellanalysen sind Ableitungen dieser Auswertung. Die vollständige öffentliche Lizenzkennzeichnung bleibt zu klären.
+
+pigments.rs: bereitgestellte Ausgangsprobendatei; Produkt-/Pigmentnamen sind erhalten. Quelle, Lizenz und Messbedingungen sind nicht für jede Probe vollständig belegt. Das Plugin behauptet keine zusätzliche Freigabe dieser Daten.
+
+Synthetische Beispielkurven: mathematisch erzeugte Importtestdaten, unter CC0-1.0 bereitgestellt; keine realen Materialproben.
+
+Nutzerimporte: verbleiben in der lokalen Browseranwendung, sofern der Nutzer sie nicht selbst exportiert oder anderweitig teilt. Der Import erteilt keine neue Lizenz für fremde Daten.

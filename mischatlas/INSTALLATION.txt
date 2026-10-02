@@ -1,0 +1,42 @@
+ATLAS Clarus Mischatlas – WordPress-Plugin 0.1.0
+Für WordPress bei IONOS oder einem anderen WordPress-Host
+
+Installation
+1. In WordPress: Plugins → Installieren → Plugin hochladen.
+2. Die Datei atlas-clarus-mischatlas-0.1.0.zip auswählen und installieren.
+3. Das Plugin „ATLAS Clarus Mischatlas“ aktivieren.
+4. Eine WordPress-Seite zunächst als Entwurf anlegen. In einen Shortcode-Block einsetzen:
+   [atlas_clarus_mischatlas]
+5. Seitenvorschau öffnen. Der Atlas startet zunächst auf H005.
+
+Optional: [atlas_clarus_mischatlas height="1400"]
+Die Höhe wird auf 500–3000 Pixel begrenzt. Für mehr Platz den Link „Mischatlas in eigener Ansicht öffnen“ verwenden.
+
+Pluginverwaltung
+Unter Einstellungen → ATLAS Mischatlas stehen Shortcode, Direktlink und Hinweise. Das Plugin legt keine Einstellungen, Datenbanktabellen oder Upload-Endpunkte an.
+
+Erster Live-Test
+- Die Startmeldung muss „Mischatlas bereit · 73 Atlas-Seiten“ zeigen.
+- Das Seitenmenü muss H000 bis H360 in 5er-Schritten anbieten.
+- H360 auswählen: 158 von 168 HLC-Modelltreffern; H360_L085_C020 ist ein Treffer.
+- Das synthetische Importbeispiel herunterladen und wieder einlesen.
+- „Ausgewähltes Atlas-Feld rechnen“ starten.
+- Ziel / B / A ansehen und den B/A-PNG-Export testen.
+- Auch mit einem kleinen Bildschirm prüfen.
+
+Falls nur „Gesamter Atlas“ erscheint
+Die Startmeldung kann den JavaScript-Fehler sichtbar machen. Außerdem den Direktlink testen. Die Atlas-Datei ist etwa 39 MB groß und muss vollständig übertragen werden. Sicherheitsregeln müssen die lokalen eingebetteten Skripte und Blob-Web-Worker zulassen. Bei blockierendem Content-Security-Policy-Header die genaue Meldung prüfen, statt pauschal Sicherheitsregeln auszuschalten.
+
+Uploadlimit
+Falls WordPress das ZIP wegen der Uploadgröße ablehnt, den Ordner atlas-clarus-mischatlas aus dem ZIP über den vorhandenen IONOS-Dateizugang in wp-content/plugins/ übertragen und anschließend aktivieren.
+
+Daten und Grenzen
+Importierte JSON-Daten werden ausschließlich durch diese Anwendung im Browser verarbeitet. Die Erweiterung sendet sie nicht an einen Server und speichert sie nicht automatisch dauerhaft. Die WordPress-Seite selbst wird regulär vom Webserver ausgeliefert. Die bestehende Website kann eigene Cookies, Statistikdienste oder Erweiterungen verwenden; dieses Plugin ergänzt keinen solchen Dienst.
+
+Die Referenzidentität und vorhandenen Rezepte bleiben fest. Korrekte Abdeckung: 12.714/13.283 = 95,72 %; 569 Felder ohne gefundenen HLC-Treffer. „Offen“ ist kein Out-of-gamut-Nachweis. Nutzerrezepte sind getrennt und nutzen zunächst S=1, höchstens vier Komponenten und 100 ganzzahlige Modellteile. Mengen sind keine kalibrierten Tropfen oder Gramm. B/A zeigt digitale D65/sRGB-Modellvorschauen, keine realen Messproben.
+
+Prüfstatus
+ZIP-Struktur, eingebettete Daten, JavaScript-Syntax und unveränderte Master-/Rezeptdaten wurden lokal geprüft. Ein PHP-/WordPress-Runtime-Test und ein Live-Test auf deiner IONOS-Installation sind in dieser Umgebung nicht durchgeführt worden. Bitte zuerst die Vorschau einer Entwurfsseite verwenden.
+
+Attribution und Lizenz
+Siehe SOURCES-AND-LICENSES.txt sowie die Hinweise im Atlas. Der WordPress-Wrapper ist separat von den Datensätzen lizenziert. Das Paket ist kein Ersatz für die noch offene Klärung einzelner Datenlizenzen vor einer öffentlichen Weitergabe.
