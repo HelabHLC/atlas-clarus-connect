@@ -18,7 +18,7 @@ Pick a pixel from an image or enter RGB/HEX to bind the observed 8-bit sRGB valu
 
 This page hosts the standalone **ATLAS Clarus Colour Picker Prototype v5.3.3**. Its tabs support image picking, region analysis, palettes, ΔE00 heatmaps, traceability, master navigation, gamut analysis, ICC profile context, production comparison, measured/spectral QC, and approval reporting. The tabs are exploratory tools; keep the reference identity visible as the output conditions change.
 
-Digital profile conversions and screen previews are calculations. They are not physical measurements, print proofs, or production approvals. Measured QC remains `NOT_MEASURED` until a real measurement record is imported and evaluated with explicit project limits.
+Digital profile conversions and screen previews are calculations. They are not physical measurements, print proofs, or production approvals. Measured QC remains `NOT_MEASURED` until a real measurement record is imported and evaluated. Without explicit project limits, a measured record has no automatic pass/fail approval.
 
 **Colour reference and attribution:** HLC Colour Atlas XL reference material © freieFarbe e.V. / freieFarbe.de. ATLAS Clarus uses a modified, indexed master. “CIELAB” describes reference data available for analysis; it does not describe the primary RGB-only identity assignment.
 
