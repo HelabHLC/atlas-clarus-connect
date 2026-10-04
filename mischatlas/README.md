@@ -1,27 +1,23 @@
-# ATLAS Clarus Mixing Atlas — WordPress 0.1.3
+# ATLAS Clarus Mixing Atlas — WordPress 0.1.4
 
-Offline spectral mixing atlas with local palette import, HLC comparison and B/A PNG export.
+Offline spectral mixing atlas with local palette import, HLC comparison, B/A PNG export and experimental light-dependent recipe search.
 
-13,283 unchanged master references; 12,714 model hits, 569 open fields. These are computational candidates, not measured mixture matches. Parts are not calibrated drops or grams.
+13,283 unchanged master references; the original database contains 12,714 HLC model hits and 569 open fields. These counts describe the original search, not the new light-dependent search. All are computational candidates, not measured mixture matches. Model parts are not calibrated drops or grams.
+
+## Light-dependent mixing
+
+The new section uses all 38 illuminants from the PKL Image Explorer. D50, D65, FL11 and LED-B3 are selected initially. Choose a reference in the existing atlas, select the required lights and search either for the lowest D50 error or the lowest maximum CIEDE2000 error across selected lights. The comparison table evaluates existing and new recipes under all 38 lights. Display swatches remain D65/sRGB.
+
+Use the provided 31-sample Golden Heavy Body subset or import a compatible spectral palette through the existing importer. Names identify a common series but do not establish measured compatibility. Search uses Kubelka–Munk S=1, seed 42, a bounded candidate pool and integer refinement, at most four components and 100 model parts. No global optimum is claimed. JSON export records the fixed reference, source metadata, search conditions, selected lights, samples, recipe and all light evaluations.
 
 ## Build and install
 
-Run `python3 mischatlas/build.py` from the repository checkout. It verifies both parts and the complete archive by SHA-256, checks ZIP CRC, and extracts the complete HTML/JavaScript source into `mischatlas/dist/atlas-clarus-mischatlas/`. The split archive preserves the exact previously verified 0.1.0 source package and avoids the connector request-size limit. The build applies patch-v011.py, then patch-v012-en.py with english-ui.json. The Liste label is translated only as a standalone word, preserving addEventListener API names. Version 0.1.3 translates the interface, help, warnings, attribution and generated labels to English, and replaces hidden automatic downloads with persistent, visible Download links. Embedded reference data, existing recipes, spectra and numeric kernels remain unchanged. Imported user names are preserved.
+Run `python3 mischatlas/build.py`. It verifies the split original archive by SHA-256 and ZIP CRC, extracts it, applies patches 0.1.1–0.1.4 and builds `mischatlas/dist/atlas-clarus-mischatlas-0.1.4.zip`. Patch 0.1.4 verifies the exact 0.1.3 HTML checksum and preserves the original reference/recipe payload byte-for-byte. New source is in `light-mixing/`; no new full copy of the 39 MB atlas is stored.
 
-Upload `mischatlas/dist/atlas-clarus-mischatlas-0.1.3.zip` through WordPress Plugins → Add New → Upload Plugin. Activate and insert `[atlas_clarus_mischatlas]` into a test page.
+Update the WordPress plugin with the ZIP and retain `[atlas_clarus_mischatlas]`. The main-branch workflow publishes `atlas-mixing-v0.1.4`, containing plugin ZIP, standalone HTML and SHA256SUMS.txt. Existing releases remain available.
 
-## Verification boundary
+## Validation and limitations
 
-Package CRC, embedded reference count and JavaScript syntax were checked locally. PHP lint passed in CI. WordPress 0.1.3 is installed and active; page 5497 is the publication target. Browser startup, page selection, synthetic palette import, selected-field calculation, B/A and cancellation passed. English startup, import and selected-field calculation passed. PNG and JSON preparation now produces visible download links. The cloud browser could not verify actual file saving; Norbert Woiwod subsequently reported that import, calculation and PNG/JSON downloads all work. Manual acceptance is user-reported, not an independently inspected export audit. See LIVE_TEST_2026-10-02.md. After installation test H005, H360 (158/168), synthetic JSON import, matching reference B/A, PNG download and cancellation of a search. User data stays in the browser.
+D50/D65 integration cross-checked against Explorer reference Lab values, maximum error below 3e-13. The complete document was tested with a lightweight DOM and actual Node workers for startup, selected-light search, D50 search, 38-light table, cancellation, reference changes, original importer, imported palette, persistent JSON export and immutable original data. CI additionally performs PHP lint and a real Chromium browser smoke test, including the JSON download. Earlier live 0.1.3 acceptance remains documented in LIVE_TEST_2026-10-02.md; it is not acceptance of this new feature.
 
-## Source-specific licensing
-
-See SOURCES-AND-LICENSES.txt. GPL applies only to the new PHP wrapper. Backes stated CC BY-SA in his 1 October 2026 reply without a version; no version is invented here. This does not settle source-specific rights for all included material data. No blanket licence applies to the archive.
-
-## Spot colours and public downloads
-
-See RELEASE_NOTES_0.1.3.md for the English companion text. The atlas supports development of spot colours from fixed HLC targets; recipes need material compatibility, dosing calibration and physical measurement before production use.
-
-The main-branch publication workflow builds a WordPress ZIP and standalone HTML and publishes them with SHA-256 checksums as release atlas-mixing-v0.1.3. Source-specific attribution remains in both distributions.
-
-Version 0.1.3 fixes an empty-table regression in the English translation. Version 0.1.2 is superseded. Numeric data and calculations are unchanged.
+Recipe accuracy requires material-specific calibration, repeatable preparation, dosing, drying, physical spectral measurements and corrections. Printing-ink/textile suitability and production approval are not established. See RELEASE_NOTES_0.1.4.md and SOURCES-AND-LICENSES.txt. Previous source-specific attribution and licensing remain in force; there is no blanket licence for material data. Backes stated CC BY-SA without a confirmed version. The added code is GPL-2.0-or-later; data retains source-specific terms.
