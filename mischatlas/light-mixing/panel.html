@@ -1,0 +1,26 @@
+<section id="lightMixSection" aria-label="Experimental light-dependent mixing">
+ <h2>Light-dependent mixing · 38 illuminants · experimental</h2>
+ <p>Choose an Atlas reference in the table, select the lights it must match under, and calculate a new recipe. The reference identity stays fixed.</p>
+ <p id="lcTarget"></p>
+ <div class="filters">
+  <label>Mixing palette<select id="lcPalette"><option value="golden">Golden Heavy Body · 31 available samples</option><option value="import">Your imported spectral palette</option></select></label>
+  <label>Search objective<select id="lcObjective"><option value="multi">Best worst-light match across selected lights</option><option value="D50">Best match under D50</option></select></label>
+  <label>Search budget<select id="lcBudget"><option value="4000">4,000 candidates · quick experiment</option><option value="20000" selected>20,000 candidates · normal</option><option value="80000">80,000 candidates · extended</option></select></label>
+ </div>
+ <div class="controls" style="flex-wrap:wrap;justify-content:flex-start">
+  <button id="lcStarter" type="button">D50 / D65 / FL11 / LED-B3</button><button id="lcAll" type="button">Select all 38</button><button id="lcNone" type="button">Clear lights</button>
+ </div>
+ <div id="lcLights" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px"></div>
+ <div class="controls" style="flex-wrap:wrap;justify-content:flex-start">
+  <button class="primary" id="lcSearch" type="button">Calculate recipe for this reference</button>
+  <button id="lcCancel" type="button" disabled>Cancel</button><button id="lcExport" type="button" disabled>Prepare recipe JSON</button>
+ </div>
+ <p id="lcProgress" role="status" aria-live="polite"></p>
+ <p class="banner">Computed recipes use Kubelka–Munk S=1 and up to four components, with 100 integer model parts. These percentages are not calibrated grams or drops. Light data and the 380–730 nm integration follow the Image Explorer. Physical mixtures remain unmeasured.</p>
+ <div id="lcRecipe"></div>
+ <div id="lcSwatches" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px"></div>
+ <p class="muted">Swatches: spectrum → CIE D65 / 2° → sRGB. Their display stays at D65; the table compares every illuminant numerically.</p>
+ <div class="scroll"><table><thead><tr><th>Illuminant</th><th>Selected</th><th>Existing recipe ΔE00</th><th>New recipe ΔE00</th></tr></thead><tbody id="lcTable"></tbody></table></div>
+ <p id="lcMaximum"></p>
+ <details><summary>Light-source provenance and calculation</summary><pre id="lcProvenance"></pre></details>
+</section>

@@ -1,0 +1,25 @@
+const {chromium}=require(process.env.ATLAS_PLAYWRIGHT_MODULE||'playwright'),path=require('path'),fs=require('fs');
+(async()=>{
+ const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ const page=await browser.newPage({acceptDownloads:true,viewport:{width:1280,height:900}}),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('file://'+path.resolve('mischatlas/dist/atlas-clarus-mischatlas/assets/mischatlas.html'));
+ await page.waitForFunction(()=>document.querySelectorAll('#lcLights input').length===38);
+ if(await page.locator('#hue option').count()!==74)throw Error('Atlas page initialization');
+ await page.locator('#lcBudget').selectOption('4000');await page.locator('#lcSearch').click();
+ await page.waitForFunction(()=>document.getElementById('lcProgress').textContent.startsWith('Recipe calculated'),null,{timeout:60000});
+ if(await page.locator('#lcTable tr').count()!==38)throw Error('Comparison row count');
+ await page.locator('#lcExport').click();const link=page.locator('#downloadPanel a').filter({hasText:'LightDependent_Recipe'});
+ const pending=page.waitForEvent('download');await link.click();const d=await pending;await d.saveAs('/tmp/atlas-light-recipe.json');
+ const r=JSON.parse(fs.readFileSync('/tmp/atlas-light-recipe.json','utf8'));
+ if(r.result.atlas_reference!=='H140_L055_C040'||!r.result.search.optimized_lights.includes('FL11'))throw Error('Export identity/lights');
+ await page.locator('#search').fill('H140_L060_C040');await page.locator('.refbtn').filter({hasText:'H140_L060_C040'}).click();
+ if(!(await page.locator('#lcTarget').textContent()).includes('H140_L060_C040'))throw Error('Reference change');
+ if(!(await page.locator('#lcExport').isDisabled()))throw Error('Stale export');
+ await page.locator('#lcSearch').click();await page.locator('#lcCancel').click();
+ await page.locator('#lcAll').click();await page.locator('#lcSearch').click();
+ await page.waitForFunction(()=>document.getElementById('lcProgress').textContent.startsWith('Recipe calculated'),null,{timeout:60000});
+ await page.screenshot({path:'/tmp/atlas-light-mixing-desktop.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});await page.screenshot({path:'/tmp/atlas-light-mixing-mobile.png',fullPage:true});
+ if(errors.length)throw Error(errors.join('\n'));await browser.close();console.log('Browser startup, workers, 38-light search, reference switch, cancellation and JSON download PASS');
+})();
