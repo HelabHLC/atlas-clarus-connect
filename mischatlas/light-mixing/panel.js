@@ -2,8 +2,8 @@ const LC=JSON.parse($('lightMixData').textContent),lcEngine=JSON.parse($('lightM
 const lcFunctions=new Function(lcEngine+';return {labFromR,de00};')();
 let lcWorker=null,lcJob=0,lcResult=null;
 function lcChosen(){return [...document.querySelectorAll('#lcLights input:checked')].map(x=>x.value);}
-function lcStop(message){if(lcWorker){lcWorker.terminate();lcWorker=null;lcJob++;if(message)$('lcProgress').textContent=message;}$('lcCancel').disabled=true;$('lcSearch').disabled=false;}
-function lcReset(){lcStop('Calculation cancelled because the reference changed.');lcResult=null;$('lcRecipe').innerHTML='';$('lcExport').disabled=true;lcRender();}
+function lcStop(message){if(lcWorker){lcWorker.terminate();lcWorker=null;lcJob++;}if(message)$('lcProgress').textContent=message;$('lcCancel').disabled=true;$('lcSearch').disabled=false;}
+function lcReset(){lcStop('Reference changed. Calculate a recipe for this reference.');lcResult=null;$('lcRecipe').innerHTML='';$('lcExport').disabled=true;lcRender();}
 LC.lights.forEach(name=>{const label=document.createElement('label');label.style.cssText='flex-direction:row;align-items:center;gap:6px';const c=document.createElement('input');c.type='checkbox';c.value=name;c.checked=['D50','D65','FL11','LED-B3'].includes(name);label.append(c,document.createTextNode(name));$('lcLights').append(label);c.onchange=()=>{lcStop('Light selection changed. Start a new search to optimize for these lights.');lcRender();};});
 function lcSet(names){document.querySelectorAll('#lcLights input').forEach(c=>c.checked=names.includes(c.value));lcStop('Light selection changed. Start a new search to optimize for these lights.');lcRender();}
 $('lcStarter').onclick=()=>lcSet(['D50','D65','FL11','LED-B3']);$('lcAll').onclick=()=>lcSet(LC.lights);$('lcNone').onclick=()=>lcSet([]);
