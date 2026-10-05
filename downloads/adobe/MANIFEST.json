@@ -1,0 +1,238 @@
+{
+  "format": "ATLAS_CLARUS_ADOBE_ASE_DOWNLOAD",
+  "version": "1.0",
+  "source_file": "hover-library/data/colors.json",
+  "source_file_sha256": "96866cacb09d712409b8f361111a73b3cbcd07252e3a7f1ba4e694fef9369361",
+  "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "entry_count": 13283,
+  "hue_library_count": 73,
+  "colour_model": "RGB",
+  "swatch_type": "global/process (ASE type 0)",
+  "adobe_runtime_status": "NOT_TESTED",
+  "measured_qc_status": "NOT_MEASURED",
+  "note": "ASE preserves HLC names and RGB; spectral data, row IDs and master hash require the sidecar.",
+  "files": {
+    "ATLAS_Clarus_13283_RGB_v1.0.ase": {
+      "sha256": "e39805b0d1daabd5f7049d5de0396d324c704f3a00ee79bd1a19e3c225b74e54"
+    },
+    "by-hue/ATLAS_Clarus_H000_RGB.ase": {
+      "sha256": "814ff823c308336b5088ff2c25c39e8c9485a0fa7365e9d549faf592ce0ad89c"
+    },
+    "by-hue/ATLAS_Clarus_H005_RGB.ase": {
+      "sha256": "63248e034f2bd9ae18112a9c48c4da8aae00c877c2ed1d7025241e40601ef16d"
+    },
+    "by-hue/ATLAS_Clarus_H010_RGB.ase": {
+      "sha256": "e53d1365ea49f09b80b341681f4533e7f78b65403dc41f55ec1771cb9c8fca94"
+    },
+    "by-hue/ATLAS_Clarus_H015_RGB.ase": {
+      "sha256": "5463d2aa951c6575f29278baf08aaf7eefe71cd3e5700f840bf0ddb5f3ea3611"
+    },
+    "by-hue/ATLAS_Clarus_H020_RGB.ase": {
+      "sha256": "4e7f56a168466168a602ef16b1a2485a3000e9fd1a2647cc895a331f13614aa3"
+    },
+    "by-hue/ATLAS_Clarus_H025_RGB.ase": {
+      "sha256": "5cedeea430c48cac88af3228466a434a754016694754291dd6d648ca920fed41"
+    },
+    "by-hue/ATLAS_Clarus_H030_RGB.ase": {
+      "sha256": "bc27d2f0a2b45415e95f7030e469c38f3b1a67a64a6ba8f04ec0f1dedd16e9d7"
+    },
+    "by-hue/ATLAS_Clarus_H035_RGB.ase": {
+      "sha256": "ddc34985c43fff817147f0f53e8c6453899f23dd560f777920edab382518bb83"
+    },
+    "by-hue/ATLAS_Clarus_H040_RGB.ase": {
+      "sha256": "39bfde2041e5d22ead0a23345147bfba00e98c2fe94cbb998942ef14d45456bb"
+    },
+    "by-hue/ATLAS_Clarus_H045_RGB.ase": {
+      "sha256": "a75c1147fbe51b21f8d616a29954b664113c77eb2ef9baffa431c33637bc461f"
+    },
+    "by-hue/ATLAS_Clarus_H050_RGB.ase": {
+      "sha256": "3491c8a03cd3f049b9fbd07011f44cb63b6c22ea4f3c7abf798916c78ae0842d"
+    },
+    "by-hue/ATLAS_Clarus_H055_RGB.ase": {
+      "sha256": "bbaed051807f13176c23bb61465641a0cc1e763ac66360f88528a2fc2fc1b4f3"
+    },
+    "by-hue/ATLAS_Clarus_H060_RGB.ase": {
+      "sha256": "1ba1cacd4b93b7dc796f7fffd0ec2f2834fb57f362e7672feab3d33a9abc8c21"
+    },
+    "by-hue/ATLAS_Clarus_H065_RGB.ase": {
+      "sha256": "30978b7a4af1a5beec45a128165046a88b2067b1d1f1e04f36dbbe3751b79c40"
+    },
+    "by-hue/ATLAS_Clarus_H070_RGB.ase": {
+      "sha256": "4b25c3ed6f101fb7d831ee4418bfaf0f6d6fd84d4dc491d1d164e08fccaf1bf5"
+    },
+    "by-hue/ATLAS_Clarus_H075_RGB.ase": {
+      "sha256": "c3c220df81bb1bd8a6fc9853a18c9f78b32f086a8be1f768f3277c3ea4320e25"
+    },
+    "by-hue/ATLAS_Clarus_H080_RGB.ase": {
+      "sha256": "cf3281f489b751ad3dd4a04de7ddda11022e7bab564056c548f833c4e26ca729"
+    },
+    "by-hue/ATLAS_Clarus_H085_RGB.ase": {
+      "sha256": "fedae90889b2e9b738a5282f047c202390a2f06833d767a4e9fd9b36dd9bf83c"
+    },
+    "by-hue/ATLAS_Clarus_H090_RGB.ase": {
+      "sha256": "308f2b612553bc40977c56182155f93f33739932e58c1d84425a13c3fcaa8b32"
+    },
+    "by-hue/ATLAS_Clarus_H095_RGB.ase": {
+      "sha256": "ff231c19d72f8efc8dde42a9074db8ca2d562a7f4f878cbcefe8277bb374a2e8"
+    },
+    "by-hue/ATLAS_Clarus_H100_RGB.ase": {
+      "sha256": "32f4800c68499adde56aadc3a3ca1d9cd10b1c9e0b485ad680aee718185cd536"
+    },
+    "by-hue/ATLAS_Clarus_H105_RGB.ase": {
+      "sha256": "9bde7445a58ed671d6bb9826fa80146128cec4cd4b376e30c0b90e74bd738e56"
+    },
+    "by-hue/ATLAS_Clarus_H110_RGB.ase": {
+      "sha256": "33b979c32fe8a6e9b8f84cd41a052864fb70d33e618a061aaee703df16178b81"
+    },
+    "by-hue/ATLAS_Clarus_H115_RGB.ase": {
+      "sha256": "c9a25ece7f4fe3fbcb916dc7472b12d67d06214c6b89ee86d676b24e48b22c3c"
+    },
+    "by-hue/ATLAS_Clarus_H120_RGB.ase": {
+      "sha256": "f8e2690e820215da8c74d0ca6815430ad9b46ad40d4fc46b8b35021d845b5871"
+    },
+    "by-hue/ATLAS_Clarus_H125_RGB.ase": {
+      "sha256": "50818129a6e7739672346aa8a37ed8d418561e55620db04eeb55f4d2c902d919"
+    },
+    "by-hue/ATLAS_Clarus_H130_RGB.ase": {
+      "sha256": "56388c0abb79e098927a80ef772e744a2093bbaa646a6f2fe865440738754087"
+    },
+    "by-hue/ATLAS_Clarus_H135_RGB.ase": {
+      "sha256": "62b623c0d6502560b5e3593f03c645421bc5f1bb6da8b825fd37ced9d42bdc54"
+    },
+    "by-hue/ATLAS_Clarus_H140_RGB.ase": {
+      "sha256": "bc359ec560004cd46f767f468bec3a2d597a450095516121aec9f1020cfd4c4c"
+    },
+    "by-hue/ATLAS_Clarus_H145_RGB.ase": {
+      "sha256": "6a71d250611136dead4e486a76a2d1f22104613cbc8563fe1a060092032935e0"
+    },
+    "by-hue/ATLAS_Clarus_H150_RGB.ase": {
+      "sha256": "aad559a75d1804e0a7eae78bc5913fbbb502a711c6a0b0dd3ed63633a35d381f"
+    },
+    "by-hue/ATLAS_Clarus_H155_RGB.ase": {
+      "sha256": "e519ac7b045afa71dd50db0b8542a3b327fcdcdce7ec23620c8630409a0299b5"
+    },
+    "by-hue/ATLAS_Clarus_H160_RGB.ase": {
+      "sha256": "21d3bc246668d1b82c90ed1e9725b1f8a348bb33621d48aacaeec4db9f2c2fdb"
+    },
+    "by-hue/ATLAS_Clarus_H165_RGB.ase": {
+      "sha256": "8d8e1f5432b2b36cb09a249924728e347cc890070d4e6f2aadc5b93292904f6e"
+    },
+    "by-hue/ATLAS_Clarus_H170_RGB.ase": {
+      "sha256": "41cc6f610b4d48966c5ab6f606e86f8ce35fdf7c352a2a28fcb09bfa18e13ab2"
+    },
+    "by-hue/ATLAS_Clarus_H175_RGB.ase": {
+      "sha256": "5575f8f79650a125d6ab903a8285becf539c4a42e75ee00f7b293f514619c48e"
+    },
+    "by-hue/ATLAS_Clarus_H180_RGB.ase": {
+      "sha256": "21cbda983dc54d7a9462109f5700b79830ce58e092e326ada33e37ef8c906e24"
+    },
+    "by-hue/ATLAS_Clarus_H185_RGB.ase": {
+      "sha256": "37e0b7af80440b9d14d90deac9c04458f7a197be80b2a2711de2a41b5e1bdffa"
+    },
+    "by-hue/ATLAS_Clarus_H190_RGB.ase": {
+      "sha256": "9be17193617f6b0aa124ee067ac1bd1fe5ade42c95db9c4fb1a4e57072ddc2f8"
+    },
+    "by-hue/ATLAS_Clarus_H195_RGB.ase": {
+      "sha256": "1b15d2ddd4213c3ec6ec0ea7220907f6021dde9630acd18cfe389d4dcd7521e2"
+    },
+    "by-hue/ATLAS_Clarus_H200_RGB.ase": {
+      "sha256": "f13f364dfd6ee91012dbb9089a7cc53897e6b4f5adbe1134b21bdb5b15ab2f2e"
+    },
+    "by-hue/ATLAS_Clarus_H205_RGB.ase": {
+      "sha256": "85de298f1e001c5d9aebc9dc9d97501794046313e309dec0b38fdc9a52c10b0d"
+    },
+    "by-hue/ATLAS_Clarus_H210_RGB.ase": {
+      "sha256": "d8cf51ef4b9e555efca58956080981e0c314394120df843f562aa7fe04e31bf3"
+    },
+    "by-hue/ATLAS_Clarus_H215_RGB.ase": {
+      "sha256": "a1667d7b3268807f7f763b55ef2940e327cad7f98133c397a1bd4c48fd524ff0"
+    },
+    "by-hue/ATLAS_Clarus_H220_RGB.ase": {
+      "sha256": "3877e34c387ba476135d66dc14954ff9085bfbb67a6986e00532aa146fa3ced4"
+    },
+    "by-hue/ATLAS_Clarus_H225_RGB.ase": {
+      "sha256": "13ad64b636925a88690956dcbad267195792ca176de4ac8394401c32e3c38091"
+    },
+    "by-hue/ATLAS_Clarus_H230_RGB.ase": {
+      "sha256": "84667b5d41a9bafe596e0dd3be7db4d3315aa1b581f317cd8a096f4e2a73f2aa"
+    },
+    "by-hue/ATLAS_Clarus_H235_RGB.ase": {
+      "sha256": "261bbf279d6751c74db366aa7828cbd0f5a200bb3f79a5257fbdb6bbdb57b8f5"
+    },
+    "by-hue/ATLAS_Clarus_H240_RGB.ase": {
+      "sha256": "e6659a8f1b08675df97ae0d894ab571b0a0f75e1ef150e283133d1327c023173"
+    },
+    "by-hue/ATLAS_Clarus_H245_RGB.ase": {
+      "sha256": "c88f69cdb651a2b19eec0b6355a0e30422ccbdc2cf2e32529a51ad67f8c9ac20"
+    },
+    "by-hue/ATLAS_Clarus_H250_RGB.ase": {
+      "sha256": "3f7dcf1c647d40b7d1a56aee0860cbc0f79c83892c944bfe11fa0211f86d2a38"
+    },
+    "by-hue/ATLAS_Clarus_H255_RGB.ase": {
+      "sha256": "09a5a91ddac7ca76cb9f5d841149d918cc65623c2e7ffaaa07c9927ae4d7cb50"
+    },
+    "by-hue/ATLAS_Clarus_H260_RGB.ase": {
+      "sha256": "f810a6a2d470825ae719a288be14e1499a1a3aedd485fbe4c3400333d7dfd05a"
+    },
+    "by-hue/ATLAS_Clarus_H265_RGB.ase": {
+      "sha256": "4db9b076879ab156e61ba8a268e02d98d751bee43f0d32f8b77120d010d3e12c"
+    },
+    "by-hue/ATLAS_Clarus_H270_RGB.ase": {
+      "sha256": "6d403335dfe587c2409906f6740cd0a60cb3e02838f74faa0d131bdae0c335f9"
+    },
+    "by-hue/ATLAS_Clarus_H275_RGB.ase": {
+      "sha256": "3a04bdba6dd5440bee30ae0c04c20b8761102be0be1ec0a264e511c4c9e9b5df"
+    },
+    "by-hue/ATLAS_Clarus_H280_RGB.ase": {
+      "sha256": "0e0b3b3d9bcf18ef20043042c1912ae2d72014806f0186368b285b10f26b6c04"
+    },
+    "by-hue/ATLAS_Clarus_H285_RGB.ase": {
+      "sha256": "868b722c79f9883b473e67dbc081a36ce62cefa004da6570309cdd9feaf5318b"
+    },
+    "by-hue/ATLAS_Clarus_H290_RGB.ase": {
+      "sha256": "f3696696a1ea0c1b5ff8f239758636c6abdb2ba981f6c54acc76c4b11da22178"
+    },
+    "by-hue/ATLAS_Clarus_H295_RGB.ase": {
+      "sha256": "7f8cd560afe0354d22ed01dc606e8522e25eb08be21274d7c9f01f71bc0f8097"
+    },
+    "by-hue/ATLAS_Clarus_H300_RGB.ase": {
+      "sha256": "c1fffcd140a58853cfd0b67bd3eff0e6a35a525f92d432d8b130182e685d989a"
+    },
+    "by-hue/ATLAS_Clarus_H305_RGB.ase": {
+      "sha256": "e940661d0e35aca517aeb8919f62734ff0d8bd0aa17813b8d0b320248422579b"
+    },
+    "by-hue/ATLAS_Clarus_H310_RGB.ase": {
+      "sha256": "f4d01c30485db7b5bf46c92dda912b5721252c5e51c62a8b9af756132b88b4cc"
+    },
+    "by-hue/ATLAS_Clarus_H315_RGB.ase": {
+      "sha256": "f7112cc5a6e07d61f7b57ab464f7fbc17e7274f7055cd3c6c5ed729f566392ba"
+    },
+    "by-hue/ATLAS_Clarus_H320_RGB.ase": {
+      "sha256": "9f70ae0ad87c26760739cadc76ebef05c307e941740a2c20a045b4ba695014c2"
+    },
+    "by-hue/ATLAS_Clarus_H325_RGB.ase": {
+      "sha256": "ec01429437ec8825986ae08f983ebcb4a6419c96283c5f393d825cd21ff2abee"
+    },
+    "by-hue/ATLAS_Clarus_H330_RGB.ase": {
+      "sha256": "3b3fe32b01ddfde4463f14ec0ffbdd7028023b128f5b1c54bd4e81a1fc1d11c9"
+    },
+    "by-hue/ATLAS_Clarus_H335_RGB.ase": {
+      "sha256": "97a975f099bde627f22a7076a36b5462c50dc8f22f486bca51cdc0b87227ecbc"
+    },
+    "by-hue/ATLAS_Clarus_H340_RGB.ase": {
+      "sha256": "ccb4aba8e5501709d802eee239dfda9edbd0fc55b8407b28ccd484e27f2e849d"
+    },
+    "by-hue/ATLAS_Clarus_H345_RGB.ase": {
+      "sha256": "b3b3f3c88b752b2354ae93d413ca2fc4aa150ee9607dbbc8f9e66c510b0bd1d1"
+    },
+    "by-hue/ATLAS_Clarus_H350_RGB.ase": {
+      "sha256": "0ddd9215d4250f0a82579013cf5700363f70ba7eb9558b7619ecba198aef1536"
+    },
+    "by-hue/ATLAS_Clarus_H355_RGB.ase": {
+      "sha256": "4cd99f4d60e02f153da352ccdf2ed20e2e85c1a189c1bc3cdc8a1b5502724870"
+    },
+    "by-hue/ATLAS_Clarus_H360_RGB.ase": {
+      "sha256": "2d0317b4bc901b1005954aa1cf2c7b37d4796d1cd5ae83ad90cdc1fd1f43188f"
+    }
+  }
+}
