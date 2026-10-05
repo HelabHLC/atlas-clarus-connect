@@ -1,4 +1,4 @@
-# ATLAS Clarus Mixing Atlas — WordPress 0.1.4
+# ATLAS Clarus Mixing Atlas — WordPress 0.1.5
 
 Offline spectral mixing atlas with local palette import, HLC comparison, B/A PNG export and experimental light-dependent recipe search.
 
@@ -12,12 +12,14 @@ Use the provided 31-sample Golden Heavy Body subset or import a compatible spect
 
 ## Build and install
 
-Run `python3 mischatlas/build.py`. It verifies the split original archive by SHA-256 and ZIP CRC, extracts it, applies patches 0.1.1–0.1.4 and builds `mischatlas/dist/atlas-clarus-mischatlas-0.1.4.zip`. Patch 0.1.4 verifies the exact 0.1.3 HTML checksum and preserves the original reference/recipe payload byte-for-byte. New source is in `light-mixing/`; no new full copy of the 39 MB atlas is stored.
+Run `python3 mischatlas/build.py`. It verifies the split original archive by SHA-256 and ZIP CRC, extracts it, applies patches 0.1.1–0.1.5 and builds `mischatlas/dist/atlas-clarus-mischatlas-0.1.5.zip`. Patch 0.1.4 verifies the exact 0.1.3 HTML checksum and preserves the original reference/recipe payload byte-for-byte. New source is in `light-mixing/`; no new full copy of the 39 MB atlas is stored.
 
-Update the WordPress plugin with the ZIP and retain `[atlas_clarus_mischatlas]`. The main-branch workflow publishes `atlas-mixing-v0.1.4`, containing plugin ZIP, standalone HTML and SHA256SUMS.txt. Existing releases remain available.
+Update the WordPress plugin with the ZIP and retain `[atlas_clarus_mischatlas]`. The main-branch workflow publishes `atlas-mixing-v0.1.5`, containing plugin ZIP, standalone HTML and SHA256SUMS.txt. Existing releases remain available.
 
 ## Validation and limitations
 
 D50/D65 integration cross-checked against Explorer reference Lab values, maximum error below 3e-13. The complete document was tested with a lightweight DOM and actual Node workers for startup, selected-light search, D50 search, 38-light table, cancellation, reference changes, original importer, imported palette, persistent JSON export and immutable original data. CI additionally performs PHP lint and a real Chromium browser smoke test, including the JSON download. Earlier live 0.1.3 acceptance remains documented in LIVE_TEST_2026-10-02.md; it is not acceptance of this new feature.
 
-Recipe accuracy requires material-specific calibration, repeatable preparation, dosing, drying, physical spectral measurements and corrections. Printing-ink/textile suitability and production approval are not established. See RELEASE_NOTES_0.1.4.md and SOURCES-AND-LICENSES.txt. Previous source-specific attribution and licensing remain in force; there is no blanket licence for material data. Backes stated CC BY-SA without a confirmed version. The added code is GPL-2.0-or-later; data retains source-specific terms.
+Recipe accuracy requires material-specific calibration, repeatable preparation, dosing, drying, physical spectral measurements and corrections. Printing-ink/textile suitability and production approval are not established. See RELEASE_NOTES_0.1.5.md and RELEASE_NOTES_0.1.4.md and SOURCES-AND-LICENSES.txt. Previous source-specific attribution and licensing remain in force; there is no blanket licence for material data. Backes stated CC BY-SA without a confirmed version. The added code is GPL-2.0-or-later; data retains source-specific terms.
+
+Version 0.1.5 corrects stale status text after reference, light or setting changes. It adds a Chromium regression assertion for the cleared reference result; numerical data and mixing algorithms are unchanged. Mobile live visual acceptance remains open.

@@ -16,6 +16,9 @@ const {chromium}=require(process.env.ATLAS_PLAYWRIGHT_MODULE||'playwright'),path
  await page.locator('#search').fill('H140_L060_C040');await page.locator('.refbtn').filter({hasText:'H140_L060_C040'}).click();
  if(!(await page.locator('#lcTarget').textContent()).includes('H140_L060_C040'))throw Error('Reference change');
  if(!(await page.locator('#lcExport').isDisabled()))throw Error('Stale export');
+ if((await page.locator('#lcProgress').textContent())!=='Reference changed. Calculate a recipe for this reference.')throw Error('Stale success status after reference change');
+ if((await page.locator('#lcRecipe').innerHTML())!=='')throw Error('Stale recipe after reference change');
+ if(await page.locator('#lcSwatches > div').count()!==2)throw Error('Stale result swatch after reference change');
  await page.locator('#lcSearch').click();await page.locator('#lcCancel').click();
  await page.locator('#lcAll').click();await page.locator('#lcSearch').click();
  await page.waitForFunction(()=>document.getElementById('lcProgress').textContent.startsWith('Recipe calculated'),null,{timeout:60000});
