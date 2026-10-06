@@ -4,9 +4,9 @@ Use ATLAS Clarus HLC reference names and RGB swatches in Illustrator, Photoshop 
 
 ## Download
 
-- [Download the ZIP with full library, smaller hue libraries and instructions](https://github.com/HelabHLC/atlas-clarus-connect/raw/refs/heads/main/downloads/adobe/ATLAS_Clarus_Adobe_ASE_v1.0.zip)
-- [Download the full 13,283-colour ASE directly](https://github.com/HelabHLC/atlas-clarus-connect/raw/refs/heads/main/downloads/adobe/ATLAS_Clarus_13283_RGB_v1.0.ase)
-- [Checksums](SHA256SUMS.txt)
+- [Download the ZIP with full library, smaller hue libraries and instructions](https://github.com/HelabHLC/atlas-clarus-connect/raw/5fcb1062298257f8e1709f971d04abc85d452d61/downloads/adobe/ATLAS_Clarus_Adobe_ASE_v1.0.zip)
+- [Download the full 13,283-colour ASE directly](https://github.com/HelabHLC/atlas-clarus-connect/raw/5fcb1062298257f8e1709f971d04abc85d452d61/downloads/adobe/ATLAS_Clarus_13283_RGB_v1.0.ase)
+- [Checksums](https://github.com/HelabHLC/atlas-clarus-connect/blob/5fcb1062298257f8e1709f971d04abc85d452d61/downloads/adobe/SHA256SUMS.txt)
 
 Start with one of the smaller `by-hue/` libraries rather than loading the entire atlas into every document. To export a small project palette, use the existing [Browser Bundle](https://arbe-lambda-star.com/atlas-clarus-browser-bundle/) and its ASE export.
 
