@@ -154,5 +154,8 @@ used an existing installation of that same dependency through `NODE_PATH`.
 The Hover CI job additionally runs PHP syntax and the existing full data/recipe
 validator. PHP is unavailable in this local environment; its execution must be
 read from the PR CI result. Existing reference, recipe, naming, spectral and
-RC28 bundle files are unchanged. Live WordPress activation, a real external
-sender/return receiver and desktop/mobile visual acceptance: **NOT TESTED**.
+RC28 bundle files are unchanged. The external sender/return implementation is
+now available as the pinned [Picker adapter](external-picker/README.md), with
+passing helper and generated-integration tests. Its staging installation and a
+real browser round trip, including desktop/mobile visual acceptance, are still
+**NOT TESTED**. The authenticated staging inspection did not replace any plugin.

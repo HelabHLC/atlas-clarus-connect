@@ -81,6 +81,7 @@ jobs:
           node --check hover-library/assets/js/atlas-clarus.js
           node --check hover-library/assets/js/source-provenance.js
           node hover-library/tests/validate-source-provenance.js
+          node hover-library/external-picker/test-picker-provenance.js
 
   browser-bundle:
     runs-on: ubuntu-latest
