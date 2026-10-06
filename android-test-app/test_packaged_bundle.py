@@ -18,7 +18,9 @@ def check_package(path):
     with zipfile.ZipFile(path) as archive:
         assert archive.testzip() is None, f'Corrupt package: {path}'
         packed = {n[len(prefix):] for n in archive.namelist() if n.startswith(prefix) and not n.endswith('/')}
-        assert packed == prepared.keys(), f'Packaged asset set differs: {path}'
+        missing = sorted(prepared.keys() - packed)
+        extra = sorted(packed - prepared.keys())
+        assert not missing and not extra, f'Packaged asset set differs: {path}; missing={missing}; extra={extra}'
         for name, source in prepared.items():
             assert archive.read(prefix + name) == source.read_bytes(), f'Packaged asset differs: {name}'
         manifest = json.loads(archive.read(prefix + 'BUNDLE_MANIFEST.json'))
