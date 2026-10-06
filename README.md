@@ -1,149 +1,99 @@
 # ATLAS Clarus Connect
 
-**Release:** v0.1.0  
-**Status:** PUBLIC SOURCE RELEASE  
+**Repository overview:** 6 October 2026  
+**Status:** public source repository with separately versioned components  
 **Workflow:** ATLAS Clarus Workflow v3.4.0
 
-ATLAS Clarus Connect is an open colour-reference workflow for designers:
+ATLAS Clarus connects colour selection, fixed reference identity, palettes,
+analysis and experimental production preparation:
 
 > Find a colour → understand it → transfer its identity without losing provenance.
 
-It combines three parts:
+See the [freieFarbe handover inventory (Deutsch)](docs/FREIEFARBE_BESTANDSUEBERSICHT_2026-10-06.md)
+for dated versions, commits, public/tested states, evidence, rights and open work.
+The original v0.1.0 [release approval](RELEASE_APPROVAL.md),
+[manifest](RELEASE_MANIFEST.json) and [validation report](VALIDATION.md) are
+historical records, not a release number or acceptance report for every component.
 
-1. **Hover Library** — find, inspect and collect ATLAS HLC references.
-2. **Colour Identity Wheel** — understand and locate a selected reference.
-3. **Identity Handoff** — transfer the zero-based identity, HLC designation and master digest between tools.
+## Current components
+
+| Component | Version / source state | Publication and evidence boundary |
+| --- | --- | --- |
+| [Mixing Atlas](mischatlas/README.md) | **0.1.5**, 38-illuminant experimental search | [Published release](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/atlas-mixing-v0.1.5): WordPress ZIP, standalone HTML and SHA256SUMS; package/Chromium checks passed; mobile live visual acceptance open. |
+| [Adobe ASE libraries](downloads/adobe/README.md) | **1.0**, 13,283 RGB swatches and 73 hue libraries | Commit-pinned public downloads; binary/name/RGB readback verified; actual Adobe import **NOT_TESTED**. |
+| [Browser Bundle](browser-bundle/README.md) | **0.2.0-rc27-recipe-notice** | Public moving prerelease [browser-bundle-current](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/browser-bundle-current); reproducible source build. Checked-in `dist/` is the older RC20 baseline. |
+| [WordPress Browser Edition](wordpress-browser-edition/) | **0.1.15-beta7**, RC27 wrapper | Source and deterministic package checks; live activation and visual acceptance must be tracked separately. |
+| [Hover Library](hover-library/manifest.json) | **0.2.6-beta1** | Public beta source/data; the older v0.1.5 approval does not establish acceptance of this version. |
+| [Colour Identity Wheel](colour-identity-wheel/SOURCE_PROVENANCE.md) | Sites v22 provenance baseline plus repository changes; embed **1.0.0** | Recorded baseline and receiver tests; current public Site/repository parity is not established by historical provenance. |
+| [Identity Handoff](identity-handoff/SPECIFICATION.md) | **0.1.0** | Protocol and executable valid/rejected transfer vectors. |
+| [Naming and tone layers](designer-layer/) | Names **0.3.0**, Tone System **0.1**, search index **v1** | Included in RC27; descriptive metadata, not a replacement for reference identity. |
+| [Android test app](android-test-app/DEVICE_TEST_LOG.md) | **0.4.0-beta.4**, version code 4 | Signed APK/AAB build evidence; recorded device observations through beta.3; no production-store release established by the log. |
+| [Appearance Pixel Simulator](appearance-pixel-simulator/README.md) / [APF](apf-material-bridge/) / [MaterialX](materialx-render-service/) | **0.4.1** / **0.1** / **0.4.0** | Simulation, binding and optional self-hosted renderer sources; explicit runtime limits; no hosted renderer is provided. |
+| [TryColors Bridge](trycolors-bridge/README.md) | **0.2.2**, Golden HB 59 pilot | Controlled external-service integration; simulated recipes, no measured mixture approval. |
+| [Open Label](open-label/) / [Connect prototype](connect-v0.1-prototype/) / [CHSOS research](research/chsos-rebuild-v0.1/) | **0.1.1** / **0.1** / **0.1** | Draft documents, interoperability prototype and research; not certification or general runtime acceptance. |
+
+The separately maintained desktop packages are in
+[`HelabHLC/atlas-clarus-core` at commit `0a4d7ad1`](https://github.com/HelabHLC/atlas-clarus-core/tree/0a4d7ad1b741fb80312f1bafc70ae83bb86e0e48/integrations):
+**Krita 0.3.4**, **GIMP 0.1.3** and **Inkscape 0.3.0**. They include recorded
+prototype runtime tests, installation instructions and checksums. They are distinct
+from the desktop workflow demonstrations inside the browser bundle.
+See the [public application download page](https://arbe-lambda-star.com/atlas-clarus-downloads/)
+and the handover inventory for the remaining licence-notice inconsistency.
 
 ## Offline browser bundle
 
-**Development branch addition:** parallel 4C / ECG print preparation is now
-implemented as an offline handoff with exact embedded ICC files, separate path
-settings and verified JSON re-import. This is preparation only: device values,
-PDF/X output and physical QC are still open. See
-[`browser-bundle/PRINT_HANDOFF.md`](browser-bundle/PRINT_HANDOFF.md). RC21 development
-builds are separate from the checked-in RC20 baseline and do not publish a release.
+Build with `python3 browser-bundle/build_bundle.py`, then open the generated
+bundle's self-contained `index.html` in a modern browser. The public
+[current ZIP](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/browser-bundle-current/ATLAS_Clarus_Browser_Bundle_current.zip)
+has a [checksum companion](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/browser-bundle-current/ATLAS_Clarus_Browser_Bundle_current.zip.sha256).
+This endpoint moves; preserve the source commit and checksum for reproducible handover.
 
-`browser-bundle/` builds a standalone edition that starts by opening `index.html`
-directly in a modern browser. It includes the Hover Library, Colour Identity
-Wheel, Identity Handoff, Appearance Pixel Simulator and documented workflow
-demos for Inkscape, GIMP, Krita and Scribus.
-
-The browser bundle performs no analytics and requires no account, installation,
-server or network connection. Its application demos document integration
-boundaries; they do not embed or claim native browser execution of the desktop
-applications.
-
-Current candidate: **v0.2.0-rc20-core-journey · CORE_JOURNEY_TEST_CANDIDATE**. The bundle uses a self-contained
-entrypoint so Windows may open `index.html` directly from the ZIP without losing
-the stylesheet, application code or embedded reference data. It restores the
-Wheel card workspace for harmony, tonal families, accessibility, ARBE comparison,
-palette packages, multi-profile context and measurement-entry review.
-The Hover Library also includes the complete 17-view selector from the supplied
-`views.json`; observed coverage views remain descriptive and claim no Pantone identity.
-The application-connections page now separates what users can do, what is
-verified and what still needs testing; Scribus is explicitly marked as planned.
-RC6 adds the first external handoff workflow: users collect exact master references
-directly in Hover, edit the same locally stored palette in the Wheel, and export it
-as ASE (Adobe/Affinity), Figma Tokens JSON, CSS custom properties or evidence-rich
-Clarus JSON. RC7 adds GIMP Palette (`.gpl`) export for GIMP/Inkscape and an
-in-bundle FAQ. These additions do not change the frozen A′ v0.4 selection logic.
-RC8 makes attribution visible in the interface through a Credits & Licensing tab
-and a footer credit for the HLC-derived reference data from freieFarbe e.V.
-RC9 keeps the complete licence summary inside the self-contained entrypoint and
-removes the unreliable relative licensing link from the direct-file workflow.
-RC10 adds an accessible smartphone navigation menu with all bundle sections.
-RC11 introduces My Palettes: several named local palettes, selection, duplication,
-deletion, colour reordering and strict identity-validated Clarus JSON import.
-RC18 synchronises the public Browser Edition source: an Image Picker samples the
-original decoded 8-bit sRGB pixel, displays an 11 × 11 pixel loupe with marked
-centre, coordinates and RGB, and binds the pixel by squared RGB distance against
-the unchanged full master. Picker → Hover → Wheel navigation preserves explicit
-return paths. Screen-pixel assignment remains neither a spectral measurement nor
-physical colour equality, measured QC or production approval.
-RC19 retains single-pixel sampling as the default and adds optional 5 × 5, 11 × 11
-and 21 × 21 area means. Edge clipping, the alpha threshold (`alpha < 128`), valid
-pixel counts, mean rounding and per-channel population standard deviation are
-covered by executable numerical tests. This observation step does not redefine a
-frozen `atlas_row_id` or change the full-master RGB-only binding.
-
-RC20 stabilises the primary path: image → reference → palette → Clarus JSON backup/import. It adds visible storage-failure feedback, strict typed import validation and explicit palette limits. Browser visual acceptance remains pending; see [the RC20 acceptance record](browser-bundle/RC20_CORE_JOURNEY.md).
-
-## Current release contents
-
-| Component | Included | Status |
-| --- | --- | --- |
-| Hover Library | Complete WordPress plugin v0.1.5 | Source and data included |
-| Identity Handoff | Protocol v0.1.0 and test vectors | Strict validation tested |
-| Colour Identity Wheel | Site v22 baseline, tested release patch and WordPress embed v1.0.0 | Source included |
-| Open Label | v0.1.1 documents | Review draft; not certification |
-
-The exact source commit behind public Site version 22 is included as the provenance baseline. Version 0.1.0 adds a tested strict-HLC patch and the final repository licence map. The currently deployed Site remains on the unpatched version until separately published.
+The main path is image → reference → local palette → Clarus JSON backup/import.
+Palettes also export as ASE, GPL, Figma Tokens and CSS. Parallel 4C/ECG preparation
+and ICC previews retain the same fixed reference and separate profile contexts;
+see the [RC27 manifest](browser-bundle/manifest-rc27.json) and
+[print-preview documentation](browser-bundle/PRINT_IMAGE_PREVIEW.md).
+Software checks, visual acceptance, physical measurements and production approval
+are separate evidence levels. Local browser storage is not a backup.
 
 ## Verified reference baseline
 
-- Master rows: **13,283**
-- Master SHA-256: `8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4`
-- `atlas_row_id`: **zero-based**
-- Human display row, when shown: **one-based**
+- Master rows: **13,283**.
+- Master SHA-256: `8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4`.
+- `atlas_row_id`: **zero-based**; human display rows, when shown, are **one-based**.
+- Image-pixel binding uses the full master's stored RGB values; Lab/ΔE and ICC
+  diagnostics do not redefine the assigned identity.
 
-## Quick start: Hover Library
+## Sources, rights and evidence
 
-1. Zip the `hover-library` directory with that directory as the archive root.
-2. In WordPress, open **Plugins → Add New → Upload Plugin**.
-3. Install and activate it.
-4. Add `[atlas_clarus_library]` to a page.
+[LICENSING.md](LICENSING.md) records the original software/documentation/reference-data
+licence map. Read it together with [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
+the [Mixing Atlas source notices](mischatlas/SOURCES-AND-LICENSES.txt) and each
+component's own notices. There is **no blanket licence for all material datasets**.
+The handover inventory records missing provenance and inconsistent older notices
+without assigning new licences.
 
-The plugin currently links to the public Wheel endpoint configured in `atlas-clarus-hover-library.php`.
+ATLAS Clarus preserves a reference identity. Digital previews and computed recipes
+do not establish a physical colour match. Basis-23/CHSOS candidates remain
+computational and unmeasured; CHSOS has not validated the derived mixtures.
+Observed source-context views do not assert Pantone identity or equivalence.
+Open Label is a review draft, not certification.
 
-## Repository structure
+The [validation workflow](.github/workflows/validate.yml) and component reports
+identify available automated checks. Before deployment, use evidence for the exact
+component/commit, preserve source-specific notices and complete its runtime/visual
+gates. A historical PASS is not acceptance of a later build.
 
-```text
-hover-library/          WordPress plugin v0.1.5
-colour-identity-wheel/ Exact Wheel application, WordPress embed and integration boundary
-identity-handoff/      Normative transfer protocol and examples
-open-label/            Review-draft label documents
-browser-bundle/        Standalone offline HTML edition and deterministic ZIP builder
-LICENSES/              Licensing status and notices
-THIRD_PARTY_NOTICES.md Upstream rights and attribution boundary
-RELEASE_MANIFEST.json  Release contents and readiness gates
-```
+The Wheel WordPress embed is an iframe wrapper, not the Wheel application. It does
+not forward the surrounding page's query parameters; identity handoff targets the
+Wheel application directly. See [source provenance](colour-identity-wheel/SOURCE_PROVENANCE.md).
 
-## Important boundary
+## Public entry points
 
-ATLAS Clarus preserves a reference identity. It does not claim that a screen, print, textile or material sample physically matches that reference unless a separate qualifying measurement has been performed.
-
-The named source-context views in the Hover Library are observed coverage views. They are not Pantone libraries and assert no Pantone identity equivalence.
-
-Basis-23 recipes are computational candidates derived in part from CHSOS spectral source data. CHSOS is cited in the Hover Library, its source registry and `THIRD_PARTY_NOTICES.md`; CHSOS has not reviewed or validated the derived mixtures. The recipes remain `COMPUTATIONAL_ONLY`, physical QC remains `NOT_MEASURED`, and no endorsement or production approval is claimed.
-
-## Verification before deployment
-
-Before deploying a modified build:
-
-- preserve all required upstream attribution and modification notices;
-- run the included plugin data validation from a clean checkout;
-- run PHP validation in CI or a PHP 7.4+ environment;
-- decide whether RC1 should also be deployed to the public Wheel Site.
-
-## Public tools
-
-- Hover Library: <https://arbe-lambda-star.com/atlas-clarus-hover-library/>
-- Colour Identity Wheel: <https://atlas-clarus-reference-wheel.arbe-lambda-star.chatgpt.site/>
-- Mission: <https://arbe-lambda-star.com/our-mission/>
-
-## Wheel WordPress embed
-
-`colour-identity-wheel/wordpress-embed-v1.0.0` contains the supplied WordPress plugin that embeds the public Wheel in an iframe. It is not the Wheel application itself. Its supplied source archive has SHA-256 `75375d730205bb55c07c83a0d1b699228594bb05d98127792c6136fcd08c5be7`.
-
-The embed currently loads its configured Wheel URL without forwarding the surrounding WordPress page's query parameters. Identity handoff therefore continues to target the Wheel application directly.
-
-## Wheel application source
-
-`colour-identity-wheel/application/` contains the exact repository checkout used by public Sites version 22:
-
-- Site project: `ATLAS Clarus Reference Wheel`
-- Source baseline commit: `32767d209c3f45bdce557856c3850b17dec97757`
-- RC1 patch: mandatory HLC validation, strict row-ID parsing and executable handoff tests
-- Public URL: <https://atlas-clarus-reference-wheel.arbe-lambda-star.chatgpt.site/>
-
-Generated dependencies, build output and Git metadata are excluded. See `colour-identity-wheel/SOURCE_PROVENANCE.md`.
+- [Mixing Atlas](https://arbe-lambda-star.com/atlas-clarus-mischatlas/)
+- [Browser Edition](https://arbe-lambda-star.com/atlas-clarus-browser-bundle/)
+- [Application downloads](https://arbe-lambda-star.com/atlas-clarus-downloads/)
+- [Hover Library](https://arbe-lambda-star.com/atlas-clarus-hover-library/)
+- [Colour Identity Wheel](https://atlas-clarus-reference-wheel.arbe-lambda-star.chatgpt.site/)
+- [Colour ID](https://arbe-lambda-star.com/atlas-clarus-colour-id/)
+- [Mission](https://arbe-lambda-star.com/our-mission/)
