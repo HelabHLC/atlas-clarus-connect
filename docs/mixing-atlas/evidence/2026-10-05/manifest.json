@@ -1,0 +1,56 @@
+[
+  {
+    "file": "desktop-initial.jpg",
+    "bytes": 125699,
+    "sha256": "add37b2d98a627963e2c5a4e02a62072fcff90bbb8353fa5cfe716e9fa8f2ce9",
+    "dimensions": [
+      1348,
+      926
+    ]
+  },
+  {
+    "file": "desktop-swatches.jpg",
+    "bytes": 98870,
+    "sha256": "b6e2777f92670e183452dffbc6c4dd765f53033569acf087223cf0cbe50aeddf",
+    "dimensions": [
+      1348,
+      926
+    ]
+  },
+  {
+    "file": "desktop-download.jpg",
+    "bytes": 95615,
+    "sha256": "b56352024cc6ecaae59ec767d7c30bb27b1db46e327ca3645ecb559ce9c303d7",
+    "dimensions": [
+      1348,
+      926
+    ]
+  },
+  {
+    "file": "desktop-reference-change.jpg",
+    "bytes": 127919,
+    "sha256": "33501aed10af9a02edb3fb14b5a03a2bcc29ad3bf3ca5e478c081c8c4f615004",
+    "dimensions": [
+      1348,
+      926
+    ]
+  },
+  {
+    "file": "desktop-table-bottom.jpg",
+    "bytes": 88035,
+    "sha256": "956a4653602a380395e100db8885bfab173bb20fb8fc6b1e49d443808b27579f",
+    "dimensions": [
+      1348,
+      926
+    ]
+  },
+  {
+    "file": "desktop-embedded.jpg",
+    "bytes": 123714,
+    "sha256": "879ad779057294efd2608f42d541b857237a6af7c50c5a152809f8918f7a288d",
+    "dimensions": [
+      1348,
+      926
+    ]
+  }
+]
