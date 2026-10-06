@@ -80,6 +80,13 @@ release APK/AAB and verify their packaged assets; the regular validation
 workflow is also required to pass on the final PR head before merge. Workflow
 results are linked in the PR; none of these software checks is a device test.
 
+The added package check initially failed because Android packages the
+precompressed `assets/name-search-index-v030.json.gz` as `.json` (confirmed in
+run `37542913280`). The validator now checks that exact representation against
+the decompressed source bytes, while rejecting any missing, extra or altered
+asset. Application assets and the reproducible RC28 ZIP pin are unchanged by
+this test correction.
+
 Beta.5 installation, in-place update/palette retention, real smartphone visual
 acceptance, real desktop-browser acceptance and live WordPress activation:
 **NOT TESTED** by this fix. Reserved-key beta.5 signing and Play upload:

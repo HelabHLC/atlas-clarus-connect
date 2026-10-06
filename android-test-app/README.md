@@ -81,7 +81,10 @@ the current identity has been used for a signed candidate.
 
 Android CI builds the debug APK and release APK/AAB with a disposable CI key.
 It checks APK version identities, signatures and every packaged asset against
-the prepared RC28/Colour ID payload. The disposable release files are deleted;
+the prepared RC28/Colour ID payload. Android expands
+`assets/name-search-index-v030.json.gz` into `.json` during packaging; this one
+representation change is checked against the exact decompressed source bytes,
+with no missing/extra files allowed. The disposable release files are deleted;
 only the debug APK is uploaded. These checks do not establish real-device
 acceptance. The reserved-key signed workflow remains manual and does not
 upload anything to Play. Merging this PR can publish the moving browser ZIP
