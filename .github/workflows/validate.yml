@@ -108,6 +108,8 @@ jobs:
         run: node browser-bundle/tests/validate_pkl_image_binding.js
       - name: Validate palette exports
         run: node browser-bundle/tests/validate_exports.js
+      - name: Validate original RGB source assignments
+        run: node browser-bundle/tests/validate_source_assignments.js
       - name: Validate palette persistence failures and limits
         run: node browser-bundle/tests/validate_palette_workspace.js
       - name: Validate offline CHSOS mixer model and status
@@ -122,6 +124,8 @@ jobs:
         run: python browser-bundle/build_bundle.py
       - name: Install DOM test dependencies
         run: npm ci --prefix browser-bundle/tests --ignore-scripts
+      - name: Validate source provenance through the shipped palette UI
+        run: node browser-bundle/tests/validate_source_provenance_ui.js
       - name: Validate named-selection mixer panel
         run: node browser-bundle/tests/validate_offline_mixer_ui.js
       - name: Validate shipped print preparation UI
@@ -166,27 +170,27 @@ jobs:
           php -l wordpress-browser-edition/tests/validate_plugin.php
       - name: Build installable IONOS plugin
         run: python wordpress-browser-edition/build_plugin.py
-      - name: Verify documented RC27 package identity
+      - name: Verify pinned RC28 candidate package identity
         run: |
-          package=wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.15-beta7_RC27.zip
+          package=wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.15-beta8_RC28.zip
           actual_size="$(wc -c < "$package")"
           actual_sha="$(sha256sum "$package" | cut -d " " -f 1)"
           echo "Package identity: size=${actual_size} sha256=${actual_sha}"
-          test "$actual_size" -eq 3816066
-          echo "f4a0a85d1a1e98e711d4a00c6125fe482ebd6c7a79628b2b9a9e9b77fea77d0c  $package" | sha256sum -c -
+          test "$actual_size" -eq 3824989
+          echo "31ba76f11992d56df261bcbc6f10728658f24a19e5565fd9a6f8193d20bdde84  $package" | sha256sum -c -
       - name: Reproduce installable package
         run: |
           python wordpress-browser-edition/build_plugin.py --output-dir "$RUNNER_TEMP/atlas-plugin-repeat"
-          cmp wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.15-beta7_RC27.zip "$RUNNER_TEMP/atlas-plugin-repeat/ATLAS_Clarus_Browser_Edition_v0.1.15-beta7_RC27.zip"
+          cmp wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.15-beta8_RC28.zip "$RUNNER_TEMP/atlas-plugin-repeat/ATLAS_Clarus_Browser_Edition_v0.1.15-beta8_RC28.zip"
       - name: Execute plugin install and rollback tests
         run: |
-          unzip -q wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.15-beta7_RC27.zip -d "$RUNNER_TEMP/atlas-plugin-test"
+          unzip -q wordpress-browser-edition/build/ATLAS_Clarus_Browser_Edition_v0.1.15-beta8_RC28.zip -d "$RUNNER_TEMP/atlas-plugin-test"
           php wordpress-browser-edition/tests/validate_plugin.php "$RUNNER_TEMP/atlas-plugin-test/atlas-clarus-browser-edition"
       - name: Upload installable IONOS candidate
         if: matrix.php == '8.3'
         uses: actions/upload-artifact@v7
         with:
-          name: atlas-clarus-ionos-rc27-plugin
+          name: atlas-clarus-ionos-rc28-plugin
           path: wordpress-browser-edition/build/*
           retention-days: 14
 

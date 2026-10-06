@@ -3,7 +3,7 @@
  * Plugin Name: ATLAS Clarus Browser Edition
  * Plugin URI: https://arbe-lambda-star.com/
  * Description: Local Browser Edition with Image Picker, Hover, Wheel, palettes, parallel 4C/ECG print preparation and local ICC image previews. Explicit runtime switch; shortcode [atlas_clarus_browser_edition] preserved. Staging beta.
- * Version: 0.1.15-beta7
+ * Version: 0.1.15-beta8
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: ARBE Lambda Star / ATLAS Clarus
@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class ATLAS_Clarus_Browser_Edition {
-    const VERSION              = '0.1.15-beta7';
-    const BUNDLE_VERSION       = 'v0.2.0-rc27-recipe-notice';
-    const BUNDLE_SIZE          = 3903113;
-    const BUNDLE_SHA256        = '3142adf2088734d34c98a3b0f337aab35a728d769e4b15bae420431178a140c7';
+    const VERSION              = '0.1.15-beta8';
+    const BUNDLE_VERSION       = 'v0.2.0-rc28-source-provenance';
+    const BUNDLE_SIZE          = 3912275;
+    const BUNDLE_SHA256        = '79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8';
     const OPTION_PREVIOUS_RUNTIME = 'atlas_clarus_browser_edition_previous_runtime';
     const OPTION_RUNTIME_PATH  = 'atlas_clarus_browser_edition_runtime_path';
     const OPTION_RUNTIME_SHA   = 'atlas_clarus_browser_edition_runtime_sha256';
@@ -481,10 +481,10 @@ final class ATLAS_Clarus_Browser_Edition {
         if ( ! is_array( $manifest ) ) {
             return new WP_Error( 'atlas_manifest', 'Bundle-Manifest fehlt oder ist kein JSON-Objekt.' );
         }
-        // Strict values from the pinned RC27 manifest; never coerce identity fields.
+        // Strict values from the pinned RC28 manifest; never coerce identity fields.
         $expected = array(
-            'version' => '0.2.0-rc27-recipe-notice',
-            'status' => 'COMPLETE_NAMES_V0_3_0_WITH_OPTIONAL_CHSOS_PILOT',
+            'version' => '0.2.0-rc28-source-provenance',
+            'status' => 'SOURCE_PROVENANCE_CANDIDATE',
             'master_rows' => 13283,
             'master_sha256' => '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4',
             'row_id_base' => 0,
@@ -521,6 +521,10 @@ final class ATLAS_Clarus_Browser_Edition {
             'primary_user_path' => 'PICKER_HOVER_PALETTE_CLARUS_JSON',
             'max_palettes' => 50,
             'max_palette_colours' => 64,
+            'palette_json_version' => '1.2',
+            'source_assignment_schema_version' => '1.0',
+            'max_source_assignments_per_palette' => 4096,
+            'source_authentication' => 'NOT_SIGNED',
             'a_prime_v04_logic' => 'UNCHANGED',
             'measured_qc_status' => 'NOT_MEASURED',
             'production_approval' => 'NOT_SUPPORTED',

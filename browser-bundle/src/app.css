@@ -79,3 +79,10 @@ html{scroll-padding-top:var(--topbar-height)}
 .colour-card small{opacity:.88}
 
 .acms-candidate{border-top:1px solid var(--line);padding:14px 0;margin-top:14px}.acms-candidate h4{margin:0 0 7px;overflow-wrap:anywhere}.acms-candidate p,.acms-candidate li{font-size:.82rem;line-height:1.5}.acms-candidate .recipe-comparison{margin:10px 0}.acms-candidate .recipe-swatch{height:75px}.acms-candidate .recipe-comparison strong{min-height:0}.acms-candidate .recipe-comparison small{display:block;color:#e7d2a2}.acms-candidate [data-acms-png]{min-height:44px;width:100%}.acms-recipe .recipe-note{overflow-wrap:anywhere}
+
+/* Source provenance belongs to each palette, not to the immutable reference row. */
+.source-provenance{border:1px solid var(--line,#314154);border-radius:10px;padding:12px;margin:12px 0;overflow-wrap:anywhere}
+.drawer-source-records{grid-column:1/-1;overflow-wrap:anywhere;min-width:0}
+.drawer-source-records summary{cursor:pointer;padding:5px 0}
+.drawer-source-records ul{padding-left:18px;margin:6px 0}
+.drawer-source-records li{margin-bottom:10px;font-size:13px}

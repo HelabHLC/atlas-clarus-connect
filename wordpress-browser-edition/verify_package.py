@@ -32,7 +32,7 @@ def verify(root):
         block = source.split("$expected = array(", 1)[1].split(");", 1)[0]
         expected = {k: v[1:-1] if v.startswith("'") else int(v)
                     for k, v in re.findall(r"'([^']+)'\s*=>\s*('[^']*'|\d+)\s*,", block)}
-        assert len(expected) == 49
+        assert len(expected) == 53
         for k, v in expected.items():
             assert type(manifest.get(k)) is type(v) and manifest[k] == v, k
         assert manifest["print_paths"] == ["4C", "ECG"]
@@ -62,9 +62,9 @@ def verify(root):
         "archive_crc": "PASS", "embedded_file_sha256": "PASS",
         "embedded_checksums_verified": len(checked), "strict_scalar_manifest_fields": len(expected),
         "sampling_and_parallel_print_arrays": "PASS", "source_manifest_alignment": "PASS",
-        "source_base_commit": "13715d6f9fc28cb84ae1bf6b131eec2e5a2a1570",
-        "source_candidate": "RC27 KIMERA recipe notice",
-        "source_review": "https://github.com/HelabHLC/atlas-clarus-connect/pull/50",
+        "source_base_commit": "ce800940490aab29adf2b874de612562dbfd3e52",
+        "source_candidate": "RC28 RGB source provenance",
+        "source_review": "browser-bundle/SOURCE_PROVENANCE.md",
         "wrapper_php_execution": "SEPARATE_CI_JOB_WORDPRESS_BROWSER_EDITION",
         "wordpress_ionos_integration": "ACCEPTANCE_PENDING",
         "visual_desktop_and_real_smartphone": "ACCEPTANCE_PENDING",
