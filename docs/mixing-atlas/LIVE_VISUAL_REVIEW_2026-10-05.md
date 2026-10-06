@@ -1,6 +1,8 @@
 # Mixing Atlas 0.1.4 — live visual review, 5 October 2026
 
-**Outcome: PARTIAL REVIEW; full desktop/mobile visual acceptance remains OPEN.**
+**Current status: UI-01 corrected and live verified in 0.1.5; mobile visual acceptance remains OPEN.**
+
+The original 0.1.4 findings below are preserved as historical evidence. See the final follow-up section for the correction and live verification. No full desktop/mobile acceptance is claimed.
 
 The requested live desktop views were inspected visually. The main controls and result presentation are usable, but a stale success message after a reference change is a confirmed UI finding. Mobile visual inspection could not be performed with the available browser controls. This report is evidence of the work performed, not a completed acceptance or a user sign-off.
 
@@ -73,3 +75,17 @@ All screenshots below are unedited captures from this session. File sizes, dimen
 - [Reference change with stale success status](evidence/2026-10-05/desktop-reference-change.jpg)
 
 This documentation change adds only the review and its screenshot evidence under `docs/`. It changes no numerical data, reference spectra, recipes, mixing algorithms, application source, release assets or live WordPress content. It does not establish physical mixing accuracy or production approval. Full visual acceptance must remain open until UI-01 is resolved and mobile visual evidence is added.
+
+## Follow-up — UI-01 corrected and live verified in 0.1.5
+
+On 2026-10-05, [PR #62](https://github.com/HelabHLC/atlas-clarus-connect/pull/62) was merged as `f94e08e009a8dcffe02085a24f38b2a310387f7c` and published as [atlas-mixing-v0.1.5](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/atlas-mixing-v0.1.5).
+
+The fix moves status-message updates outside the active-worker condition and gives reference changes a clear request to calculate a new recipe. A targeted regression fails against the old code and passes against the fix for both completed and running searches. [Chromium/package run 37349251308](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/37349251308) passed with new assertions for the status text, cleared recipe and two remaining swatches. The build reports all 13,283 original reference/recipe records unchanged. Numerical data, spectra, mixing kernels and search algorithms were not modified.
+
+Before installation, the downloaded ZIP SHA-256 (`e2784e966441f8735b4b957ecb164d2262a636b87b1e54b62f93bd02378a751b`), ZIP CRC, complete package manifest and HTML SHA-256 (`6134657042cac978b5bf5a81be3e881cf2fbd27f5df52d990fab63b16d4c1fda`) were verified locally. WordPress's normal plugin upload replaced 0.1.4 with 0.1.5 and reported success; a separate plugin read confirmed version 0.1.5 active. Page 5497's version labels and download URLs were updated. The live iframe now points to `mischatlas.html?ver=0.1.5`.
+
+A fresh interactive check on <https://arbe-lambda-star.com/wp-content/plugins/atlas-clarus-mischatlas/assets/mischatlas.html?ver=0.1.5> repeated the exact completed-search reproduction: H140_L055_C040, all 38 lights, 4,000 candidates, then select H140_L060_C040. The first calculation displayed the same observed 13/51/35/1 model-parts recipe and 5,963 evaluations as before. After the reference change, the target showed H140_L060_C040 / #609F61 / row 5312, status read **“Reference changed. Calculate a recipe for this reference.”**, the recipe was empty, JSON preparation disabled and only Fixed reference / Existing recipe swatches remained.
+
+**UI-01: RESOLVED — live desktop verification PASS.** The original failure screenshot above remains historical. Mobile live visual inspection remains NOT TESTED for the previously recorded browser limitation; this follow-up does not claim full desktop/mobile acceptance.
+
+![Corrected reference-change status in live 0.1.5](evidence/2026-10-05/desktop-reference-change-fixed-v015.jpg)
