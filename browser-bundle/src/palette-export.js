@@ -11,13 +11,85 @@
   function tokens(palette,master,name='ATLAS Clarus Palette'){const color={};palette.forEach(c=>{color[c.ref]={$type:'color',$value:c.hex,$extensions:{'org.atlas-clarus':{atlas_row_id:c.id,master_sha256:master,rgb:c.rgb,lab:c.lab,freeze_status:'FROZEN'}}}});return {$schema:'https://tr.designtokens.org/format/',$description:`${name} — ATLAS Clarus, Figma-compatible design tokens`,color}}
   function css(palette,master,name='ATLAS Clarus Palette'){return `/* ${name}\n   ATLAS Clarus · Master SHA-256: ${master}\n   Frozen reference identities; not measured QC.\n*/\n:root {\n${palette.map(c=>`  --atlas-${slug(c.ref)}: ${c.hex}; /* row ${c.id} · RGB ${c.rgb.join('/')} */`).join('\n')}\n}\n`}
   function gpl(palette,master,name='ATLAS Clarus Palette'){return `GIMP Palette\nName: ${name.replace(/[\r\n]/g,' ')}\nColumns: 4\n# Master SHA-256: ${master}\n# Frozen reference identities; not measured QC.\n${palette.map(c=>`${String(c.rgb[0]).padStart(3)} ${String(c.rgb[1]).padStart(3)} ${String(c.rgb[2]).padStart(3)}\t${c.ref}`).join('\n')}\n`}
-  function clarus(palette,master,name='ATLAS Clarus Palette'){return {format:'ATLAS_CLARUS_PALETTE',version:'1.1',palette_name:name,workflow:'ATLAS Clarus v3.4.0',master_sha256:master,row_id_base:0,freeze_status:'FROZEN',measured_qc_status:'NOT_MEASURED',references:palette.map((c,index)=>({palette_index:index,atlas_row_id:c.id,reference:c.ref,master_rgb:c.rgb,master_hex:c.hex,master_lab:c.lab}))}}
+  const WORKFLOW='ATLAS Clarus v3.4.0';
+  const MAX_SOURCE_ASSIGNMENTS=4096;
+  const clone=value=>JSON.parse(JSON.stringify(value));
+  const hex=rgb=>'#'+rgb.map(v=>v.toString(16).padStart(2,'0')).join('').toUpperCase();
+  const same=(a,b)=>Array.isArray(a)&&a.length===b.length&&b.every((v,i)=>v===a[i]);
+  const rgb8=value=>Array.isArray(value)&&value.length===3&&value.every(v=>Number.isInteger(v)&&v>=0&&v<=255);
+  function distanceSquared(a,b){return a.reduce((sum,v,i)=>sum+(v-b[i])**2,0)}
+  function createSourceAssignment(sample,point,image,c,master){
+    return {
+      schema_version:'1.0',source_rgb:[...sample.rgb],source_hex:hex(sample.rgb),
+      color_space:'sRGB',bits_per_channel:8,source_representation:'BROWSER_DECODED_SRGB',
+      atlas_row_id:c.id,reference:c.ref,reference_rgb:[...c.rgb],reference_hex:c.hex,
+      master_sha256:master,workflow:WORKFLOW,metric:'RGB_SQUARED_DISTANCE',
+      distance_squared:distanceSquared(sample.rgb,c.rgb),tie_break:'LOWER_ATLAS_ROW_ID',
+      sampling:{mode:sample.size===1?'PIXEL_RGB':'AREA_MEAN_RGB',requested_size:sample.size,
+        centre:[point.ix,point.iy],bounds:[...sample.bounds],valid_pixel_count:sample.count,
+        channel_std:[...sample.std],alpha_threshold:128,rounding:'MATH_ROUND_PER_CHANNEL'},
+      image:{name:image.name,width:image.width,height:image.height,sha256:image.sha256??null},
+      signature_status:'NOT_SIGNED'
+    };
+  }
+  function validateSourceAssignments(records,colors,master,allowedIds){
+    if(!Array.isArray(records)||records.length>MAX_SOURCE_ASSIGNMENTS)throw Error('Invalid source assignments or more than 4096 records.');
+    const byId=new Map(colors.map(c=>[c.id,c])),allowed=new Set(allowedIds),winners=new Map();
+    for(const r of records){
+      const c=r&&Number.isInteger(r.atlas_row_id)&&byId.get(r.atlas_row_id);
+      if(!c||!allowed.has(c.id)||r.schema_version!=='1.0'||!rgb8(r.source_rgb)||
+         r.source_hex!==hex(r.source_rgb)||r.color_space!=='sRGB'||r.bits_per_channel!==8||
+         r.source_representation!=='BROWSER_DECODED_SRGB'||r.reference!==c.ref||
+         !same(r.reference_rgb,c.rgb)||r.reference_hex!==c.hex||r.master_sha256!==master||
+         r.workflow!==WORKFLOW||r.metric!=='RGB_SQUARED_DISTANCE'||
+         r.tie_break!=='LOWER_ATLAS_ROW_ID'||r.signature_status!=='NOT_SIGNED'||
+         !Number.isInteger(r.distance_squared)||r.distance_squared!==distanceSquared(r.source_rgb,c.rgb)){
+        throw Error('Source assignment identity, RGB or distance validation failed.');
+      }
+      const im=r.image,q=r.sampling;
+      if(!im||typeof im.name!=='string'||!im.name.length||im.name.length>1024||
+         !Number.isSafeInteger(im.width)||!Number.isSafeInteger(im.height)||im.width<1||im.height<1||
+         !(im.sha256===null||(typeof im.sha256==='string'&&/^[0-9a-f]{64}$/.test(im.sha256)))||
+         !q||![1,5,11,21].includes(q.requested_size)||
+         q.mode!==(q.requested_size===1?'PIXEL_RGB':'AREA_MEAN_RGB')||
+         !Array.isArray(q.centre)||q.centre.length!==2||!q.centre.every(Number.isInteger)||
+         q.centre[0]<0||q.centre[0]>=im.width||q.centre[1]<0||q.centre[1]>=im.height||
+         q.alpha_threshold!==128||q.rounding!=='MATH_ROUND_PER_CHANNEL'||
+         !Array.isArray(q.channel_std)||q.channel_std.length!==3||
+         !q.channel_std.every(v=>Number.isFinite(v)&&v>=0&&v<=127.500000001)){
+        throw Error('Source image or sampling metadata validation failed.');
+      }
+      const half=(q.requested_size-1)/2,[x,y]=q.centre;
+      const bounds=[Math.max(0,x-half),Math.max(0,y-half),Math.min(im.width-1,x+half),Math.min(im.height-1,y+half)];
+      if(!same(q.bounds,bounds)||!Number.isInteger(q.valid_pixel_count)||q.valid_pixel_count<1||
+         q.valid_pixel_count>(bounds[2]-bounds[0]+1)*(bounds[3]-bounds[1]+1)||
+         (q.valid_pixel_count===1&&q.channel_std.some(v=>v!==0))){
+        throw Error('Source sampling bounds or pixel count validation failed.');
+      }
+      // Verify the claimed winner, never silently rebind an imported identity.
+      // Cache by RGB only within this validation against this exact reference set.
+      if(!winners.has(r.source_hex)){
+        let best=null,bestD=Infinity;
+        for(const candidate of colors){const d=distanceSquared(r.source_rgb,candidate.rgb);
+          if(d<bestD||(d===bestD&&candidate.id<best.id)){best=candidate;bestD=d}}
+        winners.set(r.source_hex,best.id);
+      }
+      if(winners.get(r.source_hex)!==c.id)throw Error('Source assignment is not the full-master RGB winner.');
+    }
+    return clone(records);
+  }
+  function clarus(palette,master,name='ATLAS Clarus Palette',sourceAssignments=[]){
+    return {format:'ATLAS_CLARUS_PALETTE',version:'1.2',palette_name:name,workflow:WORKFLOW,
+      master_sha256:master,row_id_base:0,freeze_status:'FROZEN',measured_qc_status:'NOT_MEASURED',
+      references:palette.map((c,index)=>({palette_index:index,atlas_row_id:c.id,reference:c.ref,master_rgb:c.rgb,master_hex:c.hex,master_lab:c.lab})),
+      source_assignments:clone(sourceAssignments)};
+  }
   // Validate the entire file before the caller changes any workspace state.
   // IDs and channels are numbers in our own exports: never coerce null,
   // booleans, strings or arrays into a different reference identity.
-  function validateClarus(data,colors,master){
+  function parseClarus(data,colors,master){
     if(!data||data.format!=='ATLAS_CLARUS_PALETTE'||
-       !['1.0','1.1'].includes(data.version)||data.row_id_base!==0||
+       !['1.0','1.1','1.2'].includes(data.version)||data.row_id_base!==0||
        data.master_sha256!==master||data.freeze_status!=='FROZEN'||
        data.measured_qc_status!=='NOT_MEASURED'||
        (data.palette_name!==undefined&&typeof data.palette_name!=='string')||
@@ -35,7 +107,16 @@
       }
       seen.add(c.id);ids.push(c.id);
     }
-    return ids;
+    let sourceAssignments=[];
+    if(data.version==='1.2'){
+      if(data.workflow!==WORKFLOW)throw Error('Source workflow version mismatch.');
+      sourceAssignments=validateSourceAssignments(data.source_assignments,colors,master,ids);
+    }else if(data.source_assignments!==undefined){
+      throw Error('Source assignments require Clarus palette version 1.2.');
+    }
+    return {colorIds:ids,sourceAssignments};
   }
-  global.ATLAS_CLARUS_EXPORTS={ase,readAse,tokens,css,gpl,clarus,validateClarus};
+  function validateClarus(data,colors,master){return parseClarus(data,colors,master).colorIds}
+
+  global.ATLAS_CLARUS_EXPORTS={ase,readAse,tokens,css,gpl,clarus,validateClarus,parseClarus,createSourceAssignment,validateSourceAssignments,WORKFLOW,MAX_SOURCE_ASSIGNMENTS};
 })(typeof window!=='undefined'?window:globalThis);

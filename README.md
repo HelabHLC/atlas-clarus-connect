@@ -21,8 +21,8 @@ historical records, not a release number or acceptance report for every componen
 | --- | --- | --- |
 | [Mixing Atlas](mischatlas/README.md) | **0.1.5**, 38-illuminant experimental search | [Published release](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/atlas-mixing-v0.1.5): WordPress ZIP, standalone HTML and SHA256SUMS; package/Chromium checks passed; mobile live visual acceptance open. |
 | [Adobe ASE libraries](downloads/adobe/README.md) | **1.0**, 13,283 RGB swatches and 73 hue libraries | Commit-pinned public downloads; binary/name/RGB readback verified; actual Adobe import **NOT_TESTED**. |
-| [Browser Bundle](browser-bundle/README.md) | **0.2.0-rc27-recipe-notice** | Public moving prerelease [browser-bundle-current](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/browser-bundle-current); reproducible source build. Checked-in `dist/` is the older RC20 baseline. |
-| [WordPress Browser Edition](wordpress-browser-edition/) | **0.1.15-beta7**, RC27 wrapper | Source and deterministic package checks; live activation and visual acceptance must be tracked separately. |
+| [Browser Bundle](browser-bundle/README.md) | **0.2.0-rc28-source-provenance** candidate | Source adds original RGB provenance; public moving prerelease [browser-bundle-current](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/browser-bundle-current); reproducible source build. Checked-in `dist/` is the older RC20 baseline. |
+| [WordPress Browser Edition](wordpress-browser-edition/) | **0.1.15-beta8**, RC28 candidate wrapper | Source and deterministic package checks; live activation and visual acceptance must be tracked separately. |
 | [Hover Library](hover-library/manifest.json) | **0.2.6-beta1** | Public beta source/data; the older v0.1.5 approval does not establish acceptance of this version. |
 | [Colour Identity Wheel](colour-identity-wheel/SOURCE_PROVENANCE.md) | Sites v22 provenance baseline plus repository changes; embed **1.0.0** | Recorded baseline and receiver tests; current public Site/repository parity is not established by historical provenance. |
 | [Identity Handoff](identity-handoff/SPECIFICATION.md) | **0.1.0** | Protocol and executable valid/rejected transfer vectors. |
@@ -51,7 +51,7 @@ This endpoint moves; preserve the source commit and checksum for reproducible ha
 The main path is image → reference → local palette → Clarus JSON backup/import.
 Palettes also export as ASE, GPL, Figma Tokens and CSS. Parallel 4C/ECG preparation
 and ICC previews retain the same fixed reference and separate profile contexts;
-see the [RC27 manifest](browser-bundle/manifest-rc27.json) and
+see the [RC28 candidate manifest](browser-bundle/manifest-rc28.json) and
 [print-preview documentation](browser-bundle/PRINT_IMAGE_PREVIEW.md).
 Software checks, visual acceptance, physical measurements and production approval
 are separate evidence levels. Local browser storage is not a backup.

@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 BUNDLE=ROOT/'browser-bundle'
-VERSION='0.2.0-rc27-recipe-notice'
+VERSION='0.2.0-rc28-source-provenance'
 temp_output=tempfile.TemporaryDirectory(prefix='atlas-print-bundle-')
 OUTPUT=Path(temp_output.name)
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
@@ -48,7 +48,7 @@ first=digest(ZIP)
 subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPUT)],check=True)
 second=digest(ZIP)
 assert first==second, f'non-reproducible ZIP: {first} != {second}'
-assert first=='3142adf2088734d34c98a3b0f337aab35a728d769e4b15bae420431178a140c7', 'built bundle differs from deployed IONOS release'
+assert first=='79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8', 'built bundle differs from pinned RC28 source-provenance candidate'
 
 with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert archive.testzip() is None
@@ -81,7 +81,12 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert manifest['visible_name_source']=='ATLAS_CLARUS_COMPLETE_NAME_LAYER'
     assert manifest['iscc_nbs_role']=='INTERNAL_AUDIT_ONLY'
     assert len(manifest['tone_system_sha256'])==64 and len(manifest['name_search_index_sha256'])==64
-    assert manifest['status']=='COMPLETE_NAMES_V0_3_0_WITH_OPTIONAL_CHSOS_PILOT'
+    assert manifest['status']=='SOURCE_PROVENANCE_CANDIDATE'
+    assert manifest['palette_json_version']=='1.2'
+    assert manifest['source_assignment_schema_version']=='1.0'
+    assert manifest['source_authentication']=='NOT_SIGNED'
+    assert manifest['max_source_assignments_per_palette']==4096
+    assert manifest['source_provenance_live_acceptance']=='NOT_TESTED'
     assert manifest['primary_user_path']=='PICKER_HOVER_PALETTE_CLARUS_JSON'
     assert manifest['max_palettes']==50 and manifest['max_palette_colours']==64
     assert manifest['reproducible_zip'] is True
@@ -115,7 +120,8 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert 'window.ATLAS_CLARUS_DATA=' in html
     assert 'id="palette-storage-status"' in html
     assert 'Your first palette · four steps' in html
-    assert 'validateClarus(data,colors,MASTER)' in html
+    assert 'parseClarus(data,colors,MASTER)' in html
+    assert 'source_assignments' in html and 'atlasClarusPalettesV3' in html
     assert html.count('"mix_display"')==13283
     assert 'Before — ATLAS Target' in html
     assert 'After — Computed Mix' in html

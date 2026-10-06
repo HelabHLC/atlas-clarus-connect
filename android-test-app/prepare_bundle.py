@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package the reproducible RC27 offline bundle for the Android test shell."""
+"""Package the reproducible RC28 offline bundle for Android beta.5."""
 from pathlib import Path
 import hashlib
 import json
@@ -13,7 +13,8 @@ from build_colour_id_locale import localize
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-EXPECTED_ZIP_SHA256 = '3142adf2088734d34c98a3b0f337aab35a728d769e4b15bae420431178a140c7'
+EXPECTED_BUNDLE_VERSION = '0.2.0-rc28-source-provenance'
+EXPECTED_ZIP_SHA256 = '79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8'
 COLOUR_ID_URL = ('https://arbe-lambda-star.com/wp-content/plugins/'
                  'atlas-clarus-colour-picker/assets/atlas-clarus-app-v5.3.3.html')
 COLOUR_ID_SHA256 = '580d4447193a736ad47a04a876a7437f757b98491836f6a3e8abaa9714769bff'
@@ -56,10 +57,10 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     output = Path(tmp)
     subprocess.run([sys.executable, str(ROOT / 'browser-bundle/build_bundle.py'),
                     '--output-dir', str(output)], check=True, stdout=subprocess.DEVNULL)
-    archive = next(output.glob('ATLAS_Clarus_Browser_Bundle_v*.zip'))
+    archive = output / f'ATLAS_Clarus_Browser_Bundle_v{EXPECTED_BUNDLE_VERSION}.zip'
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     if digest != EXPECTED_ZIP_SHA256:
-        raise SystemExit(f'Bundle checksum changed: {digest}; review and update the pinned test build.')
+        raise SystemExit(f'Bundle checksum changed: {digest}; review the payload and allocate a new Android version before updating the pin.')
     source = output / 'atlas-clarus-browser-bundle'
     if TARGET.exists():
         shutil.rmtree(TARGET)
@@ -69,4 +70,4 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     colour_html = add_bridge(colour_id_source())
     (TARGET / 'colour-id.html').write_text(localize(colour_html, 'de'), encoding='utf-8')
     (TARGET / 'colour-id-en.html').write_text(localize(colour_html, 'en'), encoding='utf-8')
-    print(f'Android assets: RC27 {digest}; Colour ID v5.3.3 DE/EN {COLOUR_ID_SHA256}; 13,283 shared identities')
+    print(f'Android assets: {EXPECTED_BUNDLE_VERSION} {digest}; Colour ID v5.3.3 DE/EN {COLOUR_ID_SHA256}; 13,283 shared identities')

@@ -2,7 +2,7 @@
 
 This directory builds a standalone offline HTML edition of ATLAS Clarus Connect.
 
-Current source build: **v0.2.0-rc27-recipe-notice**. This rebuilds the IONOS runtime byte for byte. The Names v0.3.0 data, UI4 mixer and ACMS C/U A/B candidates are source inputs. Physical mixing is not measured.
+Current source build: **v0.2.0-rc28-source-provenance**. RC28 adds original RGB source records to palette storage and Clarus JSON 1.2. It is a new candidate; the published RC27 IONOS runtime is not changed by this source update. See [source provenance](SOURCE_PROVENANCE.md) for the schema, migration and validation boundaries. The Names v0.3.0 data, UI4 mixer and ACMS C/U A/B candidates are source inputs. Physical mixing is not measured.
 
 Adds offline preparation of **parallel 4C and ECG paths** from the same frozen
 references. Each path carries its own ICC file and print settings. The complete

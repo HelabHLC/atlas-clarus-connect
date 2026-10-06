@@ -12,8 +12,9 @@ const part = (start,end)=>{
 const warning={hidden:true,textContent:''};
 const status={textContent:'',style:{}};
 let writes=0,renders=0,fail=false,stored;
-const p={id:'fixture',name:'Test palette',colorIds:[]};
+const p={id:'fixture',name:'Test palette',colorIds:[],sourceAssignments:[{atlas_row_id:4966,source_hex:'#3D7B19'},{atlas_row_id:42,source_hex:'#FFFFFF'}]};
 const context={
+  MASTER:'test-master',window:{ATLAS_CLARUS_EXPORTS:{WORKFLOW:'ATLAS Clarus v3.4.0'}},
   palette:[{id:4966},{id:10519}],palettes:[p],activePaletteId:p.id,
   currentPalette:()=>p,PALETTE_KEY:'fixture-key',
   localStorage:{setItem(key,value){writes++;if(fail)throw Error('QuotaExceededError');stored=JSON.parse(value)}},
@@ -27,6 +28,7 @@ vm.runInContext(part('function persistPalettes()', 'function paletteStatus(')+
 context.persistPalettes();
 assert.equal(writes,1);assert.equal(renders,1);assert.equal(warning.hidden,true);
 assert.deepEqual(stored.palettes[0].colorIds,[4966,10519]);
+assert.equal(stored.version,3);assert.deepEqual(stored.palettes[0].sourceAssignments,[{atlas_row_id:4966,source_hex:'#3D7B19'}]);
 fail=true;context.persistPalettes();
 assert.equal(warning.hidden,false);assert.match(warning.textContent,/could not be saved/);
 assert.equal(context.palette.length,2,'failed storage must retain in-memory colours for export');
