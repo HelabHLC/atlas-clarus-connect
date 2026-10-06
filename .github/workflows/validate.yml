@@ -110,6 +110,8 @@ jobs:
         run: node browser-bundle/tests/validate_exports.js
       - name: Validate original RGB source assignments
         run: node browser-bundle/tests/validate_source_assignments.js
+      - name: Validate Android version and bundle pin contract
+        run: python android-test-app/test_release_identity.py
       - name: Validate palette persistence failures and limits
         run: node browser-bundle/tests/validate_palette_workspace.js
       - name: Validate offline CHSOS mixer model and status

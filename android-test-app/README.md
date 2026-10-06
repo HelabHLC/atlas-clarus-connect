@@ -1,7 +1,7 @@
 # ATLAS Clarus Android test app
 
-This is an **offline, unsigned-for-release debug prototype**, not a Play Store
-submission. It packages the reproducible Browser Bundle RC27 and the standalone
+The current source is the **0.4.0-beta.5 / versionCode 5 development candidate**,
+not a Play Store submission or a newly signed beta. It packages the reproducible Browser Bundle RC28 and the standalone
 Colour ID v5.3.3 with its 14 analysis tabs as local Android assets in German
 and English. The Bundle start page opens first at `#home`; the native top bar
 labels it **ATLAS Clarus Connect** and switches to Colour ID in the last selected language.
@@ -26,9 +26,12 @@ is required. Colour ID remains a separate workbench with its own local state;
 the top bar switches between the two interfaces rather than merging their
 palette records. Its spectral and ICC views are preserved as analysis only.
 
-The last phone-tested APK is **ATLAS Clarus Connect Navigationstest**
-(`0.3.3-test`). The next signed beta has the fixed application ID
-`com.atlasclarus.connect`; the next image-trace build is `0.4.0-beta.4` / version code 4. The palette-retention update-test build was `0.4.0-beta.3` / version code 3.
+The device log includes limited phone observations through `0.4.0-beta.3`.
+The fixed release application ID remains `com.atlasclarus.connect`.
+The recorded signed beta.4 / versionCode 4 APK and Play AAB used RC27;
+RC28 requires the new `0.4.0-beta.5` / versionCode 5 identity. Never rebuild a
+changed payload as beta.4. The beta.3 observations do not establish beta.5
+device acceptance or palette migration.
 The native Colour ID button does not reload an already open
 Colour ID page, preserving its in-memory image. The Android export adapter reads generated Blobs directly so
 the Save Document dialog works for detached download links. The language
@@ -48,7 +51,9 @@ retain the existing JSON shape.
 Earlier CI debug builds used different application IDs and signing keys. They
 install alongside the new beta; each app has separate private palette storage.
 The release build requires the long-lived key described in
-[SIGNING.md](SIGNING.md). No signed beta has been distributed yet. Confirmed
+[SIGNING.md](SIGNING.md). Earlier signed betas and their limited phone
+observations are documented; beta.5 has not been signed with the reserved key
+or distributed by this change. Confirmed
 phone observations and remaining checks are recorded in
 [DEVICE_TEST_LOG.md](DEVICE_TEST_LOG.md).
 
@@ -56,7 +61,7 @@ phone observations and remaining checks are recorded in
 
 The asset preparation script rebuilds the bundle from repository source and
 checks its ZIP against SHA-256
-`3142adf2088734d34c98a3b0f337aab35a728d769e4b15bae420431178a140c7`.
+`79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8`.
 Only then does it add the Android export adapter to the HTML entry points.
 The bilingual presentation layer translates visible interface strings and
 human-readable HTML reports; canonical identifiers, numeric data, evidence
@@ -65,6 +70,23 @@ and English assets have identical 13,283-row reference data.
 Colour ID is fetched at build time from the public asset URL above; a local
 file may be supplied through `ATLAS_COLOUR_ID_SOURCE` for an offline build,
 subject to the same digest and row validation. Runtime use needs no network.
+
+`test_release_identity.py` checks the reviewed version/code/RC28 tuple and
+both Android workflows, including rejection of versionCode 4, the RC27 pin,
+and stale beta.4 names. It runs in regular validation, Android CI and before
+the manual signed workflow accesses signing secrets. `prepare_bundle.py`
+still rejects any change to the pinned bundle bytes. A future bundle or
+Android payload update requires review and a new Android version/code once
+the current identity has been used for a signed candidate.
+
+Android CI builds the debug APK and release APK/AAB with a disposable CI key.
+It checks APK version identities, signatures and every packaged asset against
+the prepared RC28/Colour ID payload. The disposable release files are deleted;
+only the debug APK is uploaded. These checks do not establish real-device
+acceptance. The reserved-key signed workflow remains manual and does not
+upload anything to Play. Merging this PR can publish the moving browser ZIP
+through `publish-browser-bundle.yml`; that is separate from Android signing
+and live WordPress activation.
 
 The matching WordPress plugin can be rebuilt from the archived v0.1.0 ZIP and
 the same pinned source with `build_wordpress_plugin.py --base-zip ...
@@ -94,7 +116,9 @@ control. This build is not signed with a release key.
 4. Export from both interfaces and save through Android's document picker.
 5. Rotate the device and repeat on a narrow phone screen.
 
-Known limits: there is no automated device test for the integrated 14-tab build.
+Known limits: beta.5 device installation, update/palette retention, RC28 image
+decoding and smartphone visual acceptance are **NOT TESTED**. There is no
+automated device test for the integrated 14-tab build.
 The 0.3.3-test APK was checked for image retention on repeated Colour ID
 selection, offline launch and a saved Traceability JSON export.
 Document import, worker-backed analysis, layout and additional exports need

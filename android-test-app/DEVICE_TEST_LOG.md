@@ -51,10 +51,37 @@ stabilization phase; no Play Store release or production signing is implied.
 
 ## Test artifact identifiers
 
+- Current source candidate: `0.4.0-beta.5`, versionCode `5`, RC28. This is distinct
+  from the latest reserved-key signed build below. No beta.5 device result,
+  reserved-key signing or Play upload is established by the version change.
 - Latest signed build in CI: `ATLAS Clarus Connect`, version `0.4.0-beta.4`, application ID `com.atlasclarus.connect`, versionCode `4`. Device observations in this log establish beta.3; beta.4 installation is not established here.
 - Prior Android test label: `ATLAS Clarus Connect Navigationstest`, version `0.3.3-test`; application ID `com.atlasclarus.browseredition.test.bilingual.navguard`.
 - Prior 0.3.2-test Nachweis ID: `com.atlasclarus.browseredition.test.bilingual.provenancefix`.
-- Reproducible Browser Bundle RC27 ZIP SHA-256:
+- Historical beta.4 Browser Bundle RC27 ZIP SHA-256:
   `3142adf2088734d34c98a3b0f337aab35a728d769e4b15bae420431178a140c7`.
+- Current beta.5 Browser Bundle RC28 ZIP SHA-256:
+  `79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8`.
 - Shared Atlas master SHA-256:
   `8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4`.
+
+## RC28 integration — 6 October 2026 UTC
+
+PR #64's original Android run `37504797316` failed at `:app:prepareBundle`:
+the built RC28 SHA-256 did not match Android's RC27 pin. The fail-closed check
+worked as intended. Because beta.4 already has signed artifacts, the fix pairs
+RC28 with beta.5 / versionCode 5, updates workflow identity checks and artifact
+names, and retains all beta.4 evidence above unchanged.
+
+The local RC28 ZIP reproduced twice at the digest above. Release-contract
+regression tests pass for the reviewed tuple and reject versionCode 4, a
+beta.4 version name, the RC27 pin, a future bundle version and stale workflow
+identities. Android CI is required to build the debug APK plus disposable-key
+release APK/AAB and verify their packaged assets; the regular validation
+workflow is also required to pass on the final PR head before merge. Workflow
+results are linked in the PR; none of these software checks is a device test.
+
+Beta.5 installation, in-place update/palette retention, real smartphone visual
+acceptance, real desktop-browser acceptance and live WordPress activation:
+**NOT TESTED** by this fix. Reserved-key beta.5 signing and Play upload:
+**NOT PERFORMED**. The existing `main` push workflow publishes the moving
+browser-bundle download independently of Android and WordPress activation.

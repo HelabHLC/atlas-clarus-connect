@@ -41,6 +41,18 @@ Before editing, the RC27 browser baseline was rebuilt and matched its existing
 `3142adf2088734d34c98a3b0f337aab35a728d769e4b15bae420431178a140c7` pin.
 The new pins describe RC28; they do not relabel the public RC27 build.
 
+## Android integration follow-up
+
+RC28 is assigned to Android `0.4.0-beta.5` / `versionCode 5`. The previously
+signed beta.4 / versionCode 4 remains historical RC27; its identifier must not
+be reused for the RC28 payload. Android's ZIP pin, CI version checks and manual
+signed-workflow artifact names move together. See
+[`android-test-app/DEVICE_TEST_LOG.md`](../android-test-app/DEVICE_TEST_LOG.md)
+for the original pin failure, regression checks and explicit device boundaries.
+Android debug/release-path CI and regular validation are merge gates; this
+follow-up does not sign with the reserved key, submit to Play, or establish
+mobile or live WordPress acceptance.
+
 ## Remaining boundaries
 
 - Live WordPress/IONOS activation: **NOT TESTED**.

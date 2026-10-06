@@ -8,6 +8,7 @@ on:
       - 'hover-library/data/**'
       - 'designer-layer/**'
       - '.github/workflows/android-test-app.yml'
+      - '.github/workflows/android-signed-beta.yml'
   workflow_dispatch:
 
 jobs:
@@ -20,6 +21,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Check Android version and bundle pin contract
+        run: python3 android-test-app/test_release_identity.py
       - name: Check preinstalled Android SDK
         run: |
           test -f "$ANDROID_HOME/platforms/android-36/android.jar"
@@ -41,34 +44,41 @@ jobs:
       - name: Verify packaged bundle and manifest
         run: |
           test -s android-test-app/app/build/outputs/apk/debug/app-debug.apk
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging android-test-app/app/build/outputs/apk/debug/app-debug.apk |
+            grep -F "package: name='com.atlasclarus.connect.dev' versionCode='5' versionName='0.4.0-beta.5-debug'"
           unzip -l android-test-app/app/build/outputs/apk/debug/app-debug.apk |
             grep -q 'assets/bundle/index.html'
           unzip -l android-test-app/app/build/outputs/apk/debug/app-debug.apk |
             grep -q 'assets/bundle/colour-id.html'
           unzip -l android-test-app/app/build/outputs/apk/debug/app-debug.apk |
             grep -q 'assets/bundle/colour-id-en.html'
+          python3 android-test-app/test_packaged_bundle.py android-test-app/app/build/outputs/apk/debug/app-debug.apk
           sha256sum android-test-app/app/build/outputs/apk/debug/app-debug.apk
       - uses: actions/upload-artifact@v4
         with:
           name: ATLAS-Clarus-Android-Test-APK
           path: android-test-app/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
-      - name: Verify release signing path with disposable CI key
+      - name: Verify APK and AAB signing paths with disposable CI key
         env:
           ATLAS_CONNECT_KEYSTORE_PATH: ${{ runner.temp }}/atlas-connect-ci.jks
           ATLAS_CONNECT_STORE_PASSWORD: disposable-ci-only
           ATLAS_CONNECT_KEY_ALIAS: ci-only
           ATLAS_CONNECT_KEY_PASSWORD: disposable-ci-only
         run: |
+          apk=android-test-app/app/build/outputs/apk/release/app-release.apk
+          aab=android-test-app/app/build/outputs/bundle/release/app-release.aab
+          trap 'rm -f "$ATLAS_CONNECT_KEYSTORE_PATH" "$apk" "$aab"' EXIT
           keytool -genkeypair -keystore "$ATLAS_CONNECT_KEYSTORE_PATH" \
             -storetype PKCS12 -alias "$ATLAS_CONNECT_KEY_ALIAS" \
             -keyalg RSA -keysize 3072 -validity 30 \
             -dname 'CN=CI test only' \
             -storepass "$ATLAS_CONNECT_STORE_PASSWORD" \
             -keypass "$ATLAS_CONNECT_KEY_PASSWORD" -noprompt
-          gradle -p android-test-app :app:assembleRelease --no-daemon
-          apk=android-test-app/app/build/outputs/apk/release/app-release.apk
+          gradle -p android-test-app :app:assembleRelease :app:bundleRelease --no-daemon
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify "$apk"
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
-            grep -E "^package: name='com.atlasclarus.connect' versionCode='4' versionName='0.4.0-beta.4'"
-          rm -f "$ATLAS_CONNECT_KEYSTORE_PATH" "$apk"
+            grep -F "package: name='com.atlasclarus.connect' versionCode='5' versionName='0.4.0-beta.5'"
+          test -s "$aab"
+          jarsigner -verify "$aab"
+          python3 android-test-app/test_packaged_bundle.py "$apk" "$aab"

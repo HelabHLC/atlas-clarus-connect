@@ -15,6 +15,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Check Android version and bundle pin contract
+        run: python3 android-test-app/test_release_identity.py
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
@@ -66,7 +68,7 @@ jobs:
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs "$apk" |
             grep -Eiq 'certificate SHA-256 digest: 986ca730efc54a20cfc88af4fb61018dfe7658f3165c5b6fb55eb9c59ccad63c'
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
-            grep -E "^package: name='com.atlasclarus.connect' versionCode='4' versionName='0.4.0-beta.4'"
+            grep -F "package: name='com.atlasclarus.connect' versionCode='5' versionName='0.4.0-beta.5'"
           sha256sum "$apk"
       - name: Verify Play bundle signature
         run: |
@@ -76,14 +78,19 @@ jobs:
           cert_sha=$(keytool -printcert -jarfile "$aab" | sed -n 's/.*SHA256: //p' | head -n 1 | tr -d ':' | tr 'A-F' 'a-f')
           test "$cert_sha" = '986ca730efc54a20cfc88af4fb61018dfe7658f3165c5b6fb55eb9c59ccad63c'
           sha256sum "$aab"
+      - name: Verify RC28 assets in APK and AAB
+        run: |
+          python3 android-test-app/test_packaged_bundle.py \
+            android-test-app/app/build/outputs/apk/release/app-release.apk \
+            android-test-app/app/build/outputs/bundle/release/app-release.aab
       - uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Connect-Play-0.4.0-beta.4-AAB
+          name: ATLAS-Clarus-Connect-Play-0.4.0-beta.5-AAB
           path: android-test-app/app/build/outputs/bundle/release/app-release.aab
           retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Connect-Beta-0.4.0-beta.4
+          name: ATLAS-Clarus-Connect-Beta-0.4.0-beta.5
           path: android-test-app/app/build/outputs/apk/release/app-release.apk
           retention-days: 14
       - name: Remove temporary signing file
