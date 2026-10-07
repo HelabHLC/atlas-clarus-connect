@@ -159,6 +159,10 @@ now available as the pinned [Picker adapter](external-picker/README.md), with
 passing helper and generated-integration tests. On 2026-10-07, owner-supplied
 desktop screenshots and a validated palette export demonstrated the main-site
 Picker beta3 → Hover beta2 → palette → Picker path with two sources for row 4966.
-Picker beta4 fixes two UI text defects found in that review; its live visual
-recheck and mobile acceptance remain **NOT TESTED**. See the adapter README for
-the evidence boundaries. The assistant did not install either live plugin.
+Picker beta4 fixes two UI text defects found in that review. The owner's
+03:13–03:14 Europe/Berlin follow-up screenshots confirm the corrected note,
+active magnifier and returned source pixel with the same fixed reference.
+The tested desktop fixture path and both UI corrections are evidence-reviewed;
+mobile acceptance, live legacy/invalid cases and fresh palette reload remain
+**NOT TESTED** live. See the adapter README for evidence hashes and boundaries.
+The assistant did not install either live plugin.

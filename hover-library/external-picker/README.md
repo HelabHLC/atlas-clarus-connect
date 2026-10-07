@@ -83,9 +83,31 @@ This was an owner-operated desktop test reviewed from supplied evidence, not an
 assistant-operated browser run. It exposed two UI defects: an unconnected
 magnifier status element still said `wartet auf Binding`, and the file-control
 note contained `Die eingefrorene Die ausgewählte`. Beta4 corrects those defects.
-The beta4 installation and visual recheck remain **NOT TESTED**. Mobile layout,
-live legacy/invalid handoff cases and palette reload are not covered by these
-screenshots; their existing automated results must not be read as live sign-off.
+
+After delivery of beta4, the owner supplied two further main-site desktop
+screenshots on 2026-10-07 at 03:13–03:14 Europe/Berlin. The first shows the
+complete corrected note and `Returned from Hover Library`. The second shows
+the magnifier status `aktiv`, restored image/selection and `RETURN VERIFIED`
+at pixel `(73,28)`, source `[61,123,25]` / `#3D7B19`, unchanged row 4966 /
+`H130_L045_C055`, reference `#37791A`, distance squared 41 and `NOT_SIGNED`.
+Both reported UI defects are **PASS in the supplied desktop visual recheck**.
+These are visible results after the update; neither screenshot includes the
+plugin version badge. No second palette export was supplied for that recheck.
+
+Evidence identifiers (original screenshots retained in the owner session, not
+published with personal browser chrome):
+
+| Screenshot | SHA-256 |
+| --- | --- |
+| `image(20261007-011328).png` — corrected note and return | `1c03f7553237e712d76ec4c8996d16cd11f0654de71f54c61aceeb6d46fdb6e5` |
+| `image(20261007-011427).png` — active magnifier and returned pixel | `d4404e176c80e14686a8bbeb616cbe6116c06e5e1e7602e81298758ee0a7e42c` |
+
+The beta4 code commit `d3f787fffff065e89c9114a851a0d4da9e3cf3e1` passed
+[GitHub validation run 37555579417](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/37555579417).
+The owner-operated desktop fixture path and its two UI corrections are now
+evidence-reviewed. Mobile layout, live legacy/invalid handoff cases and palette
+reload remain **NOT TESTED** live; existing automated results do not establish
+those live results.
 
 The original staging kit contains Hover beta2, Picker beta3, rollback ZIPs and
 the synthetic `two-greens.png` fixture. The separate Picker beta4 ZIP supersedes
@@ -95,21 +117,11 @@ its Picker candidate. Replace only
 
 Remaining live checks on the main site:
 
-1. Replace the active Picker with beta4. Check the complete note and magnifier
-   status before binding, after binding and after return from Hover.
-2. Open picker page 5393, select the fixture, confirm sRGB and bind. Click one
-   pixel on each side. Source RGBs `[61,123,25]` and `[60,123,25]` must both map
-   to row **4966**, reference **H130_L045_C055**, RGB **[55,121,26]**, HEX
-   **#37791A**; squared distances are **41** and **30**.
-3. For each pixel, open Hover, add the source to the palette and return to the
-   picker. Original image, coordinate and fixed reference must be restored.
-   Exported Clarus 1.2 must retain one reference and two source assignments;
-   reload must preserve both, with `NOT_SIGNED`.
-4. Check an old identity-only handoff and a deliberately contradictory source
+1. Check palette persistence after a fresh reload: one reference and both source
+   assignments must remain present, with `NOT_SIGNED`.
+2. Check an old identity-only handoff and a deliberately contradictory source
    record; the latter must be blocked without changing the palette.
-5. Inspect the real WordPress layout at desktop and narrow/mobile width, save
-   screenshots and record browser/viewport and test outcomes. Do not substitute
-   DOM tests or a static mockup for this visual gate.
+3. Inspect narrow/mobile layout and initial unbound magnifier status. The desktop
+   screenshots establish the shown controls and returned/bound state only.
 
-No beta4 deployment, merge or complete visual sign-off is implied by passing
-the software tests.
+No merge or complete cross-device visual sign-off is implied by these results.
