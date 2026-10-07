@@ -1,6 +1,6 @@
 # External PKL Image Picker provenance candidate
 
-This adapter prepares **PKL Image Picker 0.3.1-beta3** from the project owner's
+This adapter prepares **PKL Image Picker 0.3.1-beta4** from the project owner's
 verified **0.3.1-beta2** installation. It requires **Hover Library 0.2.6-beta2**.
 The upstream proprietary prototype is not relicensed or copied into this Git
 repository. `prepare_picker.py` checks every baseline byte against pinned hashes,
@@ -29,6 +29,10 @@ It refuses a changed baseline and never overwrites the input directory.
   data blocks restoration; it is never silently treated as a V1 handoff.
 - Resolves the Hover page within the current WordPress installation, preserving
   staging paths and query-based permalinks. The existing URL filter remains.
+- Beta4 connects the existing magnifier status element to its existing update
+  logic and removes a broken sentence fragment below the file controls. These
+  are the only behavioral/text changes from beta3, apart from version markers
+  and the changelog; reference data and provenance handling are unchanged.
 
 The records are **NOT_SIGNED**. These are consistency checks, not signature,
 issuer-authentication, authenticity or anti-counterfeit claims. Locally modified
@@ -56,23 +60,43 @@ parameters, alpha rejection and optional file hashing.
 
 ## WordPress acceptance status
 
-Inspected on 2026-10-06 UTC using the connected WordPress test instance
-`https://arbe-lambda-star.com/atlas-rc20-test` and production metadata. Both still
-had active Hover 0.2.6-beta1 and Picker 0.3.1-beta2. Browser sign-in to staging
-succeeded and displayed its authenticated picker page and administration.
-The automatic browser package upload was blocked before installation. No plugin
-replacement, palette mutation or completed visual acceptance is claimed.
+On 2026-10-07 the owner installed Hover 0.2.6-beta2 and Picker 0.3.1-beta3 on
+`https://arbe-lambda-star.com/`. Authenticated plugin metadata confirmed both
+active versions; served JS/CSS and reference files matched the tested packages.
+No installation was performed by the assistant.
 
-The prepared installation kit includes both candidate ZIPs, beta1/beta2 rollback
-ZIPs and a synthetic `two-greens.png` fixture. It is a staging candidate, not a
-production release. Preserve/backup existing local palettes before testing:
-staging is under the same origin as production, so localStorage is shared.
+The owner's desktop screenshots and downloaded Clarus 1.2 palette establish a
+successful fixture round trip on the main site's picker and Hover pages:
 
-Still required on staging:
+- Hover displayed `source record checked` and `NOT_SIGNED` for row 4966.
+- The downloaded palette retained one reference and two distinct source records:
+  `[61,123,25]` at `(90,41)`, squared distance 41, and `[60,123,25]` at `(143,43)`,
+  squared distance 30. Both resolve to `H130_L045_C055`, reference `[55,121,26]`.
+- The export passed the full-master validator, palette round-trip comparison,
+  original test-image SHA-256/dimensions and actual pixel checks. Both records
+  remain `NOT_SIGNED`. Export SHA-256:
+  `32e8e22d9c3290386dab46df6fb222295b599aee9e6c9d154e7d6958c3850f84`.
+- The return screenshot displayed `Returned from Hover Library`, the restored
+  image/selection, source `#3C7B19`, reference `#37791A` and squared distance 30.
 
-1. Upload/replace `hover-library` with 0.2.6-beta2 and the active
-   `atlas-clarus-pkl-image-picker` with 0.3.1-beta3. Avoid the inactive duplicate
-   Hover plugin folder `atlas-clarus-hover-library`.
+This was an owner-operated desktop test reviewed from supplied evidence, not an
+assistant-operated browser run. It exposed two UI defects: an unconnected
+magnifier status element still said `wartet auf Binding`, and the file-control
+note contained `Die eingefrorene Die ausgewählte`. Beta4 corrects those defects.
+The beta4 installation and visual recheck remain **NOT TESTED**. Mobile layout,
+live legacy/invalid handoff cases and palette reload are not covered by these
+screenshots; their existing automated results must not be read as live sign-off.
+
+The original staging kit contains Hover beta2, Picker beta3, rollback ZIPs and
+the synthetic `two-greens.png` fixture. The separate Picker beta4 ZIP supersedes
+its Picker candidate. Replace only
+`atlas-clarus-pkl-image-picker/atlas-clarus-pkl-image-explorer.php`; keep Hover
+0.2.6-beta2. The beta3 ZIP remains the immediate rollback package.
+
+Remaining live checks on the main site:
+
+1. Replace the active Picker with beta4. Check the complete note and magnifier
+   status before binding, after binding and after return from Hover.
 2. Open picker page 5393, select the fixture, confirm sRGB and bind. Click one
    pixel on each side. Source RGBs `[61,123,25]` and `[60,123,25]` must both map
    to row **4966**, reference **H130_L045_C055**, RGB **[55,121,26]**, HEX
@@ -87,5 +111,5 @@ Still required on staging:
    screenshots and record browser/viewport and test outcomes. Do not substitute
    DOM tests or a static mockup for this visual gate.
 
-No merge, production activation or visual sign-off is implied by passing the
-software tests.
+No beta4 deployment, merge or complete visual sign-off is implied by passing
+the software tests.

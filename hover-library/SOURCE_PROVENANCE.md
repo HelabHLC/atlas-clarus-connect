@@ -3,10 +3,10 @@
 Base: `60bf765e771c3e6493c88a02a046237c9ba69db9` (`main`, PR #64 integrated).
 This patch extends the **standalone WordPress Hover Library receiver**. The
 browser bundle already has its own integrated Picker → Hover → palette path.
-Its RC28 files, package pins and Android payload are unchanged here. No external
-Image Picker sender implementation is present in this repository; that sender
-must opt into the optional field below. This is not a claim of live deployment
-or completion of a sender update.
+Its RC28 files, package pins and Android payload are unchanged here. The pinned
+[external Picker adapter](external-picker/README.md) adds sender/return support
+to the owner-supplied plugin; its deployment and acceptance status is recorded
+separately below.
 
 ## Backward-compatible handoff
 
@@ -156,6 +156,9 @@ validator. PHP is unavailable in this local environment; its execution must be
 read from the PR CI result. Existing reference, recipe, naming, spectral and
 RC28 bundle files are unchanged. The external sender/return implementation is
 now available as the pinned [Picker adapter](external-picker/README.md), with
-passing helper and generated-integration tests. Its staging installation and a
-real browser round trip, including desktop/mobile visual acceptance, are still
-**NOT TESTED**. The authenticated staging inspection did not replace any plugin.
+passing helper and generated-integration tests. On 2026-10-07, owner-supplied
+desktop screenshots and a validated palette export demonstrated the main-site
+Picker beta3 → Hover beta2 → palette → Picker path with two sources for row 4966.
+Picker beta4 fixes two UI text defects found in that review; its live visual
+recheck and mobile acceptance remain **NOT TESTED**. See the adapter README for
+the evidence boundaries. The assistant did not install either live plugin.

@@ -29,7 +29,9 @@ def replace_once(text, old, new):
 
 
 def patch_js(js):
-    js = js.replace('front-end v0.3.1-beta2', 'front-end v0.3.1-beta3')
+    js = js.replace('front-end v0.3.1-beta2', 'front-end v0.3.1-beta4')
+    js = replace_once(js, '    this.magnifierInfo=q(root,\'[data-role="magnifier-info"]\');',
+        '    this.magnifierInfo=q(root,\'[data-role="magnifier-info"]\');\n    this.magnifierState=q(root,\'[data-role="magnifier-state"]\');')
     js = replace_once(js, "const IMAGE_DB=", "const P=window.ATLAS_CLARUS_HOVER_PROVENANCE;\nconst S=window.ATLAS_CLARUS_PICKER_PROVENANCE;\nconst IMAGE_DB=")
     js = replace_once(js,"await new Promise((resolve,reject)=>{const r=store.put(blob,'current');r.onsuccess=resolve;r.onerror=()=>reject(r.error);});",
         "await new Promise((resolve,reject)=>{const tx=store.transaction;tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Image transaction aborted'));store.put(blob,'current');});")
@@ -115,7 +117,9 @@ def patch_js(js):
 
 
 def patch_php(php):
-    php=php.replace('0.3.1-beta2','0.3.1-beta3')
+    php=php.replace('0.3.1-beta2','0.3.1-beta4')
+    php=replace_once(php, 'Das Bild wird nur lokal in diesem Browser verarbeitet. Die eingefrorene\n',
+        'Das Bild wird nur lokal in diesem Browser verarbeitet.\n')
     php=replace_once(php,"function atlas_clarus_image_picker_register_assets() {", """function atlas_clarus_image_picker_register_assets() {
     wp_register_script('atlas-clarus-picker-source-validator', ATLAS_CLARUS_IMAGE_PICKER_URL . 'assets/source-provenance.js', array(), ATLAS_CLARUS_IMAGE_PICKER_VERSION, true);
     wp_register_script('atlas-clarus-picker-provenance', ATLAS_CLARUS_IMAGE_PICKER_URL . 'assets/picker-provenance.js', array('atlas-clarus-picker-source-validator'), ATLAS_CLARUS_IMAGE_PICKER_VERSION, true);""")
@@ -141,12 +145,12 @@ def prepare(upstream,output):
     (output/'atlas-clarus-pkl-image-explorer.php').write_text(php)
     shutil.copyfile(HERE/'picker-provenance.js',output/'assets/picker-provenance.js')
     shutil.copyfile(HERE.parent/'assets/js/source-provenance.js',output/'assets/source-provenance.js')
-    manifest['plugin_version']='0.3.1-beta3';manifest['source_assignment_schema']='1.0';manifest['signature_status']='NOT_SIGNED'
+    manifest['plugin_version']='0.3.1-beta4';manifest['source_assignment_schema']='1.0';manifest['signature_status']='NOT_SIGNED'
     (output/'data/manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
-    readme=(output/'readme.txt').read_text().replace('Stable tag: 0.3.1-beta2','Stable tag: 0.3.1-beta3')
-    readme=readme.replace('== Changelog ==','== Changelog ==\n\n= 0.3.1-beta3 =\n* Preserves unsigned RC28 pixel provenance through Hover and verifies it against the restored local image.\n* Requires Hover Library 0.2.6-beta2; no new reference or spectral data.')
+    readme=(output/'readme.txt').read_text().replace('Stable tag: 0.3.1-beta2','Stable tag: 0.3.1-beta4')
+    readme=readme.replace('== Changelog ==','== Changelog ==\n\n= 0.3.1-beta4 =\n* Connects the existing magnifier status display so it reflects loaded and bound images, including after return from Hover.\n* Removes the broken sentence fragment below the image controls.\n\n= 0.3.1-beta3 =\n* Preserves unsigned RC28 pixel provenance through Hover and verifies it against the restored local image.\n* Requires Hover Library 0.2.6-beta2; no new reference or spectral data.')
     (output/'readme.txt').write_text(readme)
-    print('Prepared pinned Picker 0.3.1-beta3:',output)
+    print('Prepared pinned Picker 0.3.1-beta4:',output)
 
 
 if __name__=='__main__':
