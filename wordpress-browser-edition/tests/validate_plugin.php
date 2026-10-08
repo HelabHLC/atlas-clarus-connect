@@ -15,7 +15,7 @@ function check($condition, $message) {
 }
 function invoke_private($method, ...$args) {
     $ref = new ReflectionMethod('ATLAS_Clarus_Browser_Edition', $method);
-    $ref->setAccessible(true);
+    if (PHP_VERSION_ID < 80100) { $ref->setAccessible(true); }
     return $ref->invokeArgs(null, $args);
 }
 class WP_Error {
@@ -26,6 +26,8 @@ class WP_Error {
 }
 function is_wp_error($v) { return $v instanceof WP_Error; }
 function add_action(...$args) {}
+function wp_register_ability_category($name, $args) { $GLOBALS['ability_categories'][$name] = $args; }
+function wp_register_ability($name, $args) { $GLOBALS['abilities'][$name] = $args; }
 function add_filter(...$args) {}
 function add_shortcode(...$args) {}
 function register_activation_hook(...$args) {}
@@ -96,6 +98,29 @@ $initial = $options;
 require $package . '/atlas-clarus-browser-edition.php';
 check($options === $initial, 'Plugin boot changed existing runtime');
 check(ATLAS_Clarus_Browser_Edition::runtime_ready(), 'Existing RC20 runtime no longer serves');
+$pilot = method_exists('ATLAS_Clarus_Browser_Edition', 'install_browser_bundle_ability');
+$install_input = array('bundle_sha256' => ATLAS_Clarus_Browser_Edition::BUNDLE_SHA256, 'expected_runtime_sha256' => 'previous-sha');
+if ($pilot) {
+    ATLAS_Clarus_Browser_Edition::register_ability_category();
+    ATLAS_Clarus_Browser_Edition::register_install_ability();
+    $ability = $GLOBALS['abilities']['atlas-clarus/install-browser-bundle'];
+    check(isset($GLOBALS['ability_categories'][$ability['category']]), 'Ability category missing');
+    check($ability['meta']['show_in_rest'] === true && $ability['meta']['annotations']['readonly'] === false, 'Ability visibility/mutation metadata incorrect');
+    check($ability['input_schema']['additionalProperties'] === false, 'Ability accepts extra properties');
+    $permission = false;
+    check(call_user_func($ability['permission_callback']) === false, 'Ability permission callback allowed non-admin');
+    check(is_wp_error(call_user_func($ability['execute_callback'], $install_input)), 'Ability direct call bypassed permission');
+    check($options === $initial, 'Denied ability changed runtime');
+    $permission = true;
+    $bad_inputs = array(null, array(), array_merge($install_input, array('bundle_sha256' => str_repeat('0', 64))),
+        array_merge($install_input, array('expected_runtime_sha256' => 'stale')),
+        array_merge($install_input, array('expected_runtime_sha256' => false)),
+        array_merge($install_input, array('path' => '/tmp/arbitrary.zip')));
+    foreach ($bad_inputs as $input) {
+        check(is_wp_error(call_user_func($ability['execute_callback'], $input)), 'Ability accepted invalid input');
+        check($options === $initial, 'Rejected ability changed runtime');
+    }
+}
 
 // Execute the actual strict PHP manifest validator, including parallel arrays.
 $z = new ZipArchive(); check($z->open($package . '/assets/bundle.zip') === true, 'Missing bundle');
@@ -112,6 +137,13 @@ foreach (array('version' => '0.2.0-rc20-core-journey', 'master_rows' => '13283',
 }
 $bad = $manifest; unset($bad['print_paths']);
 check(is_wp_error(invoke_private('validate_manifest', $bad)), 'Accepted missing print paths');
+if ($pilot) {
+    foreach (array('deployment_allowed' => false, 'native_adobe_validation' => 'PASS',
+        'colour_handoff_shared_core_sha256' => str_repeat('0', 64), 'colour_decision_history' => 'wrong') as $key => $value) {
+        $bad = $manifest; $bad[$key] = $value;
+        check(is_wp_error(invoke_private('validate_manifest', $bad)), 'Accepted invalid handoff ' . $key);
+    }
+}
 
 // Both public mutations must check capability and nonce before touching options.
 foreach (array('handle_install_request', 'handle_rollback_request') as $handler) {
@@ -138,14 +170,16 @@ try {
 } finally { file_put_contents($zip_path, $bytes); clearstatcache(); }
 
 foreach (array('unzip', 'manifest', 'checksum') as $failure) {
-    $fault = $failure; $result = invoke_private('install_bundle');
+    $fault = $failure;
+    $result = $pilot ? call_user_func($ability['execute_callback'], $install_input) : invoke_private('install_bundle');
     check(is_wp_error($result), 'Failed to reject ' . $failure);
     check($options === $initial, $failure . ' error mutated runtime');
     check(file_get_contents($old . '/index.html') === '<html>ATLAS previous runtime</html>', 'Previous files changed');
     check(count(glob(dirname($old) . '/*', GLOB_ONLYDIR)) === 1, 'Failed attempt left extraction directory');
 }
 $fault = '';
-check(invoke_private('install_bundle') === true, 'RC27 installation failed');
+$result = $pilot ? call_user_func($ability['execute_callback'], $install_input) : invoke_private('install_bundle');
+check($pilot ? is_array($result) && $result['active_bundle_sha256'] === ATLAS_Clarus_Browser_Edition::BUNDLE_SHA256 : $result === true, 'Bundle installation failed');
 $runtime = $options[ATLAS_Clarus_Browser_Edition::OPTION_RUNTIME_PATH];
 check($runtime !== $old && is_file($runtime . '/index.html'), 'New runtime not selected');
 check($options[ATLAS_Clarus_Browser_Edition::OPTION_RUNTIME_SHA] === ATLAS_Clarus_Browser_Edition::BUNDLE_SHA256, 'SHA not recorded');

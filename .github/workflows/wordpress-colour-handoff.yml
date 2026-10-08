@@ -1,0 +1,41 @@
+name: Validate WordPress colour handoff pilot
+on:
+  pull_request:
+    paths:
+      - 'wordpress-browser-edition/**'
+      - 'browser-bundle/**'
+      - '.github/workflows/wordpress-colour-handoff.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  wordpress-pilot:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.5']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip
+      - name: Build and reproduce the pinned pilot package
+        run: |
+          python3 wordpress-browser-edition/build_handoff_plugin.py
+          python3 wordpress-browser-edition/build_handoff_plugin.py --output-dir "$RUNNER_TEMP/atlas-pilot-repeat"
+          cmp wordpress-browser-edition/build-handoff/*.zip "$RUNNER_TEMP/atlas-pilot-repeat/"*.zip
+          echo '5cde09b34bed7b02d30504f4c7fceba22ddd9c6aa8c57355f6b1f331fe6cb603  wordpress-browser-edition/build-handoff/ATLAS_Clarus_Browser_Edition_v0.1.15-beta9_RC29.1.zip' | sha256sum -c -
+          unzip -q wordpress-browser-edition/build-handoff/*.zip -d "$RUNNER_TEMP/atlas-pilot-php"
+      - name: Verify PHP guards, installer, failure preservation and rollback
+        run: |
+          php -l "$RUNNER_TEMP/atlas-pilot-php/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php"
+          php wordpress-browser-edition/tests/validate_plugin.php "$RUNNER_TEMP/atlas-pilot-php/atlas-clarus-browser-edition"
+      - uses: actions/upload-artifact@v7
+        if: matrix.php == '8.5'
+        with:
+          name: ATLAS-Clarus-WordPress-RC29.1-public-pilot
+          path: wordpress-browser-edition/build-handoff/*

@@ -18,16 +18,16 @@ BUNDLE = "ATLAS_Clarus_Browser_Bundle_v0.2.0-rc28-source-provenance.zip"
 FILES = ("atlas-clarus-browser-edition.php", "index.php", "readme.txt")
 
 
-def build(bundle, output):
+def build(bundle, output, source=ROOT, archive_name=NAME):
     output.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="atlas-wordpress-") as tmp:
         stage = Path(tmp) / "atlas-clarus-browser-edition"
         (stage / "assets").mkdir(parents=True)
         for name in FILES:
-            shutil.copyfile(ROOT / name, stage / name)
+            shutil.copyfile(source / name, stage / name)
         shutil.copyfile(bundle, stage / "assets/bundle.zip")
         report = verify(stage)
-        target = output / NAME
+        target = output / archive_name
         # Fixed metadata and ordering make the installable ZIP reproducible.
         with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
             for file in sorted(stage.rglob("*")):
@@ -40,7 +40,7 @@ def build(bundle, output):
                 info.compress_type = zipfile.ZIP_DEFLATED
                 archive.writestr(info, file.read_bytes(), compresslevel=9)
         digest = hashlib.sha256(target.read_bytes()).hexdigest()
-        (output / (NAME + ".sha256")).write_text(digest + "  " + NAME + "\n")
+        (output / (target.name + ".sha256")).write_text(digest + "  " + target.name + "\n")
         print(json.dumps({"path": str(target), "size": target.stat().st_size, "sha256": digest,
                           "preflight": report}, indent=2))
         return target

@@ -32,7 +32,15 @@ def verify(root):
         block = source.split("$expected = array(", 1)[1].split(");", 1)[0]
         expected = {k: v[1:-1] if v.startswith("'") else int(v)
                     for k, v in re.findall(r"'([^']+)'\s*=>\s*('[^']*'|\d+)\s*,", block)}
-        assert len(expected) == 53
+        if version == '0.1.15-beta9':
+            pilot = json.loads((Path(__file__).resolve().parents[1]/'browser-bundle/manifest-rc29.1.json').read_text())
+            assert manifest == pilot
+            scalar_count = sum(type(v) in (str, int) for v in pilot.values())
+            assert len(expected) == scalar_count
+            booleans = {k: v == 'true' for k, v in re.findall(r"'([^']+)'\s*=>\s*(true|false)\s*,", block)}
+            assert booleans == {k: v for k, v in pilot.items() if type(v) is bool}
+        else:
+            assert version == '0.1.15-beta8' and len(expected) == 53
         for k, v in expected.items():
             assert type(manifest.get(k)) is type(v) and manifest[k] == v, k
         assert manifest["print_paths"] == ["4C", "ECG"]
@@ -62,9 +70,9 @@ def verify(root):
         "archive_crc": "PASS", "embedded_file_sha256": "PASS",
         "embedded_checksums_verified": len(checked), "strict_scalar_manifest_fields": len(expected),
         "sampling_and_parallel_print_arrays": "PASS", "source_manifest_alignment": "PASS",
-        "source_base_commit": "ce800940490aab29adf2b874de612562dbfd3e52",
-        "source_candidate": "RC28 RGB source provenance",
-        "source_review": "browser-bundle/SOURCE_PROVENANCE.md",
+        "source_base_commit": "3d935f3995980726f72e46108348c183c0e14a19" if version == "0.1.15-beta9" else "ce800940490aab29adf2b874de612562dbfd3e52",
+        "source_candidate": "RC29.1 public colour handoff pilot" if version == "0.1.15-beta9" else "RC28 RGB source provenance",
+        "source_review": "browser-bundle/COLOUR_HANDOFF_PUBLIC_PILOT.md" if version == "0.1.15-beta9" else "browser-bundle/SOURCE_PROVENANCE.md",
         "wrapper_php_execution": "SEPARATE_CI_JOB_WORDPRESS_BROWSER_EDITION",
         "wordpress_ionos_integration": "ACCEPTANCE_PENDING",
         "visual_desktop_and_real_smartphone": "ACCEPTANCE_PENDING",

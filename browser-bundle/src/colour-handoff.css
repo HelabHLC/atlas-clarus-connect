@@ -1,0 +1,28 @@
+/* Shared Bundle visual language: existing type, colour, button and panel tokens. */
+#colour-handoff .ch-layout{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+#colour-handoff .ch-panel,#colour-handoff .ch-card{padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:12px;min-width:0}
+#colour-handoff label{display:grid;gap:8px;margin:16px 0;color:var(--muted);font-size:.88rem}
+#colour-handoff input,#colour-handoff select{width:100%;min-width:0;max-width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}
+#colour-handoff .ch-range{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#colour-handoff .ch-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}
+#colour-handoff .ch-check{display:flex;align-items:flex-start;line-height:1.5}
+#colour-handoff .ch-check input{width:18px;height:18px;flex-shrink:0;margin:2px 0}
+#colour-handoff .ch-drop{border:1px dashed var(--muted);border-radius:9px;padding:14px;margin-top:20px}
+#colour-handoff .ch-drop.dragging{outline:2px solid var(--accent)}
+#colour-handoff .ch-drop span{font-size:.8rem;color:var(--muted)}
+#colour-handoff details{color:var(--muted);font-size:.87rem;line-height:1.6;overflow-wrap:anywhere}
+#colour-handoff summary{cursor:pointer;color:var(--cyan)}
+#colour-handoff h3{margin-top:0}#colour-handoff .ch-panel h3:not(:first-child){margin-top:32px}
+#colour-handoff button:disabled{opacity:.45;cursor:not-allowed}
+#ch-status{padding:16px;border-left:3px solid var(--accent);background:var(--panel);line-height:1.5}
+#ch-status[data-error="true"]{border-color:var(--warn);color:var(--warn)}
+#ch-storage-warning{color:var(--warn)}
+#colour-handoff .ch-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+#colour-handoff .ch-card h3{font-size:1rem;overflow-wrap:anywhere}
+#colour-handoff .ch-swatches{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+#colour-handoff .ch-swatches i{display:block;height:80px;border-radius:8px;border:1px solid #ffffff35;margin:8px 0}
+#colour-handoff .ch-swatches small{display:block;color:var(--muted);font-size:.72rem}
+#colour-handoff .ch-card p{font-size:.83rem;line-height:1.6;overflow-wrap:anywhere}
+#colour-handoff [hidden]{display:none!important}
+@media(max-width:1000px){#colour-handoff .ch-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){#colour-handoff .ch-layout,#colour-handoff .ch-cards{grid-template-columns:1fr}#colour-handoff .ch-panel,#colour-handoff .ch-card{padding:18px}#colour-handoff .ch-actions button{width:100%}}
