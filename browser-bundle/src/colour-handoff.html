@@ -1,0 +1,35 @@
+<section id="colour-handoff" class="view">
+  <div class="section-head"><div><p class="eyebrow">COLOUR · SOURCE · HISTORY</p><h2>Colour handoff</h2></div><span class="gate warning">ADOBE PILOT</span></div>
+  <p class="lead">Take your colour decisions with you. Keep the original values, their Atlas addresses and their recorded origin together.</p>
+  <div class="ch-layout">
+    <div class="ch-panel">
+      <h3>1. Choose your starting colours</h3>
+      <p id="ch-palette-info" class="boundary"></p>
+      <label>Starting point<select id="ch-basis"><option value="RECORDED_ORIGINALS">Recorded original RGB</option><option value="REFERENCE_VALUES_AS_NEW_INPUTS">Atlas references as new design colours</option></select></label>
+      <div class="ch-range"><label>First colour<input id="ch-start" type="number" min="1" value="1"></label><label>Number of colours<input id="ch-count" type="number" min="1" max="250" value="1"></label></div>
+      <button id="ch-create" class="button primary" disabled>Use active palette</button>
+      <p class="boundary">Choose up to 250 colours. The complete source palette stays attached. References are a deliberate new starting point; an unrecorded original remains unknown.</p>
+      <div id="ch-drop" class="ch-drop" tabindex="0" role="group" aria-label="Drop a Colour Kit decision JSON">
+        <label>Or load a saved Colour Kit / handoff JSON<input id="ch-import" type="file" accept=".json,application/json" disabled></label>
+        <span>Drop one decision JSON here. Existing decision IDs and history are preserved.</span>
+      </div>
+      <p class="boundary">One working set is kept in this browser. Save its full JSON before replacing it with a different set. Source-palette edits do not change an existing working set.</p>
+    </div>
+    <div class="ch-panel">
+      <h3>2. Save or hand over</h3>
+      <p id="ch-summary">No colour decisions loaded.</p>
+      <div class="ch-actions"><button id="ch-save" disabled>Save full decision JSON</button><button id="ch-export" class="button primary" disabled>Download Adobe handoff ZIP</button></div>
+      <p class="boundary">The ZIP contains RGB swatches, full provenance JSON and a checksum manifest. Keep these files together. The same JSON opens in Colour Kit 0.3.0.</p>
+      <details><summary>What travels with the colour?</summary><p>The recorded image name, pixel or area location, available image hash, original RGB, Atlas assignment and later decision revisions stay in the JSON. ASE swatch names link to those records. Hashes check consistency; they do not authenticate authorship.</p><p>A native Adobe round trip remains untested. The provenance JSON is a companion file and is not automatically embedded in an Adobe document.</p></details>
+      <h3>3. Check a returned palette</h3>
+      <label>Returned ASE + original palette.clarus.json + handoff.json<input id="ch-return-files" type="file" accept=".ase,.json,application/json" multiple disabled></label>
+      <label class="ch-check"><input id="ch-srgb" type="checkbox" disabled>I confirm the returned RGB values are intended as sRGB.</label>
+      <button id="ch-return" disabled>Verify and load returned colours</button>
+      <p class="boundary">Keep each swatch’s AC_ identifier prefix. Return exactly the exported RGB swatches. Changes become linked revisions of the same colour decisions.</p>
+    </div>
+  </div>
+  <p id="ch-status" role="status" aria-live="polite">Checking the reference data …</p>
+  <p id="ch-storage-warning" class="boundary" role="alert" hidden></p>
+  <div id="ch-cards" class="ch-cards"></div>
+  <div id="ch-pager" class="ch-actions" hidden><button id="ch-prev">Previous</button><span id="ch-page"></span><button id="ch-next">Next</button></div>
+</section>
