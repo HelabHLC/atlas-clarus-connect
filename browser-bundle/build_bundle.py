@@ -10,12 +10,17 @@ HERE=ROOT/'browser-bundle'
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output-dir', type=Path, default=HERE/'build', help='Development output directory (keeps the checked-in RC20 distribution intact).')
 parser.add_argument('--colour-handoff', action='store_true', help='Build the RC29 Colour Kit-compatible handoff candidate; default remains the pinned RC28 wrapper payload.')
+parser.add_argument('--public-pilot', action='store_true', help='With --colour-handoff, build the owner-authorized RC29.1 website pilot.')
 ARGS=parser.parse_args()
+if ARGS.public_pilot and not ARGS.colour_handoff:
+    parser.error('--public-pilot requires --colour-handoff')
 OUTPUT=ARGS.output_dir.resolve()
 DIST=OUTPUT/'atlas-clarus-browser-bundle'
 VERSION='0.2.0-rc28-source-provenance'
 if ARGS.colour_handoff:
     VERSION='0.2.0-rc29-colour-handoff'
+if ARGS.public_pilot:
+    VERSION='0.2.0-rc29.1-colour-handoff'
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 ZIP_TIMESTAMP=(2026, 1, 1, 0, 0, 0)
@@ -126,6 +131,10 @@ if ARGS.colour_handoff:
     for name in ('LICENSE.txt','HANDOFF_PROTOCOL.txt'):
         shutil.copyfile(HERE/'vendor/clarus-handoff'/name,DIST/'docs'/('COLOUR_HANDOFF_'+name))
     shutil.copyfile(HERE/'COLOUR_HANDOFF.md',DIST/'docs/COLOUR_HANDOFF.md')
+    if ARGS.public_pilot:
+        shutil.copyfile(HERE/'COLOUR_HANDOFF_PUBLIC_PILOT.md',DIST/'docs/COLOUR_HANDOFF_PUBLIC_PILOT.md')
+        html=html.replace('ADOBE PILOT</span>', 'PUBLIC PILOT</span>')
+        html=html.replace('Take your colour decisions with you. Keep the original values, their Atlas addresses and their recorded origin together.', 'Take your colour decisions with you. The provenance travels in the companion JSON file, together with the original values, Atlas addresses and decision history.')
 html=html.replace('<link rel="stylesheet" href="assets/app.css">','<style>'+css+'</style>')
 html=html.replace('<script src="assets/atlas-data.js"></script>','<script>'+payload.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/designer-layer-data.js"></script>','<script>'+designer_payload.replace('</script','<\\/script')+'</script>')
@@ -162,6 +171,8 @@ if ARGS.colour_handoff:
 shutil.copyfile(HERE/'SOURCE_PROVENANCE.md',DIST/'docs/SOURCE_PROVENANCE.md')
 
 manifest=json.loads((HERE/('manifest-rc29.json' if ARGS.colour_handoff else 'manifest-rc28.json')).read_text(encoding='utf-8'))
+if ARGS.public_pilot:
+    manifest=json.loads((HERE/'manifest-rc29.1.json').read_text(encoding='utf-8'))
 assert manifest['version']==VERSION and manifest['master_sha256']==MASTER
 assert manifest['name_search_index_sha256']==sha(name_index)
 assert manifest['descriptor_sha256']==sha(DIST/'assets/designer-layer-data.js')

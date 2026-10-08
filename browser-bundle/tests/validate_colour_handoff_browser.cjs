@@ -6,6 +6,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const root=path.resolve(__dirname,'../..');
 const out=path.resolve(process.env.HANDOFF_TEST_OUTPUT||'/tmp/atlas-colour-handoff-browser');fs.mkdirSync(out,{recursive:true});
 const target=path.resolve(process.env.HANDOFF_HTML||path.join(root,'browser-bundle/build-handoff/atlas-clarus-browser-bundle/index.html'));
+const entrypoint=process.env.HANDOFF_TEST_URL||pathToFileURL(target).href;
 const classic=JSON.parse(require('./fixtures/colour-kit-030-two-greens.json').bundle_origin.document_text);
 (async()=>{
   const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),args:['--no-sandbox']});
@@ -13,7 +14,7 @@ const classic=JSON.parse(require('./fixtures/colour-kit-030-two-greens.json').bu
     const context=await browser.newContext({viewport:{width:1440,height:1100},acceptDownloads:true});
     const page=await context.newPage(),errors=[],requests=[];
     page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))requests.push(r.url());});
-    await page.goto(pathToFileURL(target).href+'#colour-handoff');
+    await page.goto(entrypoint+'#colour-handoff');
     await page.waitForFunction(()=>!document.getElementById('ch-create').disabled);
     // A real classic Bundle palette import; keep normal source workspace separate.
     await page.locator('#palette-toggle').click();
@@ -82,8 +83,14 @@ const classic=JSON.parse(require('./fixtures/colour-kit-030-two-greens.json').bu
       await page.waitForFunction(()=>document.getElementById('ch-status').textContent.startsWith('Decision JSON verified'));
       const back=JSON.parse(fs.readFileSync(await save('#ch-save','kit-back-in-bundle.json')));assert.deepEqual(back,kitData);kitRoundtrip='PASS';
     }
-    assert.deepEqual(errors,[]);assert.deepEqual(requests,[]);
-    const report={status:'PASS',entrypoint:'file:// self-contained candidate',create_save_reload:true,repeat_selection_preserves_ids:true,ase_return_same_decisions:true,invalid_import_preserves_current:true,drag_drop:true,storage_failure_visible:true,viewports:[1440,390,844],network_requests:requests.length,page_errors:errors,native_adobe_validation:'NOT_TESTED',colour_kit_030_browser_roundtrip:kitRoundtrip};
+    assert.deepEqual(errors,[]);
+    // The public WordPress page may request its own icon; no colour-data request
+    // or third-party service should be needed for a self-contained handoff.
+    if(process.env.HANDOFF_TEST_URL){
+      const origin=new URL(entrypoint).origin;
+      assert.equal(requests.every(url=>new URL(url).origin===origin),true,'unexpected third-party request');
+    }else assert.deepEqual(requests,[]);
+    const report={status:'PASS',entrypoint:process.env.HANDOFF_TEST_URL||'file:// self-contained candidate',create_save_reload:true,repeat_selection_preserves_ids:true,ase_return_same_decisions:true,invalid_import_preserves_current:true,drag_drop:true,storage_failure_visible:true,viewports:[1440,390,844],network_requests:requests.length,page_errors:errors,native_adobe_validation:'NOT_TESTED',colour_kit_030_browser_roundtrip:kitRoundtrip};
     fs.writeFileSync(path.join(out,'browser-results.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
   }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
