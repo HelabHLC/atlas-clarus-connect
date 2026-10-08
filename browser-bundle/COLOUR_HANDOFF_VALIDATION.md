@@ -18,6 +18,7 @@ Candidate: `0.2.0-rc29-colour-handoff` (explicit build flag).
 | Independent Python check | Colour Kit CLI verifies the generated returned JSON against the full reference set. |
 | Responsive review | Desktop 1440px, emulated portrait 390×844 and landscape 844×390; no horizontal overflow. Desktop and portrait screenshots visually reviewed. These are not physical-device tests. |
 | Existing regression checks | Palette exports, source provenance UI, source assignment rejection vectors, local persistence/quota/capacity all pass. |
+| Android release identity guard | All six existing positive/negative tests pass with the literal RC28 default and explicit RC29 override. An initial conditional-expression declaration was rejected by the AST-based guard and corrected without changing its tests or Android identity. |
 | Existing RC28 default build | Reproduced twice byte-identically: `79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8`. Android and WordPress pins retained. |
 | RC29 candidate package | Reproducible build, ZIP CRC, all packaged hashes, inline modules/load order, MIT notice and candidate manifest checked. |
 

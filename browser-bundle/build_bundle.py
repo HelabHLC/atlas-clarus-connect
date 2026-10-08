@@ -13,7 +13,9 @@ parser.add_argument('--colour-handoff', action='store_true', help='Build the RC2
 ARGS=parser.parse_args()
 OUTPUT=ARGS.output_dir.resolve()
 DIST=OUTPUT/'atlas-clarus-browser-bundle'
-VERSION='0.2.0-rc29-colour-handoff' if ARGS.colour_handoff else '0.2.0-rc28-source-provenance'
+VERSION='0.2.0-rc28-source-provenance'
+if ARGS.colour_handoff:
+    VERSION='0.2.0-rc29-colour-handoff'
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 ZIP_TIMESTAMP=(2026, 1, 1, 0, 0, 0)
