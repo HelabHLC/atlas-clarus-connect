@@ -70,7 +70,7 @@ def verify(root):
         "archive_crc": "PASS", "embedded_file_sha256": "PASS",
         "embedded_checksums_verified": len(checked), "strict_scalar_manifest_fields": len(expected),
         "sampling_and_parallel_print_arrays": "PASS", "source_manifest_alignment": "PASS",
-        "source_base_commit": "ce800940490aab29adf2b874de612562dbfd3e52",
+        "source_base_commit": "3d935f3995980726f72e46108348c183c0e14a19" if version == "0.1.15-beta9" else "ce800940490aab29adf2b874de612562dbfd3e52",
         "source_candidate": "RC29.1 public colour handoff pilot" if version == "0.1.15-beta9" else "RC28 RGB source provenance",
         "source_review": "browser-bundle/COLOUR_HANDOFF_PUBLIC_PILOT.md" if version == "0.1.15-beta9" else "browser-bundle/SOURCE_PROVENANCE.md",
         "wrapper_php_execution": "SEPARATE_CI_JOB_WORDPRESS_BROWSER_EDITION",
