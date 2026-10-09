@@ -1,0 +1,307 @@
+{
+  "schema": "atlas-clarus-crop-evidence-experiment/0.1",
+  "status": "VERIFIED_CROP_EXPERIMENT",
+  "source": {
+    "filename": "source_rijksmuseum_SK-C-210.jpg",
+    "file_sha256": "b8c1d72380a7f389ef1c33f85a088c404644bdc1a4123f6f664c7638158b171b",
+    "file_bytes": 5035516,
+    "width": 6116,
+    "height": 4412,
+    "pixels": 26983792,
+    "canonical_rgb_sha256": "a0b0112053a328eb4d246e6ec7dfd69791deb81c7e372576c000a81d3e6d4890",
+    "canonical_rgb_hash_definition": "SHA256(ASCII RGB8:6116x4412: + row-major RGB8 bytes)",
+    "raw_rgb_sha256": "e7d687d24ec69cf17379cace4c796f7d3db62e8f5c48dcab8df24b8db052700d",
+    "colour_status": "UNTAGGED_RGB; sRGB explicitly ASSUMED for digital study, not verified capture characterization",
+    "decoder": {
+      "name": "Pillow",
+      "version": "12.3.0",
+      "orientation": "stored raster; EXIF orientation absent or 1; no transpose"
+    },
+    "historical_frozen_rgb_equals_current_jpeg_decode": true,
+    "pixel_bundle_file_sha256": "7cba7e260ec8d1c4a3eebd88c5d472eb36e2eb4760aad7806fdf7c10f39fb169",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Landschap_met_waterval_Rijksmuseum_SK-C-210.jpeg"
+  },
+  "coordinates": "zero-based, top-left; original_x=x0+local_x; original_y=y0+local_y",
+  "crop": {
+    "rect_xywh": [
+      1000,
+      1000,
+      256,
+      256
+    ],
+    "operation": "INTEGER_CROP_NO_RESIZE_NO_RESAMPLE",
+    "scale": [
+      1,
+      1
+    ],
+    "rotation_degrees": 0,
+    "file_sha256": "862e65b2abdd13f0550ff8cfea429f83899d6068f2d7333cb4baaf3fc2dfb819",
+    "file_bytes": 65654,
+    "rgba_sha256": "3d31cdfd470546d3680e48ac9405ca38b1237679667024e668fa2efa53103227",
+    "rgba_hash_definition": "SHA256(raw row-major interleaved RGBA8; no header)",
+    "pixel_equality_against_parent": "ALL_65536_PIXELS",
+    "expected_map_file_sha256": "523269a26046026acec92462a76315c1afd601fcccc0fc917dad9277539a66cc"
+  },
+  "atlas": {
+    "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+    "master_file_rehashed_here": false,
+    "reference_csv_sha256": "a25f4dbd94d819ed3c9b899d0e0db7d4d9449cf8028201d0776fad93b5a7fab9",
+    "reference_rows": 13283,
+    "assignment": "argmin (integer squared sRGB distance, atlas_row_id); no Delta E"
+  },
+  "source_scope": "Full JPEG bytes and frozen RGB checked; full image NOT opened as Image Project; full Atlas assignment NOT rerun.",
+  "software": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "Pillow": "12.3.0"
+  },
+  "origin_verifier_rejections": [
+    "wrong_parent_hash",
+    "wrong_original_offset",
+    "wrong_scale",
+    "changed_rgb_even_with_recomputed_crop_hash"
+  ],
+  "tile_plan": {
+    "status": "GEOMETRY_ONLY_NOT_FULL_TILE_EXECUTION",
+    "tile_side": 1024,
+    "grid": [
+      6,
+      5
+    ],
+    "count": 30,
+    "rectangles_xywh": [
+      [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      [
+        1024,
+        0,
+        1024,
+        1024
+      ],
+      [
+        2048,
+        0,
+        1024,
+        1024
+      ],
+      [
+        3072,
+        0,
+        1024,
+        1024
+      ],
+      [
+        4096,
+        0,
+        1024,
+        1024
+      ],
+      [
+        5120,
+        0,
+        996,
+        1024
+      ],
+      [
+        0,
+        1024,
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024,
+        1024,
+        1024
+      ],
+      [
+        2048,
+        1024,
+        1024,
+        1024
+      ],
+      [
+        3072,
+        1024,
+        1024,
+        1024
+      ],
+      [
+        4096,
+        1024,
+        1024,
+        1024
+      ],
+      [
+        5120,
+        1024,
+        996,
+        1024
+      ],
+      [
+        0,
+        2048,
+        1024,
+        1024
+      ],
+      [
+        1024,
+        2048,
+        1024,
+        1024
+      ],
+      [
+        2048,
+        2048,
+        1024,
+        1024
+      ],
+      [
+        3072,
+        2048,
+        1024,
+        1024
+      ],
+      [
+        4096,
+        2048,
+        1024,
+        1024
+      ],
+      [
+        5120,
+        2048,
+        996,
+        1024
+      ],
+      [
+        0,
+        3072,
+        1024,
+        1024
+      ],
+      [
+        1024,
+        3072,
+        1024,
+        1024
+      ],
+      [
+        2048,
+        3072,
+        1024,
+        1024
+      ],
+      [
+        3072,
+        3072,
+        1024,
+        1024
+      ],
+      [
+        4096,
+        3072,
+        1024,
+        1024
+      ],
+      [
+        5120,
+        3072,
+        996,
+        1024
+      ],
+      [
+        0,
+        4096,
+        1024,
+        316
+      ],
+      [
+        1024,
+        4096,
+        1024,
+        316
+      ],
+      [
+        2048,
+        4096,
+        1024,
+        316
+      ],
+      [
+        3072,
+        4096,
+        1024,
+        316
+      ],
+      [
+        4096,
+        4096,
+        1024,
+        316
+      ],
+      [
+        5120,
+        4096,
+        996,
+        316
+      ]
+    ]
+  },
+  "binding": {
+    "project_id": "7f113d28-71b9-4d4c-ab9f-14207d740ae3",
+    "project_document_sha256": "98cc0ceb90d9e66b79c4ed2d04a25ad02d817e5dc8780e0919962f873a38060e",
+    "project_file_sha256": "9c17ad8fa5cfc8f65d684cda9f2ec549ef4034e897d2912a80bc90311823b3d8",
+    "project_original_file_sha256": "862e65b2abdd13f0550ff8cfea429f83899d6068f2d7333cb4baaf3fc2dfb819",
+    "project_original_rgba_sha256": "3d31cdfd470546d3680e48ac9405ca38b1237679667024e668fa2efa53103227",
+    "project_current_rgba_sha256": "090992a6a685d3177ceb3bf22ede631d4d2b6839b07401032d550901d6465cf6"
+  },
+  "samples": [
+    {
+      "local_xy": [
+        100,
+        100
+      ],
+      "original_xy": [
+        1100,
+        1100
+      ],
+      "original_rgb": [
+        174,
+        162,
+        146
+      ],
+      "original_alpha": 255,
+      "atlas_reference": {
+        "atlas_row_id": 1500,
+        "atlas_reference": "H045_L065_C010",
+        "reference_rgb": [
+          174,
+          154,
+          146
+        ],
+        "distance_squared": 64
+      },
+      "edited_rgb": [
+        17,
+        34,
+        51
+      ],
+      "edited_alpha": 0,
+      "edited_atlas_reference": {
+        "atlas_row_id": 10059,
+        "atlas_reference": "H270_L010_C015",
+        "reference_rgb": [
+          16,
+          29,
+          48
+        ],
+        "distance_squared": 35
+      }
+    }
+  ]
+}

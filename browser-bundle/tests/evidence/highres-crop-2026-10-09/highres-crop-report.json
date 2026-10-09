@@ -1,0 +1,83 @@
+{
+  "status": "PASS_WITH_DOCUMENTED_IMPORTER_BOUNDARY",
+  "tested_base_commit": "4a42f74aba2cdc0408e52b91b4dc57e798830491",
+  "browser": "151.0.7922.34",
+  "node": "v24.19.0",
+  "full_original_open_as_project": "REJECTED_AS_EXPECTED",
+  "full_original_rejection": "Image Projects: Maximum image size is 4,194,304 pixels, with each edge at most 8192. No resizing was performed. The current project was kept.",
+  "working_crop_kept": true,
+  "full_source_file_and_rgb_checked": true,
+  "full_original_atlas_mapping_rerun": false,
+  "crop_browser_rgba_matches_archived_rgb": true,
+  "crop_pixels_verified": 65536,
+  "crop_atlas_assignments_recomputed": 65536,
+  "recolour_transparency_undo_redo": true,
+  "zip_separate_session_and_returned_json": true,
+  "schema_rejected": [
+    "root_parent_field",
+    "original_offset_field",
+    "operation_global_coordinates",
+    "wrong_atlas_reference",
+    "extra_zip_sidecar"
+  ],
+  "recomputed_frozen_pixel_forgery_accepted_by_existing_importer": true,
+  "forged_pixels_fail_external_origin_check": true,
+  "two_half_crop_seam_equivalence": true,
+  "full_30_tile_workflow": "NOT_TESTED",
+  "uncompressed_png_bytes": {
+    "side2048": 16780625,
+    "side1024": 4195729
+  },
+  "hashes": {
+    "source_file": "b8c1d72380a7f389ef1c33f85a088c404644bdc1a4123f6f664c7638158b171b",
+    "source_canonical_rgb": "a0b0112053a328eb4d246e6ec7dfd69791deb81c7e372576c000a81d3e6d4890",
+    "crop_file": "862e65b2abdd13f0550ff8cfea429f83899d6068f2d7333cb4baaf3fc2dfb819",
+    "crop_rgba": "3d31cdfd470546d3680e48ac9405ca38b1237679667024e668fa2efa53103227",
+    "reference_csv": "a25f4dbd94d819ed3c9b899d0e0db7d4d9449cf8028201d0776fad93b5a7fab9"
+  },
+  "sample": {
+    "local_xy": [
+      100,
+      100
+    ],
+    "original_xy": [
+      1100,
+      1100
+    ],
+    "original_rgb": [
+      174,
+      162,
+      146
+    ],
+    "original_alpha": 255,
+    "atlas_reference": {
+      "atlas_row_id": 1500,
+      "atlas_reference": "H045_L065_C010",
+      "reference_rgb": [
+        174,
+        154,
+        146
+      ],
+      "distance_squared": 64
+    },
+    "edited_rgb": [
+      17,
+      34,
+      51
+    ],
+    "edited_alpha": 0,
+    "edited_atlas_reference": {
+      "atlas_row_id": 10059,
+      "atlas_reference": "H270_L010_C015",
+      "reference_rgb": [
+        16,
+        29,
+        48
+      ],
+      "distance_squared": 35
+    }
+  },
+  "reference_data_modified": false,
+  "live_ionos": "NOT_TESTED",
+  "physical_colour_or_authorship": "NOT_TESTED"
+}

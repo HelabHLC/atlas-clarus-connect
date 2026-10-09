@@ -1,0 +1,13 @@
+{
+  "crop.png": "862e65b2abdd13f0550ff8cfea429f83899d6068f2d7333cb4baaf3fc2dfb819",
+  "crop.rgba": "3d31cdfd470546d3680e48ac9405ca38b1237679667024e668fa2efa53103227",
+  "crop-expected.json": "523269a26046026acec92462a76315c1afd601fcccc0fc917dad9277539a66cc",
+  "crop-preparation.json": "1e37abd5c65086fc790b9d5a17efdda4cc3201821315b46b7b05922c4a33609a",
+  "crop-origin.json": "f8c42baec1bdd32946a17f2301e62aaffb726b26611cd648fb424be62fb41c25",
+  "crop-initial.clarus.json": "e789afd35125d2698eecb4e89905dcc4f68e3dd195c484124e0dd27de025667e",
+  "crop-edited.clarus.json": "9c17ad8fa5cfc8f65d684cda9f2ec549ef4034e897d2912a80bc90311823b3d8",
+  "crop-returned.clarus.json": "c0a025aab4d9d212bf11477fbafd75eb12cef48b62353e36911d1edc2cc752ae",
+  "crop-image-project.zip": "4682b68d95e2e329b6540a503cc2d4b6f2fc667c7a39d44e9574411f9d09aac1",
+  "highres-crop-report.json": "782d495d064468ba7f3acc1924c19ebe6f89c68055992d4d2bc9e1e41a803b61",
+  "crop-browser.png": "6645aa0680f2a800cd95b07a24b58138c72be80e79414c83a8ab5c991198dab5"
+}
