@@ -1,0 +1,29 @@
+/* Reuse the Bundle's type, colour and panel tokens. */
+#colour-projects .cp-layout{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+#colour-projects .cp-panel,#colour-projects .cp-card{padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:12px;min-width:0}
+#colour-projects label{display:grid;gap:8px;margin:16px 0;color:var(--muted);font-size:.88rem}
+#colour-projects input,#colour-projects select,#colour-projects textarea{width:100%;min-width:0;max-width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;box-sizing:border-box}
+#colour-projects textarea{resize:vertical}#colour-projects h3{margin-top:0}
+#colour-projects .cp-panel h3:not(:first-child){margin-top:32px}
+#colour-projects .cp-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}
+#colour-projects .cp-row{display:flex;gap:12px;align-items:end;margin:16px 0}
+#colour-projects .cp-row label{flex:1;margin:0}#colour-projects .cp-row button{flex-shrink:0}
+#colour-projects .cp-drop{border:1px dashed var(--muted);border-radius:9px;padding:14px;margin-top:20px}
+#colour-projects .cp-drop.dragging{outline:2px solid var(--accent)}
+#colour-projects .cp-drop span{font-size:.8rem;color:var(--muted)}
+#colour-projects .cp-set-head{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+#colour-projects .cp-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#colour-projects .cp-card h3{font-size:1.05rem;overflow-wrap:anywhere}
+#colour-projects .cp-swatches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+#colour-projects .cp-swatches i{display:block;height:64px;border-radius:8px;border:1px solid #ffffff35;margin:8px 0}
+#colour-projects .cp-swatches small{display:block;color:var(--muted);font-size:.68rem}
+#colour-projects .cp-swatches b{font-size:.85rem}
+#colour-projects details{color:var(--muted);font-size:.85rem;line-height:1.6;overflow-wrap:anywhere}
+#colour-projects summary{cursor:pointer;color:var(--cyan)}
+#colour-projects .cp-card p,#cp-history-list li{font-size:.85rem;line-height:1.6;overflow-wrap:anywhere}
+#cp-history-list li{margin:14px 0;white-space:pre-wrap}
+#cp-status{padding:16px;border-left:3px solid var(--accent);background:var(--panel);line-height:1.5}
+#cp-status[data-error="true"],#cp-storage-warning{border-color:var(--warn);color:var(--warn)}
+#colour-projects button:disabled{opacity:.45;cursor:not-allowed}
+#colour-projects [hidden]{display:none!important}
+@media(max-width:700px){#colour-projects .cp-layout,#colour-projects .cp-cards,#colour-projects .cp-set-head{grid-template-columns:1fr}#colour-projects .cp-panel,#colour-projects .cp-card{padding:18px}#colour-projects .cp-row{align-items:stretch;flex-direction:column}#colour-projects .cp-actions button{width:100%}}

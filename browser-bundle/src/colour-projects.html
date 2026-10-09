@@ -1,0 +1,44 @@
+<section id="colour-projects" class="view">
+  <div class="section-head"><div><p class="eyebrow">YOUR COLOURS · YOUR DECISIONS</p><h2>Colour Projects</h2></div><span class="gate warning">LOCAL PILOT</span></div>
+  <p class="lead">Your colours. Your decisions. A project you can take with you and keep developing.</p>
+  <p class="boundary">Collect colour sets, record changes and choose the design versions you want to use. Everything runs in this browser. Download the project JSON as your portable backup.</p>
+  <div class="cp-layout">
+    <div class="cp-panel">
+      <h3>1. Open your project</h3>
+      <label>Saved in this browser<select id="cp-project-list" disabled><option value="">No projects yet</option></select></label>
+      <div class="cp-row"><label>New project name<input id="cp-new-name" maxlength="120" placeholder="Our new logo" disabled></label><button id="cp-new" disabled>Create project</button></div>
+      <div id="cp-drop" class="cp-drop" role="group" aria-label="Drop a Colour Projects JSON">
+        <label>Open a project JSON<input id="cp-import" type="file" accept=".json,application/json" disabled></label>
+        <span>Or drop project.clarus.json here. Extract handover ZIPs first.</span>
+      </div>
+      <p id="cp-project-info" class="boundary">No project open.</p>
+      <div class="cp-row"><label>Project name<input id="cp-name" maxlength="120" disabled></label><button id="cp-rename" disabled>Save name</button></div>
+      <label>Project note<textarea id="cp-note" rows="3" maxlength="2000" placeholder="What did we decide, and why?" disabled></textarea></label>
+      <button id="cp-note-save" disabled>Add note to history</button>
+    </div>
+    <div class="cp-panel">
+      <h3>2. Bring your colours</h3>
+      <label>Colour set name<input id="cp-set-name" maxlength="120" placeholder="Logo colours" disabled></label>
+      <button id="cp-from-handoff" disabled>Add colours from Colour handoff</button>
+      <p class="boundary">Use <a href="#colour-handoff">Colour handoff</a> to prepare recorded originals from your active palette. Its decision IDs and complete source document travel into the project.</p>
+      <label>Or add a Colour Kit / handoff JSON<input id="cp-add-json" type="file" accept=".json,application/json" disabled></label>
+      <h3>3. Save and share</h3>
+      <div class="cp-actions"><button id="cp-save" class="button primary" disabled>Download project JSON</button><button id="cp-package" disabled>Download handover ZIP</button><button id="cp-passport" disabled>Download colour passport</button></div>
+      <p class="boundary">Project JSON reopens the complete project. The ZIP adds a readable passport and separate working / chosen swatches with their provenance JSON. Colour Kit opens the palette JSON inside each set.</p>
+      <p class="boundary">Keep source images separately. A chosen version records a design decision; it is not measured production approval or proof of authorship.</p>
+    </div>
+  </div>
+  <p id="cp-status" role="status" aria-live="polite">Checking the project workspace …</p>
+  <p id="cp-storage-warning" role="alert" hidden></p>
+  <p id="cp-backup-status" class="boundary"></p>
+  <div id="cp-workspace" hidden>
+    <div class="cp-set-head">
+      <label>Colour set<select id="cp-set-list" disabled></select></label>
+      <label>Update this set with a newer decision JSON<input id="cp-update-json" type="file" accept=".json,application/json" disabled></label>
+    </div>
+    <p class="boundary">Edits keep the original decision and its history. Changing a working colour does not change an already chosen version.</p>
+    <div id="cp-cards" class="cp-cards"></div>
+    <div id="cp-pager" class="cp-actions" hidden><button id="cp-prev">Previous</button><span id="cp-page"></span><button id="cp-next">Next</button></div>
+    <details id="cp-history"><summary>Project history</summary><ol id="cp-history-list"></ol></details>
+  </div>
+</section>

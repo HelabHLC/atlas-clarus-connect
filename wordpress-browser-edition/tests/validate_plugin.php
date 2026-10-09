@@ -144,6 +144,15 @@ if ($pilot) {
         check(is_wp_error(invoke_private('validate_manifest', $bad)), 'Accepted invalid handoff ' . $key);
     }
 }
+if (ATLAS_Clarus_Browser_Edition::VERSION === '0.1.15-beta10') {
+    foreach (array('colour_projects_schema' => 'wrong', 'colour_projects_selection' => 'PRODUCTION_APPROVED',
+        'colour_projects_max_versions' => '200', 'colour_projects_origin' => 'DISCARDED') as $key => $value) {
+        $bad = $manifest; $bad[$key] = $value;
+        check(is_wp_error(invoke_private('validate_manifest', $bad)), 'Accepted invalid project ' . $key);
+    }
+    check(strpos($html, 'id="colour-projects"') !== false, 'Colour Projects missing from runtime');
+    check(strpos($html, 'ATLAS_COLOUR_PROJECTS_UI.init({colors') !== false, 'Project initialization missing');
+}
 
 // Both public mutations must check capability and nonce before touching options.
 foreach (array('handle_install_request', 'handle_rollback_request') as $handler) {

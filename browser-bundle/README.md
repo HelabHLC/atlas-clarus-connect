@@ -1,5 +1,13 @@
 # ATLAS Clarus Browser Bundle
 
+## Colour Projects candidate (9 October 2026)
+The opt-in RC30 candidate adds named projects, complete source palettes,
+change notes, explicit chosen revisions and portable project JSON / handover ZIPs.
+Build with `python3 browser-bundle/build_bundle.py --colour-projects`.
+See [usage and data contract](COLOUR_PROJECTS.md) and
+[validation](COLOUR_PROJECTS_VALIDATION.md). This is a local test candidate;
+WordPress activation is a separate release step.
+
 ## Colour handoff candidate (8 October 2026)
 The opt-in RC29 candidate adds direct provenance-linked Adobe handoff and
 Colour Kit 0.3.0 JSON interchange in the Bundle layout. Build it with
