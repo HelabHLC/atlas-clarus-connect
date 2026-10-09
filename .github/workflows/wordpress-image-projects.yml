@@ -5,6 +5,7 @@ on:
       - 'wordpress-browser-edition/**'
       - 'browser-bundle/**'
       - 'downloads/wordpress/*RC31.1*'
+      - 'downloads/browser-bundle/*rc31.1*'
       - '.github/workflows/wordpress-image-projects.yml'
   workflow_dispatch:
 permissions:
@@ -31,6 +32,7 @@ jobs:
           cmp wordpress-browser-edition/build-images/*.zip "$RUNNER_TEMP/atlas-images-repeat/"*.zip
           cmp wordpress-browser-edition/build-images/*.zip downloads/wordpress/*beta11_RC31.1.zip
           python3 wordpress-browser-edition/tests/validate_images_package.py wordpress-browser-edition/build-images/ATLAS_Clarus_Browser_Edition_v0.1.15-beta11_RC31.1.zip --extract-to "$RUNNER_TEMP/atlas-images-php"
+          cmp "$RUNNER_TEMP/atlas-images-php/atlas-clarus-browser-edition/assets/bundle.zip" downloads/browser-bundle/*rc31.1-image-projects.zip
       - name: Test PHP installer, invalid packages, retained runtime and rollback
         run: |
           php -l "$RUNNER_TEMP/atlas-images-php/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php"

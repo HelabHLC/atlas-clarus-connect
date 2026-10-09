@@ -26,9 +26,13 @@ WordPress workflow. Reference data and project/handoff protocol cores are unchan
   committed ZIP, executes installer/rollback tests on PHP 7.4 and 8.5, and runs
   browser tests against the HTML extracted from the actual WordPress package.
 
-Local core, independent replay and browser checks passed. PHP execution is covered
-by CI because this local environment has no PHP runtime. CI results are associated
-with the PR commit; a test description alone is not a passing CI result.
+Local core, independent replay and browser checks passed. GitHub Actions run
+`37918845779` passed on PHP 7.4 and 8.5, including package reproduction,
+installer/rollback checks and the complete image workflow from the WordPress ZIP.
+The existing RC28/29/29.1/30/30.1 workflows also passed at source commit
+`3840d2bdeb79294b28f6a0c694b6558f7a0dd267`. The separate Android build encountered
+a network timeout downloading its unchanged Colour ID source; its bundle pin and
+export adapter checks passed. This release supplies browser/WordPress packages.
 
 ## Boundaries
 

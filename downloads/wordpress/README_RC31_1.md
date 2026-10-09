@@ -1,5 +1,8 @@
 # WordPress Image Projects update — RC31.1 / beta11
 
+[Download the installable WordPress ZIP](ATLAS_Clarus_Browser_Edition_v0.1.15-beta11_RC31.1.zip)
+· [SHA-256](ATLAS_Clarus_Browser_Edition_v0.1.15-beta11_RC31.1.zip.sha256)
+
 Use **ATLAS_Clarus_Browser_Edition_v0.1.15-beta11_RC31.1.zip** from
 `downloads/wordpress/`. This is the installable WordPress plugin, with the existing
 folder `atlas-clarus-browser-edition`. It replaces Browser Edition beta10 or earlier.
