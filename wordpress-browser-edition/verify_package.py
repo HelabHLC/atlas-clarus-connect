@@ -32,8 +32,8 @@ def verify(root):
         block = source.split("$expected = array(", 1)[1].split(");", 1)[0]
         expected = {k: v[1:-1] if v.startswith("'") else int(v)
                     for k, v in re.findall(r"'([^']+)'\s*=>\s*('[^']*'|\d+)\s*,", block)}
-        if version in ('0.1.15-beta9', '0.1.15-beta10'):
-            manifest_file = 'manifest-rc30.1.json' if version == '0.1.15-beta10' else 'manifest-rc29.1.json'
+        if version in ('0.1.15-beta9', '0.1.15-beta10', '0.1.15-beta11'):
+            manifest_file = {'0.1.15-beta9': 'manifest-rc29.1.json', '0.1.15-beta10': 'manifest-rc30.1.json', '0.1.15-beta11': 'manifest-rc31.1.json'}[version]
             pilot = json.loads((Path(__file__).resolve().parents[1]/'browser-bundle'/manifest_file).read_text())
             assert manifest == pilot
             scalar_count = sum(type(v) in (str, int) for v in pilot.values())
@@ -65,7 +65,7 @@ def verify(root):
             "public static function serve_runtime_file", 1)[0]
         assert "position:fixed" not in exit_block
         assert "stripos( $html, '</nav>' )" in exit_block
-    return {
+    report = {
         "plugin_version": version, "status": "TEST_CANDIDATE_ACCEPTANCE_PENDING",
         "bundle_version": manifest["version"], "bundle_size": size, "bundle_sha256": sha,
         "archive_crc": "PASS", "embedded_file_sha256": "PASS",
@@ -81,6 +81,11 @@ def verify(root):
         "image_preview_engine": manifest["image_preview_engine"],
         "real_press_profile_acceptance": "PENDING_USER_PROFILES",
     }
+    if version == '0.1.15-beta11':
+        report.update(source_base_commit='cf04bf69298d834e864f1ada96e7710d9de8704c',
+                      source_candidate='RC31.1 public Image Projects pilot',
+                      source_review='browser-bundle/IMAGE_PROJECTS.md')
+    return report
 
 
 if __name__ == "__main__":
