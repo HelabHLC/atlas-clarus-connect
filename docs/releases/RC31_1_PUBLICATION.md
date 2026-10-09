@@ -32,6 +32,27 @@ Install: Plugins > Add New > Upload Plugin; replace ATLAS Clarus Browser Edition
 Then Tools > ATLAS Clarus Browser Edition > Mitgeliefertes RC31.1 prüfen und aktiv schalten.
 Open Colour Projects > Open Image Projects.
 
-The two HTML fragments beside this file record the exact new public content.
-For rollback remove only that added homepage anchor and the section with
-id `clarus-image-projects-download`. Earlier page content was retained.
+The two HTML fragments beside this file record the new pilot content.
+
+## Download-link correction — 9 October 2026
+
+The owner reported receiving `v0.2.0-rc28-source-provenance`. The existing GitHub
+`browser-bundle-current` asset still contained RC28; adding a pilot button had left
+the navigation and two earlier download links pointing to that older asset.
+
+Corrected the website's existing paths to the verified RC31.1 user ZIP above:
+
+- Homepage post 4758: removed the redundant old RC28 download anchor, retaining
+  the new RC31.1 pilot button.
+- Download page post 5516: changed the older footer download to the RC31.1 ZIP
+  and labelled it `Download Browser Bundle RC31.1 · Image Projects pilot`.
+- Navigation menu 326, item 5487: changed the URL to the same RC31.1 ZIP and the
+  title to `Download Browser Edition RC31.1`.
+
+Verified the actual user ZIP: manifest and visible HTML footer both identify
+`0.2.0-rc31.1-image-projects`, with no `rc28-source-provenance` text in its HTML.
+The ZIP SHA-256 remains
+`fa538dd5b6f717f7c948a0cb11ecfff814678f114d2b9d3436148f8ed1861b3f`.
+This is a link correction; the application binaries and IONOS installer did not
+change. The historical moving GitHub release was not overwritten outside its
+existing main-branch publication workflow.
