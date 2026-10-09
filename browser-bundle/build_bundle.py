@@ -11,7 +11,12 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output-dir', type=Path, default=HERE/'build', help='Development output directory (keeps the checked-in RC20 distribution intact).')
 parser.add_argument('--colour-handoff', action='store_true', help='Build the RC29 Colour Kit-compatible handoff candidate; default remains the pinned RC28 wrapper payload.')
 parser.add_argument('--public-pilot', action='store_true', help='With --colour-handoff, build the owner-authorized RC29.1 website pilot.')
+parser.add_argument('--colour-projects', action='store_true', help='Build the RC30 local Colour Projects candidate, including Colour handoff.')
 ARGS=parser.parse_args()
+if ARGS.colour_projects:
+    if ARGS.public_pilot:
+        parser.error('--colour-projects is a separate candidate, not the RC29.1 public pilot')
+    ARGS.colour_handoff=True
 if ARGS.public_pilot and not ARGS.colour_handoff:
     parser.error('--public-pilot requires --colour-handoff')
 OUTPUT=ARGS.output_dir.resolve()
@@ -21,6 +26,8 @@ if ARGS.colour_handoff:
     VERSION='0.2.0-rc29-colour-handoff'
 if ARGS.public_pilot:
     VERSION='0.2.0-rc29.1-colour-handoff'
+if ARGS.colour_projects:
+    VERSION='0.2.0-rc30-colour-projects'
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
 MASTER='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
 ZIP_TIMESTAMP=(2026, 1, 1, 0, 0, 0)
@@ -115,22 +122,38 @@ if ARGS.colour_handoff:
         'colour-handoff.js': HERE/'src/colour-handoff.js',
         'colour-handoff-ui.js': HERE/'src/colour-handoff-ui.js',
     }
-    injected=''.join('<script>'+path.read_text(encoding='utf-8').replace('</script','<\\/script')+'</script>' for path in modules.values())
-    for name,path in modules.items(): shutil.copyfile(path,DIST/'assets'/name)
+    if ARGS.colour_projects:
+        modules.update({'colour-projects.js': HERE/'src/colour-projects.js', 'colour-projects-ui.js': HERE/'src/colour-projects-ui.js'})
+    scripts={name:path.read_text(encoding='utf-8') for name,path in modules.items()}
+    if ARGS.colour_projects:
+        bridge='    let current=null,ctx=null,busy=true,ticket=0,page=0;'
+        assert scripts['colour-handoff-ui.js'].count(bridge)==1
+        scripts['colour-handoff-ui.js']=scripts['colour-handoff-ui.js'].replace(bridge,bridge+'\n    root.ATLAS_COLOUR_HANDOFF_UI.readCurrent=()=>current&&clone(current);')
+    injected=''.join('<script>'+source.replace('</script','<\\/script')+'</script>' for source in scripts.values())
+    for name,source in scripts.items(): (DIST/'assets'/name).write_text(source,encoding='utf-8')
     html=html.replace('<script src="assets/app.js"></script>',injected+'<script src="assets/app.js"></script>')
     html=html.replace('</main>',(HERE/'src/colour-handoff.html').read_text(encoding='utf-8')+'\n</main>')
     html=html.replace('<a href="#print">Print handoff</a>','<a href="#colour-handoff">Colour handoff</a><a href="#print">Print handoff</a>')
     html=html.replace('<button id="drawer-clear">','<button data-colour-handoff>Colour handoff · keep provenance</button><button id="drawer-clear">')
     html=html.replace('</script>\\n','</script>\n')
     css+='\n'+(HERE/'src/colour-handoff.css').read_text(encoding='utf-8')
+    if ARGS.colour_projects:
+        html=html.replace('</main>',(HERE/'src/colour-projects.html').read_text(encoding='utf-8')+'\n</main>')
+        html=html.replace('<a href="#colour-handoff">','<a href="#colour-projects">Colour Projects</a><a href="#colour-handoff">',1)
+        html=html.replace('<button data-colour-handoff>','<button data-colour-projects>Colour Projects</button><button data-colour-handoff>')
+        css+='\n'+(HERE/'src/colour-projects.css').read_text(encoding='utf-8')
     hook="  select(selected);render();showWorkflow(0);route();"
     assert app.count(hook)==1, 'Bundle app handoff integration point changed'
     app=app.replace(hook,"  window.ATLAS_COLOUR_HANDOFF_UI.init({colors,master:MASTER,getBundle:()=>window.ATLAS_CLARUS_EXPORTS.clarus(palette,MASTER,currentPalette().name,currentPalette().sourceAssignments||[]),download});\n"+hook)
+    if ARGS.colour_projects:
+        app=app.replace(hook,"  window.ATLAS_COLOUR_PROJECTS_UI.init({colors,master:MASTER,download});\n"+hook)
     (DIST/'assets/app.js').write_text(app,encoding='utf-8')
     (DIST/'assets/app.css').write_text(css,encoding='utf-8')
     for name in ('LICENSE.txt','HANDOFF_PROTOCOL.txt'):
         shutil.copyfile(HERE/'vendor/clarus-handoff'/name,DIST/'docs'/('COLOUR_HANDOFF_'+name))
     shutil.copyfile(HERE/'COLOUR_HANDOFF.md',DIST/'docs/COLOUR_HANDOFF.md')
+    if ARGS.colour_projects:
+        shutil.copyfile(HERE/'COLOUR_PROJECTS.md',DIST/'docs/COLOUR_PROJECTS.md')
     if ARGS.public_pilot:
         shutil.copyfile(HERE/'COLOUR_HANDOFF_PUBLIC_PILOT.md',DIST/'docs/COLOUR_HANDOFF_PUBLIC_PILOT.md')
         html=html.replace('ADOBE PILOT</span>', 'PUBLIC PILOT</span>')
@@ -168,11 +191,15 @@ for name,body in docs.items():(DIST/'docs'/name).write_text('<!doctype html><met
 if ARGS.colour_handoff:
     readme=DIST/'docs/README.html'
     readme.write_text(readme.read_text(encoding='utf-8')+'<h2>Colour handoff candidate</h2><p>Open Colour handoff to create colour decisions from recorded originals or deliberately adopted references, exchange full JSON with Colour Kit 0.3.0, and export or verify Adobe handoff packages. See COLOUR_HANDOFF.md. Native Adobe validation remains NOT_TESTED.</p>',encoding='utf-8')
+if ARGS.colour_projects:
+    readme.write_text(readme.read_text(encoding='utf-8')+'<h2>Colour Projects — local pilot</h2><p>Create a named project, keep complete source palettes, record changes and choose design revisions. Download project JSON to reopen the complete history. The handover ZIP adds working and chosen swatches with their companion JSON. See COLOUR_PROJECTS.md.</p>',encoding='utf-8')
 shutil.copyfile(HERE/'SOURCE_PROVENANCE.md',DIST/'docs/SOURCE_PROVENANCE.md')
 
 manifest=json.loads((HERE/('manifest-rc29.json' if ARGS.colour_handoff else 'manifest-rc28.json')).read_text(encoding='utf-8'))
 if ARGS.public_pilot:
     manifest=json.loads((HERE/'manifest-rc29.1.json').read_text(encoding='utf-8'))
+if ARGS.colour_projects:
+    manifest=json.loads((HERE/'manifest-rc30.json').read_text(encoding='utf-8'))
 assert manifest['version']==VERSION and manifest['master_sha256']==MASTER
 assert manifest['name_search_index_sha256']==sha(name_index)
 assert manifest['descriptor_sha256']==sha(DIST/'assets/designer-layer-data.js')

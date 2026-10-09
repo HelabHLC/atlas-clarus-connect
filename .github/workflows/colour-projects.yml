@@ -1,0 +1,41 @@
+name: Validate Colour Projects candidate
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - 'hover-library/data/colors.json'
+      - '.github/workflows/colour-projects.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  projects:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --prefix browser-bundle/tests --ignore-scripts
+      - name: Verify full project exchange and retained decisions
+        run: node browser-bundle/tests/validate_colour_projects.js
+      - name: Verify reproducible build and existing release pins
+        run: python3 browser-bundle/tests/validate_colour_projects_build.py
+      - name: Build local candidate
+        run: python3 browser-bundle/build_bundle.py --colour-projects --output-dir browser-bundle/build-projects
+      - name: Install browser
+        run: browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+      - name: Exercise the offline project workflow
+        run: node browser-bundle/tests/validate_colour_projects_browser.cjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: colour-projects-browser-evidence
+          path: /tmp/atlas-colour-projects-browser/
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ATLAS-Clarus-Colour-Projects-RC30-candidate
+          path: browser-bundle/build-projects/*.zip
