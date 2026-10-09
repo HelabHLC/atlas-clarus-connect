@@ -1,5 +1,10 @@
 # ATLAS Clarus Colour Projects — RC30 local candidate
 
+**For WordPress installation:** use the separate
+[Browser Edition plugin update](../wordpress/README_RC30_1.md).
+The Browser Bundle below is an offline web application and cannot be uploaded
+through the WordPress plugin installer.
+
 Download `ATLAS_Clarus_Browser_Bundle_v0.2.0-rc30-colour-projects.zip`, extract the ZIP and open
 `atlas-clarus-browser-bundle/index.html` in a modern desktop browser. Choose
 **Colour Projects** in the navigation. No installation or account is required.

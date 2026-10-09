@@ -1,0 +1,52 @@
+name: Validate WordPress Colour Projects installer
+on:
+  pull_request:
+    paths:
+      - 'wordpress-browser-edition/**'
+      - 'browser-bundle/**'
+      - 'downloads/wordpress/*RC30.1*'
+      - '.github/workflows/wordpress-colour-projects.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  wordpress-projects:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.5']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip
+      - name: Reproduce the installable WordPress update
+        run: |
+          python3 wordpress-browser-edition/build_projects_plugin.py
+          python3 wordpress-browser-edition/build_projects_plugin.py --output-dir "$RUNNER_TEMP/atlas-projects-repeat"
+          cmp wordpress-browser-edition/build-projects/*.zip "$RUNNER_TEMP/atlas-projects-repeat/"*.zip
+          cmp wordpress-browser-edition/build-projects/*.zip downloads/wordpress/*beta10_RC30.1.zip
+          python3 wordpress-browser-edition/tests/validate_projects_package.py wordpress-browser-edition/build-projects/ATLAS_Clarus_Browser_Edition_v0.1.15-beta10_RC30.1.zip --extract-to "$RUNNER_TEMP/atlas-projects-php"
+      - name: Test PHP installer, invalid packages, retained runtime and rollback
+        run: |
+          php -l "$RUNNER_TEMP/atlas-projects-php/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php"
+          php wordpress-browser-edition/tests/validate_plugin.php "$RUNNER_TEMP/atlas-projects-php/atlas-clarus-browser-edition"
+      - uses: actions/setup-node@v7
+        if: matrix.php == '8.5'
+        with:
+          node-version: '22'
+      - name: Test the project workflow from the WordPress package
+        if: matrix.php == '8.5'
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          PROJECTS_HTML="$RUNNER_TEMP/atlas-projects-php/runtime/atlas-clarus-browser-bundle/index.html" node browser-bundle/tests/validate_colour_projects_browser.cjs
+      - uses: actions/upload-artifact@v7
+        if: matrix.php == '8.5'
+        with:
+          name: ATLAS-Clarus-WordPress-Colour-Projects-RC30.1
+          path: wordpress-browser-edition/build-projects/*
