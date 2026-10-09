@@ -1,0 +1,61 @@
+name: Validate WordPress Image Projects installer
+on:
+  pull_request:
+    paths:
+      - 'wordpress-browser-edition/**'
+      - 'browser-bundle/**'
+      - 'downloads/wordpress/*RC31.1*'
+      - 'downloads/browser-bundle/*rc31.1*'
+      - '.github/workflows/wordpress-image-projects.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  wordpress-images:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.5']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip
+      - name: Reproduce the installable WordPress update
+        run: |
+          python3 wordpress-browser-edition/build_images_plugin.py
+          python3 wordpress-browser-edition/build_images_plugin.py --output-dir "$RUNNER_TEMP/atlas-images-repeat"
+          cmp wordpress-browser-edition/build-images/*.zip "$RUNNER_TEMP/atlas-images-repeat/"*.zip
+          cmp wordpress-browser-edition/build-images/*.zip downloads/wordpress/*beta11_RC31.1.zip
+          python3 wordpress-browser-edition/tests/validate_images_package.py wordpress-browser-edition/build-images/ATLAS_Clarus_Browser_Edition_v0.1.15-beta11_RC31.1.zip --extract-to "$RUNNER_TEMP/atlas-images-php"
+          cmp "$RUNNER_TEMP/atlas-images-php/atlas-clarus-browser-edition/assets/bundle.zip" downloads/browser-bundle/*rc31.1-image-projects.zip
+      - name: Test PHP installer, invalid packages, retained runtime and rollback
+        run: |
+          php -l "$RUNNER_TEMP/atlas-images-php/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php"
+          php wordpress-browser-edition/tests/validate_plugin.php "$RUNNER_TEMP/atlas-images-php/atlas-clarus-browser-edition"
+      - uses: actions/setup-node@v7
+        if: matrix.php == '8.5'
+        with:
+          node-version: '22'
+      - name: Test image history and colleague handover from the WordPress package
+        if: matrix.php == '8.5'
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python3 -m pip install Pillow
+          node browser-bundle/tests/validate_image_projects.js
+          python3 browser-bundle/tests/validate_image_png.py /tmp/atlas-image-projects-core/project.zip
+          IMAGE_PROJECTS_HTML="$RUNNER_TEMP/atlas-images-php/runtime/atlas-clarus-browser-bundle/index.html" node browser-bundle/tests/validate_image_projects_browser.cjs
+          python3 browser-bundle/tests/validate_image_png.py /tmp/atlas-image-projects-browser/project.zip
+      - uses: actions/upload-artifact@v7
+        if: matrix.php == '8.5' && always()
+        with:
+          name: ATLAS-Clarus-WordPress-Image-Projects-RC31.1
+          path: |
+            wordpress-browser-edition/build-images/*
+            /tmp/atlas-image-projects-browser/report.json
+            /tmp/atlas-image-projects-browser/*.png

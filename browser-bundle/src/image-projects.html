@@ -1,0 +1,42 @@
+<section id="image-projects" class="view">
+  <div class="section-head"><div><p class="eyebrow">YOUR IMAGE · EVERY RECORDED CHANGE</p><h2>Image Projects</h2></div><span class="gate warning">IMAGE EDITING PILOT</span></div>
+  <p class="lead">Recolour a selected colour or area. Make an area transparent. Undo without losing the story.</p>
+  <p class="boundary">The original file and frozen starting pixels stay inside your image-project JSON. The handover ZIP adds the original file and current PNG. Work stays in this tab until you download it.</p>
+  <div class="ip-top">
+    <div class="ip-panel"><h3>1. Start or reopen</h3>
+      <label>Image project name<input id="ip-name" maxlength="120" placeholder="Our logo revision"></label>
+      <label>New image · PNG / JPEG<input id="ip-image" type="file" accept="image/png,image/jpeg" disabled></label>
+      <label class="ip-check"><input type="checkbox" id="ip-attach">Include the current Colour Projects palette as a starting snapshot</label>
+      <p class="boundary">Up to 4,194,304 pixels and an 8 MiB source file. Larger images are rejected without resizing. Palette changes and image edits remain separate.</p>
+      <div id="ip-drop" class="ip-drop"><label>Reopen image project · JSON / ZIP<input id="ip-import" type="file" accept=".json,.zip,application/json,application/zip" disabled></label><small>Or drop an Image Projects JSON or exported ZIP here.</small></div>
+    </div>
+    <div class="ip-panel"><h3>2. Save and hand over</h3>
+      <div class="ip-actions"><button id="ip-zip" class="button primary" disabled>Download complete handover ZIP</button><button id="ip-json" disabled>Download image-project JSON</button><button id="ip-png" disabled>Download current PNG</button></div>
+      <p class="boundary">Your colleague opens the ZIP or image-project JSON in Image Projects. PNG alone does not preserve the full history. A linked palette snapshot can also be opened separately in Colour Projects.</p>
+      <p id="ip-backup" class="ip-backup">Open an image to start. This workspace is not automatically saved in browser storage.</p>
+      <p class="boundary">Edits use browser-decoded 8-bit sRGB. Recolouring applies a flat RGB value and preserves existing opacity; making pixels transparent keeps their earlier RGB values in the project history.</p>
+    </div>
+  </div>
+  <p id="ip-status" role="status" aria-live="polite">Checking the reference data …</p>
+  <div id="ip-workspace" hidden>
+    <p id="ip-summary" class="boundary"></p>
+    <div class="ip-editor">
+      <div class="ip-panel ip-stage-panel"><h3>Working image</h3><p class="boundary">Click to sample a colour. Drag to select a rectangle. You can also enter exact coordinates below.</p><div class="ip-checker"><canvas id="ip-canvas" width="1" height="1" aria-label="Working image; click to sample, drag to select"></canvas></div><p id="ip-sample" class="boundary">No colour sampled.</p><details><summary>Original preview & file identity</summary><div class="ip-checker"><canvas id="ip-original" width="1" height="1" aria-label="Original image preview"></canvas></div><p id="ip-origin" class="boundary"></p></details></div>
+      <div class="ip-panel"><h3>3. Record your edit</h3>
+        <label>Apply to<select id="ip-mode"><option value="exact">Exact sampled RGB within the rectangle</option><option value="area">All visible pixels within the rectangle</option></select></label>
+        <p class="boundary">Exact matching uses the same RGB numbers, with no tolerance. Similar shades are not automatically included.</p>
+        <div class="ip-rect"><label>X<input id="ip-x" type="number" min="0" step="1"></label><label>Y<input id="ip-y" type="number" min="0" step="1"></label><label>Width<input id="ip-width" type="number" min="1" step="1"></label><label>Height<input id="ip-height" type="number" min="1" step="1"></label></div>
+        <button id="ip-all">Select whole image</button>
+        <label>Sampled / target sRGB HEX<input id="ip-match" value="#000000" maxlength="7"></label>
+        <label>Replacement sRGB HEX<input id="ip-replacement" value="#3D7B19" maxlength="7"></label>
+        <p id="ip-reference" class="boundary"></p>
+        <label>Change note<textarea id="ip-note" maxlength="2000" rows="3" placeholder="What are you changing, and why?"></textarea></label>
+        <div class="ip-actions"><button id="ip-recolour">Recolour selection</button><button id="ip-transparent">Make selection transparent</button></div>
+        <p id="ip-selection-info" class="boundary"></p>
+        <div class="ip-actions"><button id="ip-undo">Undo last edit</button><button id="ip-redo">Redo edit</button></div>
+        <p class="boundary">Undo and redo add history entries. Earlier edits and removed colours remain recoverable. A new edit after undo keeps the abandoned steps in the journal.</p>
+      </div>
+    </div>
+    <h3>Recorded image history</h3><p class="boundary">Every step identifies the affected pixels, input/output checksums and your note. Hashes check consistency; they do not authenticate authorship.</p><ol id="ip-history"></ol>
+  </div>
+</section>

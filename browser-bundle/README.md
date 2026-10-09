@@ -1,5 +1,13 @@
 # ATLAS Clarus Browser Bundle
 
+## Image Projects pilot (9 October 2026)
+RC31.1 adds PNG/JPEG editing with exact RGB or rectangular selection, recolouring,
+transparency, undo/redo and a retained journal. The portable ZIP/JSON embeds the
+original file and frozen pixels; a colleague can reopen it and continue.
+Build with `python3 browser-bundle/build_bundle.py --image-projects --public-pilot`.
+See [usage and limits](IMAGE_PROJECTS.md), [validation](IMAGE_PROJECTS_VALIDATION.md),
+and the [installable WordPress update](../wordpress-browser-edition/RC31_1_DEPLOYMENT.md).
+
 ## Colour Projects candidate (9 October 2026)
 The opt-in RC30 candidate adds named projects, complete source palettes,
 change notes, explicit chosen revisions and portable project JSON / handover ZIPs.
