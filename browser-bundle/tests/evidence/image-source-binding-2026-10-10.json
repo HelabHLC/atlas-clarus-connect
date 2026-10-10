@@ -1,0 +1,784 @@
+{
+  "tested_source_commit": "dfad36a452515ec35e3fff8984494a7bbd9612c2",
+  "date": "2026-10-10",
+  "workflow_url": "https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/38056368446",
+  "method": "Reported outputs of executed GitHub Actions jobs; synthetic fixtures, not a new Ruisdael archive run.",
+  "files_sha256": {
+    "browser-bundle/src/image-projects.js": "3b5b6e90abd28f52b5236ea0793ff6b9394cb0754f504951df2f0da6117e2c45",
+    "browser-bundle/src/image-projects-ui.js": "16de7d53e92cde18c85a46794c0123c8c7bebc5033d21fc18cf63147c5a306e8",
+    "browser-bundle/tests/validate_image_source_binding.cjs": "0fd5044fd6407b74c452b66ea2a665bdba0296992ba26956a974edc48387c014",
+    "browser-bundle/tests/prepare_source_binding.py": "685eaa1424ac6afa2186e6884cebbba1d6b98424d20e27ea71a71a0b5bc34fa4",
+    "browser-bundle/tests/validate_image_projects.js": "8601ad705c4765fe7570771a48e17ad832ebe400f9b437edc2f51b985d8add71",
+    "browser-bundle/tests/browser_source_decoder.cjs": "c314086fa752d2ec9daadb542e668a7400d4ff9012a9678b2c08128200110179",
+    ".github/workflows/wordpress-image-projects.yml": "49e06b1dcf8d44ba4917e0c0734f42b6e462ae83d6640ed5abbadd068f9c817a"
+  },
+  "jobs": [
+    {
+      "id": 114225614949,
+      "name": "wordpress-images (7.4)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114225615030,
+      "name": "Source binding (firefox)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114225615045,
+      "name": "Source binding (chromium)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114225615058,
+      "name": "wordpress-images (8.5)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114225615063,
+      "name": "Source binding (webkit)",
+      "conclusion": "success"
+    }
+  ],
+  "browsers": [
+    {
+      "browser": "chromium",
+      "status": "PASS",
+      "fixtures": [
+        {
+          "name": "alpha.png",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "0ac065bd78413f059faf53033e8c0280b8cd958a461f9486e83ed62681114156",
+          "rgba_sha256": "e9d7cc7ed2309b3617b1296fae2e9500245c95d49dffe57a2c8029e968ad7b6d",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-1.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "5d42552ce3d8d9427588d422d07ea94c3c93d772bacf56a2f622518359f95edc",
+          "rgba_sha256": "7b0c887bf78586564e2c81cdb3d27186b6f39957c9cbd1244d414ba801effaa6",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-2.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "7683944747774ee615408448d322b3b79d0b9440683f80ec0aa6bc8f674fbdda",
+          "rgba_sha256": "4a63cbee72162ef522e11fc6af4d3d401bbff6835f12718e508836ed9e1cc952",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-3.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "2aabb32ea30c9ea3b1ee4bfd010e79ed6e7f3c5cb20a86710b7a371737f6fc88",
+          "rgba_sha256": "1f66c6f6c8df1373c545c051e093d136f5f74734985111d021622e0880c52e15",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-4.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "15c5123d0dc565cf6fe8ffd525b7214e93a1fe0fb653247677c1621874013ef6",
+          "rgba_sha256": "550cad83342133f97432a0a2dee0bb6d84b4153172c8539f17f9d2e14bfd6542",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-5.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "77b82fa3acfd42abf6c2c0881830701290315f040205be82f76decd7998739d9",
+          "rgba_sha256": "4d86d1bee7c509c34c9ec12dc819189f1c3eb545848d17b770b86d7aec4a9b0b",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-6.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "1e257a7c3631d69ca43ff42224e2c49361fc0c02604af3f1fb7ca32def1f0b90",
+          "rgba_sha256": "142a67300c4e9800b7717ff827fb3d8933319cabf43e5fcbf1c5c42da06b3ec7",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-7.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "d585693ebaa6206e42a25dc0268b36c86d4572f1755f70d37adced76f86425db",
+          "rgba_sha256": "457067ab3ce49f7d0213d0cdc09d8093e92fb09fb98c43b60b60318fce57758b",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-8.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "b94e60d149224f65f46fc019f343055625202aa41b617ea7e875e975cdff6e48",
+          "rgba_sha256": "9cebf2980730f27dbeb02236620f93aec162f515d7293fe40f0659f2bd202566",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "linear-icc.jpg",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "1fca7e7a75c5a4760960271196c7af95e2ef0f30ee4fe448ea014085f5d847b0",
+          "rgba_sha256": "ca96922835932b3e6731598b84e52900a7e770489b30fbffa51b2fcc79d9b129",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "linear-icc.png",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "f2cd93c64f80551ad3c3cc8603c08133c907077d4996e44c314030481932f94d",
+          "rgba_sha256": "380961f3076a045b46b5787d21e7ce54680ffd2aceafb27a8baf6b92186640f9",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "opaque.png",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "15019f5c9a9ecad334990aecd0b5fb0ef3c4c6d2ac68a1d5cea5388b16b44677",
+          "rgba_sha256": "8f4b5fa0c2ba756ba2b83fbeed53ac402561fcef6394ada77329ac66acf7d86a",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "plain.jpg",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "499396f4c8061ac7b5123c94363c141d34a7792e25d1d527ed457e38e4e6b7ee",
+          "rgba_sha256": "3f0610340cb14bb1650c63d9cc158bf4e1637137afdeac1e0b199954185ca84c",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "progressive.jpg",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "495eb391fd058499accb514a44dd3f337c397a1d993d052e4713db988f878c31",
+          "rgba_sha256": "3f0610340cb14bb1650c63d9cc158bf4e1637137afdeac1e0b199954185ca84c",
+          "legacy_json_and_zip": "PASS"
+        }
+      ],
+      "attacks": [
+        {
+          "name": "rgb-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "alpha-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "rgb-history",
+          "source_unchanged": true,
+          "journal_events": 4,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "dimension-transpose",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "different-profile-source",
+          "source_unchanged": false,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "undecodable-source",
+          "source_unchanged": false,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: The retained source image could not be decoded.",
+            "Image Projects: The retained source image could not be decoded."
+          ]
+        },
+        {
+          "name": "jpeg-rgb-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "icc-rgb-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        }
+      ],
+      "live_ionos": "NOT_TESTED",
+      "authorship": "NOT_ESTABLISHED",
+      "browser_version": "151.0.7922.34",
+      "all_eight_exif_transforms": true,
+      "png_and_jpeg_icc_observable": true,
+      "json_zip_drop_keep_workspace": true,
+      "decoder_failure_and_mismatch_fail_closed": true
+    },
+    {
+      "browser": "firefox",
+      "status": "PASS",
+      "fixtures": [
+        {
+          "name": "alpha.png",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "0ac065bd78413f059faf53033e8c0280b8cd958a461f9486e83ed62681114156",
+          "rgba_sha256": "ca96c6ac9025ecb4176cb95f048553d7b8d1179bc69db31d268462a8103de1bc",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-1.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "5d42552ce3d8d9427588d422d07ea94c3c93d772bacf56a2f622518359f95edc",
+          "rgba_sha256": "7b0c887bf78586564e2c81cdb3d27186b6f39957c9cbd1244d414ba801effaa6",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-2.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "7683944747774ee615408448d322b3b79d0b9440683f80ec0aa6bc8f674fbdda",
+          "rgba_sha256": "4a63cbee72162ef522e11fc6af4d3d401bbff6835f12718e508836ed9e1cc952",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-3.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "2aabb32ea30c9ea3b1ee4bfd010e79ed6e7f3c5cb20a86710b7a371737f6fc88",
+          "rgba_sha256": "1f66c6f6c8df1373c545c051e093d136f5f74734985111d021622e0880c52e15",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-4.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "15c5123d0dc565cf6fe8ffd525b7214e93a1fe0fb653247677c1621874013ef6",
+          "rgba_sha256": "550cad83342133f97432a0a2dee0bb6d84b4153172c8539f17f9d2e14bfd6542",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-5.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "77b82fa3acfd42abf6c2c0881830701290315f040205be82f76decd7998739d9",
+          "rgba_sha256": "4d86d1bee7c509c34c9ec12dc819189f1c3eb545848d17b770b86d7aec4a9b0b",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-6.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "1e257a7c3631d69ca43ff42224e2c49361fc0c02604af3f1fb7ca32def1f0b90",
+          "rgba_sha256": "142a67300c4e9800b7717ff827fb3d8933319cabf43e5fcbf1c5c42da06b3ec7",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-7.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "d585693ebaa6206e42a25dc0268b36c86d4572f1755f70d37adced76f86425db",
+          "rgba_sha256": "457067ab3ce49f7d0213d0cdc09d8093e92fb09fb98c43b60b60318fce57758b",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-8.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "b94e60d149224f65f46fc019f343055625202aa41b617ea7e875e975cdff6e48",
+          "rgba_sha256": "9cebf2980730f27dbeb02236620f93aec162f515d7293fe40f0659f2bd202566",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "linear-icc.jpg",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "1fca7e7a75c5a4760960271196c7af95e2ef0f30ee4fe448ea014085f5d847b0",
+          "rgba_sha256": "24912b93fe1e1f6a145d34b8f9d2c8dad1f96fd2d82d219b233ca803c7e77d40",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "linear-icc.png",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "f2cd93c64f80551ad3c3cc8603c08133c907077d4996e44c314030481932f94d",
+          "rgba_sha256": "470a36b538c8e20c6c77b9df10468a2838075ad476c739e9cfc6f08df2d60a13",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "opaque.png",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "15019f5c9a9ecad334990aecd0b5fb0ef3c4c6d2ac68a1d5cea5388b16b44677",
+          "rgba_sha256": "8f4b5fa0c2ba756ba2b83fbeed53ac402561fcef6394ada77329ac66acf7d86a",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "plain.jpg",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "499396f4c8061ac7b5123c94363c141d34a7792e25d1d527ed457e38e4e6b7ee",
+          "rgba_sha256": "3f0610340cb14bb1650c63d9cc158bf4e1637137afdeac1e0b199954185ca84c",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "progressive.jpg",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "495eb391fd058499accb514a44dd3f337c397a1d993d052e4713db988f878c31",
+          "rgba_sha256": "3f0610340cb14bb1650c63d9cc158bf4e1637137afdeac1e0b199954185ca84c",
+          "legacy_json_and_zip": "PASS"
+        }
+      ],
+      "attacks": [
+        {
+          "name": "rgb-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "alpha-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "rgb-history",
+          "source_unchanged": true,
+          "journal_events": 4,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "dimension-transpose",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "different-profile-source",
+          "source_unchanged": false,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "undecodable-source",
+          "source_unchanged": false,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: The retained source image could not be decoded.",
+            "Image Projects: The retained source image could not be decoded."
+          ]
+        },
+        {
+          "name": "jpeg-rgb-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "icc-rgb-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        }
+      ],
+      "live_ionos": "NOT_TESTED",
+      "authorship": "NOT_ESTABLISHED",
+      "firefox_user_prefs": {
+        "gfx.color_management.mode": 2
+      },
+      "browser_version": "153.0",
+      "all_eight_exif_transforms": true,
+      "png_and_jpeg_icc_observable": true,
+      "json_zip_drop_keep_workspace": true,
+      "decoder_failure_and_mismatch_fail_closed": true
+    },
+    {
+      "browser": "webkit",
+      "status": "PASS",
+      "fixtures": [
+        {
+          "name": "alpha.png",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "0ac065bd78413f059faf53033e8c0280b8cd958a461f9486e83ed62681114156",
+          "rgba_sha256": "339e6164374b838f417d728d93b40ca48a6a4b34aff5b131f14f5ad9e6c4705f",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-1.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "5d42552ce3d8d9427588d422d07ea94c3c93d772bacf56a2f622518359f95edc",
+          "rgba_sha256": "7b0c887bf78586564e2c81cdb3d27186b6f39957c9cbd1244d414ba801effaa6",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-2.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "7683944747774ee615408448d322b3b79d0b9440683f80ec0aa6bc8f674fbdda",
+          "rgba_sha256": "4a63cbee72162ef522e11fc6af4d3d401bbff6835f12718e508836ed9e1cc952",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-3.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "2aabb32ea30c9ea3b1ee4bfd010e79ed6e7f3c5cb20a86710b7a371737f6fc88",
+          "rgba_sha256": "1f66c6f6c8df1373c545c051e093d136f5f74734985111d021622e0880c52e15",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-4.jpg",
+          "width": 31,
+          "height": 19,
+          "source_sha256": "15c5123d0dc565cf6fe8ffd525b7214e93a1fe0fb653247677c1621874013ef6",
+          "rgba_sha256": "550cad83342133f97432a0a2dee0bb6d84b4153172c8539f17f9d2e14bfd6542",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-5.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "77b82fa3acfd42abf6c2c0881830701290315f040205be82f76decd7998739d9",
+          "rgba_sha256": "4d86d1bee7c509c34c9ec12dc819189f1c3eb545848d17b770b86d7aec4a9b0b",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-6.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "1e257a7c3631d69ca43ff42224e2c49361fc0c02604af3f1fb7ca32def1f0b90",
+          "rgba_sha256": "142a67300c4e9800b7717ff827fb3d8933319cabf43e5fcbf1c5c42da06b3ec7",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-7.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "d585693ebaa6206e42a25dc0268b36c86d4572f1755f70d37adced76f86425db",
+          "rgba_sha256": "457067ab3ce49f7d0213d0cdc09d8093e92fb09fb98c43b60b60318fce57758b",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "exif-8.jpg",
+          "width": 19,
+          "height": 31,
+          "source_sha256": "b94e60d149224f65f46fc019f343055625202aa41b617ea7e875e975cdff6e48",
+          "rgba_sha256": "9cebf2980730f27dbeb02236620f93aec162f515d7293fe40f0659f2bd202566",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "linear-icc.jpg",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "1fca7e7a75c5a4760960271196c7af95e2ef0f30ee4fe448ea014085f5d847b0",
+          "rgba_sha256": "da434d6f8f5cbe38c5289e25f9f5e5eeb11406d76f6949ebb6e82043cf9787b5",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "linear-icc.png",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "f2cd93c64f80551ad3c3cc8603c08133c907077d4996e44c314030481932f94d",
+          "rgba_sha256": "73025c5482f69acc33b08af7096d049032a1c16e91f9b69901070c6fe4f8f064",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "opaque.png",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "15019f5c9a9ecad334990aecd0b5fb0ef3c4c6d2ac68a1d5cea5388b16b44677",
+          "rgba_sha256": "8f4b5fa0c2ba756ba2b83fbeed53ac402561fcef6394ada77329ac66acf7d86a",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "plain.jpg",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "499396f4c8061ac7b5123c94363c141d34a7792e25d1d527ed457e38e4e6b7ee",
+          "rgba_sha256": "3f0610340cb14bb1650c63d9cc158bf4e1637137afdeac1e0b199954185ca84c",
+          "legacy_json_and_zip": "PASS"
+        },
+        {
+          "name": "progressive.jpg",
+          "width": 256,
+          "height": 256,
+          "source_sha256": "495eb391fd058499accb514a44dd3f337c397a1d993d052e4713db988f878c31",
+          "rgba_sha256": "3f0610340cb14bb1650c63d9cc158bf4e1637137afdeac1e0b199954185ca84c",
+          "legacy_json_and_zip": "PASS"
+        }
+      ],
+      "attacks": [
+        {
+          "name": "rgb-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "alpha-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "rgb-history",
+          "source_unchanged": true,
+          "journal_events": 4,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "dimension-transpose",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "different-profile-source",
+          "source_unchanged": false,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "undecodable-source",
+          "source_unchanged": false,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: The retained source image could not be decoded.",
+            "Image Projects: The retained source image could not be decoded."
+          ]
+        },
+        {
+          "name": "jpeg-rgb-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        },
+        {
+          "name": "icc-rgb-empty",
+          "source_unchanged": true,
+          "journal_events": 0,
+          "legacy_accepts_json_and_zip": true,
+          "candidate_rejects_json_and_zip": true,
+          "messages": [
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.",
+            "Image Projects: Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels."
+          ]
+        }
+      ],
+      "live_ionos": "NOT_TESTED",
+      "authorship": "NOT_ESTABLISHED",
+      "browser_version": "26.5",
+      "all_eight_exif_transforms": true,
+      "png_and_jpeg_icc_observable": true,
+      "json_zip_drop_keep_workspace": true,
+      "decoder_failure_and_mismatch_fail_closed": true
+    }
+  ],
+  "other_chromium_checks": [
+    {
+      "status": "PASS",
+      "exact_rgb_and_region_masks": true,
+      "alpha_and_hidden_rgb_preserved": true,
+      "undo_redo_and_abandoned_history_retained": true,
+      "json_zip_roundtrip": true,
+      "linked_colour_project_retained": true,
+      "rejected_cases": 20,
+      "native_adobe_validation": "NOT_TESTED"
+    },
+    {
+      "status": "PASS",
+      "original_file_unchanged": true,
+      "independent_pixel_replay": true,
+      "all_affected_masks_match": true,
+      "png_rgba_including_hidden_rgb": true,
+      "history_steps": 6
+    },
+    {
+      "status": "PASS",
+      "image_upload_and_linked_palette": true,
+      "jpeg_orientation_and_original_retained": true,
+      "click_sample_and_drag_rectangle": true,
+      "recolour_and_transparency": true,
+      "undo_redo_keeps_history": true,
+      "separate_browser_colleague_zip_roundtrip": true,
+      "returned_history_extends_original": true,
+      "invalid_or_older_import_keeps_workspace": true,
+      "viewports": [
+        1440,
+        390,
+        844
+      ],
+      "native_adobe_validation": "NOT_TESTED"
+    },
+    {
+      "status": "PASS",
+      "original_file_unchanged": true,
+      "independent_pixel_replay": true,
+      "all_affected_masks_match": true,
+      "png_rgba_including_hidden_rgb": true,
+      "history_steps": 6
+    }
+  ],
+  "unchanged_release_sha256": {
+    "browser_zip": "fa538dd5b6f717f7c948a0cb11ecfff814678f114d2b9d3436148f8ed1861b3f",
+    "wordpress_zip": "8ec7cdcd296cd179ff24a84a344bc3d6c2e989273c0d31977d6ac5518079e3bd"
+  },
+  "workflows": [
+    {
+      "name": "Validate WordPress colour handoff pilot",
+      "id": 38056368439,
+      "conclusion": "success"
+    },
+    {
+      "name": "Validate colour handoff candidate",
+      "id": 38056368425,
+      "conclusion": "success"
+    },
+    {
+      "name": "Validate ATLAS Clarus Connect",
+      "id": 38056368480,
+      "conclusion": "success"
+    },
+    {
+      "name": "Validate Colour Projects candidate",
+      "id": 38056368434,
+      "conclusion": "success"
+    },
+    {
+      "name": "Validate WordPress Colour Projects installer",
+      "id": 38056368474,
+      "conclusion": "success"
+    },
+    {
+      "name": "Android test app",
+      "id": 38056368426,
+      "conclusion": "success"
+    },
+    {
+      "name": "Validate WordPress Image Projects installer",
+      "id": 38056368446,
+      "conclusion": "success"
+    }
+  ],
+  "limits": [
+    "Linux Playwright browsers; not a blanket browser/OS/decoder compatibility guarantee",
+    "No live IONOS deployment, real mobile devices, native Adobe or physical acceptance",
+    "Unsigned data consistency is not authorship or authenticity"
+  ]
+}
+

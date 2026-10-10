@@ -127,7 +127,22 @@ Unchanged download hashes:
 - Browser ZIP: `fa538dd5b6f717f7c948a0cb11ecfff814678f114d2b9d3436148f8ed1861b3f`
 - WordPress ZIP: `8ec7cdcd296cd179ff24a84a344bc3d6c2e989273c0d31977d6ac5518079e3bd`
 
-Local syntax checks, fixture generation and candidate build are recorded during
-development. Browser acceptance is reported by the `Source binding` CI jobs and
-their `report-<browser>.json` artifacts; an absent/failed result is not a pass.
+Executed validation on 10 October 2026, source commit
+`dfad36a452515ec35e3fff8984494a7bbd9612c2`:
+
+| Environment / check | Result |
+| --- | --- |
+| Chromium 151.0.7922.34 | 14 legacy image cases; 8 rehashed attacks rejected through both JSON and ZIP; UI preservation: PASS |
+| Firefox 153.0, tagged-image ICC enabled | Same cases and strict rejection: PASS |
+| WebKit 26.5 | Same cases and strict rejection: PASS |
+| Candidate edit workflow / independent Pillow replay | Atlas reference, coordinates, linked palette, recolour, alpha, undo/redo, separate-session ZIP and returned JSON: PASS |
+| Frozen RC31.1 installer | Exact package reproduction, PHP 7.4/8.5 installer and rollback: PASS |
+| All seven repository PR workflows at this source commit | PASS |
+
+[Executed CI run](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/38056368446).
+[Persisted machine-readable evidence](tests/evidence/image-source-binding-2026-10-10.json)
+includes browser versions, every fixture's source/RGBA hashes, attack outcomes,
+job IDs, checked source/test hashes and the unchanged release hashes. Local syntax,
+fixture generation and candidate build also passed. Local browser installation
+failed, so all browser results above are from the actual GitHub runners.
 Live IONOS, mobile devices, native Adobe and physical output are **NOT_TESTED**.
