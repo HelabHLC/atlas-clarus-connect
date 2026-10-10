@@ -7,16 +7,21 @@ const H=global.ClarusHandoff,A=global.ATLAS_COLOUR_HANDOFF,P=global.ATLAS_COLOUR
 const data=require('../../hover-library/data/colors.json'),clone=x=>JSON.parse(JSON.stringify(x));
 const sha=b=>createHash('sha256').update(b).digest('hex');
 (async()=>{
-  const ctx=await A.createContext(data.colors,data.master_sha256),green=[61,123,25],blue=[17,34,51],red=[185,73,65];
-  const rgba=Uint8Array.from([...green,255,...red,255,...green,128,1,2,3,0,...green,255,...red,255,...green,255,...red,255]);
+  const decoder=await require('./browser_source_decoder.cjs')();
+  try{
+  const ctx={...await A.createContext(data.colors,data.master_sha256),decodeSource:decoder.decodeSource},green=[61,123,25],blue=[17,34,51],red=[255,0,0];
+  // Canvas-stable source values; hidden RGB is tested after a recorded removal.
+  const rgba=Uint8Array.from([...green,255,...red,128,...green,255,0,0,0,0,...green,255,...red,255,...green,255,...red,255]);
   const bytes=C.png(4,2,rgba);
   let palette=await P.create('Linked logo colours',ctx);palette=await P.add(palette,'Greens',require('./fixtures/colour-kit-030-two-greens.json'),ctx);
   let p=await I.create({name:'Image test',filename:'original.png',bytes,width:4,height:2,rgba,colourProject:palette},ctx);
+  const noDecoder={...ctx};delete noDecoder.decodeSource;
+  await assert.rejects(()=>I.verify(p,noDecoder),/Source decoding is unavailable/);
   const original=clone(p);
   p=await I.edit(p,{kind:'RECOLOUR',rect:[0,0,4,2],match:green,replacement:blue,note:'Darker logo green.'},ctx);
   assert.deepEqual(p.history[0].affected_runs,[0,1,2,1,4,1,6,1]);assert.equal(p.history[0].changed_pixels,4);
   assert.equal(p.history[0].operation.source_reference.atlas_row_id,4966);
-  let frame=(await I.verify(p,ctx)).frame;assert.deepEqual(Array.from(frame.slice(8,12)),[17,34,51,128]);assert.deepEqual(Array.from(frame.slice(12,16)),[1,2,3,0]);
+  let frame=(await I.verify(p,ctx)).frame;assert.deepEqual(Array.from(frame.slice(4,8)),[255,0,0,128]);assert.deepEqual(Array.from(frame.slice(8,12)),[17,34,51,255]);assert.deepEqual(Array.from(frame.slice(12,16)),[0,0,0,0]);
   const recoloured=clone(p);
   p=await I.edit(p,{kind:'TRANSPARENT',rect:[0,0,2,2],match:null,note:'Remove the left block.'},ctx);
   frame=(await I.verify(p,ctx)).frame;assert.deepEqual(Array.from(frame.slice(0,4)),[17,34,51,0]);assert.deepEqual(p.history.at(-1).affected_runs,[0,2,4,2]);
@@ -51,4 +56,5 @@ const sha=b=>createHash('sha256').update(b).digest('hex');
   const out=process.env.IMAGE_TEST_OUTPUT||'/tmp/atlas-image-projects-core';fs.mkdirSync(out,{recursive:true});
   fs.writeFileSync(path.join(out,'project.zip'),zip);fs.writeFileSync(path.join(out,'expected-rgba.bin'),(await I.verify(p,ctx)).frame);fs.writeFileSync(path.join(out,'original.png'),bytes);
   console.log(JSON.stringify({status:'PASS',exact_rgb_and_region_masks:true,alpha_and_hidden_rgb_preserved:true,undo_redo_and_abandoned_history_retained:true,json_zip_roundtrip:true,linked_colour_project_retained:true,rejected_cases:rejected,native_adobe_validation:'NOT_TESTED'}));
+  }finally{await decoder.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

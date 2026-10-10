@@ -12,6 +12,26 @@
   function base64(bytes){let s='';for(let i=0;i<bytes.length;i+=32768)s+=String.fromCharCode(...bytes.subarray(i,i+32768));return btoa(s);}
   function unbase64(s,max){need(typeof s==='string'&&s.length<=4*Math.ceil(max/3)&&s.length%4===0&&!/[^A-Za-z0-9+/=]/.test(s),'Invalid or oversized embedded bytes.');const padding=s.endsWith('==')?2:s.endsWith('=')?1:0;need(s.indexOf('=')===-1||s.indexOf('=')===s.length-padding,'Invalid base64 padding.');const raw=atob(s),b=new Uint8Array(raw.length);need(b.length<=max,'Embedded bytes exceed limit.');for(let i=0;i<raw.length;i++)b[i]=raw.charCodeAt(i);return b;}
   function dimensions(w,h){need(Number.isInteger(w)&&Number.isInteger(h)&&w>0&&h>0&&w<=8192&&h<=8192&&w*h<=MAX_PIXELS,'Maximum image size is 4,194,304 pixels, with each edge at most 8192. No resizing was performed.');}
+  // Use the same browser path for initial capture and later verification. Native
+  // JPEG/EXIF/ICC and canvas alpha conversion are deliberately not approximated.
+  async function decodeSource(bytes){
+    need(bytes instanceof Uint8Array&&bytes.length<=MAX_SOURCE,'Source image exceeds 8 MiB.');
+    const info=C.imageInfo(bytes);dimensions(info.width,info.height);
+    need(root.document&&root.Image&&root.URL?.createObjectURL,'Source decoding is unavailable; source/pixel consistency cannot be verified in this environment.');
+    const url=root.URL.createObjectURL(new Blob([bytes],{type:info.mime})),im=new root.Image();let cv;
+    try{
+      await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=()=>reject(Error('Image Projects: The retained source image could not be decoded.'));im.src=url;});
+      dimensions(im.naturalWidth,im.naturalHeight);
+      cv=root.document.createElement('canvas');cv.width=im.naturalWidth;cv.height=im.naturalHeight;
+      const cx=cv.getContext('2d',{colorSpace:'srgb',willReadFrequently:true});
+      // Some engines expose getContextAttributes without reporting colorSpace;
+      // an omitted setting uses the standard sRGB default, as in legacy capture.
+      const actualSpace=cx?.getContextAttributes?.().colorSpace;
+      need(cx&&(!actualSpace||actualSpace==='srgb'),'An sRGB canvas is required to verify source pixels.');
+      cx.drawImage(im,0,0);
+      return {width:cv.width,height:cv.height,rgba:new Uint8Array(cx.getImageData(0,0,cv.width,cv.height).data)};
+    }finally{if(cv)cv.width=cv.height=0;im.onload=im.onerror=null;root.URL.revokeObjectURL(url);}
+  }
   const envelope=p=>Object.fromEntries(Object.entries(p).filter(([k])=>k!=='document_sha256'));
   const eventPayload=e=>Object.fromEntries(Object.entries(e).filter(([k])=>k!=='revision_sha256'));
   const hex=v=>'#'+v.map(n=>n.toString(16).padStart(2,'0')).join('').toUpperCase();
@@ -59,6 +79,10 @@
       frame=next;parent=e.revision_sha256;before=e.after_rgba_sha256;
     }
     need(hash(p.document_sha256)&&await digest(envelope(p),ctx)===p.document_sha256,'Image project checksum differs.');
+    // The host may supply a trusted decoder (e.g. a browser bridge for Node).
+    // It is never read from the project, and missing/failed decoding fails closed.
+    const decoded=await (ctx.decodeSource||decodeSource)(bytes);
+    need(decoded&&decoded.width===o.width&&decoded.height===o.height&&decoded.rgba instanceof Uint8Array&&decoded.rgba.length===original.length&&original.every((v,i)=>v===decoded.rgba[i]),'Source/pixel consistency could not be verified: the decoded original differs from the frozen starting pixels. The data may have changed, or this browser may decode JPEG, EXIF, colour profiles or alpha differently. Try the creating browser; do not replace the frozen pixels.');
     return {frame,original,source:bytes,active,redo};
   }
   async function seal(p,ctx){p.document_sha256=await digest(envelope(p),ctx);await verify(p,ctx);return p;}
@@ -93,5 +117,5 @@
     for(const [name,body]of Object.entries(expected))need(await ctx.sha(files[name])===await ctx.sha(body),'Image package file differs: '+name);
     return p;
   }
-  root.ATLAS_IMAGE_PROJECTS={SCHEMA,LIMIT,MAX_PIXELS,MAX_SOURCE,MAX_EVENTS,base64,unbase64,dimensions,reference,hex,verify,create,edit,relation,exportFiles,importZip};
+  root.ATLAS_IMAGE_PROJECTS={SCHEMA,LIMIT,MAX_PIXELS,MAX_SOURCE,MAX_EVENTS,base64,unbase64,dimensions,decodeSource,reference,hex,verify,create,edit,relation,exportFiles,importZip};
 })(typeof window==='undefined'?globalThis:window);

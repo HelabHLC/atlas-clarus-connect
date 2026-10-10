@@ -1,5 +1,8 @@
 # Image Projects — RC31 / RC31.1
 
+The source branch includes a proposed [source/pixel consistency correction](IMAGE_SOURCE_BINDING.md)
+after RC31.1. Published RC31.1 downloads are unchanged and do not include that fix.
+
 Open **Colour Projects > Open Image Projects**. Load a PNG or JPEG, then click to
 sample a colour or drag to select a rectangle. Exact coordinates are editable.
 Choose exact sampled RGB within the rectangle, or all visible pixels there.
