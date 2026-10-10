@@ -30,11 +30,11 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
-      - name: Validate pinned offline bundle
+      - name: Validate unchanged default browser bundle
         run: python3 browser-bundle/tests/validate_bundle.py
       - name: Check Android export adapter
         run: node android-test-app/test-export-adapter.js
-      - name: Build debug APK
+      - name: Build debug APK with pinned source-bound Image Projects
         run: gradle -p android-test-app :app:assembleDebug --no-daemon
       - name: Check DE/EN identity and scripts
         run: |
@@ -45,18 +45,23 @@ jobs:
         run: |
           test -s android-test-app/app/build/outputs/apk/debug/app-debug.apk
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging android-test-app/app/build/outputs/apk/debug/app-debug.apk |
-            grep -F "package: name='com.atlasclarus.connect.dev' versionCode='5' versionName='0.4.0-beta.5-debug'"
-          unzip -l android-test-app/app/build/outputs/apk/debug/app-debug.apk |
-            grep -q 'assets/bundle/index.html'
-          unzip -l android-test-app/app/build/outputs/apk/debug/app-debug.apk |
-            grep -q 'assets/bundle/colour-id.html'
-          unzip -l android-test-app/app/build/outputs/apk/debug/app-debug.apk |
-            grep -q 'assets/bundle/colour-id-en.html'
+            grep -F "package: name='com.atlasclarus.connect.dev' versionCode='6' versionName='0.4.0-beta.6-debug'"
           python3 android-test-app/test_packaged_bundle.py android-test-app/app/build/outputs/apk/debug/app-debug.apk
           sha256sum android-test-app/app/build/outputs/apk/debug/app-debug.apk
+      - name: Validate Image Projects in Android-prepared HTML
+        env:
+          IMAGE_PROJECTS_HTML: android-test-app/app/src/main/assets/bundle/index.html
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python3 -m pip install Pillow
+          python3 browser-bundle/tests/prepare_source_binding.py /tmp/atlas-source-binding
+          node browser-bundle/tests/validate_image_source_binding.cjs
+          node browser-bundle/tests/validate_image_projects_browser.cjs
+          python3 browser-bundle/tests/validate_image_png.py /tmp/atlas-image-projects-browser/project.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Android-Test-APK
+          name: ATLAS-Clarus-Android-Beta6-DEBUG-NOT-AN-UPDATE
           path: android-test-app/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
       - name: Verify APK and AAB signing paths with disposable CI key
@@ -78,7 +83,7 @@ jobs:
           gradle -p android-test-app :app:assembleRelease :app:bundleRelease --no-daemon
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify "$apk"
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
-            grep -F "package: name='com.atlasclarus.connect' versionCode='5' versionName='0.4.0-beta.5'"
+            grep -F "package: name='com.atlasclarus.connect' versionCode='6' versionName='0.4.0-beta.6'"
           test -s "$aab"
           jarsigner -verify "$aab"
           python3 android-test-app/test_packaged_bundle.py "$apk" "$aab"
