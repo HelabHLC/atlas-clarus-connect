@@ -95,6 +95,11 @@ and progressive JPEG, eight EXIF transformations and generated linear RGB ICC
 profiles. It records their hashes and extracts the **hash-checked, unmodified**
 published bundle as the comparison importer. It does not require an external
 painting archive and does not claim a rerun of the Ruisdael experiment.
+Playwright's Firefox build disables ICC correction for screenshot reproducibility;
+the test explicitly sets `gfx.color_management.mode=2` for tagged images and records
+that preference. The application itself does not alter browser preferences.
+WebKit may expose `getContextAttributes()` without a `colorSpace` property; the
+shared decoder retains the requested/default sRGB path in that case.
 
 The differential test creates real legacy projects through the old browser UI,
 then verifies unchanged JSON and complete ZIP in the candidate. It generates

@@ -21,7 +21,11 @@ async function download(page){
 }
 const upload=(page,bytes,name='image-project.clarus.json')=>page.locator('#ip-import').setInputFiles({name,mimeType:name.endsWith('.zip')?'application/zip':'application/json',buffer:bytes});
 (async()=>{
-  const browser=await playwright[browserName].launch({headless:true,...(browserName==='chromium'?{args:['--no-sandbox'],...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})}:{})});
+  // Playwright's Firefox build disables ICC correction for screenshots by
+  // default. Explicitly enable tagged-image colour management for this test.
+  const firefoxUserPrefs={'gfx.color_management.mode':2};
+  const browser=await playwright[browserName].launch({headless:true,...(browserName==='firefox'?{firefoxUserPrefs}:{}),...(browserName==='chromium'?{args:['--no-sandbox'],...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})}:{})});
+  if(browserName==='firefox')report.firefox_user_prefs=firefoxUserPrefs;
   report.browser_version=browser.version();
   try{
     const old=await browser.newPage({acceptDownloads:true}),page=await browser.newPage({acceptDownloads:true}),errors=[],requests=[];

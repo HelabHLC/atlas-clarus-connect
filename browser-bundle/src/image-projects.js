@@ -24,7 +24,10 @@
       dimensions(im.naturalWidth,im.naturalHeight);
       cv=root.document.createElement('canvas');cv.width=im.naturalWidth;cv.height=im.naturalHeight;
       const cx=cv.getContext('2d',{colorSpace:'srgb',willReadFrequently:true});
-      need(cx&&(!cx.getContextAttributes||cx.getContextAttributes().colorSpace==='srgb'),'An sRGB canvas is required to verify source pixels.');
+      // Some engines expose getContextAttributes without reporting colorSpace;
+      // an omitted setting uses the standard sRGB default, as in legacy capture.
+      const actualSpace=cx?.getContextAttributes?.().colorSpace;
+      need(cx&&(!actualSpace||actualSpace==='srgb'),'An sRGB canvas is required to verify source pixels.');
       cx.drawImage(im,0,0);
       return {width:cv.width,height:cv.height,rgba:new Uint8Array(cx.getImageData(0,0,cv.width,cv.height).data)};
     }finally{if(cv)cv.width=cv.height=0;im.onload=im.onerror=null;root.URL.revokeObjectURL(url);}
