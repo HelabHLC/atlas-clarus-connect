@@ -18,6 +18,12 @@ jobs:
         php: ['7.4', '8.5']
     steps:
       - uses: actions/checkout@v7
+      # Reproduce the frozen release from its actual source commit. Current
+      # source changes are tested separately below, never re-pinned as RC31.1.
+      - uses: actions/checkout@v7
+        with:
+          ref: 4a42f74aba2cdc0408e52b91b4dc57e798830491
+          path: _rc31_1_source
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
@@ -27,8 +33,8 @@ jobs:
           extensions: zip
       - name: Reproduce the installable WordPress update
         run: |
-          python3 wordpress-browser-edition/build_images_plugin.py
-          python3 wordpress-browser-edition/build_images_plugin.py --output-dir "$RUNNER_TEMP/atlas-images-repeat"
+          python3 _rc31_1_source/wordpress-browser-edition/build_images_plugin.py --output-dir wordpress-browser-edition/build-images
+          python3 _rc31_1_source/wordpress-browser-edition/build_images_plugin.py --output-dir "$RUNNER_TEMP/atlas-images-repeat"
           cmp wordpress-browser-edition/build-images/*.zip "$RUNNER_TEMP/atlas-images-repeat/"*.zip
           cmp wordpress-browser-edition/build-images/*.zip downloads/wordpress/*beta11_RC31.1.zip
           python3 wordpress-browser-edition/tests/validate_images_package.py wordpress-browser-edition/build-images/ATLAS_Clarus_Browser_Edition_v0.1.15-beta11_RC31.1.zip --extract-to "$RUNNER_TEMP/atlas-images-php"
@@ -59,3 +65,44 @@ jobs:
             wordpress-browser-edition/build-images/*
             /tmp/atlas-image-projects-browser/report.json
             /tmp/atlas-image-projects-browser/*.png
+  source-binding:
+    name: Source binding (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Prepare source-only candidate and unchanged-release comparison
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps ${{ matrix.browser }}
+          python3 -m pip install Pillow
+          python3 browser-bundle/build_bundle.py --image-projects --output-dir browser-bundle/build-source-binding
+          python3 browser-bundle/tests/prepare_source_binding.py /tmp/atlas-source-binding
+      - name: Verify real decoder, legacy handover and rehashed attacks
+        env:
+          SOURCE_BINDING_BROWSER: ${{ matrix.browser }}
+        run: node browser-bundle/tests/validate_image_source_binding.cjs
+      - name: Verify edits, coordinates, references and full journal through candidate UI
+        if: matrix.browser == 'chromium'
+        run: |
+          node browser-bundle/tests/validate_image_projects.js
+          python3 browser-bundle/tests/validate_image_png.py /tmp/atlas-image-projects-core/project.zip
+          IMAGE_PROJECTS_HTML=browser-bundle/build-source-binding/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_image_projects_browser.cjs
+          python3 browser-bundle/tests/validate_image_png.py /tmp/atlas-image-projects-browser/project.zip
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: Image-source-binding-${{ matrix.browser }}
+          path: |
+            /tmp/atlas-source-binding/report-*.json
+            /tmp/atlas-source-binding/fixtures-sha256.json
+            /tmp/atlas-image-projects-browser/report.json
