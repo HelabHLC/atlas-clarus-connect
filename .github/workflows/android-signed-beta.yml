@@ -34,7 +34,7 @@ jobs:
           test -n "$KEY_PASSWORD"
           umask 077
           if ! printf '%s' "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > "$RUNNER_TEMP/atlas-connect-beta.jks"; then
-            echo 'ATLAS_CONNECT_KEYSTORE_BASE64 is not valid Base64. Paste the complete contents of ATLAS-Clarus-Connect-Beta-KEYSTORE_BASE64.txt.'
+            echo 'ATLAS_CONNECT_KEYSTORE_BASE64 is not valid Base64.'
             exit 1
           fi
           test -s "$RUNNER_TEMP/atlas-connect-beta.jks"
@@ -68,7 +68,7 @@ jobs:
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs "$apk" |
             grep -Eiq 'certificate SHA-256 digest: 986ca730efc54a20cfc88af4fb61018dfe7658f3165c5b6fb55eb9c59ccad63c'
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
-            grep -F "package: name='com.atlasclarus.connect' versionCode='5' versionName='0.4.0-beta.5'"
+            grep -F "package: name='com.atlasclarus.connect' versionCode='6' versionName='0.4.0-beta.6'"
           sha256sum "$apk"
       - name: Verify Play bundle signature
         run: |
@@ -78,19 +78,19 @@ jobs:
           cert_sha=$(keytool -printcert -jarfile "$aab" | sed -n 's/.*SHA256: //p' | head -n 1 | tr -d ':' | tr 'A-F' 'a-f')
           test "$cert_sha" = '986ca730efc54a20cfc88af4fb61018dfe7658f3165c5b6fb55eb9c59ccad63c'
           sha256sum "$aab"
-      - name: Verify RC28 assets in APK and AAB
+      - name: Verify source-bound assets in APK and AAB
         run: |
           python3 android-test-app/test_packaged_bundle.py \
             android-test-app/app/build/outputs/apk/release/app-release.apk \
             android-test-app/app/build/outputs/bundle/release/app-release.aab
       - uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Connect-Play-0.4.0-beta.5-AAB
+          name: ATLAS-Clarus-Connect-Play-0.4.0-beta.6-AAB
           path: android-test-app/app/build/outputs/bundle/release/app-release.aab
           retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Connect-Beta-0.4.0-beta.5
+          name: ATLAS-Clarus-Connect-Beta-0.4.0-beta.6
           path: android-test-app/app/build/outputs/apk/release/app-release.apk
           retention-days: 14
       - name: Remove temporary signing file
