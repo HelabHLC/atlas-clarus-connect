@@ -17,6 +17,12 @@ jobs:
         php: ['7.4', '8.5']
     steps:
       - uses: actions/checkout@v7
+      # Reproduce the frozen RC32.1 public pilot from its original source.
+      # Current RC32.2 packaging is checked separately; never repin RC32.1.
+      - uses: actions/checkout@v7
+        with:
+          ref: 898a5b5dbc1322c1377d98a8d8dc0837f37b6b48
+          path: _rc321_source
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
@@ -26,12 +32,12 @@ jobs:
           extensions: zip
       - name: Reproduce WordPress package and preserve reviewed candidate
         run: |
-          python3 browser-bundle/build_colour_reference_card.py
-          python3 wordpress-browser-edition/build_reference_card_plugin.py --output-dir /tmp/atlas-wp-card-a
-          python3 wordpress-browser-edition/build_reference_card_plugin.py --output-dir /tmp/atlas-wp-card-b
+          python3 _rc321_source/browser-bundle/build_colour_reference_card.py
+          python3 _rc321_source/wordpress-browser-edition/build_reference_card_plugin.py --output-dir /tmp/atlas-wp-card-a
+          python3 _rc321_source/wordpress-browser-edition/build_reference_card_plugin.py --output-dir /tmp/atlas-wp-card-b
           cmp /tmp/atlas-wp-card-{a,b}/*.zip
           cmp /tmp/atlas-wp-card-a/*.zip downloads/wordpress/*beta12_RC32.1.zip
-          python3 wordpress-browser-edition/tests/validate_reference_card_package.py /tmp/atlas-wp-card-a/*.zip browser-bundle/build-colour-reference-card/*.zip
+          python3 wordpress-browser-edition/tests/validate_reference_card_package.py /tmp/atlas-wp-card-a/*.zip _rc321_source/browser-bundle/build-colour-reference-card/*.zip
           unzip -q /tmp/atlas-wp-card-a/*.zip -d /tmp/atlas-wp-card-extracted
           php -l /tmp/atlas-wp-card-extracted/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
           php wordpress-browser-edition/tests/validate_plugin.php /tmp/atlas-wp-card-extracted/atlas-clarus-browser-edition

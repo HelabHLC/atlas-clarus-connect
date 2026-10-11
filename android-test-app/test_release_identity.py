@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guard beta.7, RC32.1 and the unchanged Android storage boundary before CI or reserved-key signing."""
+"""Guard beta.8, RC32.2 and the unchanged Android storage boundary before CI or reserved-key signing."""
 import ast
 import hashlib
 from pathlib import Path
@@ -7,14 +7,14 @@ import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION_CODE = 7
-VERSION_NAME = '0.4.0-beta.7'
-BUNDLE_VERSION = '0.2.0-rc32.1-colour-reference-card'
-BUNDLE_SHA256 = 'd61cc48bc38b9e3a71a54d93bf4147b9a3eaa1a94bab0d0a413a382a683eb616'
+VERSION_CODE = 8
+VERSION_NAME = '0.4.0-beta.8'
+BUNDLE_VERSION = '0.2.0-rc32.2-image-exchange'
+BUNDLE_SHA256 = 'e2475f407ac77318662275f9a3c0ae006fc62135d1a87d7c5a64659a5c083f79'
 DEFAULT_BUNDLE_VERSION = '0.2.0-rc28-source-provenance'
 SOURCE_BINDING_SHA256 = {
     'image-projects.js': '3b5b6e90abd28f52b5236ea0793ff6b9394cb0754f504951df2f0da6117e2c45',
-    'image-projects-ui.js': '16de7d53e92cde18c85a46794c0123c8c7bebc5033d21fc18cf63147c5a306e8',
+    'image-projects-ui.js': '2995ae7b5e520de513d97a929346225d50c6ec476bdb3c07e6649c0a348396c8',
 }
 REFERENCE_CARD_SHA256 = {
     'colour-reference-card.js': '32dff3a94ed98099aaae8b93365e94b66ba4262112564b91757304afe687e2e2',
@@ -51,12 +51,12 @@ def check_identity(files):
         'versionName': re.findall(r"^\s*versionName\s+'([^']+)'\s*$", gradle, re.M) == [VERSION_NAME],
         'Android bundle version': literal(prepare, 'EXPECTED_BUNDLE_VERSION') == BUNDLE_VERSION,
         'Android ZIP pin': literal(prepare, 'EXPECTED_ZIP_SHA256') == BUNDLE_SHA256,
-        'RC32.1 builder': literal(prepare, 'BUNDLE_BUILDER') == 'build_colour_reference_card_pilot.py',
+        'RC32.2 builder': literal(prepare, 'BUNDLE_BUILDER') == 'build_image_exchange_pilot.py',
         'reviewed builder used': "ROOT / 'browser-bundle' / BUNDLE_BUILDER" in prepare,
         'reference-card pin': literal(prepare, 'REFERENCE_CARD_SHA256') == REFERENCE_CARD_SHA256,
         'source-binding pins': literal(prepare, 'SOURCE_BINDING_SHA256') == SOURCE_BINDING_SHA256,
         'default browser version preserved': literal(builder, 'VERSION') == DEFAULT_BUNDLE_VERSION,
-        'pilot version available': literal((ROOT / 'browser-bundle/build_colour_reference_card_pilot.py').read_text(), 'VERSION') == BUNDLE_VERSION,
+        'pilot version available': literal((ROOT / 'browser-bundle/build_image_exchange_pilot.py').read_text(), 'VERSION') == BUNDLE_VERSION,
     }
     identity = f"package: name='com.atlasclarus.connect' versionCode='{VERSION_CODE}' versionName='{VERSION_NAME}'"
     for name, workflow in [('debug', debug), ('signed', signed)]:
@@ -80,10 +80,10 @@ class ReleaseIdentityTests(unittest.TestCase):
         check_identity(self.files)
 
     def test_reject_prior_version_codes(self):
-        for code in (4, 5, 6):
+        for code in (4, 5, 6, 7):
             with self.subTest(code=code):
                 changed = dict(self.files)
-                changed[FILES[0]] = changed[FILES[0]].replace('versionCode 7', f'versionCode {code}')
+                changed[FILES[0]] = changed[FILES[0]].replace('versionCode 8', f'versionCode {code}')
                 with self.assertRaisesRegex(ValueError, 'versionCode'):
                     check_identity(changed)
 
@@ -98,8 +98,8 @@ class ReleaseIdentityTests(unittest.TestCase):
             check_identity(self.files)
 
     def test_reject_older_builder(self):
-        self.files[FILES[1]] = self.files[FILES[1]].replace('build_colour_reference_card_pilot.py', 'build_bundle.py')
-        with self.assertRaisesRegex(ValueError, 'RC32.1 builder'):
+        self.files[FILES[1]] = self.files[FILES[1]].replace('build_image_exchange_pilot.py', 'build_colour_reference_card_pilot.py')
+        with self.assertRaisesRegex(ValueError, 'RC32.2 builder'):
             check_identity(self.files)
 
     def test_native_storage_and_export_boundary_unchanged_since_beta6(self):

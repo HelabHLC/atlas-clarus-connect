@@ -8,3 +8,5 @@
 *.jks
 *.keystore
 keystore.properties
+
+__pycache__/

@@ -12,7 +12,8 @@
     </div>
     <div class="ip-panel"><h3>2. Save and hand over</h3>
       <div class="ip-actions"><button id="ip-zip" class="button primary" disabled>Download complete handover ZIP</button><button id="ip-json" disabled>Download image-project JSON</button><button id="ip-png" disabled>Download current PNG</button></div>
-      <p class="boundary">Your colleague opens the ZIP or image-project JSON in Image Projects. PNG alone does not preserve the full history. A linked palette snapshot can also be opened separately in Colour Projects.</p>
+      <p class="boundary">Your colleague opens the ZIP or image-project JSON in Image Projects. Their browser must reproduce the stored starting pixels exactly. PNG alone does not preserve the full history. A linked palette snapshot can also be opened separately in Colour Projects.</p>
+      <details id="ip-exchange-help"><summary>If a colleague cannot open your project</summary><p>Keep and send the complete, unchanged JSON or ZIP. Colour profiles and transparency can decode differently between browsers, so a valid project may be rejected. Try a browser setup that verifies the file exactly; the browser name alone is not a guarantee.</p><p>Do not replace the frozen pixels, remove the colour profile or start again from the current PNG to bypass the check: that would lose the original relationship and editable history. If no compatible setup is available, retain the files and ask the sender to continue in their verified environment.</p><p>Physical iPhone and iPad tests are still open.</p></details>
       <p id="ip-backup" class="ip-backup">Open an image to start. This workspace is not automatically saved in browser storage.</p>
       <p class="boundary">Edits use browser-decoded 8-bit sRGB. Recolouring applies a flat RGB value and preserves existing opacity; making pixels transparent keeps their earlier RGB values in the project history.</p>
     </div>
