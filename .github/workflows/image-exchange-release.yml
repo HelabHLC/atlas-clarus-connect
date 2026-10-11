@@ -1,0 +1,65 @@
+name: RC32.2 installable exchange update
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - 'wordpress-browser-edition/**'
+      - '.github/workflows/image-exchange-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4','8.5']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip
+      - name: Reproduce exact release packages and check unchanged data/installers
+        run: |
+          python3 browser-bundle/build_image_exchange_pilot.py --with-helper
+          python3 wordpress-browser-edition/build_image_exchange_plugin.py --output-dir /tmp/rc322-a
+          python3 wordpress-browser-edition/build_image_exchange_plugin.py --output-dir /tmp/rc322-b
+          cmp /tmp/rc322-{a,b}/*.zip
+          python3 wordpress-browser-edition/tests/validate_image_exchange_package.py /tmp/rc322-a/*.zip browser-bundle/build-image-exchange/ATLAS_Clarus_Browser_Bundle_*.zip browser-bundle/build-image-exchange/ATLAS_Clarus_Image_Exchange_*.zip
+          unzip -q /tmp/rc322-a/*.zip -d /tmp/rc322-wp
+          php -l /tmp/rc322-wp/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php wordpress-browser-edition/tests/validate_plugin.php /tmp/rc322-wp/atlas-clarus-browser-edition
+      - uses: actions/setup-node@v7
+        if: matrix.php == '8.5'
+        with:
+          node-version: '22'
+      - name: Verify reference cards and image history in the embedded WordPress payload
+        if: matrix.php == '8.5'
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python3 -m pip install Pillow pypdf
+          node browser-bundle/tests/validate_colour_reference_card.js
+          unzip -q /tmp/rc322-wp/atlas-clarus-browser-edition/assets/bundle.zip -d /tmp/rc322-runtime
+          CARD_HTML=/tmp/rc322-runtime/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_colour_reference_card_browser.cjs
+          IMAGE_PROJECTS_HTML=/tmp/rc322-runtime/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_image_projects_browser.cjs
+          python3 browser-bundle/tests/validate_image_png.py /tmp/atlas-image-projects-browser/project.zip
+      - uses: actions/upload-artifact@v7
+        if: matrix.php == '8.5'
+        with:
+          name: ATLAS-Clarus-RC32.2-installers-and-helper
+          path: |
+            /tmp/rc322-a/*
+            browser-bundle/build-image-exchange/*.zip
+            browser-bundle/build-image-exchange/*.sha256
+      - uses: actions/upload-artifact@v7
+        if: always() && matrix.php == '8.5'
+        with:
+          name: RC32.2-package-acceptance-evidence
+          path: |
+            /tmp/atlas-colour-reference-card/
+            /tmp/atlas-image-projects-browser/

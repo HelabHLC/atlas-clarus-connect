@@ -5,3 +5,6 @@ tests/__pycache__/
 tests/node_modules/
 
 build-colour-reference-card-pilot/
+
+build-image-exchange/
+build-source-binding/

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package the reviewed RC32.1 reference-card payload for Android beta.7.
+"""Package the reviewed RC32.2 reference-card payload for Android beta.8.
 
 The exact public pilot is rebuilt offline and pinned before adding the unchanged
 Android adapter. Existing releases, storage contracts and master remain frozen.
@@ -17,16 +17,16 @@ from build_colour_id_locale import localize
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-EXPECTED_BUNDLE_VERSION = '0.2.0-rc32.1-colour-reference-card'
-EXPECTED_ZIP_SHA256 = 'd61cc48bc38b9e3a71a54d93bf4147b9a3eaa1a94bab0d0a413a382a683eb616'
-BUNDLE_BUILDER = 'build_colour_reference_card_pilot.py'
+EXPECTED_BUNDLE_VERSION = '0.2.0-rc32.2-image-exchange'
+EXPECTED_ZIP_SHA256 = 'e2475f407ac77318662275f9a3c0ae006fc62135d1a87d7c5a64659a5c083f79'
+BUNDLE_BUILDER = 'build_image_exchange_pilot.py'
 REFERENCE_CARD_SHA256 = {
     'colour-reference-card.js': '32dff3a94ed98099aaae8b93365e94b66ba4262112564b91757304afe687e2e2',
 }
 SOURCE_BINDING_COMMIT = '9b0f2c9799879da65f0f8f02b702595b1336ae24'
 SOURCE_BINDING_SHA256 = {
     'image-projects.js': '3b5b6e90abd28f52b5236ea0793ff6b9394cb0754f504951df2f0da6117e2c45',
-    'image-projects-ui.js': '16de7d53e92cde18c85a46794c0123c8c7bebc5033d21fc18cf63147c5a306e8',
+    'image-projects-ui.js': '2995ae7b5e520de513d97a929346225d50c6ec476bdb3c07e6649c0a348396c8',
 }
 COLOUR_ID_URL = ('https://arbe-lambda-star.com/wp-content/plugins/'
                  'atlas-clarus-colour-picker/assets/atlas-clarus-app-v5.3.3.html')
@@ -95,10 +95,11 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     (source / 'colour-id.html').write_text(localize(colour_html, 'de'), encoding='utf-8')
     (source / 'colour-id-en.html').write_text(localize(colour_html, 'en'), encoding='utf-8')
     (source / 'ANDROID_CANDIDATE.json').write_text(json.dumps({
-        'version_name': '0.4.0-beta.7', 'version_code': 7,
+        'version_name': '0.4.0-beta.8', 'version_code': 8,
         'application_id': 'com.atlasclarus.connect',
         'bundle_version': EXPECTED_BUNDLE_VERSION, 'bundle_zip_sha256': digest,
         'source_binding_commit': SOURCE_BINDING_COMMIT,
+        'exchange_ui_commit': '57b132b46044344588ce2c5f6a3d86389ce9070c',
         'source_binding_sha256': SOURCE_BINDING_SHA256,
         'reference_card_sha256': REFERENCE_CARD_SHA256,
         'master_sha256': MASTER_SHA256,
@@ -108,4 +109,4 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     if TARGET.exists():
         shutil.rmtree(TARGET)
     shutil.copytree(source, TARGET)
-    print(f'Android beta.7 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')
+    print(f'Android beta.8 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')

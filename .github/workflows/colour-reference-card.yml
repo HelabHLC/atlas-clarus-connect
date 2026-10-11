@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          ref: 49fd639e191794fdf353546f6b5e4ea92265a0fe
+          path: _rc32_source
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
@@ -27,10 +31,12 @@ jobs:
           node browser-bundle/tests/validate_reference_card.js
           node browser-bundle/tests/validate_colour_handoff.js
       - name: Reproduce candidate and verify preserved legacy bundle
-        run: python3 browser-bundle/tests/validate_colour_reference_card_build.py
+        run: python3 _rc32_source/browser-bundle/tests/validate_colour_reference_card_build.py
       - name: Install browser
         run: browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
       - name: Exercise export, reimport, offline HTML and A4 PDF
+        env:
+          CARD_HTML: _rc32_source/browser-bundle/build-colour-reference-card/atlas-clarus-browser-bundle/index.html
         run: node browser-bundle/tests/validate_colour_reference_card_browser.cjs
       - uses: actions/upload-artifact@v7
         if: always()
@@ -40,4 +46,4 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: ATLAS-Clarus-RC32-Colour-Reference-Card-CANDIDATE
-          path: browser-bundle/build-colour-reference-card/*.zip
+          path: _rc32_source/browser-bundle/build-colour-reference-card/*.zip

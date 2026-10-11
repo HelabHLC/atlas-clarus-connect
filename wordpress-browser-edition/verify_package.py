@@ -32,8 +32,8 @@ def verify(root):
         block = source.split("$expected = array(", 1)[1].split(");", 1)[0]
         expected = {k: v[1:-1] if v.startswith("'") else int(v)
                     for k, v in re.findall(r"'([^']+)'\s*=>\s*('[^']*'|\d+)\s*,", block)}
-        if version in ('0.1.15-beta9', '0.1.15-beta10', '0.1.15-beta11', '0.1.15-beta12'):
-            manifest_file = {'0.1.15-beta9': 'manifest-rc29.1.json', '0.1.15-beta10': 'manifest-rc30.1.json', '0.1.15-beta11': 'manifest-rc31.1.json', '0.1.15-beta12': 'manifest-rc32.1.json'}[version]
+        if version in ('0.1.15-beta9', '0.1.15-beta10', '0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13'):
+            manifest_file = {'0.1.15-beta9': 'manifest-rc29.1.json', '0.1.15-beta10': 'manifest-rc30.1.json', '0.1.15-beta11': 'manifest-rc31.1.json', '0.1.15-beta12': 'manifest-rc32.1.json', '0.1.15-beta13': 'manifest-rc32.2.json'}[version]
             pilot = json.loads((Path(__file__).resolve().parents[1]/'browser-bundle'/manifest_file).read_text())
             assert manifest == pilot
             scalar_count = sum(type(v) in (str, int) for v in pilot.values())
@@ -89,6 +89,10 @@ def verify(root):
         report.update(source_base_commit='49fd639e191794fdf353546f6b5e4ea92265a0fe',
                       source_candidate='RC32.1 public Colour Reference Card pilot',
                       source_review='browser-bundle/COLOUR_REFERENCE_CARD.md')
+    if version == '0.1.15-beta13':
+        report.update(source_base_commit='898a5b5dbc1322c1377d98a8d8dc0837f37b6b48',
+                      source_candidate='RC32.2 Image Exchange pilot',
+                      source_review='browser-bundle/IMAGE_CROSS_ENGINE.md')
     return report
 
 
