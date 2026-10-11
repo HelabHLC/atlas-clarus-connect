@@ -43,6 +43,7 @@ jobs:
           npm ci --prefix browser-bundle/tests --ignore-scripts
           browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
           python3 -m pip install Pillow pypdf
+          node browser-bundle/tests/validate_colour_reference_card.js
           unzip -q /tmp/rc322-wp/atlas-clarus-browser-edition/assets/bundle.zip -d /tmp/rc322-runtime
           CARD_HTML=/tmp/rc322-runtime/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_colour_reference_card_browser.cjs
           IMAGE_PROJECTS_HTML=/tmp/rc322-runtime/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_image_projects_browser.cjs
