@@ -1,0 +1,49 @@
+{
+  "checked_at": "2026-10-11T11:51:00.985535+00:00",
+  "package_commit": "c0bfaf6ba2ee99e760a7e1b2dc09e34c6876dbcb",
+  "plugin_version": "0.1.15-beta12",
+  "runtime_version": "0.2.0-rc32.1-colour-reference-card",
+  "active_bundle_sha256": "d61cc48bc38b9e3a71a54d93bf4147b9a3eaa1a94bab0d0a413a382a683eb616",
+  "previous_bundle_sha256": "fa538dd5b6f717f7c948a0cb11ecfff814678f114d2b9d3436148f8ed1861b3f",
+  "activation": "PASS_VIA_GUARDED_WORDPRESS_ABILITY",
+  "http": [
+    {
+      "url": "https://arbe-lambda-star.com/atlas-clarus-browser-runtime/",
+      "status": 200,
+      "size": 33148505,
+      "sha256": "a4d4f4fb2450e99d922874b15df4a54e8df67bdc109ff0fe7e2efc350992cf89",
+      "cache_control": "no-cache, must-revalidate",
+      "matches_embedded_index": true
+    },
+    {
+      "url": "https://arbe-lambda-star.com/atlas-clarus-browser-bundle/",
+      "status": 200,
+      "size": 33149127,
+      "sha256": "81c74659ffac421c6e95c1d626c3d3d91d261966a2610f059fb3d02bf5042cc3",
+      "cache_control": "no-cache, must-revalidate",
+      "matches_embedded_index_except_home_link": true,
+      "card_export_button_present": true,
+      "export_handler_present": true
+    },
+    {
+      "url": "https://arbe-lambda-star.com/atlas-clarus-browser-runtime/BUNDLE_MANIFEST.json",
+      "status": 200,
+      "size": 6795,
+      "sha256": "90c8ffab778dc702c73fe0cf37ae6cdb49d8dc3de80b04e77143190d9f6a2585",
+      "cache_control": "public, max-age=86400",
+      "matches_embedded_manifest": true
+    },
+    {
+      "url": "https://arbe-lambda-star.com/atlas-clarus-browser-runtime/assets/colour-reference-card.js",
+      "status": 200,
+      "size": 12764,
+      "sha256": "32dff3a94ed98099aaae8b93365e94b66ba4262112564b91757304afe687e2e2",
+      "cache_control": "public, max-age=86400",
+      "matches_tested_card_module": true
+    }
+  ],
+  "live_interactive_export": "NOT_TESTED_BROWSER_TOOL_BLOCKED",
+  "packaged_interactive_export": "PASS_CI_38134973526",
+  "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "status": "PASS"
+}

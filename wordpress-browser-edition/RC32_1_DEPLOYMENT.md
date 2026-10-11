@@ -53,7 +53,25 @@ adoption. These checks are gates before live switching, not proof of live use.
 
 Live baseline observed 2026-10-11: beta11, active runtime
 `fa538dd5b6f717f7c948a0cb11ecfff814678f114d2b9d3436148f8ed1861b3f`.
-Live deployment status at package preparation: **NOT_DEPLOYED**.
+Live deployment completed on 2026-10-11 at 11:48:56 UTC after the user's manual
+ZIP upload. The existing guarded `atlas-clarus/install-browser-bundle` ability
+validated the pinned embedded package and switched from RC31.1 to RC32.1.
+The previous-runtime snapshot retains the exact RC31.1 SHA above for rollback.
+
+Public HTTP checks at 11:51 UTC returned 200 for the runtime, public canvas,
+manifest and card module. Runtime HTML is byte-identical to the tested embedded
+payload; the public canvas differs only by the wrapper's existing homepage link
+and its style. The new export button and handler are present. Master identity
+remains unchanged. See `evidence/rc32.1-live-20261011.json` for hashes and results.
+
+The interactive export/reimport and two-A4-page checks passed in the exact
+packaged payload (CI run `38134973526`). A separate post-deployment interactive
+click test was **NOT_TESTED**: the cloud browser retained a credential-protection
+error after manual sign-in, and the WPVibe rendered-DOM request exceeded its
+32 MiB response limit. The successful public HTTP byte comparison is recorded
+separately; it is not described as a successful live UI test. No original
+package, previous release, master data or deployed manifest was edited to
+change historical acceptance labels.
 
 Colour Handoff > **Download colour reference card ZIP** exports printable HTML,
 full `palette.clarus.json`, `reference-card.json` and `card-manifest.json`.
