@@ -1,0 +1,43 @@
+name: Validate Colour Reference Card candidate
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - 'hover-library/data/colors.json'
+      - '.github/workflows/colour-reference-card.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reference-card:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --prefix browser-bundle/tests --ignore-scripts
+      - run: python3 -m pip install pypdf
+      - name: Verify sources, decisions, revisions, unknown provenance and rejection cases
+        run: |
+          node browser-bundle/tests/validate_colour_reference_card.js
+          node browser-bundle/tests/validate_reference_card.js
+          node browser-bundle/tests/validate_colour_handoff.js
+      - name: Reproduce candidate and verify preserved legacy bundle
+        run: python3 browser-bundle/tests/validate_colour_reference_card_build.py
+      - name: Install browser
+        run: browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+      - name: Exercise export, reimport, offline HTML and A4 PDF
+        run: node browser-bundle/tests/validate_colour_reference_card_browser.cjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: colour-reference-card-evidence
+          path: /tmp/atlas-colour-reference-card/
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ATLAS-Clarus-RC32-Colour-Reference-Card-CANDIDATE
+          path: browser-bundle/build-colour-reference-card/*.zip
