@@ -1,0 +1,60 @@
+name: Validate WordPress Colour Reference Card pilot
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - 'wordpress-browser-edition/**'
+      - 'downloads/wordpress/*RC32.1*'
+      - '.github/workflows/wordpress-colour-reference-card.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.5']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip
+      - name: Reproduce WordPress package and preserve reviewed candidate
+        run: |
+          python3 browser-bundle/build_colour_reference_card.py
+          python3 wordpress-browser-edition/build_reference_card_plugin.py --output-dir /tmp/atlas-wp-card-a
+          python3 wordpress-browser-edition/build_reference_card_plugin.py --output-dir /tmp/atlas-wp-card-b
+          cmp /tmp/atlas-wp-card-{a,b}/*.zip
+          cmp /tmp/atlas-wp-card-a/*.zip downloads/wordpress/*beta12_RC32.1.zip
+          python3 wordpress-browser-edition/tests/validate_reference_card_package.py /tmp/atlas-wp-card-a/*.zip browser-bundle/build-colour-reference-card/*.zip
+          unzip -q /tmp/atlas-wp-card-a/*.zip -d /tmp/atlas-wp-card-extracted
+          php -l /tmp/atlas-wp-card-extracted/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php wordpress-browser-edition/tests/validate_plugin.php /tmp/atlas-wp-card-extracted/atlas-clarus-browser-edition
+      - uses: actions/setup-node@v7
+        if: matrix.php == '8.5'
+        with:
+          node-version: '22'
+      - name: Exercise card exports from the exact WordPress payload
+        if: matrix.php == '8.5'
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python3 -m pip install pypdf
+          node browser-bundle/tests/validate_colour_reference_card.js
+          unzip -q /tmp/atlas-wp-card-extracted/atlas-clarus-browser-edition/assets/bundle.zip -d /tmp/atlas-wp-card-runtime
+          CARD_HTML=/tmp/atlas-wp-card-runtime/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_colour_reference_card_browser.cjs
+      - uses: actions/upload-artifact@v7
+        if: always() && matrix.php == '8.5'
+        with:
+          name: WordPress-RC32.1-card-evidence
+          path: /tmp/atlas-colour-reference-card/
+      - uses: actions/upload-artifact@v7
+        if: matrix.php == '8.5'
+        with:
+          name: ATLAS-Clarus-WordPress-beta12-RC32.1
+          path: /tmp/atlas-wp-card-a/*
