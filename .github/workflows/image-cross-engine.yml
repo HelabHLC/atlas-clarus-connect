@@ -1,0 +1,38 @@
+name: Image Projects cross-engine exchange
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - '.github/workflows/image-cross-engine.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cross-engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Install pinned browser engines and build strict candidate
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium firefox webkit
+          python3 -m pip install Pillow
+          python3 browser-bundle/build_bundle.py --image-projects --output-dir browser-bundle/build-source-binding
+          python3 browser-bundle/tests/prepare_source_binding.py /tmp/atlas-source-binding
+      - name: Cross-import JSON and ZIP in every direction, with and without history
+        run: node browser-bundle/tests/validate_image_cross_engine.cjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: Image-Projects-cross-engine-evidence
+          path: |
+            /tmp/atlas-source-binding/cross-engine-report.json
+            /tmp/atlas-source-binding/fixtures-sha256.json
+            /tmp/atlas-source-binding/cross-engine/
