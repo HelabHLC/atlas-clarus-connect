@@ -24,6 +24,28 @@ by `android-beta-signing`, using the existing reserved certificate:
 `986ca730efc54a20cfc88af4fb61018dfe7658f3165c5b6fb55eb9c59ccad63c`.
 No signing credentials or application identity are changed.
 
+## Completed build evidence
+
+Source: `8f8f8eeb5eed32e5ef2d0eddb233921f224e90b8`.
+[Regression run 38157445047](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/38157445047)
+passed, including the persistent beta.7 to beta.8 profile update and both debug
+and disposable-key release packaging paths.
+[Manual signing run 38157534683](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/38157534683)
+passed with the reserved certificate above. Both real signed packages have all
+50 prepared assets verified, including original source binding and Colour ID.
+
+| File | SHA-256 |
+| --- | --- |
+| Signed APK | b7bd511b1cb5898811374bee320138cbc6d22b7177058813932ee3797cb8811d |
+| Signed AAB | bbe82dd02e39389c35236e7c5e049825d9aac6ac8af51df536f2df536464a90d |
+
+Artifacts: `ATLAS-Clarus-Connect-Beta-0.4.0-beta.8` (APK) and
+`ATLAS-Clarus-Connect-Play-0.4.0-beta.8-AAB` (AAB), each a ZIP containing the
+single `app-release` file. Hashes above apply to the extracted APK/AAB.
+The AAB is prepared for the existing Play test channel; uploading and releasing
+it were not performed. Signed build success is not physical-device acceptance.
+Full evidence: [RC32.2 acceptance JSON](../browser-bundle/tests/evidence/image-exchange-release-2026-10-11.json).
+
 Before a real update, save open Image Projects outside the app as JSON/ZIP (no
 autosave), plus palette/project backups. Use the existing Play test track for a
 Play-installed app; a sideload APK may have a different certificate from Play App

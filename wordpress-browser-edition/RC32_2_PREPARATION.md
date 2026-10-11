@@ -12,7 +12,41 @@ This document describes preparation, not a claim of live activation or a Play up
 | Browser ZIP | 0.2.0-rc32.2-image-exchange | e2475f407ac77318662275f9a3c0ae006fc62135d1a87d7c5a64659a5c083f79 |
 | WordPress installer | 0.1.15-beta13 / RC32.2 | 8ea6a1be099e05d858856ddea352a9f9aba599eb3d321dd0c4865ce1dc19cff1 |
 | Desktop exchange helper ZIP | RC32.2 | 1868286804b0a62b281cdf18f96b8dc96541bb64c8c5be78f5df2c3341bdc75f |
-| Android test update | 0.4.0-beta.8 / code 8 | Set by the separately verified signing run |
+| Signed Android APK | 0.4.0-beta.8 / code 8 | b7bd511b1cb5898811374bee320138cbc6d22b7177058813932ee3797cb8811d |
+| Signed Android AAB | 0.4.0-beta.8 / code 8 | bbe82dd02e39389c35236e7c5e049825d9aac6ac8af51df536f2df536464a90d |
+
+## Acceptance completed on 2026-10-11
+
+Prepared and signed from `8f8f8eeb5eed32e5ef2d0eddb233921f224e90b8`,
+with all eleven PR workflows successful. The full reports, package hashes,
+workflow IDs and remaining device gates are committed in
+[`image-exchange-release-2026-10-11.json`](../browser-bundle/tests/evidence/image-exchange-release-2026-10-11.json).
+The subsequent evidence commit changes documentation only.
+
+- [RC32.2 package acceptance, run 38157445042](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/38157445042):
+  deterministic ZIPs; exact embedded payload and helper; preserved source/data
+  modules and installer; PHP 7.4/8.5 failure preservation, activation and rollback;
+  actual image-project history, independent PNG replay, card exports and PDF.
+- [Cross-engine acceptance, run 38157445035](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/38157445035):
+  504 JSON/ZIP imports (432 verified unchanged, 72 expected rejections),
+  36 rejected UI imports preserve the workspace, 18 helper edit/return roundtrips,
+  72 coherently rehashed one-byte attacks rejected, persistent downloads verified.
+- [Android regression, run 38157445047](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/38157445047):
+  beta.7 to beta.8 persistent-profile migration, exact retained palettes/projects,
+  image JSON/ZIP history and reference-card exports, APK/AAB asset checks.
+- [Protected manual Android signing, run 38157534683](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/38157534683):
+  APK and AAB signed with the existing reserved certificate; application ID,
+  version code/name and every one of 50 packaged assets verified.
+
+Downloadable CI artifacts are `ATLAS-Clarus-RC32.2-installers-and-helper` in the
+package run and the two `0.4.0-beta.8` artifacts in the signing run. Each signed
+artifact archive contains one `app-release.apk` or `app-release.aab`; the hashes
+above are for those extracted files. Signing artifacts expire after 14 days.
+Keep downloaded copies with their checksums.
+
+The first package run failed because generated card test fixtures were missing.
+The corrected workflow runs the existing fixture generator before browser tests;
+no runtime or package bytes were changed to obtain the passing result.
 
 The browser builder verifies and extracts the immutable beta12/RC32.1 payload,
 then replaces only the reviewed Image Projects UI script and handover section,
