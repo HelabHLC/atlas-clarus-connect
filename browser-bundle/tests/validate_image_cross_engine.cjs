@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const {pathToFileURL} = require('node:url');
+const {spawnSync} = require('node:child_process');
 const X = require('../tools/image-project-exchange.cjs');
 const out = path.resolve(process.env.SOURCE_BINDING_OUTPUT || '/tmp/atlas-source-binding');
 const target = X.DEFAULT_HTML, legacy = path.join(out, 'legacy/atlas-clarus-browser-bundle/index.html');
@@ -153,6 +154,25 @@ function pack(p, zip) { return {p, json: Buffer.from(JSON.stringify(p) + '\n'), 
       assert.equal(check.input_sha256, X.sha(projects.chromium['alpha.png'].edited[format]));
       fs.writeFileSync(path.join(artifacts, `helper-check-${format}.json`), JSON.stringify(check, null, 2) + '\n');
     }
+    // Test the real CLI check and download persistence used by headed sessions.
+    const inputPath = path.join(artifacts, 'chromium-alpha.png-edited.zip');
+    const inputBefore = fs.readFileSync(inputPath);
+    const cli = spawnSync(process.execPath, [path.join(__dirname, '../tools/image-project-exchange.cjs'), inputPath, '--check'], {encoding: 'utf8', timeout: 120000});
+    assert.equal(cli.status, 0, cli.stderr);
+    assert.deepEqual(JSON.parse(cli.stdout).results.filter(r => r.status === 'VERIFIED').map(r => r.engine), ['chromium']);
+    const editor = await X.openVerified(inputBefore, 'zip', 'chromium', target, true);
+    let downloads;
+    try {
+      downloads = X.retainDownloads(editor.page, inputPath);
+      await download(editor.page, '#ip-json'); await downloads.finish();
+      await download(editor.page, '#ip-json'); await downloads.finish();
+      assert.equal(downloads.saved.length, 2); assert.notEqual(downloads.saved[0], downloads.saved[1]);
+      await download(editor.page, '#ip-zip'); await downloads.finish();
+    } finally { await editor.browser.close(); }
+    for (const saved of downloads.saved.slice(0, 2)) assert.deepEqual(JSON.parse(fs.readFileSync(saved)), projects.chromium['alpha.png'].edited.p);
+    assert.deepEqual(fs.readFileSync(downloads.saved[2]), inputBefore);
+    assert.deepEqual(fs.readFileSync(inputPath), inputBefore);
+    report.helper_cli_and_downloads_survive_close = true;
     // Coherently rehashed one-byte attacks from each origin, in BOTH formats,
     // must fail all three engine probes. Use the actual legacy exporter to make
     // all package hashes/CRCs consistent; no forged document should be "rescued".
@@ -176,11 +196,23 @@ function pack(p, zip) { return {p, json: Buffer.from(JSON.stringify(p) + '\n'), 
           const check = await X.probe(packet.json, 'json', target);
           assert(check.results.every(r => r.status === 'REJECTED')); // no compatible engine => no import
           await assert.rejects(() => X.openVerified(packet.zip, 'zip', 'chromium', target, true), /Source\/pixel consistency/);
+          const rejectedPath = path.join(artifacts, 'forged.json'); fs.writeFileSync(rejectedPath, packet.json);
+          const cli = spawnSync(process.execPath, [path.join(__dirname, '../tools/image-project-exchange.cjs'), rejectedPath, '--check'], {encoding: 'utf8', timeout: 120000});
+          assert.equal(cli.status, 2, cli.stderr);
+          assert(JSON.parse(cli.stdout).results.every(r => r.status === 'REJECTED'));
+          assert.deepEqual(fs.readFileSync(rejectedPath), packet.json);
           report.no_matching_engine_fails_closed = true;
         }
       }
       await old.close();
     }
+    const badZip = Buffer.from(projects.chromium['opaque.png'].edited.zip);
+    badZip[80] ^= 1;
+    for (const to of X.ENGINES) await assert.rejects(() => X.verifyBytes(sessions[to].page, badZip, 'zip'));
+    // Unavailable engine/runtime is never reported as rejection or acceptance.
+    const unavailable = await X.probe(projects.chromium['opaque.png'].initial.json, 'json', target, ['nonexistent']);
+    assert.equal(unavailable.results[0].status, 'UNAVAILABLE');
+    report.damaged_zip_rejected_and_unavailable_distinguished = true;
     report.status = 'PASS';
     report.totals = {imports: report.cases.length, verified: report.cases.filter(r => r.actual === 'VERIFIED').length,
       rejected: report.cases.filter(r => r.actual === 'REJECTED').length,

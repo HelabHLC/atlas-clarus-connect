@@ -93,6 +93,22 @@ async function openVerified(bytes, format, engine, html = DEFAULT_HTML, headless
   } catch (error) { await session.browser.close(); throw error; }
 }
 
+function retainDownloads(page, inputFilename) {
+  const folder = fs.mkdtempSync(path.join(path.dirname(path.resolve(inputFilename)), 'atlas-exchange-downloads-'));
+  let sequence = 0;
+  const pending = new Set(), saved = [], failures = [];
+  page.on('download', download => {
+    const target = path.join(folder, `${++sequence}-${path.basename(download.suggestedFilename())}`);
+    const task = download.saveAs(target).then(() => {saved.push(target); console.log('Saved: ' + target);})
+      .catch(error => {failures.push(error); console.error('Download failed: ' + error.message);});
+    pending.add(task); task.finally(() => pending.delete(task));
+  });
+  return {folder, saved, failures, finish: async () => {
+    await Promise.all(pending);
+    if (failures.length) throw Error('One or more requested downloads failed; keep the source and retry the export.');
+  }};
+}
+
 async function main(args) {
   const [filename, mode, engine, ...extra] = args;
   if (!filename || extra.length || !['--check', '--open'].includes(mode) ||
@@ -111,25 +127,18 @@ async function main(args) {
     if (!report.results.some(r => r.status === 'VERIFIED')) process.exitCode = 2;
   } else {
     const session = await openVerified(bytes, format, engine);
-    console.log(JSON.stringify({status: 'OPENED_AFTER_FRESH_VERIFICATION', engine,
-      browser_version: session.version, input_sha256: before, document_sha256: session.verified.document_sha256}));
-    console.log('Use the editor download buttons to save JSON/ZIP. Closing the window does not save edits.');
-    // Playwright's temporary download directory is deleted on browser close.
-    // Retain user-requested downloads beside the input, with non-overwriting names.
-    const folder = fs.mkdtempSync(path.join(path.dirname(path.resolve(filename)), 'atlas-exchange-downloads-'));
-    let sequence = 0;
-    const pending = new Set();
-    session.page.on('download', download => {
-      const target = path.join(folder, `${++sequence}-${path.basename(download.suggestedFilename())}`);
-      const task = download.saveAs(target).then(() => console.log('Saved: ' + target))
-        .catch(error => { console.error('Download failed: ' + error.message); process.exitCode = 1; });
-      pending.add(task); task.finally(() => pending.delete(task));
-    });
-    await new Promise(resolve => session.page.once('close', resolve));
-    await Promise.all(pending);
-    await session.browser.close();
+    try {
+      // Install the saver before announcing the workspace. Playwright normally
+      // deletes temporary downloads when its browser context closes.
+      const downloads = retainDownloads(session.page, filename);
+      console.log(JSON.stringify({status: 'OPENED_AFTER_FRESH_VERIFICATION', engine,
+        browser_version: session.version, input_sha256: before, document_sha256: session.verified.document_sha256}));
+      console.log('Use the editor download buttons to save JSON/ZIP. Wait for Saved: before closing. Closing alone does not save edits.');
+      await new Promise(resolve => session.page.once('close', resolve));
+      await downloads.finish();
+    } finally { await session.browser.close(); }
   }
   if (sha(bytes) !== before) throw Error('Input bytes changed.');
 }
-module.exports = {ENGINES, DEFAULT_HTML, sha, launch, verifyBytes, probe, openVerified};
+module.exports = {ENGINES, DEFAULT_HTML, sha, launch, verifyBytes, probe, openVerified, retainDownloads};
 if (require.main === module) main(process.argv.slice(2)).catch(error => {console.error(error.message); process.exitCode = 1;});

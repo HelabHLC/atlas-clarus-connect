@@ -59,6 +59,13 @@ Relevant platform definitions:
 [drawing images](https://html.spec.whatwg.org/multipage/canvas.html#drawing-images-to-the-canvas),
 [premultiplied alpha](https://html.spec.whatwg.org/multipage/canvas.html#premultiplied-alpha-and-the-2d-rendering-context).
 
+## Cross-engine follow-up
+
+Same-engine tests above do not prove cross-engine portability. The follow-up
+[exact cross-engine handover suite and desktop exchange route](IMAGE_CROSS_ENGINE.md)
+test actual JSON/ZIP transfers in both directions and retain strict verification.
+Physical iPhone/iPad acceptance remains open.
+
 ## What this establishes
 
 Successful import establishes agreement between the **embedded** source bytes,
