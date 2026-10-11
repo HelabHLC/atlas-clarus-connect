@@ -144,5 +144,53 @@ EXIF orientation, ICC conversion, UI drop failures and the published package.
   decoder policy and a deliberate migration design. No such conversion or claim
   is introduced here.
 
-Executed evidence is recorded separately after the CI run completes. A report
-with `status: RUNNING`/`FAIL` is not a compatibility pass.
+## Executed cross-import results — 11 October 2026
+
+The completed suite passed on Chromium **151.0.7922.34**, Firefox **153.0** and
+WebKit **26.5**, using Playwright 1.62.1 on a GitHub-hosted Linux runner.
+Firefox tagged-image colour management was explicitly enabled as described above.
+[Executed run](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/38155586500)
+checked source commit `c257c2ff6e1f24aefdc049187db4e7f46032e4f1`.
+[Complete machine-readable evidence](tests/evidence/image-cross-engine-2026-10-11.json)
+contains all 504 cases, source/pixel/input hashes, UI and helper results, 72
+attack outcomes, tested source hashes and all eight successful CI workflow IDs.
+The evidence-only commit does not alter the tested runtime or tests.
+
+Each cell below covers **both JSON and ZIP**, both the initial project and the
+four-event edited project. “Reject” means an exact source/pixel mismatch; the
+unchanged source file's SHA-256 remains valid.
+
+| Fixture | Chromium ↔ Firefox | Chromium ↔ WebKit | Firefox ↔ WebKit |
+| --- | --- | --- | --- |
+| `alpha.png` | Reject both directions | Reject both directions | Reject both directions |
+| `linear-icc.png` | Reject both directions | Reject both directions | Reject both directions |
+| `linear-icc.jpg` | Reject both directions | Reject both directions | Reject both directions |
+| `opaque.png`, `plain.jpg`, `progressive.jpg`, `exif-1.jpg`–`exif-8.jpg` | Unchanged, both directions | Unchanged, both directions | Unchanged, both directions |
+
+All 14 fixtures pass the same-engine controls. The measured counts are:
+
+| Direction | Unchanged imports | Expected rejections |
+| --- | ---: | ---: |
+| Chromium → Firefox | 44 | 12 |
+| Firefox → Chromium | 44 | 12 |
+| Chromium → WebKit | 44 | 12 |
+| WebKit → Chromium | 44 | 12 |
+| Firefox → WebKit | 44 | 12 |
+| WebKit → Firefox | 44 | 12 |
+| Same-engine controls combined | 168 | 0 |
+| **Total** | **432** | **72** |
+
+All 36 UI workspace-preservation checks, all six opaque-PNG edit/return
+roundtrips, all 18 problematic-file matching-engine edit/return roundtrips and
+all 72 rejection checks for coherently rehashed attacks passed. The CLI check
+returned the correct exit statuses; repeated JSON and ZIP downloads survived
+browser closure without overwriting the input. Damaged ZIPs were rejected and
+unavailable engines were distinguished from failed verification. The 72 expected
+compatibility rejections are separate from the 72 malicious test variants.
+
+The pixel/source verifier remains byte-for-byte identical to #70 (SHA-256
+`3b5b6e90abd28f52b5236ea0793ff6b9394cb0754f504951df2f0da6117e2c45`).
+Original source and browser-decoded sRGB values remain distinct. The embedded
+file retains information (including profile and hidden RGB) that a browser's
+initial canvas capture may already have converted or rounded; this work does
+not claim to reverse that original capture conversion.
