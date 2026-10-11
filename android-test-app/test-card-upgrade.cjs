@@ -99,7 +99,7 @@ const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-upgrade-profile-'))
 
     // Image Projects intentionally has no autosave: preserve an actual exported
     // project with original bytes, a linked palette and an editing event.
-    await page.locator('a[href="#image-projects"]').click();
+    await page.locator('#primary-nav a[href="#image-projects"]').click();
     await page.waitForFunction(() => !document.getElementById('ip-image').disabled);
     await page.locator('#ip-name').fill('Saved image project');
     await page.locator('#ip-attach').check();
@@ -131,12 +131,12 @@ const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-upgrade-profile-'))
     const paletteFile = await save('[data-palette-export="clarus"]','beta7-palette.json');
     assert.deepEqual(JSON.parse(fs.readFileSync(paletteFile)).source_assignments,JSON.parse(fixture.bundle_origin.document_text).source_assignments);
     await page.locator('#palette-close').click();
-    await page.locator('a[href="#image-projects"]').click();
+    await page.locator('#primary-nav a[href="#image-projects"]').click();
     for (const file of [path.join(out,'beta6-image.json'),imageZip]) {
       await page.locator('#ip-import').setInputFiles(file); await done('ip-status','Image project opened');
       assert.deepEqual(JSON.parse(fs.readFileSync(await save('#ip-json','beta7-image.json'))),imageBefore);
     }
-    await page.locator('a[href="#colour-handoff"]').click();
+    await page.locator('#primary-nav a[href="#colour-handoff"]').click();
     await page.waitForFunction(() => !document.getElementById('ch-reference-card').disabled);
     const zip = await save('#ch-reference-card','android-reference-card.zip');
     const dir = path.join(out,'card');
