@@ -3,3 +3,5 @@ build-colour-reference-card/
 __pycache__/
 tests/__pycache__/
 tests/node_modules/
+
+build-colour-reference-card-pilot/
