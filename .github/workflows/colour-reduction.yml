@@ -1,4 +1,4 @@
-name: RC33 colour reduction
+name: RC33.1 colour reduction and input magnifier
 on:
   pull_request:
     paths:
@@ -46,14 +46,14 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: success()
         with:
-          name: ATLAS-Clarus-RC33-colour-reduction-candidate
+          name: ATLAS-Clarus-RC33.1-colour-reduction-loupe-candidate
           path: |
             browser-bundle/build-colour-reduction/*.zip
             browser-bundle/build-colour-reduction/*.sha256
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: RC33-colour-reduction-evidence
+          name: RC33.1-colour-reduction-loupe-evidence
           path: |
             /tmp/atlas-colour-reduction/
             /tmp/atlas-image-projects-browser/

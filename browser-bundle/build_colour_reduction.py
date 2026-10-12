@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build RC33 colour reduction on the exact reviewed RC32.2 runtime."""
+"""Build RC33.1 colour reduction with an input pixel magnifier on RC32.2."""
 import argparse
 import json
 from pathlib import Path
@@ -8,7 +8,7 @@ import tempfile
 from build_image_exchange_pilot import build as build_base, sha, zip_tree
 
 HERE = Path(__file__).resolve().parent
-VERSION = '0.2.0-rc33-colour-reduction'
+VERSION = '0.2.0-rc33.1-colour-reduction-loupe'
 BASE_VERSION = '0.2.0-rc32.2-image-exchange'
 BASE_SHA256 = 'e2475f407ac77318662275f9a3c0ae006fc62135d1a87d7c5a64659a5c083f79'
 
@@ -46,7 +46,7 @@ def build(output):
         self.postMessage({result},[result.pixels.buffer,result.indices.buffer,result.assignments.buffer]);
       } catch(e) { self.postMessage({error:e.message}); }
     };'''
-    scripts = inline(core)+inline(ui)+'<script type="application/json" id="atlas-reduction-worker-source">'+json.dumps(worker).replace('<','\\u003c')+'</script>'
+    scripts = inline(core)+inline((HERE/'src/colour-reduction-loupe.js').read_text())+inline(ui)+'<script type="application/json" id="atlas-reduction-worker-source">'+json.dumps(worker).replace('<','\\u003c')+'</script>'
     html = once(html,inline(new_ui),inline(new_ui)+scripts)
     anchor = '  window.ATLAS_IMAGE_PROJECTS_UI.init({colors,master:MASTER,download});'
     html = once(html,anchor,anchor+'\n  window.ATLAS_COLOUR_REDUCTION_UI.init({colors,master:MASTER,download});')
@@ -54,13 +54,13 @@ def build(output):
     app.write_text(once(app.read_text(),anchor,anchor+'\n  window.ATLAS_COLOUR_REDUCTION_UI.init({colors,master:MASTER,download});'))
     html = html.replace(BASE_VERSION,VERSION)
     (dist/'index.html').write_text(html)
-    for name in ['colour-reduction.js','colour-reduction-ui.js','colour-reduction.css']:
+    for name in ['colour-reduction.js','colour-reduction-loupe.js','colour-reduction-ui.js','colour-reduction.css']:
         shutil.copyfile(HERE/'src'/name,dist/'assets'/name)
     shutil.copyfile(HERE/'COLOUR_REDUCTION.md',dist/'docs/COLOUR_REDUCTION.md')
     manifest = json.loads((dist/'BUNDLE_MANIFEST.json').read_text())
     manifest.update(version=VERSION,status='COLOUR_REDUCTION_CANDIDATE',deployment_allowed=False,
                     colour_reduction_schema='atlas-clarus-colour-reduction/1.0',colour_reduction_max_colours=256,
-                    colour_reduction_method='ATLAS_RGB_WEIGHTED_MEDOIDS_V1')
+                    colour_reduction_method='ATLAS_RGB_WEIGHTED_MEDOIDS_V1',colour_reduction_input_loupe='11x11_ORIGINAL_RGBA')
     (dist/'BUNDLE_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n')
     (dist/'SHA256SUMS.txt').write_text(''.join(f'{sha(p.read_bytes())}  {p.relative_to(dist).as_posix()}\n'
         for p in sorted(dist.rglob('*')) if p.is_file() and p.name!='SHA256SUMS.txt'))

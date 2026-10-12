@@ -1,4 +1,4 @@
-# Colour Reduction 0.1 — RC33 candidate
+# Colour Reduction 0.1 — RC33.1 input magnifier candidate
 
 Adds an offline Colour Reduction workspace to the exact RC32.2 payload. Select
 1–256 motif references, keep selected Atlas references, compare the input with
@@ -10,7 +10,12 @@ the derived image, export PNG and GPL / ASE / CSS / design tokens.
 2. Load PNG/JPEG, an Image Projects JSON/ZIP, or choose **Use current Image Project**.
 3. Choose the maximum number of motif colours. For a flat T-shirt graphic, start
    with a small palette and discuss the result with the printer.
-4. Click visible input pixels or enter HEX and choose **Protect its Atlas reference**.
+4. Move over the input to see the **11 × 11 pixel magnifier**. Click or tap to
+   retain a selection; choose a cell in the enlarged grid or use the arrow buttons
+   to move by one original pixel. A focused image/grid supports arrow keys and
+   Shift + arrow for ten pixels. The readout separates input RGB/HEX and alpha
+   from the full-master Atlas reference. Choose **Protect selected pixel’s Atlas
+   reference** next to the magnifier, or enter HEX above and choose **Protect its Atlas reference**.
    The displayed reference is what is protected, not the exact original HEX.
 5. Generate and compare the preview. Change settings and rerun as needed.
 6. Download the derived PNG, a palette, and the complete reduction ZIP.
@@ -18,6 +23,15 @@ the derived image, export PNG and GPL / ASE / CSS / design tokens.
 No reduction changes the original Image Project. Its exact source-verification,
 history and decoder modules are retained. The editor integration only reads a
 deep copy of the current document and re-verifies it.
+
+The magnifier reads frozen original/current input RGBA directly. It does not
+sample scaled canvas pixels, average a region, change the source or alter the
+reduction method. The centre cell is outlined; outside-image padding cannot be
+selected. Alpha=0 cells have no Atlas assignment and cannot be protected through
+the magnifier. Partially opaque pixels show their retained RGB and alpha separately.
+Touch uses tap selection and arrow buttons; native page scrolling is retained.
+Selecting a new source clears the pixel selection. Inspection controls are
+disabled while loading, reducing or preparing an export.
 
 ## Defined method
 

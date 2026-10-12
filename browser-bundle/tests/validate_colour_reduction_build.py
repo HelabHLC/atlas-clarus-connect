@@ -20,7 +20,7 @@ with tempfile.TemporaryDirectory() as tmp:
         if old.is_file() and old.relative_to(base).as_posix() not in allowed:
             assert old.read_bytes()==(new/old.relative_to(base)).read_bytes(),old
     html=(new/'index.html').read_text()
-    for name in ['image-projects-ui.js','colour-reduction.js','colour-reduction-ui.js','app.js']:
+    for name in ['image-projects-ui.js','colour-reduction.js','colour-reduction-loupe.js','colour-reduction-ui.js','app.js']:
         assert '<script>'+(new/'assets'/name).read_text().replace('</script','<\\/script')+'</script>' in html,name
     for line in (new/'SHA256SUMS.txt').read_text().splitlines():
         digest,name=line.split('  ',1)

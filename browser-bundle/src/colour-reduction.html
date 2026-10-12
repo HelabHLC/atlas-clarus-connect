@@ -20,7 +20,22 @@
   </div>
   <p id="cr-status" role="status" aria-live="polite">Checking reference data …</p>
   <div id="cr-images" hidden>
-    <div class="cr-grid"><div class="cr-panel"><h3>Input image</h3><div class="cr-checker"><canvas id="cr-before" width="1" height="1" aria-label="Input preview; click a visible pixel to sample a protection colour"></canvas></div></div>
+    <div class="cr-grid"><div class="cr-panel"><h3>Input image</h3>
+      <p id="cr-pixel-help" class="boundary">Move over the image to magnify original pixels. Click or tap to keep a selection, then refine it in the pixel magnifier below. Arrow keys move one pixel; Shift + arrow moves ten.</p>
+      <div id="cr-input-stage" class="cr-checker">
+        <canvas id="cr-before" width="1" height="1" tabindex="0" aria-label="Input image pixel selection" aria-describedby="cr-pixel-help"></canvas>
+        <span id="cr-pixel-marker" aria-hidden="true" hidden></span>
+        <div id="cr-loupe-hover" aria-hidden="true" hidden><canvas id="cr-loupe-hover-canvas" width="264" height="264"></canvas><p id="cr-loupe-hover-value"></p></div>
+      </div>
+      <div id="cr-pixel-inspector" hidden>
+        <h4>Pixel magnifier · 11 × 11 original pixels</h4>
+        <p class="boundary">The outlined centre is selected. Click a magnified pixel or use the arrows to refine your selection.</p>
+        <div class="cr-pixel-grid"><canvas id="cr-loupe-detail" width="264" height="264" tabindex="0" aria-label="Magnified original pixels; select a cell or use arrow keys" aria-describedby="cr-pixel-value"></canvas></div>
+        <div class="cr-pixel-arrows" aria-label="Move selected pixel"><button id="cr-pixel-left" type="button" aria-label="Select pixel to the left">←</button><button id="cr-pixel-up" type="button" aria-label="Select pixel above">↑</button><button id="cr-pixel-down" type="button" aria-label="Select pixel below">↓</button><button id="cr-pixel-right" type="button" aria-label="Select pixel to the right">→</button></div>
+        <p id="cr-pixel-value" class="boundary" role="status" aria-live="polite"></p><p id="cr-pixel-reference" class="boundary"></p>
+        <button id="cr-pixel-protect" type="button">Protect selected pixel’s Atlas reference</button>
+      </div>
+    </div>
     <div class="cr-panel"><h3>Reduced preview</h3><div class="cr-checker"><canvas id="cr-after" width="1" height="1" aria-label="Reduced image preview" hidden></canvas></div><p id="cr-result" class="boundary">Create a preview to compare.</p></div></div>
   </div>
   <div id="cr-output" hidden>

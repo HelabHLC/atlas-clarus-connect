@@ -3,7 +3,7 @@
   const I=root.ATLAS_IMAGE_PROJECTS,C=root.ATLAS_IMAGE_CODECS,A=root.ATLAS_COLOUR_HANDOFF,H=root.ClarusHandoff,R=root.ATLAS_COLOUR_REDUCTION;
   const $=id=>document.getElementById(id);
   function init({colors,master,download}){
-    let ctx=null,input=null,result=null,busy=false,worker=null,workerUrl=null,locks=[];
+    let ctx=null,input=null,result=null,busy=false,worker=null,workerUrl=null,locks=[],loupe=null;
     const byId=new Map(colors.map(c=>[c.id,c]));
     const status=(s,error=false)=>{$('cr-status').textContent=s;$('cr-status').dataset.error=String(error);};
     function controls(){
@@ -12,6 +12,7 @@
       for(const id of ['cr-png','cr-zip','cr-palette'])$(id).disabled=busy||!result;
       $('cr-cancel').disabled=!worker;
       document.querySelectorAll('#cr-locks button').forEach(b=>b.disabled=busy);
+      loupe?.setBusy(busy||!ctx||!input);
     }
     function invalidate(){result=null;$('cr-output').hidden=true;$('cr-after').hidden=true;$('cr-result').textContent='Settings changed. Create a new reduced preview.';controls();}
     function draw(id,pixels){const cv=$(id);cv.width=input.width;cv.height=input.height;cv.getContext('2d',{colorSpace:'srgb'}).putImageData(new ImageData(new Uint8ClampedArray(pixels),input.width,input.height),0,0);}
@@ -22,7 +23,7 @@
     async function run(message,fn){if(busy||!ctx)return;busy=true;controls();status(message);try{await fn();}catch(e){status(e.message+' Previous source retained.',true);}finally{busy=false;controls();}}
     async function projectInput(p){const s=await I.verify(p,ctx);return {width:p.original.width,height:p.original.height,rgba:s.frame.slice(),name:p.name,
       sourceName:p.original.name,sourceBytes:s.source,sourceMime:p.original.mime,project:p};}
-    function accept(next){input=next;locks=[];invalidate();showLocks();$('cr-images').hidden=false;draw('cr-before',input.rgba);$('cr-source').textContent=input.name+' · '+input.width+' × '+input.height+' pixels'+(input.project?' · verified current Image Project revision':' · browser-decoded sRGB');status('Source ready. Choose the maximum palette size and protect important references.');}
+    function accept(next){input=next;locks=[];loupe.setInput(input);invalidate();showLocks();$('cr-images').hidden=false;draw('cr-before',input.rgba);$('cr-source').textContent=input.name+' · '+input.width+' × '+input.height+' pixels'+(input.project?' · verified current Image Project revision':' · browser-decoded sRGB');status('Source ready. Choose the maximum palette size and protect important references.');}
     $('cr-file').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;run('Reading and verifying the source …',async()=>{
       const isProject=/\.(json|zip)$/i.test(f.name),limit=isProject?96*1024*1024:I.MAX_SOURCE;
       if(f.size>limit)throw Error('File exceeds the supported size.');
@@ -40,9 +41,12 @@
       if(locks.length>=Number($('cr-k').value))throw Error('Increase the colour limit or remove a protected reference.');
       locks.push(ref.atlas_row_id);locks.sort((a,b)=>a-b);invalidate();showLocks();status(value.toUpperCase()+' → protected '+ref.atlas_reference+' ('+I.hex(ref.reference_rgb)+'). Create a new preview.');
     }catch(e){status(e.message,true);}};
-    $('cr-before').onclick=e=>{if(!input||busy)return;const cv=$('cr-before'),b=cv.getBoundingClientRect(),x=Math.min(input.width-1,Math.floor((e.clientX-b.left)*input.width/b.width)),y=Math.min(input.height-1,Math.floor((e.clientY-b.top)*input.height/b.height)),i=(y*input.width+x)*4;
-      if(!input.rgba[i+3]){status('This pixel is fully transparent; choose a visible colour.');return;}
-      $('cr-lock-hex').value=I.hex(Array.from(input.rgba.slice(i,i+3)));status('Sampled X '+x+', Y '+y+'. Choose “Protect its Atlas reference” to keep it.');};
+    function selectPixel(pixel){
+      if(!pixel.alpha){status('This pixel is fully transparent; choose a visible colour.');return;}
+      $('cr-lock-hex').value=I.hex(pixel.rgb);status('Sampled X '+pixel.x+', Y '+pixel.y+'. Protect the selected pixel’s Atlas reference when ready.');
+    }
+    loupe=root.ATLAS_COLOUR_REDUCTION_LOUPE.create({hex:I.hex,reference:rgb=>I.reference(rgb,ctx),onSelect:selectPixel,
+      onProtect:pixel=>{selectPixel(pixel);$('cr-lock-add').click();}});
     function stop(){if(worker)worker.terminate();if(workerUrl)URL.revokeObjectURL(workerUrl);worker=null;workerUrl=null;busy=false;controls();}
     $('cr-cancel').onclick=()=>{stop();status('Reduction cancelled. Source unchanged.');};
     $('cr-run').onclick=()=>{

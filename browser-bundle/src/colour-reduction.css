@@ -9,6 +9,18 @@
 #colour-reduction .cr-checker{min-height:140px;display:flex;align-items:center;justify-content:center;background:repeating-conic-gradient(#c7cbd0 0% 25%,#f2f3f5 0% 50%) 0 0/20px 20px;border-radius:8px;overflow:hidden}
 #colour-reduction canvas{display:block;max-width:100%;max-height:65vh;width:auto;height:auto}
 #cr-before{cursor:crosshair}
+#colour-reduction #cr-input-stage{position:relative}
+#colour-reduction #cr-loupe-hover{position:absolute;z-index:4;pointer-events:none;width:220px;max-width:100%;box-sizing:border-box;padding:5px;background:var(--bg);border:2px solid var(--accent);border-radius:8px;box-shadow:0 8px 24px #0009}
+#colour-reduction #cr-loupe-hover canvas{width:100%;height:auto;max-height:none;image-rendering:pixelated;background:repeating-conic-gradient(#c7cbd0 0% 25%,#f2f3f5 0% 50%) 0 0/24px 24px}
+#colour-reduction #cr-loupe-hover-value{font:12px/1.4 monospace;margin:5px 0 0;color:var(--text)}
+#colour-reduction #cr-pixel-marker{position:absolute;z-index:2;width:18px;height:18px;transform:translate(-50%,-50%);box-sizing:border-box;border:2px solid var(--accent);outline:1px solid #000;border-radius:50%;pointer-events:none}
+#colour-reduction #cr-pixel-inspector{margin-top:20px;border-top:1px solid var(--line);padding-top:4px}
+#colour-reduction .cr-pixel-grid{width:264px;max-width:100%;background:repeating-conic-gradient(#c7cbd0 0% 25%,#f2f3f5 0% 50%) 0 0/24px 24px}
+#colour-reduction #cr-loupe-detail{width:100%;height:auto;max-height:none;image-rendering:pixelated;cursor:crosshair}
+#colour-reduction .cr-pixel-arrows{display:flex;gap:8px;margin:12px 0}
+#colour-reduction .cr-pixel-arrows button{min-width:44px;min-height:44px;font-size:20px}
+#colour-reduction #cr-pixel-protect{max-width:100%;white-space:normal;min-height:44px}
+#colour-reduction #cr-before:focus-visible,#colour-reduction #cr-loupe-detail:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
 #cr-status{padding:16px;border-left:3px solid var(--accent);background:var(--panel)}
 #cr-status[data-error="true"]{border-color:var(--warn);color:var(--warn)}
 #cr-swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
