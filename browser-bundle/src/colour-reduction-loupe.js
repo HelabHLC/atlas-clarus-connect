@@ -69,9 +69,12 @@
     });
     before.addEventListener('pointerleave',()=>{floating.hidden=true;});
     before.addEventListener('blur',()=>{floating.hidden=true;});
-    before.addEventListener('click',event=>{if(input)choose(pointAt(event,before,input.width,input.height));});
-    $('cr-loupe-detail').addEventListener('click',event=>{
-      if(!selected||!input||disabled)return;
+    // PointerEvent retains fractional CSS coordinates. Chromium's click event
+    // can round them, selecting a neighbouring source pixel in a scaled image.
+    // Native touch scrolling cancels the pointer, so it never selects a pixel.
+    before.addEventListener('pointerup',event=>{if(input&&event.isPrimary&&event.button===0)choose(pointAt(event,before,input.width,input.height));});
+    $('cr-loupe-detail').addEventListener('pointerup',event=>{
+      if(!selected||!input||disabled||!event.isPrimary||event.button!==0)return;
       const p=pointAt(event,$('cr-loupe-detail'),span,span),x=selected.x+p.x-half,y=selected.y+p.y-half;
       // Blank cells outside the source are padding, never a different source pixel.
       if(x>=0&&y>=0&&x<input.width&&y<input.height)choose({x,y});

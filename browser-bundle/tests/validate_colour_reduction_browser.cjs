@@ -49,6 +49,7 @@ const fixture=path.join(out,'textile-motif.png');fs.writeFileSync(fixture,C.png(
   const partial=await page.evaluate(async bytes=>Array.from((await ATLAS_IMAGE_PROJECTS.decodeSource(Uint8Array.from(bytes))).rgba.slice((80*360+36)*4,(80*360+36)*4+4)),Array.from(fs.readFileSync(fixture)));
   await pixelAt(36,80);assert((await page.locator('#cr-pixel-value').innerText()).includes('Input RGB '+partial.slice(0,3).join(' / ')));assert((await page.locator('#cr-pixel-value').innerText()).includes('Alpha 128/255'));
   await page.setViewportSize({width:390,height:844});await pixelAt(290,210);
+  assert((await page.locator('#cr-pixel-value').innerText()).startsWith('X 290 · Y 210'),await page.locator('#cr-pixel-value').innerText());
   assert.equal(await page.locator('#cr-lock-hex').inputValue(),'#3D7B19');
   assert((await page.locator('#cr-pixel-reference').innerText()).includes('H130_L045_C055'));
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'magnifier mobile overflow');
