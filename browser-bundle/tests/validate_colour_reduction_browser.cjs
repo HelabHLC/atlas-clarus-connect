@@ -52,8 +52,10 @@ const fixture=path.join(out,'textile-motif.png');fs.writeFileSync(fixture,C.png(
   assert.equal(await page.locator('#cr-lock-hex').inputValue(),'#3D7B19');
   assert((await page.locator('#cr-pixel-reference').innerText()).includes('H130_L045_C055'));
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'magnifier mobile overflow');
-  await page.locator('#cr-loupe-detail').click({position:{x:6*24+12,y:5*24+12}});
-  assert((await page.locator('#cr-pixel-value').innerText()).startsWith('X 291 · Y 210'));
+  const grid=page.locator('#cr-loupe-detail');await grid.scrollIntoViewIfNeeded();const gb=await grid.boundingBox();
+  await grid.click({position:{x:6.5*gb.width/11,y:5.5*gb.height/11}});
+  const gridSelection=await page.locator('#cr-pixel-value').innerText();
+  assert(gridSelection.startsWith('X 291 · Y 210'),'Grid selection '+gridSelection+'; bounds '+JSON.stringify(gb));
   await page.locator('#cr-loupe-detail').press('ArrowLeft');await page.locator('#cr-loupe-detail').press('Shift+ArrowUp');
   assert((await page.locator('#cr-pixel-value').innerText()).startsWith('X 290 · Y 200'));
   await page.locator('#cr-pixel-right').click();assert((await page.locator('#cr-pixel-value').innerText()).startsWith('X 291 · Y 200'));
