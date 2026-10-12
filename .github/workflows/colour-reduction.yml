@@ -30,7 +30,7 @@ jobs:
           python3 -m pip install Pillow pypdf
       - name: Exercise offline reduction, full 256 exports and retained projects
         run: |
-          node browser-bundle/tests/validate_colour_reduction_browser.cjs
+          REDUCTION_EMIT_SCREENSHOT=1 node browser-bundle/tests/validate_colour_reduction_browser.cjs
           python3 - <<'PY'
           from PIL import Image
           from pathlib import Path

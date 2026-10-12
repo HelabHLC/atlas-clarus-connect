@@ -32,7 +32,7 @@
       accept(next);
     });};
     $('cr-current').onclick=()=>run('Checking the current Image Project …',async()=>{const p=root.ATLAS_IMAGE_PROJECTS_UI.readCurrent?.();if(!p)throw Error('Open an image in Image Projects first.');accept(await projectInput(p));});
-    $('cr-k').onchange=()=>{invalidate();status('Colour limit changed. Create a new preview.');};
+    $('cr-k').oninput=()=>{invalidate();status('Colour limit changed. Create a new preview.');};
     $('cr-lock-add').onclick=()=>{try{
       if(busy||!input)return;const value=$('cr-lock-hex').value.trim();if(!/^#[0-9a-f]{6}$/i.test(value))throw Error('Enter a six-digit HEX value.');
       const rgb=[1,3,5].map(i=>parseInt(value.slice(i,i+2),16)),ref=I.reference(rgb,ctx);

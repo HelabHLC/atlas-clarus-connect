@@ -35,13 +35,16 @@
     let palette=locks.slice();
     // Weighted farthest-first seeds; integer RGB error, then lower row ID.
     if(!palette.length)palette.push(points.slice().sort((a,b)=>b.count-a.count||a.id-b.id)[0].id);
+    const distances=new Float64Array(points.length).fill(Infinity),seeded=new Set(palette);
+    function updateDistances(id){const rgb=byId.get(id).rgb;points.forEach((p,i)=>{distances[i]=Math.min(distances[i],d2(p.rgb,rgb));});}
+    palette.forEach(updateDistances);
     while(palette.length<target){
-      const used=new Set(palette);let best=null,score=-1;
-      for(const p of points){if(used.has(p.id))continue;
-        const value=p.count*Math.min(...palette.map(id=>d2(p.rgb,byId.get(id).rgb)));
+      let best=null,score=-1;
+      points.forEach((p,i)=>{if(seeded.has(p.id))return;
+        const value=p.count*distances[i];
         if(value>score||(value===score&&p.id<best)){score=value;best=p.id;}
-      }
-      if(best===null)break;palette.push(best);
+      });
+      if(best===null)break;palette.push(best);seeded.add(best);updateDistances(best);
     }
     function nearestId(rgb,ids){let winner=ids[0],distance=Infinity;
       for(const id of ids){const d=d2(rgb,byId.get(id).rgb);if(d<distance||(d===distance&&id<winner)){winner=id;distance=d;}}
@@ -65,11 +68,12 @@
     palette.sort((a,b)=>a-b);
     const indices=new Uint16Array(assigned.length),output=rgba.slice(),counts=new Map(palette.map(id=>[id,0]));
     const mapping=new Map(points.map(p=>[p.id,palette.includes(p.id)?p.id:nearestId(p.rgb,palette)]));
+    const paletteIndex=new Map(palette.map((id,i)=>[id,i]));
     let reductionError=0,totalError=0,changed=0;
     for(let p=0;p<assigned.length;p++){
       const id=assigned[p],i=p*4;if(id===65535){indices[p]=65535;continue;}
       const chosen=mapping.get(id),rgb=byId.get(chosen).rgb;
-      indices[p]=palette.indexOf(chosen);counts.set(chosen,counts.get(chosen)+1);
+      indices[p]=paletteIndex.get(chosen);counts.set(chosen,counts.get(chosen)+1);
       reductionError+=d2(byId.get(id).rgb,rgb);totalError+=d2([rgba[i],rgba[i+1],rgba[i+2]],rgb);
       if(rgb.some((v,j)=>v!==rgba[i+j]))changed++;
       output.set(rgb,i);

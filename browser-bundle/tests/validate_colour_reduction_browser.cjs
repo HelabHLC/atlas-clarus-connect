@@ -45,7 +45,9 @@ const fixture=path.join(out,'textile-motif.png');fs.writeFileSync(fixture,C.png(
   fs.writeFileSync(path.join(out,'expected-rgba.bin'),rebuilt);fs.writeFileSync(path.join(out,'reduced.png'),files['reduced.png']);
   for(const [format,name]of [['gpl','palette.gpl'],['ase','palette.ase'],['css','palette.css'],['tokens','palette.tokens.json']]){await page.locator('#cr-format').selectOption(format);assert.deepEqual(await save('#cr-palette',name),Buffer.from(files[name]));}
   assert.deepEqual(E.readAse(files['palette.ase']).map(c=>c.rgb),report.palette.map(c=>c.rgb));
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'desktop overflow');
   await page.screenshot({path:path.join(out,'desktop.png'),fullPage:true});
+  if(process.env.REDUCTION_EMIT_SCREENSHOT==='1')console.log('REDUCTION_SCREENSHOT_BASE64='+Buffer.from(await page.screenshot({type:'jpeg',quality:60,fullPage:true})).toString('base64'));
   for(const viewport of [{width:390,height:844},{width:844,height:390}]){await page.setViewportSize(viewport);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.screenshot({path:path.join(out,'viewport-'+viewport.width+'.png'),fullPage:true});}
   await page.setViewportSize({width:1440,height:1100});
   await page.locator('#cr-k').fill('256');await page.locator('#cr-k').blur();assert(await page.locator('#cr-zip').isDisabled());assert(await page.locator('#cr-after').isHidden());
