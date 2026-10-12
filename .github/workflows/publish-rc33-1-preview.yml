@@ -1,0 +1,108 @@
+name: Publish verified RC33.1 preview
+
+on:
+  push:
+    branches: [release/rc33-1-public-preview-20261012]
+    paths:
+      - '.github/workflows/publish-rc33-1-preview.yml'
+      - 'browser-bundle/RELEASE_NOTES_RC33_1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-rc33-1-preview
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'HelabHLC/atlas-clarus-connect' && github.ref == 'refs/heads/release/rc33-1-public-preview-20261012'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: write
+    env:
+      SOURCE_SHA: b6993cfde7ddf8e62ec10914babc6c387373b4ec
+      SOURCE_RUN: '38266487858'
+      ASSET_NAME: ATLAS_Clarus_Browser_Bundle_v0.2.0-rc33.1-colour-reduction-loupe.zip
+      ASSET_SHA256: 2df593619196cdf4b808e8f2199a28e1fb7aaf7a65cc5db6e5056e632174b1e5
+      RELEASE_TAG: v0.2.0-rc33.1-colour-reduction-loupe
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Retrieve the exact accepted candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$SOURCE_RUN" > "$RUNNER_TEMP/rc331-run.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          run=json.loads((Path(os.environ['RUNNER_TEMP'])/'rc331-run.json').read_text())
+          assert run['id']==int(os.environ['SOURCE_RUN'])
+          assert run['head_sha']==os.environ['SOURCE_SHA']
+          assert run['status']=='completed' and run['conclusion']=='success'
+          assert run['repository']['full_name']==os.environ['GITHUB_REPOSITORY']
+          print('Accepted source and successful validation run confirmed.')
+          PY
+          gh run download "$SOURCE_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name ATLAS-Clarus-RC33.1-colour-reduction-loupe-candidate \
+            --dir "$RUNNER_TEMP/rc331-assets"
+          python3 - <<'PY'
+          import hashlib, os, zipfile
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'rc331-assets'/os.environ['ASSET_NAME']
+          data=p.read_bytes()
+          assert len(data)==4036930
+          assert hashlib.sha256(data).hexdigest()==os.environ['ASSET_SHA256']
+          with zipfile.ZipFile(p) as z:
+              assert z.testzip() is None
+          p.with_name(p.name+'.sha256').write_text(os.environ['ASSET_SHA256']+'  '+p.name+'\n')
+          print('Exact accepted ZIP verified:', len(data), 'bytes,', os.environ['ASSET_SHA256'])
+          PY
+      - name: Publish the requested isolated pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ -n "$(git ls-remote --tags "https://github.com/$GITHUB_REPOSITORY.git" "refs/tags/$RELEASE_TAG")" ]; then
+            echo 'The release tag already exists; refusing to replace or retarget it.' >&2
+            exit 1
+          fi
+          asset="$RUNNER_TEMP/rc331-assets/$ASSET_NAME"
+          gh release create "$RELEASE_TAG" "$asset" "$asset.sha256" \
+            --repo "$GITHUB_REPOSITORY" --target "$SOURCE_SHA" \
+            --title 'ATLAS Clarus RC33.1 — Colour Reduction & Pixel Magnifier (Test Preview)' \
+            --notes-file browser-bundle/RELEASE_NOTES_RC33_1.md \
+            --prerelease --latest=false
+      - name: Verify anonymous public download
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, time, urllib.request
+          from pathlib import Path
+          # No token, cookies or Authorization header: test the public endpoint.
+          url='https://github.com/'+os.environ['GITHUB_REPOSITORY']+'/releases/download/'+os.environ['RELEASE_TAG']+'/'+os.environ['ASSET_NAME']
+          for attempt in range(4):
+              try:
+                  with urllib.request.urlopen(url, timeout=60) as response:
+                      assert response.status==200
+                      data=response.read()
+                  assert len(data)==4036930
+                  digest=hashlib.sha256(data).hexdigest()
+                  assert digest==os.environ['ASSET_SHA256']
+                  break
+              except Exception:
+                  if attempt==3: raise
+                  time.sleep(3)
+          report={'status':'PASS','anonymous_download':True,'url':url,'bytes':len(data),'sha256':digest,'source_sha':os.environ['SOURCE_SHA']}
+          (Path(os.environ['RUNNER_TEMP'])/'rc331-public-download.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report))
+          PY
+      - uses: actions/upload-artifact@v7
+        with:
+          name: RC33.1-anonymous-download-verification
+          path: ${{ runner.temp }}/rc331-public-download.json
