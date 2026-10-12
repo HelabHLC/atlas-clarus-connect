@@ -1,0 +1,60 @@
+name: RC33 colour reduction
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - '.github/workflows/colour-reduction.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Check reduction invariants and reproducible integration
+        run: |
+          node browser-bundle/tests/validate_colour_reduction.js
+          python3 browser-bundle/tests/validate_colour_reduction_build.py
+          python3 browser-bundle/build_colour_reduction.py
+      - name: Install browser test dependencies
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python3 -m pip install Pillow pypdf
+      - name: Exercise offline reduction, full 256 exports and retained projects
+        run: |
+          node browser-bundle/tests/validate_colour_reduction_browser.cjs
+          python3 - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          p=Path('/tmp/atlas-colour-reduction')
+          assert Image.open(p/'reduced.png').convert('RGBA').tobytes()==(p/'expected-rgba.bin').read_bytes()
+          print('PASS: independent PNG decoder matches the pixel-index reconstruction')
+          PY
+      - name: Check existing Image Projects and reference card journeys on RC33
+        run: |
+          IMAGE_PROJECTS_HTML=browser-bundle/build-colour-reduction/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_image_projects_browser.cjs
+          node browser-bundle/tests/validate_colour_reference_card.js
+          CARD_HTML="$PWD/browser-bundle/build-colour-reduction/atlas-clarus-browser-bundle/index.html" node browser-bundle/tests/validate_colour_reference_card_browser.cjs
+      - uses: actions/upload-artifact@v7
+        if: success()
+        with:
+          name: ATLAS-Clarus-RC33-colour-reduction-candidate
+          path: |
+            browser-bundle/build-colour-reduction/*.zip
+            browser-bundle/build-colour-reduction/*.sha256
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: RC33-colour-reduction-evidence
+          path: |
+            /tmp/atlas-colour-reduction/
+            /tmp/atlas-image-projects-browser/
+            /tmp/atlas-colour-reference-card/
