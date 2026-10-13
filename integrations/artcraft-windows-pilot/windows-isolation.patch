@@ -7,7 +7,7 @@
 -  "version": "0.41.0",
 -  "identifier": "ai.artcraft.app",
 +  "productName": "ArtCraft ATLAS Pilot",
-+  "version": "0.41.0-clarus.0.2.1",
++  "version": "0.41.0-clarus.0.2.2",
 +  "identifier": "org.atlasclarus.artcraft.pilot",
    "build": {
      "frontendDist": "../../../frontend/apps/artcraft/dist",
@@ -68,4 +68,4 @@
  /// The version of the ArtCraft desktop app reported in the UI and via Analytics.
  /// This should match the CI builds.
 -pub const ARTCRAFT_VERSION: &str = "0.41.0";
-+pub const ARTCRAFT_VERSION: &str = "0.41.0-clarus.0.2.1";
++pub const ARTCRAFT_VERSION: &str = "0.41.0-clarus.0.2.2";
