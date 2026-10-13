@@ -7,6 +7,18 @@ $PSNativeCommandUseErrorActionPreference = $true
 if (-not $IsWindows) { throw 'This build requires Windows and the MSVC toolchain.' }
 $root = (Resolve-Path $ArtcraftCheckout).Path
 $manifest = Get-Content (Join-Path $PSScriptRoot 'build-manifest.json') -Raw | ConvertFrom-Json
+# Retain the license shipped at the pinned release, whose file names differ from main.
+$upstreamLicenseFiles = @(
+  'LICENSE.md',
+  'crates/vendor/tauri-plugin-http/LICENSE.spdx',
+  'crates/vendor/tauri-plugin-http/LICENSE_APACHE-2.0',
+  'crates/vendor/tauri-plugin-http/LICENSE_MIT'
+)
+foreach ($relative in $upstreamLicenseFiles) {
+  if (-not (Test-Path (Join-Path $root $relative) -PathType Leaf)) {
+    throw "Missing license in pinned source: $relative"
+  }
+}
 $output = [IO.Path]::GetFullPath($OutputDirectory)
 New-Item -ItemType Directory -Path $output -Force | Out-Null
 $env:SQLX_OFFLINE = 'true'
@@ -46,7 +58,12 @@ Copy-Item (Join-Path $root 'docs/atlas-clarus-pilot.md') $deliverable
 Copy-Item (Join-Path $PSScriptRoot '*.patch') $deliverable
 $licenses = Join-Path $deliverable 'licenses'
 New-Item -ItemType Directory -Path $licenses -Force | Out-Null
-Copy-Item (Join-Path $root 'LICENSE-MIT'),(Join-Path $root 'LICENSE-APACHE'),(Join-Path $root 'NOTICE') $licenses
+Copy-Item (Join-Path $root 'LICENSE.md') (Join-Path $licenses 'ArtCraft-0.41.0-LICENSE.md')
+$vendorLicenses = Join-Path $licenses 'tauri-plugin-http'
+New-Item -ItemType Directory -Path $vendorLicenses -Force | Out-Null
+foreach ($relative in $upstreamLicenseFiles | Select-Object -Skip 1) {
+  Copy-Item (Join-Path $root $relative) $vendorLicenses
+}
 Copy-Item (Join-Path $root 'frontend/libs/components/moodboard/src/lib/clarus/*NOTICE.txt') $licenses
 Copy-Item (Join-Path $root 'frontend/libs/components/moodboard/src/lib/clarus/REFERENCE-DATA-ZLIB.txt') $licenses
 $checksums = Get-ChildItem $deliverable -Recurse -File | Sort-Object FullName | ForEach-Object {

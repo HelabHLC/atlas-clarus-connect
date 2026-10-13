@@ -4,6 +4,9 @@ Testversion: 0.41.0-clarus.0.2.1
 
 Dies ist eine unabhängig gebaute Testfassung, keine offizielle ArtCraft-Version.
 Der enthaltene Code ist ein direkter Moodboard-Einbau, kein extern ladbares Plug-in.
+Diese Fassung ist für deinen persönlichen Integrationstest bestimmt.
+Der verwendete Stand 0.41.0 enthält die ArtCraft-Fair-Source-Lizenz (LICENSE.md);
+deren Text liegt unverändert bei und wird nicht durch eine andere Lizenz ersetzt.
 
 1. ZIP in einen eigenen neuen Ordner entpacken.
 2. ArtCraft-ATLAS-Pilot.exe starten.

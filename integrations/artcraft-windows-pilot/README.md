@@ -40,3 +40,8 @@ Use PowerShell 7, Node 24, Rust stable MSVC, Visual Studio C++ Build Tools,
 Windows SDK, CMake, LLVM, Strawberry Perl, pkg-config and NASM.
 The GitHub workflow installs/configures those dependencies for the hosted runner.
 The portable executable is unsigned; all source and data licenses are retained.
+
+The pinned 0.41.0 revision ships `LICENSE.md` (ArtCraft fair-source terms),
+not the different license files present on current main. Package that exact
+license unchanged, along with the vendored HTTP plugin licenses. This is a
+personal integration test build, not a generally relicensed distribution.
