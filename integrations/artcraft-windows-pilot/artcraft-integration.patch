@@ -3,7 +3,7 @@ new file mode 100644
 index 0000000000000000000000000000000000000000..8bc887371e977b70248cfdffab8bdc2d44c36483
 --- /dev/null
 +++ b/docs/atlas-clarus-pilot.md
-@@ -0,0 +1,136 @@
+@@ -0,0 +1,145 @@
 +# ATLAS Clarus moodboard integration pilot
 +
 +This is a source-level integration into the existing React/Tauri ArtCraft
@@ -19,6 +19,12 @@ index 0000000000000000000000000000000000000000..8bc887371e977b70248cfdffab8bdc2d
 +Each source occurrence becomes an ordinary ArtCraft color item using its
 +original HEX. Double-click a swatch to see its ATLAS reference and recorded
 +provenance in ItemInspector. Local board persistence retains both.
++
++Choose **Export ATLAS Clarus palette** to reconstruct Clarus JSON 1.2 from
++the saved source-backed records in the current board. Every saved annotation
++is revalidated before serialization. The exporter preserves source RGB, fixed
++reference identity, sampling/image provenance, master binding and NOT_SIGNED;
++it does not remap from the current design swatch.
 +
 +The reference-only ASE, GPL, CSS and token exports cannot reconstruct original
 +RGB values. This first integration therefore accepts the rich JSON export.
@@ -43,7 +49,10 @@ index 0000000000000000000000000000000000000000..8bc887371e977b70248cfdffab8bdc2d
 +are never deduplicated by reference address or row id. The entire source file
 +is not embedded in every item; its checksum identifies the received file,
 +while the two complete relevant records retain the color provenance.
-+Keep the exported JSON if exact file-byte recovery is required.
++Keep the received JSON if exact file-byte recovery is required. A pilot export
++is a newly serialized, semantically equivalent source-backed palette; it is not
++byte-for-byte recovery of the received file, and unused reference-only rows are
++not reconstructed.
 +
 +| Design color | Original RGB | ATLAS address | Row id | Reference RGB | Reference HEX | Squared RGB distance |
 +|--------------|--------------|---------------|--------|---------------|---------------|----------------------|
@@ -140,6 +149,7 @@ index 0000000000000000000000000000000000000000..8bc887371e977b70248cfdffab8bdc2d
 +The synthetic export is extracted unchanged from the upstream
 +[two-greens fixture](https://github.com/HelabHLC/atlas-clarus-connect/blob/e83b8165bb4c7ef4c9e37522310b9c60b7e2d19c/browser-bundle/tests/fixtures/colour-kit-030-two-greens.json);
 +its CC BY 4.0 attribution is in `EXAMPLE-NOTICE.txt`.
+
 diff --git a/frontend/libs/components/moodboard/src/lib/boards/BoardLibraryStore.ts b/frontend/libs/components/moodboard/src/lib/boards/BoardLibraryStore.ts
 index 3603fe144604e8118845e57741c414d8532acb70..7568a67175f3b09158c338991a5f086e6d808e11 100644
 --- a/frontend/libs/components/moodboard/src/lib/boards/BoardLibraryStore.ts
@@ -464,9 +474,9 @@ new file mode 100644
 index 0000000000000000000000000000000000000000..2516106a562fce68ad396dcf23202666bedbc990
 --- /dev/null
 +++ b/frontend/libs/components/moodboard/src/lib/clarus/ClarusImportButton.tsx
-@@ -0,0 +1,59 @@
+@@ -0,0 +1,108 @@
 +import { useRef, useState } from "react";
-+import { FileInputIcon } from "lucide-react";
++import { FileInputIcon, FileOutputIcon } from "lucide-react";
 +import toast from "react-hot-toast";
 +import { useBoardLibraryStore } from "../boards/BoardLibraryStore";
 +import { ToolbarIconButton } from "../ui/Toolbar";
@@ -478,6 +488,14 @@ index 0000000000000000000000000000000000000000..2516106a562fce68ad396dcf23202666
 +  const importPalette = useBoardLibraryStore(
 +    (state) => state.importClarusPalette,
 +  );
++  const board = useBoardLibraryStore((state) =>
++    boardId ? state.boards[boardId] : undefined,
++  );
++  const hasClarus =
++    board?.itemOrder.some((id) => {
++      const item = board.items[id];
++      return item?.kind === "color" && Boolean(item.atlasClarus);
++    }) ?? false;
 +
 +  const readFile = async (file: File) => {
 +    if (!boardId || busyRef.current) return;
@@ -490,10 +508,31 @@ index 0000000000000000000000000000000000000000..2516106a562fce68ad396dcf23202666
 +        new Uint8Array(await file.arrayBuffer()),
 +        file.name,
 +      );
-+      toast.success(`Imported ${count} original colors with ATLAS references`);
++      toast.success("Imported " + count + " original colors with ATLAS references");
 +    } catch (error) {
 +      toast.error(
 +        error instanceof Error ? error.message : "Clarus import failed.",
++      );
++    } finally {
++      busyRef.current = false;
++      setBusy(false);
++    }
++  };
++
++  const exportFile = async () => {
++    if (!board || busyRef.current) return;
++    busyRef.current = true;
++    setBusy(true);
++    try {
++      const { createClarusExport } = await import("./exportPalette");
++      const result = await createClarusExport(board);
++      downloadJson(result.text, result.filename);
++      toast.success(
++        "Exported " + result.sourceCount + " original colors as Clarus JSON 1.2",
++      );
++    } catch (error) {
++      toast.error(
++        error instanceof Error ? error.message : "Clarus export failed.",
 +      );
 +    } finally {
 +      busyRef.current = false;
@@ -505,9 +544,15 @@ index 0000000000000000000000000000000000000000..2516106a562fce68ad396dcf23202666
 +    <>
 +      <ToolbarIconButton
 +        icon={FileInputIcon}
-+        label={busy ? "Importing ATLAS Clarus…" : "Import ATLAS Clarus palette"}
++        label={busy ? "ATLAS Clarus operation in progress…" : "Import ATLAS Clarus palette"}
 +        disabled={busy || !boardId}
 +        onClick={() => input.current?.click()}
++      />
++      <ToolbarIconButton
++        icon={FileOutputIcon}
++        label={busy ? "ATLAS Clarus operation in progress…" : "Export ATLAS Clarus palette"}
++        disabled={busy || !hasClarus}
++        onClick={() => void exportFile()}
 +      />
 +      <input
 +        ref={input}
@@ -524,6 +569,221 @@ index 0000000000000000000000000000000000000000..2516106a562fce68ad396dcf23202666
 +    </>
 +  );
 +}
++
++function downloadJson(text: string, filename: string) {
++  const url = URL.createObjectURL(
++    new Blob([text], { type: "application/json;charset=utf-8" }),
++  );
++  const link = document.createElement("a");
++  link.href = url;
++  link.download = filename;
++  link.style.display = "none";
++  document.body.appendChild(link);
++  link.click();
++  link.remove();
++  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
++}
+
+diff --git a/frontend/libs/components/moodboard/src/lib/clarus/exportPalette.ts b/frontend/libs/components/moodboard/src/lib/clarus/exportPalette.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/libs/components/moodboard/src/lib/clarus/exportPalette.ts
+@@ -0,0 +1,117 @@
++import type { Board, BoardColorItem } from "../boards/boardTypes";
++import {
++  CLARUS_MASTER_SHA256,
++  validateClarusAnnotation,
++  validateClarusPalette,
++} from "./importPalette";
++import type {
++  ClarusAnnotation,
++  ClarusPalette,
++  ClarusReference,
++  ClarusSourceAssignment,
++} from "./types";
++
++const WORKFLOW = "ATLAS Clarus v3.4.0";
++
++export interface ClarusExportResult {
++  palette: ClarusPalette;
++  text: string;
++  filename: string;
++  sourceCount: number;
++}
++
++export async function createClarusExport(
++  board: Board,
++): Promise<ClarusExportResult> {
++  const annotations: ClarusAnnotation[] = [];
++  for (const id of board.itemOrder) {
++    const item = board.items[id] as BoardColorItem | undefined;
++    if (item?.kind !== "color" || !item.atlasClarus) continue;
++    annotations.push(await validateClarusAnnotation(item.atlasClarus));
++  }
++  if (!annotations.length) {
++    throw new Error(
++      "This board has no imported ATLAS Clarus original colors to export.",
++    );
++  }
++
++  const references = new Map<number, ClarusReference>();
++  const referenceFingerprints = new Map<number, string>();
++  const sourceAssignments: ClarusSourceAssignment[] = [];
++  for (const annotation of annotations) {
++    const reference = structuredClone(annotation.reference_record);
++    const row = reference.atlas_row_id;
++    const fingerprint = canonicalJson(reference);
++    const previous = referenceFingerprints.get(row);
++    if (previous !== undefined && previous !== fingerprint) {
++      throw new Error(
++        "Conflicting saved reference records for ATLAS row " +
++          row +
++          ". Export those imports separately.",
++      );
++    }
++    if (!references.has(row)) {
++      references.set(row, reference);
++      referenceFingerprints.set(row, fingerprint);
++    }
++    sourceAssignments.push(structuredClone(annotation.source_assignment));
++  }
++
++  const documentIds = new Set(
++    annotations.map((annotation) => annotation.import.document_id),
++  );
++  const originalName =
++    documentIds.size === 1 ? annotations[0].import.palette_name?.trim() : "";
++  const paletteName =
++    originalName || board.name?.trim() || "ArtCraft ATLAS Clarus export";
++
++  const palette: ClarusPalette = {
++    format: "ATLAS_CLARUS_PALETTE",
++    version: "1.2",
++    palette_name: paletteName,
++    workflow: WORKFLOW,
++    master_sha256: CLARUS_MASTER_SHA256,
++    row_id_base: 0,
++    freeze_status: "FROZEN",
++    measured_qc_status: "NOT_MEASURED",
++    references: [...references.values()],
++    source_assignments: sourceAssignments,
++  };
++
++  // Re-run the same strict validator used on import. Export never remaps,
++  // substitutes the current design swatch, or upgrades an unsigned record.
++  await validateClarusPalette(palette);
++
++  return {
++    palette,
++    text: JSON.stringify(palette, null, 2) + "\n",
++    filename: safeFilename(paletteName) + ".clarus.json",
++    sourceCount: sourceAssignments.length,
++  };
++}
++
++function safeFilename(name: string) {
++  const cleaned = name
++    .replace(/[<>:"/\\|?*\u0000-\u001F]/g, "-")
++    .replace(/\s+/g, " ")
++    .replace(/[. ]+$/g, "")
++    .trim()
++    .slice(0, 96);
++  return cleaned || "artcraft-atlas-clarus";
++}
++
++function canonicalJson(value: unknown): string {
++  if (Array.isArray(value)) return "[" + value.map(canonicalJson).join(",") + "]";
++  if (value && typeof value === "object") {
++    const object = value as Record<string, unknown>;
++    return (
++      "{" +
++      Object.keys(object)
++        .sort()
++        .map((key) => JSON.stringify(key) + ":" + canonicalJson(object[key]))
++        .join(",") +
++      "}"
++    );
++  }
++  return JSON.stringify(value);
++}
+diff --git a/frontend/libs/components/moodboard/src/lib/clarus/exportPalette.spec.ts b/frontend/libs/components/moodboard/src/lib/clarus/exportPalette.spec.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/libs/components/moodboard/src/lib/clarus/exportPalette.spec.ts
+@@ -0,0 +1,73 @@
++import { webcrypto } from "node:crypto";
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import sourceText from "./two-greens.clarus.json?raw";
++import { useBoardLibraryStore } from "../boards/BoardLibraryStore";
++import { createClarusExport } from "./exportPalette";
++import type { ClarusPalette } from "./types";
++
++const fixture = (): ClarusPalette => JSON.parse(sourceText);
++
++beforeEach(() => {
++  vi.stubGlobal("crypto", webcrypto);
++  localStorage.clear();
++  useBoardLibraryStore.setState({
++    boards: {},
++    boardOrder: [],
++    activeBoardId: null,
++    selectedItemIds: new Set(),
++  });
++});
++afterEach(() => {
++  vi.restoreAllMocks();
++  vi.unstubAllGlobals();
++});
++
++describe("Clarus export from native ArtCraft boards", () => {
++  it("reconstructs a valid Clarus 1.2 palette without remapping", async () => {
++    const store = useBoardLibraryStore.getState();
++    const id = store.createBoard("Round trip");
++    await store.importClarusPalette(
++      id,
++      new TextEncoder().encode(sourceText),
++      "greens.json",
++    );
++    const result = await createClarusExport(
++      useBoardLibraryStore.getState().boards[id],
++    );
++    const parsed = JSON.parse(result.text) as ClarusPalette;
++    expect(parsed.master_sha256).toBe(fixture().master_sha256);
++    expect(parsed.freeze_status).toBe("FROZEN");
++    expect(parsed.measured_qc_status).toBe("NOT_MEASURED");
++    expect(parsed.references).toEqual(fixture().references);
++    expect(parsed.source_assignments).toEqual(fixture().source_assignments);
++    expect(result.sourceCount).toBe(2);
++    expect(result.filename.endsWith(".clarus.json")).toBe(true);
++  });
++
++  it("exports the recorded original even if the design swatch was edited", async () => {
++    const store = useBoardLibraryStore.getState();
++    const id = store.createBoard("Edited");
++    await store.importClarusPalette(
++      id,
++      new TextEncoder().encode(sourceText),
++      "greens.json",
++    );
++    const board = useBoardLibraryStore.getState().boards[id];
++    const first = board.itemOrder[0];
++    store.updateItem(id, first, { color: "#FFFFFF" });
++    const result = await createClarusExport(
++      useBoardLibraryStore.getState().boards[id],
++    );
++    expect(result.palette.source_assignments[0].source_hex).toBe("#3D7B19");
++    expect(result.palette.source_assignments[0].reference_hex).toBe("#37791A");
++  });
++
++  it("does not invent source provenance for ordinary ArtCraft swatches", async () => {
++    const store = useBoardLibraryStore.getState();
++    const id = store.createBoard("Legacy");
++    store.addColorItem(id, "#123456");
++    await expect(
++      createClarusExport(useBoardLibraryStore.getState().boards[id]),
++    ).rejects.toThrow("no imported ATLAS Clarus original colors");
++  });
++});
 diff --git a/frontend/libs/components/moodboard/src/lib/clarus/EXAMPLE-NOTICE.txt b/frontend/libs/components/moodboard/src/lib/clarus/EXAMPLE-NOTICE.txt
 new file mode 100644
 index 0000000000000000000000000000000000000000..f29670335e755ad83e9fa4a168a7e594e37ec91e
