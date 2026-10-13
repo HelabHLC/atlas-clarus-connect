@@ -71,5 +71,5 @@ $checksums = Get-ChildItem $deliverable -Recurse -File | Sort-Object FullName | 
   "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant())  $relative"
 }
 $checksums | Set-Content (Join-Path $deliverable 'SHA256SUMS.txt') -Encoding utf8NoBOM
-Compress-Archive -Path $deliverable -DestinationPath (Join-Path $output 'ArtCraft-ATLAS-Pilot-0.41.0-clarus.0.2.1-windows-x64.zip') -Force
+Compress-Archive -Path $deliverable -DestinationPath (Join-Path $output ("ArtCraft-ATLAS-Pilot-0.41.0-clarus.{0}-windows-x64.zip" -f $manifest.pilot_version)) -Force
 Write-Host 'Windows executable built. Native acceptance on the user machine is still required.'
