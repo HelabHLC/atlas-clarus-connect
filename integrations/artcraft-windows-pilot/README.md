@@ -19,11 +19,13 @@ this integration directory and its Actions workflow to atlas-clarus-connect.
 The job has read-only repository permissions and uploads a test artifact;
 it does not publish a release or deploy anything.
 
-The frontend patch was checked with 63 tests, a TypeScript project build,
-a production frontend build and seven real Chromium interaction checks.
+The frontend pilot now also reconstructs validated source-backed Clarus JSON 1.2 exports without remapping. Exported JSON is a new serialization of the saved records, not byte-for-byte recovery of the received file. Reference-only rows without source assignments are not reconstructed.
+
+The earlier frontend patch was checked with 63 tests, a TypeScript project build,
+a production frontend build and seven real Chromium interaction checks. The new export path adds dedicated unit coverage and requires a fresh Windows build plus real download/re-import acceptance.
 The Windows workflow repeats the tests and builds the native executable,
 then checks startup and that the default ArtCraft data folder is untouched.
-Native WebView import acceptance on Windows 10 remains a separate user test.
+Native WebView import/persistence acceptance on Windows 10 has a user-reported PASS for the earlier pilot. The new export path is not yet accepted in the native WebView until a fresh 0.2.2 build is tested.
 
 The reference CSV is an unmodified, checksum-pinned read-only projection.
 The palette extractor and upstream dependency lockfiles must remain unchanged.
