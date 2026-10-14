@@ -1,0 +1,7 @@
+import {build} from 'esbuild';
+import {mkdir,writeFile} from 'node:fs/promises';
+await mkdir('dist',{recursive:true});
+const result=await build({entryPoints:['ui.js'],bundle:true,write:false,minify:true,legalComments:'inline'});
+const script=result.outputFiles[0].text.replace(/<\/script/gi,'<\\/script');
+await writeFile('dist/ATLAS_Paint_by_Numbers.html',`<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>ATLAS × Paint by Numbers – Testversion</title><style>body{font:17px system-ui;max-width:1000px;margin:30px auto;padding:20px;background:#fafafa}button,input{font:inherit;margin:10px 0}#preview{max-height:70vh;overflow:auto;background:white;border:1px solid #bbb}svg{display:block}p{line-height:1.5}</style><h1>ATLAS × Paint by Numbers</h1><p>Separate Offline-Testversion. In Colour Reduction zuerst das vollständige ZIP exportieren, dann hier öffnen. Verarbeitung lokal im Browser. Bis 1.048.576 Pixel, nur vollständig deckende Bilder. Keine automatische Größenänderung oder Entfernung kleiner Flächen.</p><input type="file" accept=".zip"><p id="status">Colour-Reduction-ZIP auswählen.</p><button disabled>Malvorlage und Atlas-Legende herunterladen</button><div id="preview"></div><p>Originalgenerator: drakarah/paintbynumbersgenerator (MIT). Atlas-RGB ist eine Referenz, keine physische Farbrezeptur. Prüfsummen bestätigen Konsistenz, keine Urheberschaft.</p><script>${script}</script></html>`);
+await build({entryPoints:['bridge.js'],bundle:true,platform:'node',format:'esm',outfile:'dist/bridge.mjs'});
