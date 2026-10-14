@@ -81,7 +81,7 @@ export async function reduceImage({rgba,width,height,k,lockedIds=[],sourceBytes,
  for(let i=3;i<rgba.length;i+=4)if(rgba[i]!==255)fail('Diese Testversion benötigt ein vollständig deckendes Bild. Transparenz wird nicht automatisch verändert.');
  const root=typeof window==='undefined'?globalThis:window;
  const result=root.ATLAS_COLOUR_REDUCTION.reduce({rgba,width,height,k,lockedIds,colors:master.colors,master:master.master_sha256});
- return {indices:result.indices,report:{...result.report,source:{name:sourceName,file_sha256:await sha(sourceBytes),input_rgba_sha256:await sha(rgba)},output_rgba_sha256:await sha(result.pixels)}};
+ return {pixels:result.pixels,indices:result.indices,report:{...result.report,source:{name:sourceName,file_sha256:await sha(sourceBytes),input_rgba_sha256:await sha(rgba)},output_rgba_sha256:await sha(result.pixels)}};
 }
 const binding=(typeof window==='undefined'?globalThis:window).ATLAS_CLARUS_PKL_IMAGE.create(master.colors,master.master_sha256);
 export function imageReference(rgb){const row=binding.nearest(rgb).row;return {id:row.id,reference:row.ref,rgb:row.rgb.slice()};}

@@ -1,10 +1,10 @@
-# ATLAS × drakarah — standalone offline preview 0.3
+# ATLAS × drakarah — standalone offline preview 0.4
 
 Direct image → ATLAS RGB-only reduction → drakarah Paint by Numbers contour pipeline. Independent HTML application; no bundle, WordPress or Android integration and no ZIP input required.
 
 ## Use
 
-Open `ATLAS_Paint_by_Numbers.html` locally in a modern browser, select PNG/JPEG/WebP, choose 1–256 colours, optionally click important accents to protect their Atlas references, and click “Malvorlage erzeugen”. Download numbered SVG, coloured SVG, HTML legend and JSON map individually. Original pixel RGB and assigned Atlas RGB are shown separately. Protection is global and counts towards the colour limit.
+Open `ATLAS_Paint_by_Numbers.html` locally in a modern browser, select PNG/JPEG/WebP, choose 1–256 colours, optionally click important accents to protect their Atlas references, and click “RGB-only reduzieren”. Inspect the reduced canvas and palette, and optionally download its PNG. Only clicking “Weiter zum drakarah-Generator” runs contour/label generation. Changes to the input, colour limit or protected references invalidate the previous reduction and disable continuation. Download numbered SVG, coloured SVG, HTML legend and JSON map individually. Original pixel RGB and assigned Atlas RGB are shown separately. Protection is global and counts towards the colour limit.
 
 ## Pipeline and provenance
 
