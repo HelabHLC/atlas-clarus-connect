@@ -34,7 +34,7 @@ jobs:
         run: python3 browser-bundle/tests/validate_bundle.py
       - name: Check Android export adapter
         run: node android-test-app/test-export-adapter.js
-      - name: Build debug APK with pinned RC32.2 reference cards
+      - name: Build debug APK with pinned RC33.2 reference cards
         run: gradle -p android-test-app :app:assembleDebug --no-daemon
       - name: Check DE/EN identity and scripts
         run: |
@@ -45,7 +45,7 @@ jobs:
         run: |
           test -s android-test-app/app/build/outputs/apk/debug/app-debug.apk
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging android-test-app/app/build/outputs/apk/debug/app-debug.apk |
-            grep -F "package: name='com.atlasclarus.connect.dev' versionCode='8' versionName='0.4.0-beta.8-debug'"
+            grep -F "package: name='com.atlasclarus.connect.dev' versionCode='9' versionName='0.4.0-beta.9-debug'"
           python3 android-test-app/test_packaged_bundle.py android-test-app/app/build/outputs/apk/debug/app-debug.apk
           sha256sum android-test-app/app/build/outputs/apk/debug/app-debug.apk
       - name: Validate Image Projects in Android-prepared HTML
@@ -59,32 +59,46 @@ jobs:
           node browser-bundle/tests/validate_image_source_binding.cjs
           node browser-bundle/tests/validate_image_projects_browser.cjs
           python3 browser-bundle/tests/validate_image_png.py /tmp/atlas-image-projects-browser/project.zip
-      - name: Validate RC32.2 cards and printable companion in Android HTML
+      - name: Validate RC33.2 cards and printable companion in Android HTML
         env:
           CARD_HTML: android-test-app/app/src/main/assets/bundle/index.html
         run: |
           node browser-bundle/tests/validate_colour_reference_card.js
           node browser-bundle/tests/validate_colour_reference_card_browser.cjs
-      - name: Check out immutable signed beta.7 baseline for upgrade test
+      - name: Verify reduction, magnifier and native export adapter in Android HTML
+        env:
+          REDUCTION_HTML: android-test-app/app/src/main/assets/bundle/index.html
+          ANDROID_EXPORT_CAPTURE: '1'
+          REDUCTION_TEST_OUTPUT: /tmp/atlas-android-reduction
+        run: |
+          node browser-bundle/tests/validate_colour_reduction_browser.cjs
+          python3 - <<'PYPNG'
+          from PIL import Image
+          from pathlib import Path
+          p=Path('/tmp/atlas-android-reduction')
+          assert Image.open(p/'reduced.png').convert('RGBA').tobytes()==(p/'expected-rgba.bin').read_bytes()
+          PYPNG
+      - name: Check out immutable signed beta.8 baseline for upgrade test
         uses: actions/checkout@v4
         with:
-          ref: 9e369afc439f3cf22fdac34ef0a302c60f5ccfa6
-          path: .beta7-baseline
-      - name: Verify stored work survives beta.7 to beta.8 document update
+          ref: e83b8165bb4c7ef4c9e37522310b9c60b7e2d19c
+          path: .beta8-baseline
+      - name: Verify stored work survives beta.8 to beta.9 document update
         run: |
-          python3 .beta7-baseline/android-test-app/prepare_bundle.py
+          python3 .beta8-baseline/android-test-app/prepare_bundle.py
           node android-test-app/test-card-upgrade.cjs
       - name: Save Android update and card evidence
         uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Android-Beta8-card-and-update-evidence
+          name: ATLAS-Clarus-Android-Beta9-card-and-update-evidence
           path: |
             /tmp/atlas-android-upgrade/
+            /tmp/atlas-android-reduction/
             /tmp/atlas-colour-reference-card/
           retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Android-Beta8-DEBUG-NOT-AN-UPDATE
+          name: ATLAS-Clarus-Android-Beta9-DEBUG-NOT-AN-UPDATE
           path: android-test-app/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
       - name: Verify APK and AAB signing paths with disposable CI key
@@ -106,7 +120,7 @@ jobs:
           gradle -p android-test-app :app:assembleRelease :app:bundleRelease --no-daemon
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify "$apk"
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
-            grep -F "package: name='com.atlasclarus.connect' versionCode='8' versionName='0.4.0-beta.8'"
+            grep -F "package: name='com.atlasclarus.connect' versionCode='9' versionName='0.4.0-beta.9'"
           test -s "$aab"
           jarsigner -verify "$aab"
           python3 android-test-app/test_packaged_bundle.py "$apk" "$aab"

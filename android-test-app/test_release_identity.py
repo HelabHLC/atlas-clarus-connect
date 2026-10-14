@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guard beta.8, RC32.2 and the unchanged Android storage boundary before CI or reserved-key signing."""
+"""Guard beta.9, RC33.2 and the unchanged Android storage boundary before CI or reserved-key signing."""
 import ast
 import hashlib
 from pathlib import Path
@@ -7,10 +7,10 @@ import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION_CODE = 8
-VERSION_NAME = '0.4.0-beta.8'
-BUNDLE_VERSION = '0.2.0-rc32.2-image-exchange'
-BUNDLE_SHA256 = 'e2475f407ac77318662275f9a3c0ae006fc62135d1a87d7c5a64659a5c083f79'
+VERSION_CODE = 9
+VERSION_NAME = '0.4.0-beta.9'
+BUNDLE_VERSION = '0.2.0-rc33.2-colour-reduction-update'
+BUNDLE_SHA256 = '95342c346fc8c73acb89a365ba9f4818184630e45b71b0e1726a9a1c76bf3aee'
 DEFAULT_BUNDLE_VERSION = '0.2.0-rc28-source-provenance'
 SOURCE_BINDING_SHA256 = {
     'image-projects.js': '3b5b6e90abd28f52b5236ea0793ff6b9394cb0754f504951df2f0da6117e2c45',
@@ -19,6 +19,8 @@ SOURCE_BINDING_SHA256 = {
 REFERENCE_CARD_SHA256 = {
     'colour-reference-card.js': '32dff3a94ed98099aaae8b93365e94b66ba4262112564b91757304afe687e2e2',
 }
+BUILD_SOURCE_BINDING_SHA256 = {'image-projects.js': '3b5b6e90abd28f52b5236ea0793ff6b9394cb0754f504951df2f0da6117e2c45',
+    'image-projects-ui.js': '648bb3f2486a8cb6cd1a054a6c512fc241bcbe2ffe0c4551fdf9b117b21c6082'}
 # Frozen beta.6 native boundary: app origin, WebView storage and document adapter.
 BETA6_NATIVE_SHA256 = {
     'app/src/main/java/com/atlasclarus/browseredition/test/MainActivity.java': 'c58e97ff4736a3f8b4257845bea0a39f2f9fea157d9bfa837a9221442ed6d7fd',
@@ -51,12 +53,13 @@ def check_identity(files):
         'versionName': re.findall(r"^\s*versionName\s+'([^']+)'\s*$", gradle, re.M) == [VERSION_NAME],
         'Android bundle version': literal(prepare, 'EXPECTED_BUNDLE_VERSION') == BUNDLE_VERSION,
         'Android ZIP pin': literal(prepare, 'EXPECTED_ZIP_SHA256') == BUNDLE_SHA256,
-        'RC32.2 builder': literal(prepare, 'BUNDLE_BUILDER') == 'build_image_exchange_pilot.py',
+        'RC33.2 builder': literal(prepare, 'BUNDLE_BUILDER') == 'build_colour_reduction_release.py',
         'reviewed builder used': "ROOT / 'browser-bundle' / BUNDLE_BUILDER" in prepare,
         'reference-card pin': literal(prepare, 'REFERENCE_CARD_SHA256') == REFERENCE_CARD_SHA256,
+        'built read-only bridge pin': literal(prepare, 'BUILD_SOURCE_BINDING_SHA256') == BUILD_SOURCE_BINDING_SHA256,
         'source-binding pins': literal(prepare, 'SOURCE_BINDING_SHA256') == SOURCE_BINDING_SHA256,
         'default browser version preserved': literal(builder, 'VERSION') == DEFAULT_BUNDLE_VERSION,
-        'pilot version available': literal((ROOT / 'browser-bundle/build_image_exchange_pilot.py').read_text(), 'VERSION') == BUNDLE_VERSION,
+        'pilot version available': literal((ROOT / 'browser-bundle/build_colour_reduction_release.py').read_text(), 'VERSION') == BUNDLE_VERSION,
     }
     identity = f"package: name='com.atlasclarus.connect' versionCode='{VERSION_CODE}' versionName='{VERSION_NAME}'"
     for name, workflow in [('debug', debug), ('signed', signed)]:
@@ -80,10 +83,10 @@ class ReleaseIdentityTests(unittest.TestCase):
         check_identity(self.files)
 
     def test_reject_prior_version_codes(self):
-        for code in (4, 5, 6, 7):
+        for code in (4, 5, 6, 7, 8):
             with self.subTest(code=code):
                 changed = dict(self.files)
-                changed[FILES[0]] = changed[FILES[0]].replace('versionCode 8', f'versionCode {code}')
+                changed[FILES[0]] = changed[FILES[0]].replace('versionCode 9', f'versionCode {code}')
                 with self.assertRaisesRegex(ValueError, 'versionCode'):
                     check_identity(changed)
 
@@ -98,8 +101,8 @@ class ReleaseIdentityTests(unittest.TestCase):
             check_identity(self.files)
 
     def test_reject_older_builder(self):
-        self.files[FILES[1]] = self.files[FILES[1]].replace('build_image_exchange_pilot.py', 'build_colour_reference_card_pilot.py')
-        with self.assertRaisesRegex(ValueError, 'RC32.2 builder'):
+        self.files[FILES[1]] = self.files[FILES[1]].replace('build_colour_reduction_release.py', 'build_colour_reference_card_pilot.py')
+        with self.assertRaisesRegex(ValueError, 'RC33.2 builder'):
             check_identity(self.files)
 
     def test_native_storage_and_export_boundary_unchanged_since_beta6(self):
