@@ -14,22 +14,16 @@ class FakeClient:
         self.scratch_open = False
 
     def call(self, method, params=None):
-        params = params or {}
-        self.calls.append((method, params))
-        if method == "session.list":
-            docs = [{"index": 0, "name": "Original", "dirty": False, "revision": 7}]
-            if self.scratch_open:
-                docs.append({"index": 1, "name": "ATLAS Clarus Pilot Scratch", "dirty": True, "revision": 2})
-            return {"active": 1 if self.scratch_open else 0, "documents": docs}
-        if method == "doc.inspect":
-            if params["index"] == 0:
-                return {"name": "Original", "width": 20, "height": 20, "mode": "Rgb", "depth": 8, "revision": 7}
-            return {"name": "ATLAS Clarus Pilot Scratch", "width": 20, "height": 20, "mode": "Rgb", "depth": 8, "revision": 2}
+        self.calls.append((method, params or {}))
         raise AssertionError((method, params))
 
     def engine(self, command, params=None):
         params = params or {}
         self.calls.append(("engine:" + command, params))
+        if command == "document.inspect":
+            if self.scratch_open:
+                return {"name": "ATLAS Clarus Pilot Scratch", "width": 20, "height": 20, "mode": "Rgb", "depth": 8, "revision": 2}
+            return {"name": "Original", "width": 20, "height": 20, "mode": "Rgb", "depth": 8, "revision": 7}
         if command == "edit.profileInfo":
             return {"profile": {"description": "sRGB IEC61966-2.1", "colorSpace": "Rgb", "embedded": True}}
         if command == "image.duplicate":

@@ -192,14 +192,10 @@ def capture_point(client: Any, rows: list[MasterRow], x: int, y: int) -> dict[st
     if not isinstance(x, int) or isinstance(x, bool) or not isinstance(y, int) or isinstance(y, bool):
         raise PilotError("x and y must be integer document coordinates")
 
-    session_before = client.call("session.list", {})
-    active = session_before.get("active") if isinstance(session_before, dict) else None
-    docs_before = session_before.get("documents") if isinstance(session_before, dict) else None
-    if not isinstance(active, int) or not isinstance(docs_before, list) or not 0 <= active < len(docs_before):
-        raise PilotError("PhotoCraft has no active document")
-
-    original_index = active
-    original = client.call("doc.inspect", {"index": original_index})
+    # Desktop PhotoCraft's live control channel exposes engine.execute and ui.*.
+    # The headless-only convenience methods session.list/doc.inspect are deliberately
+    # not used here (PhotoCraft 0.8.2 desktop correctly rejects them as unknown).
+    original = client.engine("document.inspect", {})
     if not isinstance(original, dict):
         raise PilotError("PhotoCraft document inspection failed")
     width, height = original.get("width"), original.get("height")
@@ -223,7 +219,7 @@ def capture_point(client: Any, rows: list[MasterRow], x: int, y: int) -> dict[st
             raise PilotError("PhotoCraft did not return the scratch document index")
 
         conversion = client.engine("edit.convertToProfile", {"profile": "srgb", "intent": "relative", "bpc": True})
-        scratch_inspect = client.call("doc.inspect", {"index": scratch_index})
+        scratch_inspect = client.engine("document.inspect", {})
         scratch_profile = client.engine("edit.profileInfo", {})
         sample = client.engine(
             "document.sampleColor",
@@ -236,13 +232,15 @@ def capture_point(client: Any, rows: list[MasterRow], x: int, y: int) -> dict[st
             except Exception as close_exc:
                 raise PilotError(f"scratch document could not be closed: {close_exc}") from close_exc
 
-    original_after = client.call("doc.inspect", {"index": original_index})
-    session_after = client.call("session.list", {})
-    if not isinstance(original_after, dict) or original_after.get("revision") != original_revision:
-        raise PilotError("original PhotoCraft document revision changed during the pilot")
-    after_docs = session_after.get("documents") if isinstance(session_after, dict) else None
-    if not isinstance(after_docs, list) or len(after_docs) != len(docs_before):
-        raise PilotError("PhotoCraft document count changed after scratch cleanup")
+    original_after = client.engine("document.inspect", {})
+    if (
+        not isinstance(original_after, dict)
+        or original_after.get("revision") != original_revision
+        or original_after.get("name") != original.get("name")
+        or original_after.get("width") != width
+        or original_after.get("height") != height
+    ):
+        raise PilotError("original PhotoCraft document identity or revision changed during the pilot")
 
     if not isinstance(scratch_inspect, dict) or scratch_inspect.get("mode") != "Rgb":
         raise PilotError("scratch document was not converted to RGB")

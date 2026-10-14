@@ -16,15 +16,14 @@ The examined PhotoCraft `main` revision is:
 
 The pilot relies on these existing commands/methods:
 
-- `session.list`
-- `doc.inspect`
+- `document.inspect` through `engine.execute`
 - `edit.profileInfo`
 - `image.duplicate {"mergedOnly": true}`
 - `edit.convertToProfile {"profile":"srgb","intent":"relative","bpc":true}`
 - `document.sampleColor {"size":1,"sampleLayer":"all"}`
 - `file.close {"document": scratch_index}`
 
-The original document is not converted. A temporary merged duplicate is converted and sampled, then closed. Its source document revision is checked again afterward.
+The original document is not converted. A temporary merged duplicate is converted and sampled, then closed. Its source document identity and revision are checked again afterward. Pilot 0.1 intentionally uses only methods exposed by the PhotoCraft 0.8.2 desktop control channel; headless-only `session.list`/`doc.inspect` convenience methods are not used.
 
 ## Start PhotoCraft
 
