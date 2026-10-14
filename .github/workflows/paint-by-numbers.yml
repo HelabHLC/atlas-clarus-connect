@@ -1,0 +1,32 @@
+name: Paint by Numbers bridge
+on:
+  pull_request:
+    paths: ['paint-by-numbers/**', '.github/workflows/paint-by-numbers.yml']
+  push:
+    paths: ['paint-by-numbers/**', '.github/workflows/paint-by-numbers.yml']
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: paint-by-numbers/package-lock.json
+      - run: npm ci
+        working-directory: paint-by-numbers
+      - run: npm run build && npm test
+        working-directory: paint-by-numbers
+      - run: npm ci
+        working-directory: browser-bundle/tests
+      - run: npx playwright install --with-deps chromium
+        working-directory: browser-bundle/tests
+      - run: node browser-test.mjs
+        working-directory: paint-by-numbers
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ATLAS-Paint-by-Numbers-preview
+          path: paint-by-numbers/dist/
