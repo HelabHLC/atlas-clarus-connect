@@ -144,7 +144,7 @@ if ($pilot) {
         check(is_wp_error(invoke_private('validate_manifest', $bad)), 'Accepted invalid handoff ' . $key);
     }
 }
-if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta10', '0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13'), true)) {
+if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta10', '0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14'), true)) {
     foreach (array('colour_projects_schema' => 'wrong', 'colour_projects_selection' => 'PRODUCTION_APPROVED',
         'colour_projects_max_versions' => '200', 'colour_projects_origin' => 'DISCARDED') as $key => $value) {
         $bad = $manifest; $bad[$key] = $value;
@@ -153,7 +153,7 @@ if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta10', '0.1.
     check(strpos($html, 'id="colour-projects"') !== false, 'Colour Projects missing from runtime');
     check(strpos($html, 'ATLAS_COLOUR_PROJECTS_UI.init({colors') !== false, 'Project initialization missing');
 }
-if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13'), true)) {
+if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14'), true)) {
     foreach (array('image_projects_schema' => 'wrong', 'image_projects_original' => 'DISCARDED',
         'image_projects_max_pixels' => '4194304', 'image_projects_history' => 'NONE') as $key => $value) {
         $bad = $manifest; $bad[$key] = $value;
@@ -163,12 +163,22 @@ if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta11', '0.1.
     check(strpos($html, 'ATLAS_IMAGE_PROJECTS_UI.init({colors') !== false, 'Image editor initialization missing');
 }
 
-if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta12', '0.1.15-beta13'), true)) {
+if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14'), true)) {
     foreach (array('colour_reference_card_schema' => 'wrong', 'reference_card_signature_status' => 'SIGNED') as $key => $value) {
         $bad = $manifest; $bad[$key] = $value;
         check(is_wp_error(invoke_private('validate_manifest', $bad)), 'Accepted invalid reference-card ' . $key);
     }
     check(strpos($html, 'id="ch-reference-card"') !== false, 'Reference card button missing');
+}
+
+if (ATLAS_Clarus_Browser_Edition::VERSION === '0.1.15-beta14') {
+    foreach (array('colour_reduction_max_colours' => '256', 'colour_reduction_method' => 'PERCEPTUAL',
+        'colour_reduction_schema' => 'wrong', 'colour_reduction_input_loupe' => 'OUTPUT_ONLY') as $key => $value) {
+        $bad = $manifest; $bad[$key] = $value;
+        check(is_wp_error(invoke_private('validate_manifest', $bad)), 'Accepted invalid reduction ' . $key);
+    }
+    check(strpos($html, 'id="colour-reduction"') !== false, 'Colour Reduction missing');
+    check(strpos($html, 'ATLAS_COLOUR_REDUCTION_UI.init({colors') !== false, 'Reduction initialization missing');
 }
 
 // Both public mutations must check capability and nonce before touching options.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package the reviewed RC32.2 reference-card payload for Android beta.8.
+"""Package the reviewed RC33.2 reference-card payload for Android beta.9.
 
 The exact public pilot is rebuilt offline and pinned before adding the unchanged
 Android adapter. Existing releases, storage contracts and master remain frozen.
@@ -17,9 +17,9 @@ from build_colour_id_locale import localize
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-EXPECTED_BUNDLE_VERSION = '0.2.0-rc32.2-image-exchange'
-EXPECTED_ZIP_SHA256 = 'e2475f407ac77318662275f9a3c0ae006fc62135d1a87d7c5a64659a5c083f79'
-BUNDLE_BUILDER = 'build_image_exchange_pilot.py'
+EXPECTED_BUNDLE_VERSION = '0.2.0-rc33.2-colour-reduction-update'
+EXPECTED_ZIP_SHA256 = '95342c346fc8c73acb89a365ba9f4818184630e45b71b0e1726a9a1c76bf3aee'
+BUNDLE_BUILDER = 'build_colour_reduction_release.py'
 REFERENCE_CARD_SHA256 = {
     'colour-reference-card.js': '32dff3a94ed98099aaae8b93365e94b66ba4262112564b91757304afe687e2e2',
 }
@@ -35,8 +35,11 @@ MASTER_SHA256 = '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c
 TARGET = HERE / 'app/src/main/assets/bundle'
 
 
-def verify_source_binding(directory):
-    for name, expected in {**SOURCE_BINDING_SHA256, **REFERENCE_CARD_SHA256}.items():
+BUILD_SOURCE_BINDING_SHA256 = {'image-projects.js': '3b5b6e90abd28f52b5236ea0793ff6b9394cb0754f504951df2f0da6117e2c45',
+    'image-projects-ui.js': '648bb3f2486a8cb6cd1a054a6c512fc241bcbe2ffe0c4551fdf9b117b21c6082'}
+
+def verify_source_binding(directory, built=False):
+    for name, expected in {**(BUILD_SOURCE_BINDING_SHA256 if built else SOURCE_BINDING_SHA256), **REFERENCE_CARD_SHA256}.items():
         actual = hashlib.sha256((directory / name).read_bytes()).hexdigest()
         if actual != expected:
             raise SystemExit(f'Reviewed implementation changed: {name}; review before repinning')
@@ -87,7 +90,7 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     if digest != EXPECTED_ZIP_SHA256:
         raise SystemExit(f'Bundle checksum changed: {digest}; review the payload and allocate a new Android version before updating the pin.')
     source = output / 'atlas-clarus-browser-bundle'
-    verify_source_binding(source / 'assets')
+    verify_source_binding(source / 'assets', built=True)
     # Prepare and validate everything before replacing the generated asset tree.
     index = source / 'index.html'
     index.write_text(add_bridge(index.read_text(encoding='utf-8')), encoding='utf-8')
@@ -95,12 +98,13 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     (source / 'colour-id.html').write_text(localize(colour_html, 'de'), encoding='utf-8')
     (source / 'colour-id-en.html').write_text(localize(colour_html, 'en'), encoding='utf-8')
     (source / 'ANDROID_CANDIDATE.json').write_text(json.dumps({
-        'version_name': '0.4.0-beta.8', 'version_code': 8,
+        'version_name': '0.4.0-beta.9', 'version_code': 9,
         'application_id': 'com.atlasclarus.connect',
         'bundle_version': EXPECTED_BUNDLE_VERSION, 'bundle_zip_sha256': digest,
         'source_binding_commit': SOURCE_BINDING_COMMIT,
         'exchange_ui_commit': '57b132b46044344588ce2c5f6a3d86389ce9070c',
         'source_binding_sha256': SOURCE_BINDING_SHA256,
+        'built_source_binding_sha256': BUILD_SOURCE_BINDING_SHA256,
         'reference_card_sha256': REFERENCE_CARD_SHA256,
         'master_sha256': MASTER_SHA256,
         'device_acceptance': 'NOT_TESTED', 'play_submission': 'NOT_PERFORMED',
@@ -109,4 +113,4 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     if TARGET.exists():
         shutil.rmtree(TARGET)
     shutil.copytree(source, TARGET)
-    print(f'Android beta.8 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')
+    print(f'Android beta.9 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')

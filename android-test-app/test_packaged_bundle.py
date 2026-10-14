@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check beta.8 source binding and every prepared asset in the actual APK/AAB."""
+"""Check beta.9 source binding and every prepared asset in the actual APK/AAB."""
 import gzip
 import hashlib
 import json
@@ -7,7 +7,7 @@ from pathlib import Path
 import sys
 import zipfile
 
-from test_release_identity import BUNDLE_VERSION, BUNDLE_SHA256, VERSION_NAME, VERSION_CODE, SOURCE_BINDING_SHA256, REFERENCE_CARD_SHA256
+from test_release_identity import BUNDLE_VERSION, BUNDLE_SHA256, VERSION_NAME, VERSION_CODE, SOURCE_BINDING_SHA256, BUILD_SOURCE_BINDING_SHA256, REFERENCE_CARD_SHA256
 
 ASSETS = Path(__file__).resolve().parent / 'app/src/main/assets/bundle'
 
@@ -17,6 +17,7 @@ def check_package(path):
     prepared = {p.relative_to(ASSETS).as_posix(): p for p in ASSETS.rglob('*') if p.is_file()}
     required = {'index.html', 'colour-id.html', 'colour-id-en.html', 'BUNDLE_MANIFEST.json',
                 'ANDROID_CANDIDATE.json', 'assets/image-projects.js', 'assets/image-projects-ui.js',
+                'assets/colour-reduction.js', 'assets/colour-reduction-loupe.js', 'assets/colour-reduction-ui.js',
                 'assets/image-project-codecs.js', 'assets/colour-projects.js', 'assets/colour-reference-card.js'}
     assert required <= prepared.keys(), 'Missing prepared Android assets'
     expected = {name: source.read_bytes() for name, source in prepared.items()}
@@ -40,14 +41,17 @@ def check_package(path):
         assert candidate['version_name'] == VERSION_NAME and candidate['version_code'] == VERSION_CODE
         assert candidate['application_id'] == 'com.atlasclarus.connect'
         assert candidate['bundle_zip_sha256'] == BUNDLE_SHA256
+        assert candidate['built_source_binding_sha256'] == BUILD_SOURCE_BINDING_SHA256
+        assert manifest['colour_reduction_max_colours'] == 256 and manifest['deployment_allowed'] is True
+        assert 'id="cr-pixel-inspector"' in archive.read(prefix + 'index.html').decode('utf-8')
         assert candidate['reference_card_sha256'] == REFERENCE_CARD_SHA256
         assert 'id="ch-reference-card"' in archive.read(prefix + 'index.html').decode('utf-8')
-        for name, digest in {**SOURCE_BINDING_SHA256, **REFERENCE_CARD_SHA256}.items():
+        for name, digest in {**BUILD_SOURCE_BINDING_SHA256, **REFERENCE_CARD_SHA256}.items():
             raw = archive.read(prefix + 'assets/' + name)
             assert hashlib.sha256(raw).hexdigest() == digest, f'Wrong source-binding module: {name}'
             embedded = raw.decode('utf-8').replace('</script', '<\\/script')
             assert ('<script>' + embedded + '</script>') in archive.read(prefix + 'index.html').decode('utf-8'), f'Wrong embedded source-binding module: {name}'
-    print(f'PASS: {path.name}: {len(expected)} beta.8/Colour ID assets match; source binding and name-index expansion verified')
+    print(f'PASS: {path.name}: {len(expected)} beta.9/Colour ID assets match; source binding and name-index expansion verified')
 
 
 if __name__ == '__main__':

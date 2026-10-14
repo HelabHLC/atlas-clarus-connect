@@ -26,9 +26,21 @@ const fixture=path.join(out,'textile-motif.png');fs.writeFileSync(fixture,C.png(
  const browser=await chromium.launch({headless:true,args:['--no-sandbox'],...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
  try{
   const context=await browser.newContext({viewport:{width:1440,height:1100},acceptDownloads:true});
+  if(process.env.ANDROID_EXPORT_CAPTURE==='1')await context.addInitScript(()=>{
+    window.androidSaved=[];window.androidErrors=[];
+    window.AndroidExport={save(filename,mime,base64){window.androidSaved.push({filename,mime,base64});},error(message){window.androidErrors.push(message);}};
+  });
   const page=await context.newPage(),errors=[],requests=[];page.on('pageerror',e=>errors.push(e.message));context.on('request',r=>{if(/^https?:/.test(r.url()))requests.push(r.url());});
   const done=async(prefix)=>{await page.waitForFunction(p=>{const s=document.getElementById('cr-status');return (s.textContent.startsWith(p)||s.dataset.error==='true')&&document.getElementById('cr-cancel').disabled;},prefix,{timeout:60000});assert((await page.locator('#cr-status').innerText()).startsWith(prefix),await page.locator('#cr-status').innerText());};
-  async function save(selector,name){const [d]=await Promise.all([page.waitForEvent('download'),page.locator(selector).click()]);const file=path.join(out,name);await d.saveAs(file);return fs.readFileSync(file);}
+  async function save(selector,name){
+    if(process.env.ANDROID_EXPORT_CAPTURE==='1'){
+      const n=await page.evaluate(()=>window.androidSaved.length);
+      await page.locator(selector).click();await page.waitForFunction(n=>window.androidSaved.length>n,n);
+      assert.deepEqual(await page.evaluate(()=>window.androidErrors),[]);
+      const result=await page.evaluate(n=>window.androidSaved[n],n),bytes=Buffer.from(result.base64,'base64');
+      fs.writeFileSync(path.join(out,name),bytes);return bytes;
+    }
+    const [d]=await Promise.all([page.waitForEvent('download'),page.locator(selector).click()]);const file=path.join(out,name);await d.saveAs(file);return fs.readFileSync(file);}
   await page.goto(pathToFileURL(target).href+'#colour-reduction');await page.waitForFunction(()=>!document.getElementById('cr-file').disabled);
   await page.locator('#cr-file').setInputFiles(fixture);await done('Source ready');
   async function pixelAt(x,y,action='click'){

@@ -10,8 +10,8 @@ android {
         applicationId 'com.atlasclarus.connect'
         minSdk 26
         targetSdk 36
-        versionCode 8
-        versionName '0.4.0-beta.8'
+        versionCode 9
+        versionName '0.4.0-beta.9'
     }
 
     def signingEnvironment = [
@@ -78,6 +78,8 @@ def prepareBundle = tasks.register('prepareBundle', Exec) {
             new File(rootProject.projectDir, '../browser-bundle/build_bundle.py'),
             new File(rootProject.projectDir, '../browser-bundle/build_colour_reference_card.py'),
             new File(rootProject.projectDir, '../browser-bundle/build_image_exchange_pilot.py'),
+            new File(rootProject.projectDir, '../browser-bundle/build_colour_reduction.py'),
+            new File(rootProject.projectDir, '../browser-bundle/build_colour_reduction_release.py'),
             fileTree(new File(rootProject.projectDir, '../browser-bundle')).matching { include 'manifest*.json' },
             new File(rootProject.projectDir, 'prepare_bundle.py'),
             new File(rootProject.projectDir, 'android-export.js')

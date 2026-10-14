@@ -1,12 +1,12 @@
 'use strict';
-// Actual beta.7 -> beta.8 documents, one persisted Chromium profile and the
+// Actual beta.8 -> beta.9 documents, one persisted Chromium profile and the
 // unchanged Android HTTPS origin. Native Save Document is a captured boundary,
 // not an emulated device acceptance or evidence of a Play update.
 const fs = require('node:fs'), path = require('node:path'), os = require('node:os');
 const assert = require('node:assert/strict'), {execFileSync} = require('node:child_process');
 const root = path.resolve(__dirname, '..');
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || path.join(root, 'browser-bundle/tests/node_modules/playwright'));
-const oldAssets = path.resolve(process.env.BASELINE_ASSETS || '.beta7-baseline/android-test-app/app/src/main/assets/bundle');
+const oldAssets = path.resolve(process.env.BASELINE_ASSETS || '.beta8-baseline/android-test-app/app/src/main/assets/bundle');
 const newAssets = path.join(__dirname, 'app/src/main/assets/bundle');
 const out = process.env.ANDROID_UPGRADE_OUTPUT || '/tmp/atlas-android-upgrade';
 const fixturePath = path.join(root, 'browser-bundle/tests/fixtures/colour-kit-030-two-greens.json');
@@ -17,8 +17,8 @@ fs.mkdirSync(out, {recursive:true});
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-upgrade-profile-'));
 
 (async () => {
-  assert.equal(JSON.parse(fs.readFileSync(path.join(oldAssets, 'ANDROID_CANDIDATE.json'))).version_name, '0.4.0-beta.7');
-  assert.equal(JSON.parse(fs.readFileSync(path.join(newAssets, 'ANDROID_CANDIDATE.json'))).version_name, '0.4.0-beta.8');
+  assert.equal(JSON.parse(fs.readFileSync(path.join(oldAssets, 'ANDROID_CANDIDATE.json'))).version_name, '0.4.0-beta.8');
+  assert.equal(JSON.parse(fs.readFileSync(path.join(newAssets, 'ANDROID_CANDIDATE.json'))).version_name, '0.4.0-beta.9');
   let context, page, activeAssets = oldAssets;
   const errors = [], unexpected = [];
   async function open() {
@@ -70,7 +70,7 @@ const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-upgrade-profile-'))
   }
   try {
     await open();
-    // Seed through beta.7's UI, including both original sources on a shared row.
+    // Seed through beta.8's UI, including both original sources on a shared row.
     await upload('#palette-import-file', JSON.parse(fixture.bundle_origin.document_text));
     await page.waitForFunction(() => document.getElementById('export-status').textContent.startsWith('Imported'));
     await page.locator('#palette-toggle').click();
@@ -91,7 +91,7 @@ const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-upgrade-profile-'))
     await card.locator('[data-hex]').fill('#112233');
     await card.locator('[data-edit-note]').fill('Retain an independent working revision.');
     await card.locator('[data-edit]').click(); await done('cp-status','Colour revision saved');
-    const projectBefore = JSON.parse(fs.readFileSync(await save('#cp-save','beta7-project.json')));
+    const projectBefore = JSON.parse(fs.readFileSync(await save('#cp-save','beta8-project.json')));
     await page.locator('#cp-new-name').fill('Second retained project');
     await page.locator('#cp-new').click(); await done('cp-status','Project created');
     await page.locator('#cp-project-list').selectOption(projectBefore.project_id);
@@ -109,9 +109,9 @@ const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-upgrade-profile-'))
     await page.locator('#ip-replacement').fill('#112233');
     await page.locator('#ip-note').fill('Before the Android update');
     await page.locator('#ip-recolour').click(); await done('ip-status','Image change recorded');
-    const imageBefore = JSON.parse(fs.readFileSync(await save('#ip-json','beta7-image.json')));
+    const imageBefore = JSON.parse(fs.readFileSync(await save('#ip-json','beta8-image.json')));
     assert.equal(imageBefore.history.length,1);
-    const imageZip = await save('#ip-zip','beta7-image.zip');
+    const imageZip = await save('#ip-zip','beta8-image.zip');
     const before = await storage();
     keys.forEach(key => assert.ok(before[key],key));
     const palettes = JSON.parse(before[keys[0]]);
@@ -124,17 +124,17 @@ const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-upgrade-profile-'))
     activeAssets = newAssets; await open();
     assert.deepEqual(await storage(),before,'update changed stored work');
     assert.equal(await page.locator('#cp-project-list').inputValue(),projectBefore.project_id);
-    assert.deepEqual(JSON.parse(fs.readFileSync(await save('#cp-save','beta8-project.json'))),projectBefore);
+    assert.deepEqual(JSON.parse(fs.readFileSync(await save('#cp-save','beta9-project.json'))),projectBefore);
     assert.ok((await page.locator('.cp-chosen').first().innerText()).includes('differs from working colour'));
     await page.locator('#palette-toggle').click();
     assert.equal(await page.locator('#palette-select').inputValue(),palettes.activeId);
-    const paletteFile = await save('[data-palette-export="clarus"]','beta8-palette.json');
+    const paletteFile = await save('[data-palette-export="clarus"]','beta9-palette.json');
     assert.deepEqual(JSON.parse(fs.readFileSync(paletteFile)).source_assignments,JSON.parse(fixture.bundle_origin.document_text).source_assignments);
     await page.locator('#palette-close').click();
     await page.locator('#colour-projects a[href="#image-projects"]').click();
-    for (const file of [path.join(out,'beta7-image.json'),imageZip]) {
+    for (const file of [path.join(out,'beta8-image.json'),imageZip]) {
       await page.locator('#ip-import').setInputFiles(file); await done('ip-status','Image project opened');
-      assert.deepEqual(JSON.parse(fs.readFileSync(await save('#ip-json','beta8-image.json'))),imageBefore);
+      assert.deepEqual(JSON.parse(fs.readFileSync(await save('#ip-json','beta9-image.json'))),imageBefore);
     }
     await page.locator('#primary-nav a[href="#colour-handoff"]').click();
     await page.waitForFunction(() => !document.getElementById('ch-reference-card').disabled);
@@ -157,7 +157,7 @@ const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-upgrade-profile-'))
     assert.equal(new Set(projection.cards.map(c=>c.decision_id)).size,2);
     assert.deepEqual(await storage(),before,'export changed stored work');
     assert.deepEqual(errors,[]); assert.deepEqual(unexpected,[]);
-    const report = {status:'PASS',baseline:'0.4.0-beta.7',candidate:'0.4.0-beta.8',
+    const report = {status:'PASS',baseline:'0.4.0-beta.8',candidate:'0.4.0-beta.9',
       persistent_profile_restart:true,origin,storage_keys:keys,stored_values_unchanged:true,
       project_revisions_and_chosen_colour_preserved:true,image_project_json_and_zip_reopen:true,
       android_adapter_card_zip_and_checksums:true,two_distinct_sources_and_decisions:true,

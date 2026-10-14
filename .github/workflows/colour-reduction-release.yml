@@ -1,0 +1,76 @@
+name: RC33.2 installable colour reduction update
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - 'wordpress-browser-edition/**'
+      - '.github/workflows/colour-reduction-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.5']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip
+      - name: Reproduce installable packages and verify the immutable preview boundary
+        run: |
+          python3 browser-bundle/build_colour_reduction.py --output-dir /tmp/rc331
+          python3 browser-bundle/build_colour_reduction_release.py --output-dir /tmp/rc332-bundle
+          python3 wordpress-browser-edition/build_colour_reduction_plugin.py --output-dir /tmp/rc332-a
+          python3 wordpress-browser-edition/build_colour_reduction_plugin.py --output-dir /tmp/rc332-b
+          cmp /tmp/rc332-{a,b}/*.zip
+          python3 wordpress-browser-edition/tests/validate_colour_reduction_package.py /tmp/rc332-a/*.zip /tmp/rc332-bundle/*.zip /tmp/rc331/*.zip
+          unzip -q /tmp/rc332-a/*.zip -d /tmp/rc332-wp
+          php -l /tmp/rc332-wp/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php wordpress-browser-edition/tests/validate_plugin.php /tmp/rc332-wp/atlas-clarus-browser-edition
+      - uses: actions/setup-node@v7
+        if: matrix.php == '8.5'
+        with:
+          node-version: '22'
+      - name: Verify reduction, projects and printable cards in the embedded WordPress payload
+        if: matrix.php == '8.5'
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python3 -m pip install Pillow pypdf
+          unzip -q /tmp/rc332-wp/atlas-clarus-browser-edition/assets/bundle.zip -d /tmp/rc332-runtime
+          REDUCTION_HTML=/tmp/rc332-runtime/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_colour_reduction_browser.cjs
+          IMAGE_PROJECTS_HTML=/tmp/rc332-runtime/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_image_projects_browser.cjs
+          python3 browser-bundle/tests/validate_image_png.py /tmp/atlas-image-projects-browser/project.zip
+          node browser-bundle/tests/validate_colour_reference_card.js
+          CARD_HTML=/tmp/rc332-runtime/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_colour_reference_card_browser.cjs
+          python3 - <<'PYPNG'
+          from PIL import Image
+          from pathlib import Path
+          p=Path('/tmp/atlas-colour-reduction')
+          assert Image.open(p/'reduced.png').convert('RGBA').tobytes()==(p/'expected-rgba.bin').read_bytes()
+          PYPNG
+      - uses: actions/upload-artifact@v7
+        if: matrix.php == '8.5'
+        with:
+          name: ATLAS-Clarus-RC33.2-WordPress-and-Browser
+          path: |
+            /tmp/rc332-a/*
+            /tmp/rc332-bundle/*.zip
+            /tmp/rc332-bundle/*.sha256
+          retention-days: 14
+      - uses: actions/upload-artifact@v7
+        if: always() && matrix.php == '8.5'
+        with:
+          name: RC33.2-installable-acceptance-evidence
+          path: |
+            /tmp/atlas-colour-reduction/
+            /tmp/atlas-image-projects-browser/
+            /tmp/atlas-colour-reference-card/
+          retention-days: 14
