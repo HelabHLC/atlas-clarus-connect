@@ -20,7 +20,13 @@ jobs:
         working-directory: paint-by-numbers
       - run: npm run build && npm test
         working-directory: paint-by-numbers
+      - run: npm ci
+        working-directory: browser-bundle/tests
+      - run: npx playwright install --with-deps chromium
+        working-directory: browser-bundle/tests
+      - run: node browser-test.mjs
+        working-directory: paint-by-numbers
       - uses: actions/upload-artifact@v4
         with:
           name: ATLAS-Paint-by-Numbers-preview
-          path: paint-by-numbers/dist/ATLAS_Paint_by_Numbers.html
+          path: paint-by-numbers/dist/

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {zipSync,strToU8} from 'fflate';
-import {readPackage,generate} from './dist/bridge.mjs';
+import {readPackage,generate,reduceImage,imageReference} from './dist/bridge.mjs';
 const master=JSON.parse(await readFile('../hover-library/data/colors.json','utf8'));
 const hash=b=>createHash('sha256').update(b).digest('hex');
 function fixture(count=2,alpha=255){
@@ -22,3 +22,6 @@ test('transparency is rejected without flattening',async()=>{const f=fixture(2,1
 test('original actual RC33.2 export is rejected explicitly for alpha rather than silently modified',async()=>{const path=process.env.ATLAS_REAL_ZIP;if(!path){return;}await assert.rejects(readPackage(new Uint8Array(await readFile(path))),/opaque/);});
 
 if(process.env.ATLAS_DEMO_PATH){await (await import("node:fs/promises")).writeFile(process.env.ATLAS_DEMO_PATH,pack(fixture().files));}
+
+test('direct image reduction matches ZIP path and protects clicked reference',async()=>{const f=fixture();const clicked=imageReference([226,226,226]);assert.equal(clicked.id,1);const reduced=await reduceImage({rgba:f.files['input-rgba.bin'],width:5,height:5,k:2,lockedIds:[0,clicked.id],sourceBytes:new Uint8Array([1]),sourceName:'test.png'});assert.deepEqual(reduced.indices,f.result.indices);const out=await generate(reduced);assert.equal(out.mapping.regions.find(r=>r.pixels===1).number,2);assert.equal(out.mapping.source.name,'test.png');});
+test('direct image rejects alpha and impossible protection limit',async()=>{const f=fixture(2,128);await assert.rejects(reduceImage({rgba:f.files['input-rgba.bin'],width:5,height:5,k:2,sourceBytes:new Uint8Array([1])}),/deckendes/);const opaque=fixture();await assert.rejects(reduceImage({rgba:opaque.files['input-rgba.bin'],width:5,height:5,k:1,lockedIds:[0,1],sourceBytes:new Uint8Array([1])}),/protected/);});

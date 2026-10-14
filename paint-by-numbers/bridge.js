@@ -59,3 +59,14 @@ export async function generate({report:r,indices}){
  const legend='<!doctype html><meta charset="utf-8"><title>ATLAS colour legend</title><h1>ATLAS Malnummern</h1><p>Referenz-RGB; keine Farbrezeptur. Kleine Flächen: '+regions.filter(f=>f.tiny).length+'. SVG bei Bedarf vergrößern. Unbenutzte geschützte Referenzen bleiben in der Palette.</p><table><tr><th>Nummer</th><th>Farbe</th><th>Atlas</th><th>RGB</th><th>Pixel</th><th>Geschützt</th></tr>'+palette.map(p=>`<tr><td>${p.index+1}</td><td style="background:${p.hex};width:50px"></td><td>${escape(p.reference)}</td><td>${p.rgb.join(', ')}</td><td>${p.pixel_count}</td><td>${p.protected?'Ja':''}</td></tr>`).join('')+'</table>';
  return {worksheet,coloured,legend,mapping:{schema:'atlas-paint-by-numbers/0.1',upstream_commit:'8c717508798525cca25548f1fb52e73025f0661a',master_sha256:r.master_sha256,source:r.source,output_rgba_sha256:r.output_rgba_sha256,width:w,height:h,palette:palette.map(p=>({...p,number:p.index+1})),regions,policy:'EXACT_PIXEL_EDGES_NO_REQUANTIZATION_NO_FACET_REMOVAL'}};
 }
+
+export async function reduceImage({rgba,width,height,k,lockedIds=[],sourceBytes,sourceName='image'}){
+ if(!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1||width*height>1048576)fail('Bild zu groß: maximal 1.048.576 Pixel. Bitte vorher verkleinern.');
+ if(!(rgba instanceof Uint8Array)||rgba.length!==width*height*4)fail('Ungültige Bilddaten.');
+ for(let i=3;i<rgba.length;i+=4)if(rgba[i]!==255)fail('Diese Testversion benötigt ein vollständig deckendes Bild. Transparenz wird nicht automatisch verändert.');
+ const root=typeof window==='undefined'?globalThis:window;
+ const result=root.ATLAS_COLOUR_REDUCTION.reduce({rgba,width,height,k,lockedIds,colors:master.colors,master:master.master_sha256});
+ return {indices:result.indices,report:{...result.report,source:{name:sourceName,file_sha256:await sha(sourceBytes),input_rgba_sha256:await sha(rgba)},output_rgba_sha256:await sha(result.pixels)}};
+}
+const binding=(typeof window==='undefined'?globalThis:window).ATLAS_CLARUS_PKL_IMAGE.create(master.colors,master.master_sha256);
+export function imageReference(rgb){const row=binding.nearest(rgb).row;return {id:row.id,reference:row.ref,rgb:row.rgb.slice()};}
