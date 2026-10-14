@@ -1,0 +1,29 @@
+name: Validate PhotoCraft ATLAS control pilot
+
+on:
+  push:
+    paths:
+      - "integrations/photocraft-control-pilot/**"
+      - ".github/workflows/validate-photocraft-control-pilot.yml"
+      - "hover-library/data/colors.json"
+  pull_request:
+    paths:
+      - "integrations/photocraft-control-pilot/**"
+      - ".github/workflows/validate-photocraft-control-pilot.yml"
+      - "hover-library/data/colors.json"
+
+permissions:
+  contents: read
+
+jobs:
+  bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Compile bridge
+        run: python -m py_compile integrations/photocraft-control-pilot/photocraft_atlas_bridge.py
+      - name: Run isolated bridge tests
+        run: python -m unittest discover -s integrations/photocraft-control-pilot -p "test_*.py" -v

@@ -1,0 +1,24 @@
+{
+  "pilot": "PhotoCraft × ATLAS Clarus Control Pilot",
+  "pilot_version": "0.1",
+  "atlas_master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "atlas_master_rows": 13283,
+  "atlas_base_commit": "60bf765e771c3e6493c88a02a046237c9ba69db9",
+  "photocraft_examined_commit": "2d5a7497fd1e1891c796f1a93741b27a1d904604",
+  "integration_mode": "CONTROL_CHANNEL_EXTERNAL",
+  "modifies_photocraft_core": false,
+  "sample_mode": "POINT_COMPOSITE",
+  "source_representation": "PHOTOCRAFT_COMPOSITE_CONVERTED_TO_SRGB_U8",
+  "assignment": {
+    "metric": "RGB_SQUARED_DISTANCE",
+    "tie_break": "LOWER_ATLAS_ROW_ID"
+  },
+  "boundaries": [
+    "FROZEN",
+    "COMPUTATIONAL_ONLY",
+    "NOT_MEASURED",
+    "NOT_SIGNED",
+    "NO_PRODUCTION_APPROVAL"
+  ],
+  "clarus_palette_json_1_2": false
+}
