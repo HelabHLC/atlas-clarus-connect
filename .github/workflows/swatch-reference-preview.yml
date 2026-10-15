@@ -1,0 +1,35 @@
+name: Original swatch reference labels
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - '.github/workflows/swatch-reference-preview.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          python browser-bundle/build_swatch_reference_preview.py
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python -m pip install Pillow
+          node browser-bundle/tests/validate_swatch_reference_browser.cjs
+          mkdir -p /tmp/swatch-reference-delivery
+          cp browser-bundle/build-swatch-reference-preview/*rc33.4.1*.zip /tmp/swatch-reference-delivery/
+          cp -r /tmp/atlas-rectangle /tmp/swatch-reference-delivery/evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: original-swatch-reference-preview
+          path: /tmp/swatch-reference-delivery/
+          retention-days: 14
