@@ -1,0 +1,41 @@
+name: Exact rectangle protection preview
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - '.github/workflows/rectangle-preview.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          node browser-bundle/tests/validate_colour_reduction.js
+          node browser-bundle/tests/validate_original_rgb.js
+          node browser-bundle/tests/validate_rectangle_protection.js
+          python browser-bundle/build_rectangle_preview.py
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python -m pip install Pillow
+          node browser-bundle/tests/validate_rectangle_browser.cjs
+          REDUCTION_HTML=browser-bundle/build-rectangle-preview/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_original_rgb_browser.cjs
+          REDUCTION_HTML=browser-bundle/build-rectangle-preview/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_colour_reduction_browser.cjs
+      - run: |
+          mkdir -p /tmp/rectangle-delivery
+          cp browser-bundle/build-rectangle-preview/*rc33.4*.zip /tmp/rectangle-delivery/
+          cp -r /tmp/atlas-rectangle /tmp/rectangle-delivery/evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rectangle-protection-preview
+          path: /tmp/rectangle-delivery/
+          retention-days: 14
