@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{pathToFileURL}=require('node:url'),{execFileSync}=require('node:child_process'),{chromium}=require('playwright');
 require('../src/image-project-codecs.js');const C=globalThis.ATLAS_IMAGE_CODECS;
 const out='/tmp/atlas-rectangle';fs.mkdirSync(out,{recursive:true});
-const html=path.resolve(__dirname,'../build-swatch-reference-preview/atlas-clarus-browser-bundle/index.html');
+const html=process.env.ATLAS_TEST_HTML || path.resolve(__dirname,'../build-swatch-reference-preview/atlas-clarus-browser-bundle/index.html');
 (async()=>{const browser=await chromium.launch({headless:true});try{
  const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(pathToFileURL(html).href+'#colour-reduction');await page.waitForFunction(()=>!document.getElementById('cr-file').disabled);
