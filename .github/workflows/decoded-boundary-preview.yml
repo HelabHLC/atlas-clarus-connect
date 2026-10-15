@@ -1,0 +1,36 @@
+name: Decoded input protection boundary
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - '.github/workflows/decoded-boundary-preview.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          python browser-bundle/build_decoded_boundary_preview.py
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python -m pip install Pillow
+          node browser-bundle/tests/validate_decoded_boundary_browser.cjs
+          ATLAS_TEST_HTML="$PWD/browser-bundle/build-decoded-boundary-preview/atlas-clarus-browser-bundle/index.html" node browser-bundle/tests/validate_swatch_reference_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: decoded-boundary-preview
+          path: |
+            /tmp/atlas-decoded-boundary/
+            /tmp/atlas-rectangle/
+            browser-bundle/build-decoded-boundary-preview/*decoded-boundary-preview.zip
+          retention-days: 14
