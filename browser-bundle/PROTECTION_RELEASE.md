@@ -29,5 +29,5 @@ Owner-operated offline export checks on 2026-10-15 independently verified:
 Release CI separately tests reproducible ZIPs, preview boundary, PHP7.4/8.5 installer
 and rollback, embedded-runtime browser journeys and independent PNG/mask checks.
 A passing CI run is automated verification, not public interactive acceptance.
-Public deployment and live interactive acceptance remain pending until documented.
+Public WordPress beta15 / RC33.5 activation and the desktop public UI test passed on 2026-10-15. See `wordpress-browser-edition/RC33_5_DEPLOYMENT.md` and `browser-bundle/evidence/rc33.5/live-verification.json`: 69 source RGB colours to24, two global RGB locks plus an inclusive2x2 rectangle, six exact protected RGBA pixels, all32768 source reference assignments independently verified, PNG/ZIP verified,58 public files matched. Physical devices and production remain untested.
 No customer artwork is included. Paint-by-Numbers PR81 is outside this release.
