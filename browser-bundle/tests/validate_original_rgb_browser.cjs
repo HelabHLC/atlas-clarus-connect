@@ -7,11 +7,11 @@ const html=process.env.REDUCTION_HTML||path.resolve(__dirname,'../build-original
 (async()=>{const browser=await chromium.launch({headless:true});try{
  const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(pathToFileURL(html).href+'#colour-reduction');await page.waitForFunction(()=>!document.getElementById('cr-file').disabled);
- const pixels=Uint8Array.from([61,123,25,255,61,123,26,128,55,121,26,255,238,228,208,255,204,97,90,255,61,123,25,0]);
+ const pixels=Uint8Array.from([61,123,25,255,61,123,26,255,55,121,26,255,238,228,208,128,204,97,90,255,61,123,25,0]);
  await page.locator('#cr-file').setInputFiles({name:'nuances.png',mimeType:'image/png',buffer:Buffer.from(C.png(6,1,pixels))});
  await page.waitForFunction(()=>document.getElementById('cr-status').textContent.startsWith('Source ready'));
  await page.locator('#cr-k').fill('5');
- for(const hex of ['#3D7B19','#3D7B1A','#37791A']){await page.locator('#cr-lock-hex').fill(hex);await page.locator('#cr-original-add').click();}
+ for(const hex of ['#3D7B19','#3D7B1A','#37791A']){await page.locator('#cr-lock-hex').fill(hex);await page.locator('#cr-original-add').click();assert((await page.locator('#cr-status').innerText()).startsWith('Exact original'));}
  assert((await page.locator('#cr-original-warning').innerText()).includes('share one Atlas reference'));
  await page.locator('#cr-run').click();await page.waitForFunction(()=>document.getElementById('cr-status').textContent.startsWith('Reduced preview ready'));
  const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#cr-zip').click()]);await download.saveAs(path.join(out,'mixed.zip'));
