@@ -1,0 +1,59 @@
+name: RC33.5 original and area protection release
+on:
+  pull_request:
+    paths: ['browser-bundle/**', 'wordpress-browser-edition/**', '.github/workflows/protection-release.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.5']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip
+      - run: |
+          python browser-bundle/build_swatch_reference_preview.py --output-dir /tmp/preview
+          python browser-bundle/build_protection_release.py --output-dir /tmp/release
+          python wordpress-browser-edition/build_protection_plugin.py --output-dir /tmp/wp-a
+          python wordpress-browser-edition/build_protection_plugin.py --output-dir /tmp/wp-b
+          cmp /tmp/wp-{a,b}/*.zip
+          python wordpress-browser-edition/tests/validate_protection_package.py /tmp/wp-a/*.zip /tmp/release/*rc33.5*.zip /tmp/preview/*rc33.4.1*.zip
+          unzip -q /tmp/wp-a/*.zip -d /tmp/wp
+          php -l /tmp/wp/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php wordpress-browser-edition/tests/validate_plugin.php /tmp/wp/atlas-clarus-browser-edition
+      - uses: actions/setup-node@v4
+        if: matrix.php == '8.5'
+        with:
+          node-version: '22'
+      - if: matrix.php == '8.5'
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python -m pip install Pillow pypdf
+          node browser-bundle/tests/validate_original_rgb.js
+          node browser-bundle/tests/validate_rectangle_protection.js
+          unzip -q /tmp/wp/atlas-clarus-browser-edition/assets/bundle.zip -d /tmp/embedded
+          ATLAS_TEST_HTML=/tmp/embedded/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_swatch_reference_browser.cjs
+          REDUCTION_HTML=/tmp/embedded/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_colour_reduction_browser.cjs
+          IMAGE_PROJECTS_HTML=/tmp/embedded/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_image_projects_browser.cjs
+          python browser-bundle/tests/validate_image_png.py /tmp/atlas-image-projects-browser/project.zip
+          node browser-bundle/tests/validate_colour_reference_card.js
+          CARD_HTML=/tmp/embedded/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_colour_reference_card_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.php == '8.5'
+        with:
+          name: RC33.5-WordPress-release-and-evidence
+          path: |
+            /tmp/wp-a/*
+            /tmp/release/*rc33.5*.zip
+            /tmp/atlas-rectangle/
+          retention-days: 14

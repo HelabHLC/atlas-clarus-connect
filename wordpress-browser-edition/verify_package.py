@@ -32,8 +32,8 @@ def verify(root):
         block = source.split("$expected = array(", 1)[1].split(");", 1)[0]
         expected = {k: v[1:-1] if v.startswith("'") else int(v)
                     for k, v in re.findall(r"'([^']+)'\s*=>\s*('[^']*'|\d+)\s*,", block)}
-        if version in ('0.1.15-beta9', '0.1.15-beta10', '0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14'):
-            manifest_file = {'0.1.15-beta9': 'manifest-rc29.1.json', '0.1.15-beta10': 'manifest-rc30.1.json', '0.1.15-beta11': 'manifest-rc31.1.json', '0.1.15-beta12': 'manifest-rc32.1.json', '0.1.15-beta13': 'manifest-rc32.2.json', '0.1.15-beta14': 'manifest-rc33.2.json'}[version]
+        if version in ('0.1.15-beta9', '0.1.15-beta10', '0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14', '0.1.15-beta15'):
+            manifest_file = {'0.1.15-beta9': 'manifest-rc29.1.json', '0.1.15-beta10': 'manifest-rc30.1.json', '0.1.15-beta11': 'manifest-rc31.1.json', '0.1.15-beta12': 'manifest-rc32.1.json', '0.1.15-beta13': 'manifest-rc32.2.json', '0.1.15-beta14': 'manifest-rc33.2.json', '0.1.15-beta15': 'manifest-rc33.5.json'}[version]
             pilot = json.loads((Path(__file__).resolve().parents[1]/'browser-bundle'/manifest_file).read_text())
             assert manifest == pilot
             scalar_count = sum(type(v) in (str, int) for v in pilot.values())
@@ -97,6 +97,8 @@ def verify(root):
         report.update(source_base_commit='b6993cfde7ddf8e62ec10914babc6c387373b4ec',
                       source_candidate='RC33.2 Colour Reduction public pilot',
                       source_review='browser-bundle/COLOUR_REDUCTION.md')
+    if version == '0.1.15-beta15':
+        report.update(source_base_commit='47ee682ca0e079b451daa994d2a87d68fcf9509f', source_candidate='RC33.5 Original RGB and area protection public pilot', source_review='browser-bundle/PROTECTION_RELEASE.md')
     return report
 
 
