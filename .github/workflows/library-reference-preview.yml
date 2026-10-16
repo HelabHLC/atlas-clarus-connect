@@ -27,11 +27,14 @@ jobs:
           browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
           python -m pip install Pillow
           node browser-bundle/tests/validate_library_reference_browser.cjs
+          node browser-bundle/tests/validate_region_correction_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: library-reference-preview
           path: |
             /tmp/atlas-library-reference.zip
-            browser-bundle/build-library-reference-preview/*library-cleanup-preview.zip
+            /tmp/atlas-correction-*
+            /tmp/atlas-region-correction-mobile.png
+            browser-bundle/build-library-reference-preview/*region-correction-preview.zip
           retention-days: 14

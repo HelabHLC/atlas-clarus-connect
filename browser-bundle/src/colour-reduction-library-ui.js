@@ -6,7 +6,73 @@
     let uncleaned=null,ctx=null,input=null,result=null,busy=false,worker=null,workerUrl=null,locks=[],originals=[],rectangles=[],corner=null,selectedPixel=null,loupe=null;
     const libraryMode=()=>$('cr-protection-mode').value==='LIBRARY_REFERENCE';
     const library=()=>libraryViews[$('cr-library').value];
-    let libraryBinding=null;
+    let libraryBinding=null, editCorner=null, editRect=null, correction=null, correctionBefore=null;
+    function editControls(){
+      $('cr-edit-apply').disabled=busy||!result||!editRect;
+      $('cr-edit-clear').disabled=busy;
+      $('cr-after').setAttribute('aria-disabled',String(busy||!result));
+    }
+    function inspectEdit(){
+      editControls();
+      $('cr-edit-help').textContent=libraryMode()?'Library mode: restores nearest selected-library references, then protects them. Original RGB may differ; reference slots count within the limit.':'Original mode: restores exact frozen browser-decoded RGBA inside the region. Every distinct visible original RGB needs a palette slot. Stored file channels may differ from decoded pixels.';
+      if(!editRect||!result)return;
+      const [x0,y0,x1,y1]=editRect,w=x1-x0+1,h=y1-y0+1;
+      $('cr-edit-selection').textContent='X '+x0+'–'+x1+' / Y '+y0+'–'+y1+' · '+w*h+' pixels. '+(editCorner?'Choose the second corner.':'Ready to correct.');
+      for(const [id,rgba]of [['cr-edit-original',input.rgba],['cr-edit-current',result.pixels]]){
+        const cv=$(id);cv.width=w;cv.height=h;cv.style.imageRendering='pixelated';
+        const pixels=new Uint8ClampedArray(w*h*4);
+        for(let y=0;y<h;y++)pixels.set(rgba.subarray(((y+y0)*input.width+x0)*4,((y+y0)*input.width+x1+1)*4),y*w*4);
+        cv.getContext('2d').putImageData(new ImageData(pixels,w,h),0,0);
+      }
+      draw('cr-after',result.pixels);const c=$('cr-after').getContext('2d');c.strokeStyle='#a6ff4d';c.lineWidth=Math.max(1,input.width/600);c.strokeRect(x0,y0,w,h);
+    }
+    $('cr-after').tabIndex=0;
+    $('cr-after').addEventListener('keydown',event=>{
+      if(busy||!result)return;const directions={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]},d=directions[event.key];
+      if(d){event.preventDefault();const x=Math.max(0,Math.min(input.width-1,(editRect?.[2]??0)+d[0])),y=Math.max(0,Math.min(input.height-1,(editRect?.[3]??0)+d[1]));if(!editCorner)editCorner=[editRect?.[0]??x,editRect?.[1]??y];editRect=[Math.min(x,editCorner[0]),Math.min(y,editCorner[1]),Math.max(x,editCorner[0]),Math.max(y,editCorner[1])];inspectEdit();}
+      if(event.key==='Enter'||event.key===' '){event.preventDefault();editRect??=[0,0,0,0];editCorner=null;inspectEdit();}
+    });
+    function deviations(){
+      if(!input||!result)return;
+      const threshold=Number($('cr-error-threshold').value),pixels=new Uint8ClampedArray(input.rgba.length);let count=0;
+      if(!Number.isFinite(threshold)||threshold<0||threshold>442){$('cr-error-count').textContent='Choose a threshold from 0 to 442.';return;}
+      for(let i=0;i<pixels.length;i+=4){const distance=Math.hypot(...[0,1,2].map(j=>input.rgba[i+j]-result.pixels[i+j]));if(input.rgba[i+3]&&distance>=threshold){pixels.set([255,0,180,255],i);count++;}}
+      draw('cr-error-map',pixels);$('cr-error-map').hidden=!$('cr-error-show').checked;$('cr-error-count').textContent=count+' visible pixels at or above RGB distance '+threshold+'.';
+    }
+    $('cr-error-show').onchange=deviations;$('cr-error-threshold').oninput=deviations;
+    $('cr-edit-clear').onclick=()=>{if(busy)return;editCorner=null;editRect=null;$('cr-edit-selection').textContent='No result region selected.';if(result)draw('cr-after',result.pixels);editControls();};
+    $('cr-after').style.cursor='crosshair';
+    $('cr-after').addEventListener('pointerup',event=>{
+      if(busy||!result||!event.isPrimary||event.button!==0)return;
+      const b=$('cr-after').getBoundingClientRect(),x=Math.max(0,Math.min(input.width-1,Math.floor((event.clientX-b.left)*input.width/b.width))),y=Math.max(0,Math.min(input.height-1,Math.floor((event.clientY-b.top)*input.height/b.height)));
+      if(!editCorner){editCorner=[x,y];editRect=[x,y,x,y];}else{editRect=[Math.min(x,editCorner[0]),Math.min(y,editCorner[1]),Math.max(x,editCorner[0]),Math.max(y,editCorner[1])];editCorner=null;}
+      const i=(y*input.width+x)*4,original=Array.from(input.rgba.slice(i,i+3)),assigned=input.rgba[i+3]?I.reference(original,ctx):null;$('cr-edit-pixel').textContent='X '+x+' / Y '+y+' · Frozen original RGBA '+Array.from(input.rgba.slice(i,i+4)).join(' / ')+' · Output RGBA '+Array.from(result.pixels.slice(i,i+4)).join(' / ')+(assigned?' · Independent full-master assignment '+assigned.atlas_reference+' · row '+assigned.atlas_row_id:' · Fully transparent, unassigned');selectPixel({x,y,rgb:Array.from(input.rgba.slice(i,i+3)),alpha:input.rgba[i+3]});inspectEdit();
+    });
+    $('cr-edit-apply').onclick=()=>{
+      if(busy||!result||!editRect)return;
+      if(rectangles.length>=64){$('cr-edit-status').textContent='Palette/selection conflict: maximum 64 rectangles. Previous result retained.';return;}
+      correction={rect:editRect.slice(),previous:result,rectangles:rectangles.map(r=>r.slice())};
+      if(!rectangles.some(r=>r.every((n,i)=>n===editRect[i])))rectangles.push(editRect.slice());
+      $('cr-run').click();
+    };
+    function correctionFailed(message){
+      if(!correction)return;
+      rectangles=correction.rectangles;result=correction.previous;correction=null;
+      $('cr-edit-status').textContent='Correction conflict: '+message+' Previous result and protections retained. Increase the colour limit or select a smaller region.';
+      showRegions();inspectEdit();controls();
+    }
+    function correctionDone(){
+      if(!correction)return;
+      const {rect,previous}=correction;correctionBefore=previous.pixels.slice();let changed=0,before=0,after=0,count=0;
+      for(let y=rect[1];y<=rect[3];y++)for(let x=rect[0];x<=rect[2];x++){
+        const i=(y*input.width+x)*4;if([0,1,2,3].some(j=>previous.pixels[i+j]!==result.pixels[i+j]))changed++;
+        if(input.rgba[i+3]){count++;before+=Math.hypot(...[0,1,2].map(j=>input.rgba[i+j]-previous.pixels[i+j]));after+=Math.hypot(...[0,1,2].map(j=>input.rgba[i+j]-result.pixels[i+j]));}
+      }
+      const evidence={rectangle:rect,mode:$('cr-protection-mode').value,changed_pixels:changed,visible_pixels:count,mean_rgb_distance_before:count?before/count:0,mean_rgb_distance_after:count?after/count:0};
+      result.report.post_corrections=[...(previous.report.post_corrections||[]),evidence];
+      $('cr-edit-status').textContent=changed+' region pixels changed · mean RGB distance '+evidence.mean_rgb_distance_before.toFixed(2)+' → '+evidence.mean_rgb_distance_after.toFixed(2)+'. Protected within '+result.report.requested_colours+' palette slots. Previous cleanup is reset; reapply if needed.';
+      correction=null;showRegions();
+    }
     function reference(rgb){
       if(!libraryMode())return I.reference(rgb,ctx);
       const c=libraryBinding.nearest(rgb).row;
@@ -21,13 +87,13 @@
       $('cr-cleanup').disabled=busy||!result;$('cr-cleanup-reset').disabled=busy||!result?.report.area_cleanup;$('cr-cleanup-min').disabled=busy;
       $('cr-cancel').disabled=!worker;
       document.querySelectorAll('#cr-locks button, #cr-original-locks button, #cr-region-locks button').forEach(b=>b.disabled=busy);
-      loupe?.setBusy(busy||!ctx||!input);
+      loupe?.setBusy(busy||!ctx||!input);editControls();
       $('cr-pixel-original').disabled=busy||!selectedPixel?.alpha;
       $('cr-region-start').disabled=busy||!ctx||!input||!selectedPixel;
       $('cr-region-end').disabled=busy||!ctx||!input||!selectedPixel||!corner;
       $('cr-region-cancel').disabled=busy||!corner;
     }
-    function invalidate(){uncleaned=null;result=null;$('cr-output').hidden=true;$('cr-after').hidden=true;$('cr-result').textContent='Settings changed. Create a new reduced preview.';controls();}
+    function invalidate(){correctionBefore=null;editCorner=null;editRect=null;correction=null;$('cr-edit-status').textContent='';$('cr-edit-selection').textContent='No result region selected.';uncleaned=null;result=null;$('cr-output').hidden=true;$('cr-after').hidden=true;$('cr-result').textContent='Settings changed. Create a new reduced preview.';controls();}
     function draw(id,pixels){const cv=$(id);cv.width=input.width;cv.height=input.height;cv.getContext('2d',{colorSpace:'srgb'}).putImageData(new ImageData(new Uint8ClampedArray(pixels),input.width,input.height),0,0);}
     function showLocks(){
       $('cr-locks').replaceChildren();
@@ -97,32 +163,32 @@
     loupe=root.ATLAS_COLOUR_REDUCTION_LOUPE.create({hex:I.hex,reference:rgb=>reference(rgb),onSelect:selectPixel,
       onProtect:pixel=>{selectPixel(pixel);$('cr-lock-add').click();}});
     function stop(){if(worker)worker.terminate();if(workerUrl)URL.revokeObjectURL(workerUrl);worker=null;workerUrl=null;busy=false;controls();}
-    $('cr-cancel').onclick=()=>{stop();status('Reduction cancelled. Source unchanged.');};
+    $('cr-cancel').onclick=()=>{stop();correctionFailed('Cancelled.');status('Reduction cancelled. Source unchanged.');};
     $('cr-run').onclick=()=>{
-      if(busy||!ctx||!input)return;invalidate();busy=true;status('Assigning source pixels to the full Atlas …');
+      if(busy||!ctx||!input)return;if(!correction)invalidate();busy=true;status('Assigning source pixels to the full Atlas …');
       try{
         workerUrl=URL.createObjectURL(new Blob([JSON.parse($('atlas-reduction-worker-source').textContent)],{type:'text/javascript'}));worker=new Worker(workerUrl);controls();
         worker.onmessage=e=>{const m=e.data;if(m.progress){status('Assigning source pixels to the full Atlas … '+Math.round(m.progress.fraction*100)+'%');return;}
-          if(m.error){stop();status(m.error,true);return;}result=m.result;uncleaned=result;$('cr-cleanup-status').textContent='';stop();draw('cr-after',result.pixels);$('cr-after').hidden=false;$('cr-output').hidden=false;
+          if(m.error){stop();correctionFailed(m.error);status(m.error,true);return;}result=m.result;uncleaned=result;$('cr-cleanup-status').textContent='';stop();draw('cr-after',result.pixels);$('cr-after').hidden=false;$('cr-output').hidden=false;
           const r=result.report;$('cr-result').textContent=r.reference_protection?'Used: '+r.used_rgb_colours+' library RGB colours · '+r.selected_references+' selected references, including '+r.reference_protection.protected_references+' protected (limit '+r.requested_colours+').':r.source_unique_visible_rgb+' input RGB colours → '+r.used_rgb_colours+' visible output RGB colours · '+r.selected_references+' Atlas references + '+(r.protected_source_palette?.reserved_slots??r.original_rgb_protection?.reserved_slots??0)+' original RGB entries (limit '+r.requested_colours+') · '+r.partial_alpha_pixels+' pixels with partial opacity.';
           $('cr-swatches').replaceChildren();for(const c of r.palette){const el=document.createElement('div');el.className='cr-swatch';const sw=document.createElement('i');sw.style.backgroundColor=c.hex;el.append(sw,document.createTextNode(c.reference+' · '+c.hex+' · '+c.pixel_count+' pixels'+(c.protected?' · PROTECTED':'')+(c.pixel_count===0?' · unused in this image':'')));if(c.kind==='ORIGINAL_RGB'){
             const ref=byId.get(c.source_atlas_row_id),detail=document.createElement('p');detail.className='boundary cr-source-reference';
             detail.textContent=ref?'ATLAS assignment: '+ref.ref+' · row '+ref.id+' · Reference RGB '+ref.rgb.join(' / ')+' · '+I.hex(ref.rgb):'ATLAS assignment unavailable';
             el.append(detail);
           }$('cr-swatches').append(el);}
-          status('Reduced preview ready. Original pixels and their full-master assignments are retained separately.');controls();
+          correctionDone();inspectEdit();deviations();status('Reduced preview ready. Original pixels and their full-master assignments are retained separately.');controls();
         };
-        worker.onerror=e=>{stop();status('Reduction worker failed: '+e.message,true);};
+        worker.onerror=e=>{stop();correctionFailed(e.message);status('Reduction worker failed: '+e.message,true);};
         const pixels=input.rgba.slice();worker.postMessage({rgba:pixels,width:input.width,height:input.height,colors:colors.map(c=>({id:c.id,ref:c.ref,rgb:c.rgb})),master,protectionMode:$('cr-protection-mode').value,libraryId:$('cr-library').value,libraryName:library().name,libraryIds:library().ids.map(Number),k:Number($('cr-k').value),lockedIds:locks.slice(),originalRgbs:originals.map(c=>c.slice()),protectedRectangles:rectangles.map(r=>r.slice())},[pixels.buffer]);
-      }catch(e){stop();status(e.message,true);}
+      }catch(e){stop();correctionFailed(e.message);status(e.message,true);}
     };
     function refreshCleanup(){
-      draw('cr-after',result.pixels);
+      inspectEdit();deviations();draw('cr-after',result.pixels);
       const r=result.report;$('cr-result').textContent='Used: '+r.used_rgb_colours+' RGB colours · '+r.selected_references+' selected references (limit '+r.requested_colours+').';
       const cards=$('cr-swatches').children;for(let i=0;i<cards.length;i++){
         const c=r.palette[i],card=cards[i];for(const node of [...card.childNodes])if(node.nodeType===3)node.textContent=c.reference+' · '+c.hex+' · '+c.pixel_count+' pixels'+(c.protected?' · PROTECTED':'')+(c.pixel_count===0?' · unused in this image':'');
       }
-      controls();
+      inspectEdit();controls();
     }
     $('cr-cleanup').onclick=()=>{if(busy||!result||!uncleaned)return;try{
       result=root.ATLAS_COLOUR_REDUCTION_CLEANUP.cleanup(uncleaned,input,Number($('cr-cleanup-min').value));refreshCleanup();
@@ -143,10 +209,11 @@
     $('cr-zip').onclick=()=>run('Preparing source, reduced image and per-pixel evidence …',async()=>{
       if(!result)throw Error('Create a reduced preview first.');
       const files={'reduced.png':C.png(input.width,input.height,result.pixels),'input-rgba.bin':input.rgba,'input-atlas-row-id.u16le':R.assignmentBytes(result.assignments),'output-palette-index.u16le':R.assignmentBytes(result.indices)};
+      if(correctionBefore)files['before-last-correction.png']=C.png(input.width,input.height,correctionBefore);
       if(result.protectionMask)files['protected-pixel-mask.u8']=result.protectionMask;
       files['original.'+(input.sourceMime==='image/jpeg'?'jpg':'png')]=input.sourceBytes;
       if(input.project)files['source-image-project.clarus.json']=H.utf8(JSON.stringify(input.project)+'\n');
-      const report={...result.report,source:{name:input.sourceName,file_sha256:await ctx.sha(input.sourceBytes),input_rgba_sha256:await ctx.sha(input.rgba),image_project_document_sha256:input.project?.document_sha256||null},output_rgba_sha256:await ctx.sha(result.pixels),index_layout:{order:'ROW_MAJOR_ZERO_BASED',coordinates:'x = pixel_index % width; y = floor(pixel_index / width)',input_reference:'UINT16_LITTLE_ENDIAN; 65535 = fully transparent, not assigned',output_palette:'UINT16_LITTLE_ENDIAN; 65535 = fully transparent, not assigned'}};
+      const report={...result.report,correction_before_rgba_sha256:correctionBefore?await ctx.sha(correctionBefore):null,source:{name:input.sourceName,file_sha256:await ctx.sha(input.sourceBytes),input_rgba_sha256:await ctx.sha(input.rgba),image_project_document_sha256:input.project?.document_sha256||null},output_rgba_sha256:await ctx.sha(result.pixels),index_layout:{order:'ROW_MAJOR_ZERO_BASED',coordinates:'x = pixel_index % width; y = floor(pixel_index / width)',input_reference:'UINT16_LITTLE_ENDIAN; 65535 = fully transparent, not assigned',output_palette:'UINT16_LITTLE_ENDIAN; 65535 = fully transparent, not assigned'}};
       files['reduction.json']=H.utf8(JSON.stringify(report,null,2)+'\n');
       files['README.txt']=H.utf8('ATLAS Clarus Colour Reduction 0.1\nOpen reduced.png to view the derived motif. reduction.json describes the exact settings and palette. Original source bytes and frozen input RGBA are retained. The input may be the current edited frame of the included Image Project; that project retains its complete history and can be opened in Image Projects.\nPer-pixel full-master assignments and selected palette indices use the original image dimensions and coordinates. Transparent pixels keep their original RGB and alpha; sentinel indices mark them unassigned. Partially transparent pixels keep their alpha.\nTo regenerate, load the original image (or included Image Project), choose requested_colours and protect protected_ids using the palette HEX values. Identical input RGBA and the same master/method yield identical output. Browser decoding can differ; compare input_rgba_sha256.\nThis package is not an Image Projects ZIP and does not add an edit to the original project. No reduction-job importer is supplied in v0.1. GPL/ASE/CSS/tokens contain the complete selected palette. Clarus JSON is split into parts of at most 64 references for the existing palette importer.\nNo dithering, ink separation, underbase, trapping, halftones or print approval. Motif RGB colours are not a count of inks/screens. Checksums establish consistency, not authorship.\n');
       if(result.report.original_rgb_protection)files['README.txt']=H.utf8('Mixed output preview. ORIGINAL_RGB entries preserve browser-decoded source RGB at all matching visible pixels; alpha is unchanged. Each original reserves one slot, separately from Atlas references. atlas_row_id is null for originals; source_atlas_row_id records their unchanged reference assignment. Output indices refer to the mixed palette in reduction.json. Reference mapping may split a source reference across multiple outputs. GPL/ASE/CSS/Tokens contain the complete mixed palette. Clarus JSON chunks contain ATLAS REFERENCES ONLY; they cannot restore the mixed palette or original RGB protections. Use the full ZIP. No reduction-job importer. No region mask or spatial-isolation guarantee. Checksums establish consistency, not trusted origin or authorship. No production approval.\n');
@@ -171,7 +238,7 @@
       $('cr-mode-help').textContent=libraryMode()?'All visible output colours come from this library. Selected source colours and rectangles are converted to their nearest library references, then fixed. Duplicate references count once within the colour limit. Alpha stays unchanged.':'Exact original RGB and rectangle protection preserve frozen browser-decoded pixels. Reference locks use the full Atlas master.';
       $('cr-original-add').textContent=libraryMode()?'Convert this source colour and protect reference':'Keep this original RGB unchanged';
       $('cr-pixel-original').textContent=libraryMode()?'Convert selected source colour and protect reference':'Keep selected original RGB unchanged';
-      status('Mode or library changed. Reference locks cleared; source selections retained. Create a new preview.');
+      inspectEdit();status('Mode or library changed. Reference locks cleared; source selections retained. Create a new preview.');
     }
     $('cr-library').onchange=updateMode;$('cr-protection-mode').onchange=updateMode;
     updateMode();

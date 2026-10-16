@@ -5,7 +5,7 @@ from build_decoded_boundary_preview import build as base,VERSION as OLD
 from build_colour_reduction import inline,once
 from build_image_exchange_pilot import sha,zip_tree
 HERE=Path(__file__).resolve().parent
-VERSION='0.2.0-rc33.6.1-library-cleanup-preview'
+VERSION='0.2.0-rc33.7-region-correction-preview'
 def build(output):
     base(output)
     dist=output/'atlas-clarus-browser-bundle'
@@ -22,6 +22,7 @@ def build(output):
     html=html[:a]+json.dumps(worker).replace('<','\\u003c')+html[b:];(dist/'index.html').write_text(html)
     for name in ['colour-reduction-library.js','colour-reduction-library-ui.js','colour-reduction-cleanup.js']:shutil.copyfile(HERE/'src'/name,dist/'assets'/name)
     shutil.copyfile(HERE/'LIBRARY_REFERENCE_PREVIEW.md',dist/'docs/LIBRARY_REFERENCE_PREVIEW.md')
+    shutil.copyfile(HERE/'REGION_CORRECTION_PREVIEW.md',dist/'docs/REGION_CORRECTION_PREVIEW.md')
     m=json.loads((dist/'BUNDLE_MANIFEST.json').read_text());m.update(version=VERSION,status='LIBRARY_REFERENCE_OFFLINE_PREVIEW',deployment_allowed=False,colour_reduction_schema='atlas-clarus-colour-reduction/1.3',colour_reduction_method='ATLAS_LIBRARY_RGB_WEIGHTED_MEDOIDS_WITH_REFERENCE_LOCKS_V1')
     (dist/'BUNDLE_MANIFEST.json').write_text(json.dumps(m,indent=2)+'\n')
     (dist/'SHA256SUMS.txt').write_text(''.join(f'{sha(p.read_bytes())}  {p.relative_to(dist).as_posix()}\n' for p in sorted(dist.rglob('*')) if p.is_file() and p.name!='SHA256SUMS.txt'))
