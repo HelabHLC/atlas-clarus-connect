@@ -1,0 +1,52 @@
+name: RC33.7 Browser and IONOS release
+on:
+  push:
+    branches: [release/rc33.7-ionos-20261016]
+    paths: ['browser-bundle/**', 'wordpress-browser-edition/**', '.github/workflows/region-correction-release.yml']
+permissions:
+  contents: write
+jobs:
+  package-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: zip
+      - run: |
+          python wordpress-browser-edition/build_region_correction_plugin.py --output-dir downloads/rc33.7
+          python wordpress-browser-edition/build_region_correction_plugin.py --output-dir /tmp/rc337-repeat
+          cmp downloads/rc33.7/*RC33.7.zip /tmp/rc337-repeat/*RC33.7.zip
+          cmp downloads/rc33.7/*region-correction.zip /tmp/rc337-repeat/*region-correction.zip
+          unzip -q downloads/rc33.7/*RC33.7.zip -d /tmp/wp337
+          php -l /tmp/wp337/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php wordpress-browser-edition/tests/validate_plugin.php /tmp/wp337/atlas-clarus-browser-edition
+          unzip -q /tmp/wp337/atlas-clarus-browser-edition/assets/bundle.zip -d /tmp/embedded337
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python -m pip install Pillow
+          ATLAS_TEST_HTML=/tmp/embedded337/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_library_reference_browser.cjs
+          ATLAS_TEST_HTML=/tmp/embedded337/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_region_correction_browser.cjs
+      - name: Preserve verified packages on the release branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add downloads/rc33.7
+          git commit -m 'Preserve verified RC33.7 Browser and IONOS packages'
+          git push origin HEAD:release/rc33.7-ionos-20261016
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RC33.7-IONOS-Browser-verified
+          path: |
+            downloads/rc33.7/*
+            /tmp/atlas-correction-*
+            /tmp/atlas-region-correction-mobile.png
+          retention-days: 30
