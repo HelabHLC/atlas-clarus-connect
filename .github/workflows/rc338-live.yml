@@ -1,0 +1,32 @@
+name: RC33.8 public IONOS acceptance
+on:
+  push:
+    branches: [release/rc33.8-ionos-20261016]
+    paths: ['.github/workflows/rc338-live.yml']
+permissions:
+  contents: read
+jobs:
+  live-acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          unzip -q downloads/rc33.8/*RC33.8.zip -d /tmp/live-wp338
+          unzip -q /tmp/live-wp338/atlas-clarus-browser-edition/assets/bundle.zip -d /tmp/embedded338
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python -m pip install Pillow numpy
+          ATLAS_TEST_URL=https://arbe-lambda-star.com/atlas-clarus-browser-runtime/ node releases/rc33.8/acceptance.mjs
+          python releases/rc33.8/verify_exports.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RC33.8-public-IONOS-export-evidence
+          path: /tmp/rc338-acceptance/*
+          retention-days: 30
