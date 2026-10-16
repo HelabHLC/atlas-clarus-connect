@@ -1,0 +1,37 @@
+name: Library reference reduction preview
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - '.github/workflows/library-reference-preview.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          node browser-bundle/tests/validate_area_cleanup.js
+          node browser-bundle/tests/validate_library_reference.js
+          node browser-bundle/tests/validate_rectangle_protection.js
+          python browser-bundle/build_library_reference_preview.py
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python -m pip install Pillow
+          node browser-bundle/tests/validate_library_reference_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: library-reference-preview
+          path: |
+            /tmp/atlas-library-reference.zip
+            browser-bundle/build-library-reference-preview/*library-cleanup-preview.zip
+          retention-days: 14
