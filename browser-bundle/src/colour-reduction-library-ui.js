@@ -19,7 +19,7 @@
       const [x0,y0,x1,y1]=editRect,w=x1-x0+1,h=y1-y0+1;
       $('cr-edit-selection').textContent='X '+x0+'–'+x1+' / Y '+y0+'–'+y1+' · '+w*h+' pixels. '+(editCorner?'Choose the second corner.':'Ready to correct.');
       for(const [id,rgba]of [['cr-edit-original',input.rgba],['cr-edit-current',result.pixels]]){
-        const cv=$(id);cv.width=w;cv.height=h;cv.style.imageRendering='pixelated';
+        const cv=$(id);cv.width=w;cv.height=h;cv.style.imageRendering='pixelated';cv.style.width='100%';cv.style.maxHeight='none';
         const pixels=new Uint8ClampedArray(w*h*4);
         for(let y=0;y<h;y++)pixels.set(rgba.subarray(((y+y0)*input.width+x0)*4,((y+y0)*input.width+x1+1)*4),y*w*4);
         cv.getContext('2d').putImageData(new ImageData(pixels,w,h),0,0);
