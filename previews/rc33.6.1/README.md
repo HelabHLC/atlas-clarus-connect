@@ -1,6 +1,6 @@
 # ATLAS Clarus RC33.6.1 — Offline Preview
 
-[Download the offline preview ZIP](ATLAS_Clarus_RC33.6.1_Cleanup_Preview.zip?raw=true)
+[Download the offline preview ZIP](https://raw.githubusercontent.com/HelabHLC/atlas-clarus-connect/6ae93c1d21a33fa10e68eed023d6f746cee9dd12/previews/rc33.6.1/ATLAS_Clarus_RC33.6.1_Cleanup_Preview.zip)
 
 Choose an output reference library, protect selected references or inclusive image rectangles, reduce the colour count and clean up small unprotected colour areas using the existing palette. Unzip the download and open `atlas-clarus-browser-bundle/index.html` in your browser.
 
