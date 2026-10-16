@@ -1,0 +1,28 @@
+'use strict';
+const assert=require('node:assert/strict');
+for(const f of ['pkl-image-binding','colour-reduction','colour-reduction-original','colour-reduction-region'])require('../src/'+f+'.js');
+const legacy=globalThis.ATLAS_COLOUR_REDUCTION;
+require('../src/colour-reduction-library.js');const R=globalThis.ATLAS_COLOUR_REDUCTION;
+const colors=[{id:1,ref:'original',rgb:[100,0,0]},{id:2,ref:'dark',rgb:[80,0,0]},{id:3,ref:'light',rgb:[120,0,0]},{id:4,ref:'green',rgb:[0,255,0]}],master='8'.repeat(64);
+const rgba=Uint8Array.from([100,0,0,255,101,0,0,128,0,250,0,255,7,8,9,0]);
+const args={colors,master,rgba,width:4,height:1,k:2};
+assert.deepEqual(R.reduce(args),legacy.reduce(args),'legacy parity');
+const a={...args,protectionMode:'LIBRARY_REFERENCE',libraryIds:[2,3,4],libraryId:'test',originalRgbs:[[100,0,0]],protectedRectangles:[[1,0,1,0]]};
+const r=R.reduce(a);
+assert.equal(r.assignments[0],1,'independent full master assignment');
+assert.equal(r.report.palette[r.indices[0]].atlas_row_id,2,'tie breaks lower library ID');
+assert.equal(r.report.palette[r.indices[1]].atlas_row_id,3,'rectangle mapped and fixed');
+assert.equal(r.report.reference_protection.protected_references,2);
+assert.deepEqual([...r.protectionMask],[1,1,0,0]);
+for(let p=0;p<3;p++){assert([2,3,4].includes(r.report.palette[r.indices[p]].atlas_row_id));assert.equal(r.pixels[p*4+3],rgba[p*4+3]);}
+assert.deepEqual(r.pixels.slice(12),rgba.slice(12));
+assert.deepEqual(R.reduce(a),r,'determinism');assert.deepEqual(rgba,args.rgba);
+assert.throws(()=>R.reduce({...a,k:1}),/exceed/);
+assert.throws(()=>R.reduce({...a,libraryIds:[]}),/library/);
+assert.throws(()=>R.reduce({...a,libraryIds:[2,999]}),/Invalid library/);
+assert.throws(()=>R.reduce({...a,lockedIds:[1]}),/outside/);
+assert.throws(()=>R.reduce({...a,protectedRectangles:[[0,0,4,0]]}),/bounds/);
+assert.throws(()=>R.reduce({...a,originalRgbs:[[44,44,44]]}),/occur/);
+const same=R.reduce({...a,k:1,libraryIds:[2,4],originalRgbs:[[100,0,0],[101,0,0]]});assert.equal(same.report.reference_protection.protected_references,1,'deduplicate mapped locks');
+assert.equal(same.report.selected_references,1);
+console.log('PASS library membership, protected conversion, tie, rectangle, alpha, full provenance, budget, deduplication, determinism, legacy parity');
