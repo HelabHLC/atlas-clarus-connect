@@ -1,0 +1,44 @@
+name: Reduction job complete round trip
+on:
+  push:
+    branches: [feat/reduction-job-roundtrip-20261017]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python browser-bundle/build_reduction_job_preview.py
+          JOB_TEST_OUTPUT=/tmp/reduction-job-core node browser-bundle/tests/validate_reduction_job.cjs
+          node browser-bundle/tests/validate_exports.js
+          node browser-bundle/tests/validate_source_assignments.js
+          node browser-bundle/tests/validate_colour_handoff.js
+          node browser-bundle/tests/validate_colour_projects.js
+          node browser-bundle/tests/validate_original_rgb.js
+          node browser-bundle/tests/validate_rectangle_protection.js
+          node browser-bundle/tests/validate_library_reference.js
+          node browser-bundle/tests/validate_reduction_job_browser.cjs
+          python -m pip install Pillow numpy
+          python browser-bundle/tests/verify_reduction_job_exports.py
+          REDUCTION_HTML=$PWD/browser-bundle/build-reduction-job/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_colour_reduction_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RC33.9-reduction-job-preview-and-evidence
+          path: |
+            browser-bundle/build-reduction-job/*.zip
+            browser-bundle/build-reduction-job/SHA256SUMS.txt
+            /tmp/reduction-job-core/*
+            /tmp/atlas-reduction-job-browser/*
+          retention-days: 30
