@@ -1,5 +1,7 @@
 name: Library reference reduction preview
 on:
+  push:
+    branches: [feat/library-reference-protection-20261016]
   pull_request:
     paths:
       - 'browser-bundle/**'
