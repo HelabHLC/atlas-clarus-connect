@@ -1,0 +1,51 @@
+name: RC33.8 Browser and IONOS release
+on:
+  push:
+    branches: [release/rc33.8-ionos-20261016]
+    paths: ['browser-bundle/**', 'wordpress-browser-edition/**', 'releases/rc33.8/**', '.github/workflows/rc338-release.yml']
+permissions:
+  contents: write
+jobs:
+  package-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: zip
+      - run: |
+          python wordpress-browser-edition/build_rc338_release.py --output-dir downloads/rc33.8
+          python wordpress-browser-edition/build_rc338_release.py --output-dir /tmp/rc338-repeat
+          cmp downloads/rc33.8/*RC33.8.zip /tmp/rc338-repeat/*RC33.8.zip
+          cmp downloads/rc33.8/*region-correction.zip /tmp/rc338-repeat/*region-correction.zip
+          unzip -q downloads/rc33.8/*RC33.8.zip -d /tmp/wp338
+          php -l /tmp/wp338/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php wordpress-browser-edition/tests/validate_plugin.php /tmp/wp338/atlas-clarus-browser-edition
+          unzip -q /tmp/wp338/atlas-clarus-browser-edition/assets/bundle.zip -d /tmp/embedded338
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python -m pip install Pillow numpy
+          node releases/rc33.8/acceptance.mjs
+          python releases/rc33.8/verify_exports.py
+      - name: Preserve verified packages on the release branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add downloads/rc33.8
+          git commit -m 'Preserve verified RC33.8 Browser and IONOS packages'
+          git push origin HEAD:release/rc33.8-ionos-20261016
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RC33.8-IONOS-Browser-verified
+          path: |
+            downloads/rc33.8/*
+            /tmp/rc338-acceptance/*
+          retention-days: 30
