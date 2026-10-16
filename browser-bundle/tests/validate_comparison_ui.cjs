@@ -1,0 +1,10 @@
+'use strict';
+const {JSDOM}=require('jsdom'),fs=require('fs'),assert=require('assert/strict');
+const doc=new JSDOM('<select id="cr-compare-zoom"><option value="1">1</option><option value="2">2</option></select><button id="cr-compare-center"></button><button id="cr-variant-save"></button><button id="cr-variant-clear"></button><select id="cr-variant-select"><option value="current">Current</option></select><p id="cr-variant-info"></p>'+['original','reduced','current'].map(n=>'<canvas id="cr-compare-'+n+'" width="480" height="400"></canvas>').join(''),{runScripts:'outside-only'});
+const w=doc.window,calls=new Map();w.ImageData=class{};w.HTMLCanvasElement.prototype.getContext=function(){const cv=this;return {putImageData(){},clearRect(){},fillRect(){},drawImage(...a){calls.set(cv.id,a.slice(1));}};};
+w.eval(fs.readFileSync(require('path').resolve(__dirname,'../src/colour-reduction-compare.js'),'utf8'));
+const c=w.ATLAS_COLOUR_REDUCTION_COMPARE.create(),data={pixels:new Uint8Array(16),report:{requested_colours:4}};c.update({rgba:new Uint8Array(16),width:2,height:2},data,data);
+w.document.getElementById('cr-compare-zoom').value='2';w.document.getElementById('cr-compare-zoom').onchange();assert.deepEqual(calls.get('cr-compare-original'),calls.get('cr-compare-reduced'));assert.deepEqual(calls.get('cr-compare-current'),calls.get('cr-compare-reduced'));
+w.document.getElementById('cr-compare-original').onkeydown({key:'ArrowRight',preventDefault(){}});assert.deepEqual(calls.get('cr-compare-original'),calls.get('cr-compare-current'));
+for(let i=0;i<4;i++)w.document.getElementById('cr-variant-save').click();assert.equal(w.document.getElementById('cr-variant-select').options.length,4);c.reset();assert.equal(w.document.getElementById('cr-variant-select').options.length,1);
+console.log('PASS shared zoom/pan coordinates, snapshot limit and clearing on source reset (mock canvas)');

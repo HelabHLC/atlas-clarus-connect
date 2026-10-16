@@ -1,0 +1,21 @@
+'use strict';
+const assert=require('node:assert/strict');
+for(const f of ['pkl-image-binding','colour-reduction','colour-reduction-original','colour-reduction-region','colour-reduction-corrections','colour-reduction-library','colour-reduction-scoped-cleanup'])require('../src/'+f+'.js');
+const R=globalThis.ATLAS_COLOUR_REDUCTION,C=globalThis.ATLAS_COLOUR_CORRECTIONS;
+const colors=[{id:1,ref:'dark',rgb:[0,0,0]},{id:2,ref:'red',rgb:[255,0,0]},{id:3,ref:'green',rgb:[0,255,0]},{id:4,ref:'other master',rgb:[120,120,120]}],master='8'.repeat(64);
+const args={width:4,height:1,rgba:Uint8Array.from([0,250,0,128,255,0,0,255,0,250,0,255,7,8,9,0]),colors,master,k:2,protectionMode:'LIBRARY_REFERENCE',libraryIds:[1,2,3]};const original=args.rgba.slice();
+const forced={mode:'REFERENCE',rectangle:[0,0,0,0],atlas_row_id:2};const r=R.reduce({...args,regionCorrections:[forced]});
+assert.equal(r.report.palette[r.indices[0]].atlas_row_id,2);assert.deepEqual([...r.pixels.slice(0,4)],[255,0,0,128]);assert.deepEqual([...r.protectionMask],[1,0,0,0]);assert.equal(r.report.palette[r.indices[2]].atlas_row_id,3,'same source RGB outside area remains independently assigned');
+assert.equal(r.assignments[0],3,'full master identity unchanged');assert.deepEqual(r.pixels.slice(12),original.slice(12));assert.deepEqual(args.rgba,original);
+assert.deepEqual(r.report.reference_protection.corrections,[forced]);assert.equal(r.report.schema,'atlas-clarus-colour-reduction/1.4');assert.equal(r.report.palette.reduce((n,c)=>n+c.pixel_count,0),3);
+for(const scope of ['MASK_ONLY','PALETTE_AND_MASK']){const cleaned=globalThis.ATLAS_COLOUR_REDUCTION_CLEANUP.cleanup(r,args,6,scope);assert.deepEqual(cleaned.pixels.slice(0,4),r.pixels.slice(0,4));assert.deepEqual(cleaned.report.palette.map(c=>c.rgb),r.report.palette.map(c=>c.rgb));}
+const nearest={mode:'NEAREST_LIBRARY',rectangle:[0,0,2,0]};const p=C.plan({...args,regionCorrections:[nearest]});assert.equal(p.locks.length,2);assert.equal(p.protectedVisible,3);const q=R.reduce({...args,regionCorrections:[nearest]});assert.equal(q.report.palette[q.indices[0]].atlas_row_id,3);
+assert.throws(()=>R.reduce({...args,k:1,regionCorrections:[nearest]}),/exceed/);
+assert.throws(()=>R.reduce({...args,regionCorrections:[{...forced,atlas_row_id:4}]}),/outside/);
+assert.throws(()=>R.reduce({...args,regionCorrections:[forced,forced]}),/overlap/);
+assert.throws(()=>R.reduce({...args,regionCorrections:[{...forced,rectangle:[0,0,4,0]}]}),/bounds/);
+assert.throws(()=>R.reduce({...args,protectionMode:'ORIGINAL_RGBA',regionCorrections:[forced]}),/library mode/);
+assert.throws(()=>R.reduce({...args,originalRgbs:[[0,250,0]],regionCorrections:[forced]}),/conflicts/);
+assert.throws(()=>R.reduce({...args,protectedRectangles:[[0,0,0,0]],regionCorrections:[forced]}),/conflicts/);
+assert.deepEqual(R.reduce({...args,regionCorrections:[forced]}),r,'deterministic');
+console.log('PASS source-based local correction, nearest-pixel mode, palette budget, cleanup retention, alpha, provenance, overlap rejection and deterministic report');

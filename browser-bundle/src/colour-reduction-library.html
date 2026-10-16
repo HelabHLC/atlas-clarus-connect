@@ -1,0 +1,69 @@
+<section id="colour-reduction" class="view">
+  <div class="section-head"><div><p class="eyebrow">T-SHIRTS · TEXTILES · LIMITED-COLOUR MOTIFS</p><h2>Colour Reduction</h2></div><span class="gate warning">PREPARATION PILOT</span></div>
+  <p class="lead">Choose a smaller motif palette. Protect important Atlas colours. Compare before you hand over.</p>
+  <p class="boundary">Original RGB → full Atlas assignment → selected output palette. Each stage stays separate. Reducing to four motif colours does not automatically produce four print-ready screens.</p>
+  <div class="cr-grid">
+    <div class="cr-panel"><h3>1. Choose your source</h3>
+      <label>PNG / JPEG or Image Projects JSON / ZIP<input id="cr-file" type="file" accept="image/png,image/jpeg,.json,.zip" disabled></label>
+      <button id="cr-current" disabled>Use current Image Project</button>
+      <p class="boundary">Up to 4,194,304 pixels; source image up to 8 MiB. An Image Project is verified and its current image is used, with the complete project retained. No resizing.</p>
+      <p id="cr-source" class="boundary">No source loaded.</p>
+    </div>
+    <div class="cr-panel"><h3>2. Set the motif palette</h3>
+      <label>Reduction mode<select id="cr-protection-mode"><option value="LIBRARY_REFERENCE">Selected library · convert and protect references</option><option value="ORIGINAL_RGBA">Full Atlas · original pixel protection</option></select></label>
+      <label>Output reference library<select id="cr-library"></select></label><p id="cr-mode-help" class="boundary"></p>
+      <label>Maximum motif colours<input id="cr-k" type="number" min="1" max="256" step="1" value="4" list="cr-presets"><datalist id="cr-presets"><option value="1"><option value="2"><option value="3"><option value="4"><option value="6"><option value="8"><option value="12"><option value="16"><option value="32"><option value="64"><option value="128"><option value="256"></datalist></label>
+      <label>Colour to protect · sRGB HEX<input id="cr-lock-hex" value="#3D7B19" maxlength="7"></label>
+      <button id="cr-lock-add" disabled>Protect its Atlas reference</button>
+      <p class="boundary">Click a visible pixel in the input preview or enter HEX. Protection keeps the assigned reference from the active library (full master in original mode) in the selected palette; its RGB may differ from your original. Protected colours count towards the limit.</p>
+      <div id="cr-locks"></div>
+      <h4>Protect selected source colours</h4>
+      <button id="cr-original-add" disabled>Keep this original RGB unchanged</button>
+      <p class="boundary cr-original-only">Uses the HEX above. Here, “original” means the frozen, browser-decoded sRGB input, not the channels stored in the image file. Keeps every matching visible pixel in the frozen, browser-decoded input exactly, including alpha. Each original reserves one palette slot separately from protected references. No tolerance, no area mask. Other colours can still become the same output RGB.</p>
+      <div id="cr-original-locks"></div><p id="cr-original-warning" role="status"></p>
+      <h4>Protect colours in a rectangle</h4>
+      <p class="boundary">Select the first pixel in the input image or refine it with the 11 × 11 loupe. Set the first corner, select the opposite pixel, then protect the rectangle. Both edge pixels are included. Green outlines are preview annotations only.</p>
+      <button id="cr-region-start" disabled>Set first corner from selected pixel</button>
+      <button id="cr-region-end" disabled>Protect rectangle to selected pixel</button>
+      <button id="cr-region-cancel" disabled>Cancel pending corner</button>
+      <p id="cr-region-corner" role="status">Select a pixel, then set the first corner.</p>
+      <div id="cr-region-locks"></div>
+      <p class="boundary cr-original-only">All frozen, browser-decoded RGB nuances and alpha inside each rectangle stay exact. Their distinct visible RGB values reserve palette slots. If protection exceeds the limit, the preview stops and asks you to increase it or reduce the protected area. Outside colours can still become the same output RGB.</p>
+      <div class="cr-actions"><button id="cr-run" class="button primary" disabled>Create reduced preview</button><button id="cr-cancel" disabled>Cancel</button></div>
+    </div>
+  </div>
+  <p id="cr-status" role="status" aria-live="polite">Checking reference data …</p>
+  <div id="cr-images" hidden>
+    <div class="cr-grid"><div class="cr-panel"><h3>Input image</h3>
+      <p id="cr-pixel-help" class="boundary">Move over the image to magnify original pixels. Click or tap to keep a selection, then refine it in the pixel magnifier below. Arrow keys move one pixel; Shift + arrow moves ten.</p>
+      <div id="cr-input-stage" class="cr-checker">
+        <canvas id="cr-before" width="1" height="1" tabindex="0" aria-label="Input image pixel selection" aria-describedby="cr-pixel-help"></canvas>
+        <span id="cr-pixel-marker" aria-hidden="true" hidden></span>
+        <div id="cr-loupe-hover" aria-hidden="true" hidden><canvas id="cr-loupe-hover-canvas" width="264" height="264"></canvas><p id="cr-loupe-hover-value"></p></div>
+      </div>
+      <div id="cr-pixel-inspector" hidden>
+        <h4>Pixel magnifier · 11 × 11 original pixels</h4>
+        <p class="boundary">The loupe shows frozen, browser-decoded sRGB RGB/RGBA8 values. In original mode, original RGB and rectangle protection preserve these values exactly. In library mode, selected colours are converted to library references and then fixed. Browser decoding may change stored file channels, especially with partial transparency; it does not guarantee identical numbers to the PNG file. The outlined centre is selected. Click a magnified pixel or use the arrows to refine your selection.</p>
+        <div class="cr-pixel-grid"><canvas id="cr-loupe-detail" width="264" height="264" tabindex="0" aria-label="Magnified original pixels; select a cell or use arrow keys" aria-describedby="cr-pixel-value"></canvas></div>
+        <div class="cr-pixel-arrows" aria-label="Move selected pixel"><button id="cr-pixel-left" type="button" aria-label="Select pixel to the left">←</button><button id="cr-pixel-up" type="button" aria-label="Select pixel above">↑</button><button id="cr-pixel-down" type="button" aria-label="Select pixel below">↓</button><button id="cr-pixel-right" type="button" aria-label="Select pixel to the right">→</button></div>
+        <p id="cr-pixel-value" class="boundary" role="status" aria-live="polite"></p><p id="cr-pixel-reference" class="boundary"></p>
+        <button id="cr-pixel-original" type="button">Keep selected original RGB unchanged</button><button id="cr-pixel-protect" type="button">Protect selected pixel’s Atlas reference</button>
+      </div>
+    </div>
+    <div class="cr-panel"><h3>Reduced preview</h3><div class="cr-checker"><canvas id="cr-after" width="1" height="1" aria-label="Reduced image preview" hidden></canvas></div><p id="cr-result" class="boundary">Create a preview to compare.</p></div></div>
+  </div>
+  <div id="cr-output" hidden>
+    <h3>Clean up unprotected areas</h3>
+    <label>Merge areas smaller than (pixels)<input id="cr-cleanup-min" type="number" min="1" max="1000000" step="1" value="16"></label>
+    <button id="cr-cleanup" disabled>Clean up unprotected areas</button><button id="cr-cleanup-reset" disabled>Reset cleanup</button>
+    <p class="boundary">Simplifies small connected colour islands using existing palette colours. Protected pixels and protected palette colours stay unchanged. Alpha is preserved. Each application starts from the reduced preview, so cleanup does not accumulate.</p><p id="cr-cleanup-status" role="status"></p>
+    <h3>Selected output palette</h3><p class="boundary">Export up to 256 selected output entries. In original mode, exact originals are labelled separately from Atlas reference swatches. Clarus JSON chunks contain references only; use the full ZIP for original RGB evidence.</p><div id="cr-swatches"></div>
+    <label>Palette format<select id="cr-format"><option value="gpl">GPL · GIMP / Krita / Inkscape</option><option value="ase">ASE · Adobe / Affinity</option><option value="css">CSS variables</option><option value="tokens">Design tokens JSON</option></select></label><button id="cr-palette" disabled>Download palette</button><div class="cr-actions"><button id="cr-png" disabled>Download reduced PNG</button><button id="cr-zip" disabled>Download source + reduction ZIP</button></div>
+    <p class="boundary">The ZIP retains the original image file byte-for-byte, separately from frozen, browser-decoded input pixels, Atlas assignments, reduced PNG and palette. In reduction.json, file_sha256 identifies the original file; input_rgba_sha256 identifies the frozen pixels. The manifest checksums cover the exported files. Keep it for handover. It is a reduction evidence package, not an editable Image Projects ZIP.</p>
+  </div>
+  <details class="cr-panel"><summary>For T-shirt printing: what this preparation means</summary>
+    <p>For flat-colour motifs, a small palette can help you and the printer discuss the design. This RGB-only pilot creates no separations, screens, halftones, underbase, trapping or ink recipes. The printer determines those production steps.</p>
+    <p>Transparency and partial opacity are preserved. Semi-transparent edges can produce additional apparent colours on fabric; no garment background is baked in. Dithering is off. The number shown counts visible RGB motif colours, not inks or screens.</p>
+    <p>For photographic DTF, DTG or sublimation work, use the full-colour original unless you deliberately want a reduced look or the printer requests it. The preview is not a fabric proof or production approval.</p>
+  </details>
+</section>
