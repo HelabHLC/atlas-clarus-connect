@@ -12,7 +12,7 @@ require('../src/image-project-codecs.js');
  await page.waitForFunction(()=>document.getElementById('cr-status').textContent.startsWith('Source ready'));
  const ready=()=>page.waitForFunction(()=>document.getElementById('cr-status').textContent.startsWith('Reduced preview ready'));
  const select=async(x0,y0,x1,y1)=>{
-   await page.locator('#cr-after').evaluate((c,r)=>{const b=c.getBoundingClientRect();for(const [x,y]of [[r[0],r[1]],[r[2],r[3]]])c.dispatchEvent(new PointerEvent('pointerup',{isPrimary:true,button:0,clientX:b.left+(x+.5)*b.width/c.width,clientY:b.top+(y+.5)*b.height/c.height}));},[x0,y0,x1,y1]);
+   await page.locator('#cr-after').evaluate((c,r)=>{for(const [x,y]of [[r[0],r[1]],[r[2],r[3]]]){const b=c.getBoundingClientRect();c.dispatchEvent(new PointerEvent('pointerup',{isPrimary:true,button:0,clientX:b.left+(x+.5)*b.width/c.width,clientY:b.top+(y+.5)*b.height/c.height}));}},[x0,y0,x1,y1]);
  };
  const zip=async(name)=>{const [d]=await Promise.all([page.waitForEvent('download'),page.locator('#cr-zip').click()]);await d.saveAs('/tmp/atlas-correction-'+name+'.zip');};
  await page.locator('#cr-run').click();await ready();await zip('baseline');
