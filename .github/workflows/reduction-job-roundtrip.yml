@@ -30,6 +30,7 @@ jobs:
           node browser-bundle/tests/validate_library_reference.js
           node browser-bundle/tests/validate_reduction_job_browser.cjs
           python -m pip install Pillow numpy
+          python browser-bundle/tests/verify_reduction_job_exports.py
           REDUCTION_HTML=$PWD/browser-bundle/build-reduction-job/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_colour_reduction_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()

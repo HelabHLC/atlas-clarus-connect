@@ -33,6 +33,7 @@ def build(output):
     anchor='      <label>PNG / JPEG or Image Projects JSON / ZIP'
     assert html.count(anchor)==1
     html=html.replace(anchor,'      <label>Open complete reduction job ZIP<input id="cr-job-import" type="file" accept=".zip" disabled></label>\n      <p class="boundary">Save the complete job ZIP to resume later with palette, protections, corrections, cleanup and variants. Older evidence ZIPs cannot restore a job. Opening verifies all files and replays the result before replacing the current job.</p>\n'+anchor)
+    html=html.replace('Download source + reduction ZIP','Save complete reduction job ZIP')
     html=html.replace('0.2.0-rc33.8-region-correction',VERSION)
     (dist/'index.html').write_text(html)
     manifest=json.loads((dist/'BUNDLE_MANIFEST.json').read_text())

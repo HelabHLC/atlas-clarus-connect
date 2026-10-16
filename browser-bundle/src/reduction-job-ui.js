@@ -89,7 +89,7 @@
       appliedSettings=s;result=restored.result;uncleaned=restored.uncleaned;
       libraryBinding=root.ATLAS_CLARUS_PKL_IMAGE.create(library().ids.map(id=>byId.get(Number(id))),master);
       $('cr-k').value=s.k;loupe.setInput(input);showLocks();showOriginals();showRegions();correctionUI.restore();
-      $('cr-library').hidden=!libraryMode();document.querySelectorAll('.cr-original-only').forEach(el=>el.hidden=libraryMode());
+      modeLabels();
       $('cr-images').hidden=false;$('cr-after').hidden=false;$('cr-output').hidden=false;
       draw('cr-after',result.pixels);renderResult();compare.restore(input,uncleaned,result,appliedSettings,restored);
       $('cr-source').textContent=input.name+' · '+input.width+' × '+input.height+' pixels · verified restored reduction job';
@@ -199,14 +199,17 @@
       download('ATLAS_Clarus_Reduction_Job.zip',H.zipStored(jobFiles),'application/zip');status('Complete reduction job ZIP download started. Keep this file to resume later.');
     });
     for(const [id,v]of Object.entries(libraryViews)){const o=document.createElement('option');o.value=id;o.textContent=v.name+' · '+v.ids.length+' references';$('cr-library').append(o);}
-    function updateMode(){
-      const v=library();if(!v||!v.ids.length)throw Error('Reference library unavailable.');
-      libraryBinding=root.ATLAS_CLARUS_PKL_IMAGE.create(v.ids.map(id=>byId.get(Number(id))),master);
-      corrections=[];correctionUI.reset();locks=[];invalidate();showLocks();showOriginals();
+    function modeLabels(){
       $('cr-library').hidden=!libraryMode();document.querySelectorAll('.cr-original-only').forEach(el=>el.hidden=libraryMode());
       $('cr-mode-help').textContent=libraryMode()?'All visible output colours come from this library. Selected source colours and rectangles are converted to their nearest library references, then fixed. Duplicate references count once within the colour limit. Alpha stays unchanged.':'Exact original RGB and rectangle protection preserve frozen browser-decoded pixels. Reference locks use the full Atlas master.';
       $('cr-original-add').textContent=libraryMode()?'Convert this source colour and protect reference':'Keep this original RGB unchanged';
       $('cr-pixel-original').textContent=libraryMode()?'Convert selected source colour and protect reference':'Keep selected original RGB unchanged';
+    }
+    function updateMode(){
+      const v=library();if(!v||!v.ids.length)throw Error('Reference library unavailable.');
+      libraryBinding=root.ATLAS_CLARUS_PKL_IMAGE.create(v.ids.map(id=>byId.get(Number(id))),master);
+      corrections=[];correctionUI.reset();locks=[];invalidate();showLocks();showOriginals();
+      modeLabels();
       status('Mode or library changed. Reference locks cleared; source selections retained. Create a new preview.');
     }
     $('cr-library').onchange=updateMode;$('cr-protection-mode').onchange=updateMode;

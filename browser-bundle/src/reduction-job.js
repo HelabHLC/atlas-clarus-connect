@@ -92,9 +92,11 @@
   // Validate before saving too: every successful export must be resumable.
   await verify(state,ctx);
   const files={...existing};need(!files['job.json']&&!files['job-package-manifest.json'],'Duplicate job payload.');
-  files['job.json']=utf8(JSON.stringify(encode(state,files)));need(files['job.json'].length<=MAX_JSON,'Job metadata exceeds limit. No data were omitted.');
+  const encoded=encode(state,files);decode(encoded,files);
+  files['job.json']=utf8(JSON.stringify(encoded));need(files['job.json'].length<=MAX_JSON,'Job metadata exceeds limit. No data were omitted.');
   const hashes={};for(const [n,b]of Object.entries(files))hashes[n]=await sha(b);
   files['job-package-manifest.json']=utf8(JSON.stringify({schema:MANIFEST,master_sha256:ctx.master,files:hashes}));
+  need(Object.keys(files).length<=256,'Too many package files. No data were omitted.');
   need(Object.values(files).reduce((n,b)=>n+b.length+256,22)<=MAX_BYTES,'Job ZIP exceeds limit. No data were omitted.');return files;
  }
  async function importZip(bytes,ctx){
@@ -107,6 +109,21 @@
   const C=root.ATLAS_IMAGE_CODECS,R=root.ATLAS_COLOUR_REDUCTION;
   if(files['reduced.png'])need(bytesEqual(files['reduced.png'],C.png(state.input.width,state.input.height,state.result.pixels)),'Evidence PNG differs.');
   for(const [name,expected]of [['input-rgba.bin',state.input.rgba],['input-atlas-row-id.u16le',R.assignmentBytes(state.result.assignments)],['output-palette-index.u16le',R.assignmentBytes(state.result.indices)]])if(files[name])need(bytesEqual(files[name],expected),'Evidence differs: '+name);
+  if(files['protected-pixel-mask.u8'])need(bytesEqual(files['protected-pixel-mask.u8'],state.result.protectionMask),'Evidence protection mask differs.');
+  const originalName='original.'+(state.input.sourceMime==='image/jpeg'?'jpg':'png');
+  if(files[originalName])need(bytesEqual(files[originalName],state.input.sourceBytes),'Evidence original differs.');
+  if(files['source-image-project.clarus.json'])need(equal(json(files['source-image-project.clarus.json']),state.input.project),'Evidence image project differs.');
+  if(files['reduction.json']){
+   const report=json(files['reduction.json']);
+   for(const [k,v]of Object.entries(state.result.report))need(equal(report[k],v),'Evidence report differs: '+k);
+   need(report.output_rgba_sha256===await sha(state.result.pixels)&&report.source?.file_sha256===await sha(state.input.sourceBytes)&&report.source.input_rgba_sha256===await sha(state.input.rgba),'Evidence source/output hashes differ.');
+  }
+  if(files['reduction-package-manifest.json']){
+   const evidence=json(files['reduction-package-manifest.json']);
+   const names=Object.keys(files).filter(n=>!n.startsWith('job-data/')&&!['job.json','job-package-manifest.json','reduction-package-manifest.json'].includes(n)).sort();
+   need(evidence.schema==='atlas-clarus-colour-reduction-package/1.0'&&equal(Object.keys(evidence.files).sort(),names),'Evidence manifest file set differs.');
+   for(const name of names)need(evidence.files[name]===await sha(files[name]),'Evidence manifest hash differs: '+name);
+  }
   return state;
  }
  root.ATLAS_REDUCTION_JOB={SCHEMA,MAX_BYTES,exportFiles,importZip,verify,unzip};

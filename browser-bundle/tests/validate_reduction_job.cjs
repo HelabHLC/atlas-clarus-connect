@@ -27,6 +27,17 @@ const master=require('../../hover-library/data/colors.json'),colors=master.color
  const changed=R.reduce({...back.settings,...back.input,regionCorrections:[],colors,master:ctx.master});assert.notDeepEqual(changed.pixels,back.result.pixels);
  assert.deepEqual(back.variants[0].result.pixels,original.pixels);assert.deepEqual(back.input.sourceBytes,source);
  const again=await J.exportFiles(back,evidence,ctx);assert.deepEqual(await J.importZip(H.zipStored(again),ctx),state);
+ // Complete linked Image Project: original file, edited frame, colour project and journal.
+ const A=global.ATLAS_COLOUR_HANDOFF,P=global.ATLAS_COLOUR_PROJECTS,I=global.ATLAS_IMAGE_PROJECTS;
+ const projectContext={...await A.createContext(colors,ctx.master),decodeSource:ctx.decodeSource};
+ let colourProject=await P.create('Linked colours',projectContext);
+ colourProject=await P.add(colourProject,'Two greens',require('./fixtures/colour-kit-030-two-greens.json'),projectContext);
+ let project=await I.create({name:'Linked source',filename:'motif.png',bytes:source,width:4,height:2,rgba,colourProject},projectContext);
+ project=await I.edit(project,{kind:'RECOLOUR',rect:[0,0,1,1],match:null,replacement:[17,34,51],note:'Recorded source edit.'},projectContext);
+ const frame=(await I.verify(project,projectContext)).frame;
+ const linked=copy(state);linked.input={...input,rgba:frame,project};linked.settings=originalSettings;linked.uncleaned=R.reduce({...originalSettings,...linked.input,colors,master:ctx.master});linked.result=linked.uncleaned;linked.variants=[];linked.view.active='current';
+ const projectCtx={...ctx,projectContext};const linkedFiles=await J.exportFiles(linked,{},projectCtx);
+ const linkedBack=await J.importZip(H.zipStored(linkedFiles),projectCtx);assert.deepEqual(linkedBack,linked);assert.deepEqual(linkedBack.input.project.colour_project,colourProject);assert.equal(linkedBack.input.project.history.length,1);
  let rejected=0;const reject=async(fn)=>{await assert.rejects(fn);rejected++;};
  const mutated=async fn=>{const s=copy(state);fn(s);await reject(()=>J.exportFiles(s,evidence,ctx));};
  await mutated(s=>s.result.pixels[0]^=1);
@@ -50,5 +61,5 @@ const master=require('../../hover-library/data/colors.json'),colors=master.color
  await reject(()=>J.importZip(H.zipStored({'reduction.json':H.utf8('{}'),'reduction-package-manifest.json':H.utf8('{}')}),ctx));
  await reject(()=>J.importZip(H.zipStored({...files,'../escape':new Uint8Array()}),ctx));
  const out=process.env.JOB_TEST_OUTPUT;if(out){fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'job.zip'),zip);fs.writeFileSync(path.join(out,'source.png'),source);}
- console.log(JSON.stringify({status:'PASS',real_master:true,complete_roundtrip:true,second_roundtrip:true,corrections_cleanup_variants:true,original_nuances_alpha_hidden_rgb:true,rejected,replays,decodes,source_decoder:'synthetic-fixture adapter; real browser acceptance separate'}));
+ console.log(JSON.stringify({status:'PASS',real_master:true,complete_roundtrip:true,second_roundtrip:true,corrections_cleanup_variants:true,linked_image_colour_project_history:true,original_nuances_alpha_hidden_rgb:true,rejected,replays,decodes,source_decoder:'synthetic-fixture adapter; real browser acceptance separate'}));
 })().catch(e=>{console.error(e);process.exitCode=1;});
