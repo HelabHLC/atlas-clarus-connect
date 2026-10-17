@@ -1,0 +1,43 @@
+name: RC34.1 installable Tool Exchange candidate
+on:
+  push:
+    branches: [release/rc34.1-wordpress-20261017]
+    paths: ['wordpress-browser-edition/**', '.github/workflows/rc341-package.yml']
+permissions:
+  contents: write
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          python mischatlas/build.py
+          python mischatlas/build_recipe_import_preview.py
+          python wordpress-browser-edition/build_tool_exchange_release.py
+          python wordpress-browser-edition/tests/validate_tool_exchange_package.py
+          php -l downloads/rc34.1/plugin.php
+          php wordpress-browser-edition/tests/validate_exchange_help.php
+          node mischatlas/test_recipe_exchange.cjs
+          python mischatlas/verify_recipe_exchange.py
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          ATLAS_PLAYWRIGHT_MODULE=$PWD/browser-bundle/tests/node_modules/playwright node mischatlas/test_recipe_import_browser.cjs
+          node browser-bundle/tests/validate_tool_exchange_browser.cjs
+      - name: Store reviewed candidate downloads
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add downloads/rc34.1/*.zip downloads/rc34.1/SHA256SUMS.txt downloads/rc34.1/VALIDATION.json
+          git commit -m 'Package tested installable RC34.1 candidate; preserve frozen master'
+          git push
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RC34.1-WordPress-installable-and-offline-bundle
+          path: |
+            downloads/rc34.1/*.zip
+            downloads/rc34.1/SHA256SUMS.txt
+            downloads/rc34.1/VALIDATION.json
