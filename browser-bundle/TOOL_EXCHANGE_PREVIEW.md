@@ -32,6 +32,8 @@ Standalone Mixing Atlas, Appearance/APF/MaterialX tools, standalone WordPress Ho
 3. Edit in that tool and capture its complete native state back into the exchange. The original payload is not overwritten. Captures opened via Exchange are linked to their source document.
 4. Save **ATLAS_Clarus_Exchange.zip**. Reopen that file in another browser/profile, choose a document, and continue using its native tool.
 
+A shared package banner stays available in native tool views, with capture and save controls. Reduction-job verification runs in a worker to keep the interface responsive.
+
 Capture suppresses the intermediate native download and puts its bytes in the in-memory exchange instead. The workspace warns before leaving with an unsaved exchange. Save the complete exchange ZIP before closing. No autosave or online sync is claimed.
 
 ## Preservation and failure rules

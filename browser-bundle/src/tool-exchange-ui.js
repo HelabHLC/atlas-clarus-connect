@@ -5,8 +5,8 @@
  const tools={palette:{route:'library',button:'export-palette',input:'palette-import-file',status:'export-status',success:'Imported '},decisions:{route:'colour-handoff',button:'ch-save',input:'ch-import',status:'ch-status',success:'Decision JSON verified'},project:{route:'colour-projects',button:'cp-save',input:'cp-import',status:'cp-status',success:'Project opened'},image:{route:'image-projects',button:'ip-json',input:'ip-import',status:'ip-status',success:'Image project opened'},reduction:{route:'colour-reduction',button:'cr-zip',input:'cr-job-import',status:'cr-status',success:'Complete reduction job restored'},print:{route:'print',button:'print-export',input:'print-import-file',status:'print-message',success:'Handoff restored'}};
  const kindTool={REFERENCE_PALETTE:'palette',COLOUR_DECISIONS:'decisions',DECISION_HANDOFF:'decisions',DECISION_CARD:'decisions',COLOUR_PROJECT:'project',IMAGE_PROJECT:'image',REDUCTION_JOB:'reduction',PRINT_HANDOFF:'print'};
  const summary=p=>p?JSON.stringify(p.documents.map(d=>[d.id,d.sha256])):'';
- function status(text,error=false){$('xe-status').textContent=text;$('xe-status').dataset.error=String(error);}
- function controls(){for(const id of ['xe-new','xe-import','xe-add','xe-attachment','xe-capture','xe-tool','xe-document','xe-derive','xe-target','xe-save','xe-native-open','xe-native-target','xe-original'])$(id).disabled=busy||!ctx;
+ function status(text,error=false){$('xe-status').textContent=text;$('xe-status').dataset.error=String(error);if($('xe-banner-message'))$('xe-banner-message').textContent=text;}
+ function controls(){if($('xe-banner')){$('xe-banner').hidden=!pkg?.documents.length;$('xe-banner-capture').disabled=busy||!ctx;$('xe-banner-save').disabled=busy||!ctx||!pkg?.documents.length;}for(const id of ['xe-new','xe-import','xe-add','xe-attachment','xe-capture','xe-tool','xe-document','xe-derive','xe-target','xe-save','xe-native-open','xe-native-target','xe-original'])$(id).disabled=busy||!ctx;
   $('xe-save').disabled=busy||!pkg?.documents.length;for(const id of ['xe-native-open','xe-original','xe-derive'])$(id).disabled=busy||!pkg?.documents.length;
  }
  function render(){const selected=$('xe-document').value;$('xe-document').replaceChildren();for(const d of pkg?.documents||[]){const o=new Option(d.filename+' · '+d.kind,d.id);$('xe-document').add(o);}if(pkg?.documents.some(d=>d.id===selected))$('xe-document').value=selected;
@@ -37,6 +37,19 @@
  }
  function init(options){
   const download=options.download;
+  function replay(args){return new Promise((resolve,reject)=>{
+   const source=$('atlas-reduction-worker-source');if(!source){reject(Error('Reduction replay worker is unavailable.'));return;}
+   const url=URL.createObjectURL(new Blob([JSON.parse(source.textContent)],{type:'text/javascript'}));let worker;
+   const end=()=>{worker?.terminate();URL.revokeObjectURL(url);};
+   try{worker=new Worker(url);worker.onmessage=e=>{if(e.data.progress)return;end();e.data.error?reject(Error(e.data.error)):resolve(e.data.result);};worker.onerror=e=>{end();reject(Error(e.message));};
+    const request={};for(const k of ['rgba','width','height','master','k','lockedIds','originalRgbs','protectedRectangles','regionCorrections','protectionMode','libraryId','libraryName','libraryIds'])request[k]=args[k];request.colors=args.colors.map(c=>({id:c.id,ref:c.ref,rgb:c.rgb}));worker.postMessage(request);
+   }catch(e){end();reject(e);}
+  });}
+  if($('xe-banner')){
+   $('xe-banner-save').onclick=()=>$('xe-save').click();
+   $('xe-banner-capture').onclick=()=>{const route=location.hash.slice(1),key=Object.keys(tools).find(k=>tools[k].route===route)||(['picker','wheel','appearance'].includes(route)?'palette':null);if(!key){location.hash='exchange';status('Choose the tool to capture in the exchange workspace.');return;}$('xe-tool').value=key;$('xe-capture').click();};
+  }
+
   $('xe-new').onclick=()=>run('Creating a new exchange workspace …',async()=>{if(pkg?.documents.length&&summary(pkg)!==lastSaved)throw Error('Save the current exchange ZIP before starting another package.');pkg=X.create(ctx);activeByTool={};lastSaved='';status('New package. Add a native file or capture a tool state.');});
   $('xe-import').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;run('Verifying all exchange files and native documents …',async()=>{const candidate=await X.importZip(await fileBytes(f),ctx);if(pkg?.documents.length&&summary(pkg)!==lastSaved)throw Error('Save the current changed exchange package before opening another one.');pkg=candidate;activeByTool={};lastSaved=summary(pkg);status('Exchange opened. Every native document and retained source file verified.');});};
   $('xe-add').onchange=e=>{const files=[...e.target.files];e.target.value='';if(!files.length)return;run('Checking complete native files …',async()=>{let next=pkg;for(const f of files){const r=await X.add(next,{filename:f.name,bytes:await fileBytes(f),attachment:$('xe-attachment').checked},ctx);next=r.package;}pkg=next;status('Files added in full. Attachments are retained as bytes; no editable interpretation is claimed.');});};
@@ -51,7 +64,7 @@
    });$('xe-document').value=id;status('Complete native state added. Save the exchange ZIP to retain it across tools.');
   });
   root.addEventListener('beforeunload',e=>{if(pkg?.documents.length&&summary(pkg)!==lastSaved){e.preventDefault();e.returnValue='';}});
-  (async()=>{try{ctx=await X.context(options);pkg=X.create(ctx);status('Ready. Complete sources stay in the package; working views are explicit.');render();}catch(e){status(e.message,true);}controls();})();
+  (async()=>{try{ctx=await X.context({...options,reduce:replay});pkg=X.create(ctx);status('Ready. Complete sources stay in the package; working views are explicit.');render();}catch(e){status(e.message,true);}controls();})();
  }
  root.ATLAS_TOOL_EXCHANGE_UI={init,captureNative};
 })(window);
