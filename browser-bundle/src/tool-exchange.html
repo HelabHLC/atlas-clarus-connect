@@ -1,0 +1,25 @@
+<section class="view" id="exchange">
+ <div class="section-heading"><span class="eyebrow">ATLAS CLARUS</span><h2>Exchange between tools</h2><p>Keep complete source files, original RGB, fixed references and history together. Prepare an explicit working view for another tool and bring its edits back into the same package.</p></div>
+ <p class="boundary">A working view can contain fewer editable fields than its source. The complete source stays in the exchange ZIP. PNG, ASE, GPL, CSS, tokens and recipes can be retained unchanged as attachments; that does not make them complete editable projects.</p>
+ <div class="cr-actions"><button id="xe-new" disabled>New exchange</button><label>Open exchange ZIP<input id="xe-import" type="file" accept=".zip" disabled></label><button id="xe-save" disabled>Save complete exchange ZIP</button></div>
+ <label>Add native JSON / ZIP files<input id="xe-add" type="file" multiple accept=".json,.zip,.png,.ase,.gpl,.css,.pdf,.html" disabled></label>
+ <label><input id="xe-attachment" type="checkbox" disabled> Add as unchanged attachment only (no editable schema validation)</label>
+ <div class="cr-actions"><label>Capture from tool<select id="xe-tool" disabled><option value="palette">Browser palette</option><option value="decisions">Colour handoff</option><option value="project">Colour Projects</option><option value="image">Image Projects</option><option value="reduction">Colour Reduction</option><option value="print">4C / ECG print handoff</option></select></label><button id="xe-capture" disabled>Add current tool state to exchange</button></div>
+ <p id="xe-summary" role="status"></p><p id="xe-status" class="boundary" role="status">Starting …</p>
+ <label>Complete files<select id="xe-document" disabled></select></label><ul id="xe-files"></ul>
+ <label>Open destination<select id="xe-native-target" disabled><option value="AUTO">Document’s native tool</option><option value="REDUCTION_SOURCE">Colour Reduction source (complete Image Project)</option></select></label>
+ <div class="cr-actions"><button id="xe-native-open" disabled>Open selected document in its tool</button><button id="xe-original" disabled>Download original native file</button></div>
+ <label>Prepare for another tool<select id="xe-target" disabled>
+  <option value="DECISIONS">Design colours and history (reduction: output as new inputs)</option>
+  <option value="COLOUR_PROJECT">Colour Project with all transferred colour sets</option>
+  <option value="COLOUR_PROJECT_SOURCE">Recover complete source Colour Project, including choices and history</option>
+  <option value="PRINT_SOURCE">Recover complete source print request, including profiles and settings</option>
+  <option value="SOURCE_PALETTE">Recover recorded source Browser palette</option>
+  <option value="REFERENCE_VIEW">Reference-only palette view (originals/history stay in package)</option>
+  <option value="IMAGE_PROJECT_SOURCE">Recover attached complete source Image Project</option>
+  <option value="IMAGE_PROJECT_OUTPUT">New Image Project from exact reduced output (source job stays in package)</option>
+  <option value="PRINT_HANDOFF">New 4C / ECG reference handoff (source settings stay in package)</option>
+  <option value="REFERENCE_CARDS">Reference cards with complete decision JSON companions</option>
+ </select></label><button id="xe-derive" disabled>Prepare working document and retain source</button>
+ <p class="boundary">Use Save complete exchange ZIP for the complete transfer. A native file downloaded separately contains only that document. No silent truncation, no silent rebinding; unsupported conversions fail explicitly. Checksums verify consistency, not authorship. Offline preview; no automatic sync.</p>
+</section>
