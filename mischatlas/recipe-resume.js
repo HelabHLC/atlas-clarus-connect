@@ -9,7 +9,7 @@
   return p.job;
  }
  function compare(original,current,job,savedJob){
-  const keys=['recipe','model_spectrum','lights','search'];
+  const keys=['atlas_row_id','atlas_reference','reference_spectrum','recipe','model_spectrum','lights','search'];
   const differences=keys.filter(k=>R.canon(original[k])!==R.canon(current[k]));
   return {status:differences.length?'DIFFERENT':'EXACT_NUMERICAL_MATCH',same_inputs:R.canon(job)===R.canon(savedJob),differences,original_recipe:original.recipe,new_recipe:current.recipe,illuminants:original.lights.map(l=>{const n=current.lights.find(x=>x.name===l.name);return {name:l.name,original_DE00:l.DE00,new_DE00:n?.DE00??null,delta_DE00:n?n.DE00-l.DE00:null};}),physical_measurements:false};
  }

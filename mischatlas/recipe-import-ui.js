@@ -5,6 +5,7 @@ let mrSaved=null,mrJob=null,mrCompletedJob=null,mrPrepared=null,mrRunSource=null
 function mrCapture(job){
  mrRunSource=mrPrepared?.saved||null;
  if(mrPrepared && job.target.atlas_row_id===mrPrepared.job.target.atlas_row_id){job.seed=mrPrepared.job.seed;job.seedRecipe=structuredClone(mrPrepared.job.seedRecipe);}
+ $('mr-compare').textContent=mrRunSource?'New calculation running; comparison available after completion.':'';
  mrJob=structuredClone(job);return job;
 }
 const mrSection=document.createElement('section');
@@ -44,3 +45,6 @@ function mrCompare(){
  const comparison=ATLAS_RECIPE_RESUME.compare(mrRunSource.result,lcResult,mrCompletedJob,mrRunSource.replay.job);
  $('mr-compare').textContent=JSON.stringify({engine_sha256:mrRunSource.replay.environment.engine_sha256,...comparison},null,2);
 }
+
+const mrOriginalStop=lcStop;
+lcStop=function(message){const running=!!lcWorker;mrOriginalStop(message);if(running)$('mr-compare').textContent='No new completed comparison. Calculation stopped or finished; only completed results can be compared.';};

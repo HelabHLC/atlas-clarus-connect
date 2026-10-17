@@ -13,6 +13,13 @@ const {chromium}=require(process.env.ATLAS_PLAYWRIGHT_MODULE||'playwright'),fs=r
  assert.deepEqual(await p.evaluate(()=>mrTestCounts),{worker:0,lab:0});
  assert((await p.locator('#mr-record').textContent()).includes('SHA256_CONSISTENT'));
  await p.locator('#mr-export').click();let [d]=await Promise.all([p.waitForEvent('download'),p.locator('#downloadPanel a').filter({hasText:'snapshot.json'}).click()]);await d.saveAs('/tmp/mixing-import-reexport.json');assert.deepEqual(fs.readFileSync('/tmp/mixing-import-reexport.json'),raw);
+ // A structurally valid snapshot with another engine remains a stored document.
+ const foreign=await p.evaluate(async()=>{const replay=structuredClone(mrSaved.replay);replay.environment.engine_sha256='0'.repeat(64);return Array.from(await MR.seal(mrSaved.originalBytes,mrContext,replay));});
+ await p.locator('#mr-file').setInputFiles({name:'foreign-engine.json',mimeType:'application/json',buffer:Buffer.from(foreign)});
+ await p.waitForFunction(()=>mrSaved.filename==='foreign-engine.json');await p.locator('#mr-resume').click();
+ await p.waitForFunction(()=>document.getElementById('mr-resume-status').textContent.includes('Engine SHA-256 differs'));
+ assert.equal(await p.evaluate(()=>mrTestCounts.worker),0);
+ await p.locator('#mr-file').setInputFiles(fixture);await p.waitForFunction(()=>mrSaved.filename==='snapshot.json');
  // Adoption restores UI only; a second explicit action starts the unchanged Worker.
  const immutable=await p.evaluate(()=>Array.from(mrSaved.bytes));
  await p.locator('#mr-resume').click();await p.waitForFunction(()=>document.getElementById('mr-resume-status').textContent.startsWith('Parameters restored'));
@@ -24,6 +31,9 @@ const {chromium}=require(process.env.ATLAS_PLAYWRIGHT_MODULE||'playwright'),fs=r
  assert.deepEqual(await p.evaluate(()=>Array.from(mrSaved.bytes)),immutable);
  await p.locator('#lcBudget').selectOption('4000');await p.locator('#lcSearch').click();await p.waitForFunction(()=>document.getElementById('lcProgress').textContent.startsWith('Recipe calculated'));
  assert.equal(await p.evaluate(()=>JSON.parse(document.getElementById('mr-compare').textContent).same_inputs),false);
+ await p.locator('#lcSearch').click();await p.locator('#lcCancel').click();
+ assert(!(await p.locator('#mr-compare').textContent()).includes('EXACT_NUMERICAL_MATCH'));
+ assert.deepEqual(await p.evaluate(()=>Array.from(mrSaved.bytes)),immutable);
  const before=await p.locator('#mr-record').textContent(),bad=JSON.parse(raw);bad.record.result.recipe[0].parts++;
  await p.locator('#mr-file').setInputFiles({name:'bad.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(bad))});await p.waitForFunction(()=>document.getElementById('mr-status').dataset.error==='true');assert.equal(await p.locator('#mr-record').textContent(),before);
  await p.locator('#mr-file').setInputFiles(path.resolve('mischatlas/tests/fixtures/light-recipe-v1.json'));await p.waitForFunction(()=>document.getElementById('mr-status').textContent.includes('LEGACY_UNSEALED'));
