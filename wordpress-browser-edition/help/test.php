@@ -9,10 +9,15 @@ function parse_blocks($content){return [['blockName'=>'core/html','innerHTML'=>'
 function wp_kses_post($content){return $content;}
 require '/tmp/atlas-browser-help.php';
 $method=new ReflectionMethod('ATLAS_Clarus_Browser_Edition','inject_exchange_help');$method->setAccessible(true);
-$original='<!doctype html><html><body><main>Original app</main><script>const source=[1,2,3];</script></body></html>';
+$original='<!doctype html><html><body><main>Original app</main><script>const source=[1,2,3];const printTemplate=`<html><body>Print</body></html>`;</script></body></html>';
 $result=$method->invoke(null,$original);
-foreach(['id="atlas-exchange-help"','Help / Hilfe','Preserve $100','<script>const source=[1,2,3];</script>'] as $expected){if(strpos($result,$expected)===false)throw new Exception('Missing '.$expected);}
+$scriptEnd=strpos($result,'</script>');$helpAt=strpos($result,'<details id="atlas-exchange-help"');
+if($helpAt<$scriptEnd)throw new Exception('Help injected into embedded print template');
+foreach(['id="atlas-exchange-help"','Help / Hilfe','Preserve $100','<script>const source=[1,2,3];const printTemplate=`<html><body>Print</body></html>`;</script>'] as $expected){if(strpos($result,$expected)===false)throw new Exception('Missing '.$expected);}
 if(strpos($result,'[atlas_clarus_browser_edition]')!==false)throw new Exception('Shortcode recursion');
 if(substr_count($result,'id="atlas-exchange-help"')!==1)throw new Exception('Duplicate help');
 if($method->invoke(null,$result)!==$result)throw new Exception('Injection not idempotent');
 echo "PASS actual plugin PHP: help injection, unchanged app scripts, literal text, no shortcode execution, no duplicate injection\n";
+
+$actual=file_get_contents('/tmp/atlas-help-runtime.html');
+file_put_contents('/tmp/atlas-help-rendered.html',$method->invoke(null,$actual));

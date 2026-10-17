@@ -23,5 +23,8 @@
             . '#atlas-exchange-help details{margin-top:16px}#atlas-exchange-help summary:focus-visible{outline:2px solid #a9dcff;outline-offset:4px}'
             . '</style><details id="atlas-exchange-help"><summary>Exchange between tools · Help / Hilfe</summary>'
             . $content . '</details>';
-        return preg_replace_callback( '/<\/body>/i', static function () use ( $help ) { return $help . '</body>'; }, $html, 1 );
+        // The self-contained app includes HTML print templates inside scripts.
+        // Only the LAST closing body tag belongs to the actual application document.
+        $position = strripos( $html, '</body>' );
+        return false === $position ? $html : substr_replace( $html, $help, $position, 0 );
     }

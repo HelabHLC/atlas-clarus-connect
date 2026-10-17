@@ -12,6 +12,13 @@ jobs:
       - uses: actions/checkout@v4
       - run: python wordpress-browser-edition/help/build.py
       - run: php wordpress-browser-edition/help/test.php
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          node wordpress-browser-edition/help/browser-test.cjs
       - name: Make reviewed plugin package downloadable
         run: |
           git config user.name 'github-actions[bot]'
