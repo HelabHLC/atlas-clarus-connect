@@ -29,7 +29,7 @@ def build(output):
     assert html.count('\n</main>\n')==1
     html=html.replace('\n</main>\n',(HERE/'src/tool-exchange.html').read_text()+'\n</main>\n')
     html=html.replace('<a href="#colour-reduction">Colour Reduction</a>','<a href="#colour-reduction">Colour Reduction</a><a href="#exchange">Tool Exchange</a>')
-    html=html.replace('</head>','<style>#exchange{overflow-wrap:anywhere}#exchange label{display:block;margin:12px 0}#exchange select{max-width:100%}#xe-status[data-error="true"]{color:#ff8f8f}@media(min-width:901px){.topbar{height:auto;min-height:72px;padding-block:10px;gap:20px}#primary-nav{min-width:0;flex-wrap:wrap;column-gap:14px;row-gap:8px}}</style></head>')
+    html=html.replace('</head>','<style>#exchange{overflow-wrap:anywhere}#exchange label{display:block;margin:12px 0}#exchange select{max-width:100%}#xe-status[data-error="true"]{color:#ff8f8f}@media(min-width:901px){.topbar{height:auto;min-height:72px;padding-block:10px;gap:20px}#primary-nav{min-width:0;flex-wrap:wrap;column-gap:14px;row-gap:8px}}</style></head>',1)
     marker='\n</main>\n'
     banner='<aside id="xe-banner" hidden style="padding:12px;border:1px solid #71809a;border-radius:10px;margin:12px 0;overflow-wrap:anywhere"><b>Clarus Exchange</b> · Complete sources stay in the package. <a href="#exchange">Open exchange</a> <button id="xe-banner-capture">Add this tool state</button> <button id="xe-banner-save">Save complete exchange ZIP</button><p id="xe-banner-message" role="status"></p></aside>'
     # Keep the package controls available while a native tool view is active.

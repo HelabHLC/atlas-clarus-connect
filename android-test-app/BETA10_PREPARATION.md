@@ -2,8 +2,11 @@
 
 Version `0.4.0-beta.10`, versionCode `10`, application ID `com.atlasclarus.connect`.
 Payload `0.2.0-rc34.1-mixing-recipe-preview`, ZIP SHA-256
-`c703ccc4145f67b6bb39ad7d69e16fc3b34b38b89cdfc2f760aef3a135bab2a5`.
-The exact preview is rebuilt and verified before adding the unchanged Android adapter.
+`d32596dad50e63419ee107af469c9203267f2ba240c67dfce68f095eac6ac8e3`.
+The preview is rebuilt with a narrow head-only CSS-insertion correction and verified
+before adding the unchanged Android adapter. The global replacement previously
+modified an embedded reference-card HTML template; its reviewed bytes must remain exact.
+Preparation now verifies the embedded module as well as its external asset.
 Its upstream `deployment_allowed=false` status remains intact: internal test candidate,
 not a new public Browser Edition/WordPress release or Play publication.
 

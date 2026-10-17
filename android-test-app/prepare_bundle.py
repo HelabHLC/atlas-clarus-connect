@@ -18,7 +18,7 @@ from build_colour_id_locale import localize
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 EXPECTED_BUNDLE_VERSION = '0.2.0-rc34.1-mixing-recipe-preview'
-EXPECTED_ZIP_SHA256 = 'c703ccc4145f67b6bb39ad7d69e16fc3b34b38b89cdfc2f760aef3a135bab2a5'
+EXPECTED_ZIP_SHA256 = 'd32596dad50e63419ee107af469c9203267f2ba240c67dfce68f095eac6ac8e3'
 BUNDLE_BUILDER = 'build_tool_exchange_preview.py'
 REFERENCE_CARD_SHA256 = {
     'colour-reference-card.js': '32dff3a94ed98099aaae8b93365e94b66ba4262112564b91757304afe687e2e2',
@@ -38,11 +38,15 @@ TARGET = HERE / 'app/src/main/assets/bundle'
 BUILD_SOURCE_BINDING_SHA256 = {'image-projects.js': '3b5b6e90abd28f52b5236ea0793ff6b9394cb0754f504951df2f0da6117e2c45',
     'image-projects-ui.js': '648bb3f2486a8cb6cd1a054a6c512fc241bcbe2ffe0c4551fdf9b117b21c6082'}
 
-def verify_source_binding(directory, built=False):
+def verify_source_binding(directory, built=False, html=None):
     for name, expected in {**(BUILD_SOURCE_BINDING_SHA256 if built else SOURCE_BINDING_SHA256), **REFERENCE_CARD_SHA256}.items():
         actual = hashlib.sha256((directory / name).read_bytes()).hexdigest()
         if actual != expected:
             raise SystemExit(f'Reviewed implementation changed: {name}; review before repinning')
+        if html is not None:
+            embedded = (directory / name).read_text().replace('</script', '<\\/script')
+            if '<script>' + embedded + '</script>' not in html:
+                raise SystemExit(f'Embedded implementation differs from reviewed asset: {name}')
 
 
 def add_bridge(html):
@@ -90,7 +94,7 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     if digest != EXPECTED_ZIP_SHA256:
         raise SystemExit(f'Bundle checksum changed: {digest}; review the payload and allocate a new Android version before updating the pin.')
     source = output / 'atlas-clarus-browser-bundle'
-    verify_source_binding(source / 'assets', built=True)
+    verify_source_binding(source / 'assets', built=True, html=(source / 'index.html').read_text())
     # Prepare and validate everything before replacing the generated asset tree.
     index = source / 'index.html'
     index.write_text(add_bridge(index.read_text(encoding='utf-8')), encoding='utf-8')

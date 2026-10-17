@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSION_CODE = 10
 VERSION_NAME = '0.4.0-beta.10'
 BUNDLE_VERSION = '0.2.0-rc34.1-mixing-recipe-preview'
-BUNDLE_SHA256 = 'c703ccc4145f67b6bb39ad7d69e16fc3b34b38b89cdfc2f760aef3a135bab2a5'
+BUNDLE_SHA256 = 'd32596dad50e63419ee107af469c9203267f2ba240c67dfce68f095eac6ac8e3'
 DEFAULT_BUNDLE_VERSION = '0.2.0-rc28-source-provenance'
 SOURCE_BINDING_SHA256 = {
     'image-projects.js': '3b5b6e90abd28f52b5236ea0793ff6b9394cb0754f504951df2f0da6117e2c45',
