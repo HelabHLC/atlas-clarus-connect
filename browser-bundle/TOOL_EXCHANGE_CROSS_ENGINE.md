@@ -40,3 +40,26 @@ The dedicated `RC34 Tool Exchange cross-engine compatibility` workflow uploads `
 ## Acceptance boundary
 
 This is an automated **Linux** browser-engine test. Playwright WebKit is not an actual Safari installation on a Mac, iPhone or iPad. Physical Windows, macOS Safari, iPhone and iPad acceptance remains **NOT_TESTED**, including their file pickers, downloads, memory limits and OS-specific image decoding. A 390px viewport is not Apple-device acceptance. Device testing must record OS/browser versions and repeat real file export/import before making platform claims.
+
+## Executed result — 17 October 2026
+
+PASS on tested source `65d5efa64167e012191610e9ca1b3046646b578a`:
+https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/39010549538
+
+- 42 complete sender packages; 126 actual UI transfers, 108 exact acceptances and 18 expected decoder rejections.
+- Eleven fixtures accept in every direction. `alpha.png`, `linear-icc.png` and `linear-icc.jpg` reject all six cross-engine directions; all same-engine controls pass.
+- All three engines retain unsaved recipient edits after malformed input and decoder rejection; compatible replacement is refused until the changed package is saved.
+- Independent Python verification of the actual artifacts passes for all 42 packages, 84 embedded profile payloads, original file/RGBA SHA-256, ZIP CRCs, parent links, image journals and exact protected rectangle RGBA.
+- Chromium 151.0.7922.34, Firefox 153.0 and Playwright WebKit 26.5 on Linux; Playwright 1.62.1. Physical devices remain NOT_TESTED.
+
+See [measured matrix](TOOL_EXCHANGE_CROSS_ENGINE_MATRIX.md) and [complete per-case report](tests/evidence/tool-exchange-cross-engine-2026-10-17.json).
+The evidence commit adds reports and the independently executed Python inspection helper; the browser-tested application and JavaScript suite remain unchanged from the tested source above.
+
+Reproduce the independent artifact inspection after the browser suite, or against the extracted workflow artifact's `tool-exchange` directory:
+
+```sh
+python browser-bundle/tests/verify_tool_exchange_cross_engine.py /tmp/atlas-source-binding/tool-exchange
+```
+
+The workflow artifact `12093520040` retains sender ZIPs until 16 November 2026. Artifact archive SHA-256: `89ed60afc27b693e691bfdb7c47938751bd337d7e59a3c1d516cb2e941659bd3`.
+The committed report and matrix remain inspectable after artifact expiry. Full package reproduction uses the pinned source and commands above.
