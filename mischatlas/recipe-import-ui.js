@@ -1,6 +1,6 @@
 /* Development preview: imported results never enter the numerical renderer. */
 const MR=window.ATLAS_MIXING_RECIPE;
-const mrContext={master:D.summary.master_sha256,colors:D.rows.map(r=>({id:r.atlas_row_id,ref:r.atlas_reference,hex:r.master_hex})),rows:D.rows};
+const mrContext={master:D.summary.master_sha256,colors:Object.fromEntries(D.rows.map(r=>[r.atlas_row_id,{id:r.atlas_row_id,ref:r.atlas_reference,hex:r.master_hex}])),rows:D.rows};
 let mrSaved=null,mrJob=null,mrCompletedJob=null;
 function mrCapture(job){mrJob=structuredClone(job);return job;}
 const mrSection=document.createElement('section');

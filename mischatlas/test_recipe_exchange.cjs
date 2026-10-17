@@ -19,6 +19,7 @@ const bytes=d=>new TextEncoder().encode(JSON.stringify(d,null,3)+'\n'),hash=b=>c
  const out=path.join(__dirname,'dist/recipe-exchange-test');fs.mkdirSync(out,{recursive:true});
  const fixture=fs.readFileSync(path.join(__dirname,'tests/fixtures/light-recipe-v1.json'));assert.deepEqual(JSON.parse(fixture),document);
  const original=new Uint8Array(fixture),sealed=await R.seal(original,ctx,replay),state=await R.inspect(sealed,ctx);
+ const standaloneCtx={master:m.master_sha256,rows:D.rows,colors:Object.fromEntries(D.rows.map(r=>[r.atlas_row_id,{id:r.atlas_row_id,ref:r.atlas_reference,hex:r.master_hex}]))};assert.deepEqual((await R.inspect(sealed,standaloneCtx)).result,result);
  assert.deepEqual(state.result,result);assert.deepEqual(state.replay,replay);assert.deepEqual(state.originalBytes,original);
  const exchangeCtx=await X.context({colors:m.colors,master:m.master_sha256});
  let pkg=X.create(exchangeCtx);const added=await X.add(pkg,{filename:'recipe.snapshot.json',bytes:sealed},exchangeCtx);pkg=added.package;assert.equal(added.native.kind,'MIXING_RECIPE');
