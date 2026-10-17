@@ -37,23 +37,24 @@ async function payloads(p,bytes){return p.evaluate(async b=>{const H=ClarusHando
     const settings={protectionMode:'ORIGINAL_RGBA',libraryId:'core',libraryName:D.views.core.name,libraryIds:D.views.core.ids.map(Number),k:32,lockedIds:[],originalRgbs:[],protectedRectangles:[[0,0,3,3]],regionCorrections:[]};
     const input={...decoded,rgba:(await I.verify(image,ctx.native)).frame,name,sourceName:name,sourceBytes:source,sourceMime:name.endsWith('.png')?'image/png':'image/jpeg',project:image};
     const result=ATLAS_COLOUR_REDUCTION.reduce({...settings,...input,colors:D.colors,master:D.master_sha256});
+    for(let y=0;y<4;y++)for(let x=0;x<4;x++){const at=(y*input.width+x)*4;if(result.protectionMask[y*input.width+x]!==1||!input.rgba.slice(at,at+4).every((v,i)=>v===result.pixels[at+i]))throw Error('Protected rectangle changed frozen RGBA');}
     const job={schema:J.SCHEMA,master_sha256:D.master_sha256,input,settings,result,uncleaned:result,variants:[],view:{zoom:1,x:.5,y:.5,selected:null,region:null,active:'current',overlay:false,difference:false,threshold:40,cleanupMin:16,cleanupScope:'MASK_ONLY'}};
     await add('protected-job.zip',H.zipStored(await J.exportFiles(job,{},ctx.job)),[imageId]);
     return {zip:I.base64(await T.exportZip(pkg,ctx)),rgba:image.original.rgba_sha256,original:image.original.file_sha256};
    },{b:bytes.toString('base64'),name,palette:require('./fixtures/colour-kit-030-two-greens.json').bundle_origin.document_text});
    assert.equal(seed.original,sha(bytes));const zip=Buffer.from(seed.zip,'base64');assert.match(await upload(p,zip),/^Exchange opened/);
    const exported=await save(p);assert.deepEqual(await payloads(p,exported),await payloads(p,zip));packets[e][name]={bytes:exported,rgba:seed.rgba,expected:await payloads(p,exported)};
-   fs.writeFileSync(path.join(out,e+'-'+name+'.zip'),exported);
+   fs.writeFileSync(path.join(out,e+'-'+name+'.zip'),exported);console.log('SEED',e,name);
   }
  }
  for(const from of engines)for(const to of engines)for(const name of Object.keys(fixtures)){
   const p=sessions[to].page,packet=packets[from][name],compatible=packet.rgba===packets[to][name].rgba;
   // Seed a valid saved workspace before every transfer; snapshots include native tool state.
   assert.match(await upload(p,packets[to]['opaque.png'].bytes),/^Exchange opened/);const base=packets[to]['opaque.png'].expected;
-  for(const filename of ['edited-colour-project.json','image.json']){await p.locator('#xe-document').selectOption(base.documents.find(d=>d.filename===filename).id);await p.locator('#xe-native-open').click();await idle(p);assert.match(await p.locator('#xe-status').innerText(),/^Opened in/);}
+  for(const filename of ['edited-colour-project.json','image.json']){await p.evaluate(()=>location.hash='exchange');await p.locator('#xe-document').selectOption(base.documents.find(d=>d.filename===filename).id);await p.locator('#xe-native-open').click();await idle(p);assert.match(await p.locator('#xe-status').innerText(),/^Opened in/);}
   await p.evaluate(()=>location.hash='exchange');const before=await snapshot(p),retained=await save(p);
   const text=await upload(p,packet.bytes),accepted=text.startsWith('Exchange opened');
-  const row={from,to,fixture:name,input_sha256:sha(packet.bytes),sender_rgba:packet.rgba,receiver_rgba:packets[to][name].rgba,expected:compatible?'ACCEPT':'REJECT',actual:accepted?'ACCEPT':'REJECT',message:text};report.cases.push(row);
+  const row={from,to,fixture:name,input_sha256:sha(packet.bytes),sender_rgba:packet.rgba,receiver_rgba:packets[to][name].rgba,expected:compatible?'ACCEPT':'REJECT',actual:accepted?'ACCEPT':'REJECT',message:text};report.cases.push(row);console.log('TRANSFER',from,to,name,row.actual);
   assert.equal(accepted,compatible,JSON.stringify(row));
   if(accepted){const returned=await save(p);assert.deepEqual(await payloads(p,returned),packet.expected);row.complete_payloads_exact=true;}
   else{assert.match(text,/Source\/pixel consistency could not be verified/);assert.deepEqual(await snapshot(p),before);assert.deepEqual(await payloads(p,await save(p)),await payloads(p,retained));row.workspace_preserved=true;}
