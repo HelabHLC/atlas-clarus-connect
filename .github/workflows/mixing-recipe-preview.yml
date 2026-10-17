@@ -19,6 +19,7 @@ jobs:
       - run: python mischatlas/build.py
       - run: python mischatlas/build_recipe_import_preview.py
       - run: node mischatlas/test_recipe_exchange.cjs
+      - run: node mischatlas/test_recipe_resume.cjs
       - run: python mischatlas/verify_recipe_exchange.py
       - run: python browser-bundle/build_tool_exchange_preview.py
       - run: node browser-bundle/tests/validate_tool_exchange.cjs

@@ -9,7 +9,12 @@ assert source.count('parts:p.model_parts}))});')==1
 assert source.count("else if(m.type==='done'){lcResult=")==1
 source=source.replace('lcWorker.postMessage({samples,', 'lcWorker.postMessage(mrCapture({samples,').replace('parts:p.model_parts}))});','parts:p.model_parts}))}));')
 source=source.replace("else if(m.type==='done'){lcResult=","else if(m.type==='done'){mrCompletedJob=structuredClone(mrJob);lcResult=")
-extra=''.join('<script>'+ (ROOT/n).read_text()+'</script>' for n in ['recipe-exchange.js','recipe-import-ui.js'])
+source=source.replace('const samples=imported?userPalette.samples:LC.samples,', 'const samples=mrPrepared && $("lcPalette").value==="snapshot"?mrPrepared.job.samples:imported?userPalette.samples:LC.samples,')
+source=source.replace("paletteName=imported?", "paletteName=mrPrepared && $('lcPalette').value==='snapshot'?(mrPrepared.saved.result.palette_name||'Snapshot palette'):imported?")
+source=source.replace("const materialSystem=imported?", "const materialSystem=mrPrepared && $('lcPalette').value==='snapshot'?(mrPrepared.saved.result.palette_material_system||'Snapshot material system'):imported?")
+source=source.replace("paletteWarnings=imported?", "paletteWarnings=mrPrepared && $('lcPalette').value==='snapshot'?(mrPrepared.saved.result.palette_warnings||[]):imported?")
+source=source.replace("lcRender();}\n  else if(m.type==='error')", "lcRender();mrCompare();}\n  else if(m.type==='error')")
+extra=''.join('<script>'+ (ROOT/n).read_text()+'</script>' for n in ['recipe-exchange.js','recipe-resume.js','recipe-import-ui.js'])
 preview=source.replace('</body>',extra+'</body>').replace('38-light experimental mixing · 0.1.5</title>', 'Recipe return import · DEVELOPMENT PREVIEW</title>')
 preview=preview.replace('</head>','<style>main{overflow-wrap:anywhere}input,select,button{max-width:100%}.filters>label{max-width:100%;min-width:0}#downloadPanel a{overflow-wrap:anywhere}</style></head>')
 assert re.search(r'<script id="data".*?</script>',source,re.S)[0]==re.search(r'<script id="data".*?</script>',preview,re.S)[0]

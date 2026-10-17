@@ -1,17 +1,21 @@
 /* Development preview: imported results never enter the numerical renderer. */
 const MR=window.ATLAS_MIXING_RECIPE;
 const mrContext={master:D.summary.master_sha256,colors:Object.fromEntries(D.rows.map(r=>[r.atlas_row_id,{id:r.atlas_row_id,ref:r.atlas_reference,hex:r.master_hex}])),rows:D.rows};
-let mrSaved=null,mrJob=null,mrCompletedJob=null;
-function mrCapture(job){mrJob=structuredClone(job);return job;}
+let mrSaved=null,mrJob=null,mrCompletedJob=null,mrPrepared=null,mrRunSource=null;
+function mrCapture(job){
+ mrRunSource=mrPrepared?.saved||null;
+ if(mrPrepared && job.target.atlas_row_id===mrPrepared.job.target.atlas_row_id){job.seed=mrPrepared.job.seed;job.seedRecipe=structuredClone(mrPrepared.job.seedRecipe);}
+ mrJob=structuredClone(job);return job;
+}
 const mrSection=document.createElement('section');
-mrSection.innerHTML='<h2>Recipe return import · development preview</h2><p>Import a recipe JSON retrieved with “Download original file” from RC34 Tool Exchange. Stored results are displayed without recalculation. Model parts are not calibrated grams or drops; these are not physically validated pigment or print recipes.</p><label>Recipe JSON <input id="mr-file" type="file" accept=".json,application/json"></label><p id="mr-status" role="status"></p><button id="mr-export" disabled>Re-export imported file exactly</button><details><summary>Stored result, conditions and provenance</summary><pre id="mr-record" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre></details>';
+mrSection.innerHTML='<h2>Recipe return import · development preview</h2><p>Import a recipe JSON retrieved with “Download original file” from RC34 Tool Exchange. Stored results are displayed without recalculation. Model parts are not calibrated grams or drops; these are not physically validated pigment or print recipes.</p><label>Recipe JSON <input id="mr-file" type="file" accept=".json,application/json"></label><p id="mr-status" role="status"></p><button id="mr-export" disabled>Re-export imported file exactly</button><button id="mr-resume" disabled>Als neuen Suchlauf übernehmen</button><p id="mr-resume-status" role="status"></p><pre id="mr-compare" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre><details><summary>Stored result, conditions and provenance</summary><pre id="mr-record" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre></details>';
 document.querySelector('main').prepend(mrSection);
 $('mr-file').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{
  if(f.size>MR.MAX_BYTES)throw Error('Recipe JSON exceeds 16 MiB.');
  const bytes=new Uint8Array(await f.arrayBuffer()),saved=await MR.inspect(bytes,mrContext);
  // Validate everything before replacing the previous imported record; stop any running search.
  lcStop('Imported stored result; no calculation started.');
- mrSaved={...saved,filename:f.name};$('mr-export').disabled=false;
+ mrSaved={...saved,filename:f.name};$('mr-export').disabled=false; $('mr-resume').disabled=!saved.replay; $('mr-resume-status').textContent=saved.replay?'Complete snapshot: engine and light environment will be checked before adoption.':'Incomplete export: stored result only; full search cannot be restored.';
  $('mr-record').textContent=JSON.stringify({reference:saved.reference,integrity:saved.integrity,limitations:saved.limitations,stored_document:saved.record,replay:saved.replay||null},null,2);
  $('mr-status').textContent='Recipe imported: '+saved.result.atlas_reference+' · '+saved.integrity+'. '+saved.limitations.join(' ');$('mr-status').dataset.error='false';
  }catch(err){$('mr-status').textContent='Import rejected: '+err.message+' Previous imported result retained.';$('mr-status').dataset.error='true';}};
@@ -23,3 +27,20 @@ $('lcExport').onclick=async()=>{try{
  const bytes=await MR.seal(new TextEncoder().encode(JSON.stringify(record,null,2)),mrContext,replay);
  deliverDownload(record.result.atlas_reference+'_Recipe_Snapshot_preview.json',new Blob([bytes],{type:'application/json'}));
  }catch(err){$('mr-status').textContent='Export rejected: '+err.message;}};
+
+$('mr-resume').onclick=async()=>{const saved=mrSaved;if(!saved)return;try{
+ const job=await ATLAS_RECIPE_RESUME.prepare(saved,lcEngine,{kernels:LC.kernels,whitepoints:LC.whitepoints});
+ if(saved!==mrSaved)return;
+ lcStop();selected=D.rows.findIndex(r=>r.atlas_row_id===job.target.atlas_row_id);renderDetail();
+ mrPrepared={job,saved};
+ let opt=document.querySelector('#lcPalette option[value="snapshot"]');if(!opt){opt=new Option('Imported snapshot · complete spectral palette','snapshot');$('lcPalette').add(opt);}
+ $('lcPalette').value='snapshot';$('lcObjective').value=job.objective;
+ if(![...$('lcBudget').options].some(o=>o.value===String(job.poolSize)))$('lcBudget').add(new Option(job.poolSize+' candidates · snapshot',String(job.poolSize)));
+ $('lcBudget').value=String(job.poolSize);lcSet(job.lights);
+ $('mr-compare').textContent='';$('mr-resume-status').textContent='Parameters restored; no calculation started. Seed '+job.seed+' and saved seed recipe retained. Engine SHA-256 '+saved.replay.environment.engine_sha256+'. Click Calculate recipe to start. Changes to reference/settings create a different search.';
+ }catch(e){$('mr-resume-status').textContent='Cannot restore: '+e.message;}};
+function mrCompare(){
+ if(!mrRunSource)return;
+ const comparison=ATLAS_RECIPE_RESUME.compare(mrRunSource.result,lcResult,mrCompletedJob,mrRunSource.replay.job);
+ $('mr-compare').textContent=JSON.stringify({engine_sha256:mrRunSource.replay.environment.engine_sha256,...comparison},null,2);
+}

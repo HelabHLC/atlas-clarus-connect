@@ -13,9 +13,22 @@ const {chromium}=require(process.env.ATLAS_PLAYWRIGHT_MODULE||'playwright'),fs=r
  assert.deepEqual(await p.evaluate(()=>mrTestCounts),{worker:0,lab:0});
  assert((await p.locator('#mr-record').textContent()).includes('SHA256_CONSISTENT'));
  await p.locator('#mr-export').click();let [d]=await Promise.all([p.waitForEvent('download'),p.locator('#downloadPanel a').filter({hasText:'snapshot.json'}).click()]);await d.saveAs('/tmp/mixing-import-reexport.json');assert.deepEqual(fs.readFileSync('/tmp/mixing-import-reexport.json'),raw);
+ // Adoption restores UI only; a second explicit action starts the unchanged Worker.
+ const immutable=await p.evaluate(()=>Array.from(mrSaved.bytes));
+ await p.locator('#mr-resume').click();await p.waitForFunction(()=>document.getElementById('mr-resume-status').textContent.startsWith('Parameters restored'));
+ assert.equal(await p.evaluate(()=>mrTestCounts.worker),0);
+ assert.equal(await p.locator('#lcBudget').inputValue(),'16');assert.equal(await p.locator('#lcPalette').inputValue(),'snapshot');
+ await p.locator('#lcSearch').click();await p.waitForFunction(()=>document.getElementById('mr-compare').textContent.includes('EXACT_NUMERICAL_MATCH'));
+ assert.equal(await p.evaluate(()=>mrTestCounts.worker),1);
+ assert.equal(await p.evaluate(()=>JSON.parse(document.getElementById('mr-compare').textContent).same_inputs),true);
+ assert.deepEqual(await p.evaluate(()=>Array.from(mrSaved.bytes)),immutable);
+ await p.locator('#lcBudget').selectOption('4000');await p.locator('#lcSearch').click();await p.waitForFunction(()=>document.getElementById('lcProgress').textContent.startsWith('Recipe calculated'));
+ assert.equal(await p.evaluate(()=>JSON.parse(document.getElementById('mr-compare').textContent).same_inputs),false);
  const before=await p.locator('#mr-record').textContent(),bad=JSON.parse(raw);bad.record.result.recipe[0].parts++;
  await p.locator('#mr-file').setInputFiles({name:'bad.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(bad))});await p.waitForFunction(()=>document.getElementById('mr-status').dataset.error==='true');assert.equal(await p.locator('#mr-record').textContent(),before);
  await p.locator('#mr-file').setInputFiles(path.resolve('mischatlas/tests/fixtures/light-recipe-v1.json'));await p.waitForFunction(()=>document.getElementById('mr-status').textContent.includes('LEGACY_UNSEALED'));
+ assert.equal(await p.locator('#mr-resume').isDisabled(),true);
+ await p.locator('#lcPalette').selectOption('golden');
  // A new calculation is explicit. Fresh exports must contain the actual complete worker input.
  await p.locator('#lcBudget').selectOption('4000');await p.locator('#lcSearch').click();await p.waitForFunction(()=>document.getElementById('lcProgress').textContent.startsWith('Recipe calculated'));
  await p.locator('#lcExport').click();const link=p.locator('#downloadPanel a').filter({hasText:'Recipe_Snapshot_preview.json'});await link.waitFor();[d]=await Promise.all([p.waitForEvent('download'),link.click()]);await d.saveAs('/tmp/mixing-new-snapshot.json');const fresh=JSON.parse(fs.readFileSync('/tmp/mixing-new-snapshot.json'));assert(fresh.replay.job.samples.length===31);assert.equal(fresh.replay.job.poolSize,4000);assert.equal(Object.keys(fresh.replay.job.kernels).length,38);

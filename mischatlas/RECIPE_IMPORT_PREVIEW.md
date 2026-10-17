@@ -8,7 +8,7 @@ This branch adds a **stored-result importer**, a richer snapshot export for new 
 |---|---|---|
 | `atlas-light-dependent-recipe-v1` | Original UTF-8 bytes (including whitespace, unknown fields and provenance), master checksum, fixed ID/name, target/model spectra, components with spectra and parts, objective, optimized illuminants, seed/budget, stored Lab/DE00 evaluations, material warnings | Complete candidate palette, kernels/whitepoints and original seed recipe are absent. The exact checked-but-unsealed result is displayed; no editable search session or automatic replay is claimed. |
 | Older schema-less row export | Entire original document, row/reference, labels, model parts, spectra, observations, method and unknown metadata | Not a light-search session. Source spectra of all candidate pigments and search inputs are absent. No full-search restoration. Open rows without a recipe are rejected as non-recipe documents. |
-| `atlas-mixing-recipe-snapshot/1.0` | Exact original file embedded as base64 with SHA-256; duplicated parsed record verified against original; canonical record SHA-256; complete new worker request and environment with their own SHA-256 | Checksums establish consistency after capture, not authenticity. Engine bytes are identified by digest, not executed or embedded. A future re-run must use that exact engine. This preview does not implement editable session resume. |
+| `atlas-mixing-recipe-snapshot/1.0` | Exact original file embedded as base64 with SHA-256; duplicated parsed record verified against original; canonical record SHA-256; complete new worker request and environment with their own SHA-256 | Checksums establish consistency after capture, not authenticity. Engine bytes are identified by digest, not executed or embedded. A re-run must use that exact engine. The explicit new-search bridge described below checks compatibility before restoring inputs. |
 
 A new search snapshot retains **all samples**, component IDs/names/spectra, seed recipe, selected lights (also when D50 is the objective), objective, budget, random seed, target identity/spectrum, all 38 integration kernels, whitepoints, source provenance and engine SHA-256. Result spectrum, recipe, evaluation counts, all stored evaluations and `physical_measurements:false` remain separate from these inputs. Existing values are never replaced by recomputed ones on import. A new calculation is an explicit separate action in the normal mixer; it does not alter the imported result or its re-export.
 
@@ -45,3 +45,40 @@ The committed JSON fixture and SHA256SUMS pin an actual deterministic 16-candida
 Local verification: core roundtrip PASS (13 rejected invalid cases), independent Python checks PASS, existing RC34 core PASS (13 rejected cases), standalone script syntax PASS. Local Chromium execution is unavailable: browser installation returned truncated ZIP downloads. Browser results must be read from the dedicated CI run; pending is not acceptance.
 
 All recipes are computational candidates. Model parts are not calibrated dosing units. No physical mixture measurement, validated printing/pigment recipe, production suitability or production approval is established.
+
+## Explicit new search from a snapshot
+
+The preview now offers **Als neuen Suchlauf übernehmen** for complete snapshots.
+Adoption itself starts no Worker. It copies the target, complete spectral candidate
+palette, selected lights, objective and budget into the existing light-search UI.
+The saved random seed and original seed recipe are retained for that target; both
+are named in the adoption status. The snapshot palette is a separate option and
+does not replace the original user-palette editor. A budget absent from the usual
+menu is added explicitly. The user must then press **Calculate recipe**.
+
+The local bundled engine must match the saved engine SHA-256. All integration
+kernels and whitepoints must also match the UI environment, because the existing
+renderer uses those built-in data. Mismatches block adoption and explain the
+missing prerequisite. Imported engine code is never executed. Older files without
+complete replay data remain stored results; no missing parameters are invented.
+
+Each completed adopted search shows a separate comparison of recipe components,
+model spectrum, stored per-light evaluations and search diagnostics. It reports
+`EXACT_NUMERICAL_MATCH` or `DIFFERENT`, lists differing result sections, and shows
+original/new/delta DE00 by illuminant. `same_inputs` separately indicates whether
+the actual worker request equals the saved request; a changed setting or target
+must not be described as reproduction. Equality means exact numerical equality
+in this runtime, not a physical validation or a guarantee across engines/runtimes.
+The imported document and its exact re-export remain unchanged. Cancellation and
+failed searches do not replace the stored result or produce a comparison.
+
+Additional reproducible check (after the roundtrip fixture has been built):
+
+```sh
+node mischatlas/test_recipe_resume.cjs
+```
+
+This executes the real unchanged numerical engine, checks exact results and copied
+inputs, and rejects missing replay data, changed engines, kernels and whitepoints.
+The browser regression now also tests adoption without Worker startup, explicit
+calculation, exact reproduction, changed-input labeling and original-byte retention.
