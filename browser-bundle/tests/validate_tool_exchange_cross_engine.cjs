@@ -7,7 +7,7 @@ const out=path.join(root,'tool-exchange');fs.mkdirSync(out,{recursive:true});
 const html=path.resolve(__dirname,'../build-tool-exchange/atlas-clarus-browser-bundle/index.html');
 const fixtures=JSON.parse(fs.readFileSync(path.join(root,'fixtures-sha256.json'))),engines=X.ENGINES;
 const sha=b=>createHash('sha256').update(b).digest('hex');
-const report={status:'RUNNING',platform:process.platform,playwright:require('playwright/package.json').version,html_sha256:sha(fs.readFileSync(html)),fixture_hashes:fixtures,engines:{},cases:[],physical_devices:{windows:'NOT_TESTED',macos_safari:'NOT_TESTED',iphone:'NOT_TESTED',ipad:'NOT_TESTED'}};
+const report={status:'RUNNING',source_commit:process.env.GITHUB_SHA||null,test_sha256:sha(fs.readFileSync(__filename)),platform:process.platform,playwright:require('playwright/package.json').version,html_sha256:sha(fs.readFileSync(html)),fixture_hashes:fixtures,engines:{},cases:[],physical_devices:{windows:'NOT_TESTED',macos_safari:'NOT_TESTED',iphone:'NOT_TESTED',ipad:'NOT_TESTED'}};
 const sessions={},packets={};
 async function idle(p){await p.waitForFunction(()=>!document.getElementById('xe-import').disabled);}
 async function upload(p,bytes){await p.evaluate(()=>location.hash='exchange');await p.locator('#xe-import').setInputFiles({name:'exchange.zip',mimeType:'application/zip',buffer:bytes});await idle(p);return p.locator('#xe-status').innerText();}
@@ -57,6 +57,21 @@ async function payloads(p,bytes){return p.evaluate(async b=>{const H=ClarusHando
   assert.equal(accepted,compatible,JSON.stringify(row));
   if(accepted){const returned=await save(p);assert.deepEqual(await payloads(p,returned),packet.expected);row.complete_payloads_exact=true;}
   else{assert.match(text,/Source\/pixel consistency could not be verified/);assert.deepEqual(await snapshot(p),before);assert.deepEqual(await payloads(p,await save(p)),await payloads(p,retained));row.workspace_preserved=true;}
+ }
+ assert.equal(report.cases.length,126);
+ report.unsaved=[];
+ for(const engine of engines){const p=sessions[engine].page,base=packets[engine]['opaque.png'];assert.match(await upload(p,base.bytes),/^Exchange opened/);
+  await p.locator('#xe-document').selectOption(base.expected.documents.find(d=>d.filename==='edited-colour-project.json').id);await p.locator('#xe-native-open').click();await idle(p);assert.match(await p.locator('#xe-status').innerText(),/^Opened in/);
+  await p.locator('#cp-note').fill('Unsaved recipient work must survive');await p.locator('#cp-note-save').click();await p.waitForFunction(()=>document.getElementById('cp-status').textContent.startsWith('Project note recorded'));
+  await p.evaluate(()=>location.hash='exchange');await p.locator('#xe-tool').selectOption('project');await p.locator('#xe-capture').click();await idle(p);assert.match(await p.locator('#xe-status').innerText(),/^Complete native state added/);
+  const before=await snapshot(p);assert.match(before['xe-summary'],/changes in this tab/);
+  const bad=await upload(p,base.bytes.subarray(0,100));assert.match(bad,/Existing package retained/);assert.deepEqual(await snapshot(p),before);
+  const compatible=await upload(p,base.bytes);assert.match(compatible,/Save the current changed exchange package/);assert.deepEqual(await snapshot(p),before);
+  const incompatible=engines.map(e=>packets[e]['alpha.png']).find(v=>v.rgba!==packets[engine]['alpha.png'].rgba);
+  if(incompatible){assert.match(await upload(p,incompatible.bytes),/Source\/pixel consistency could not be verified/);assert.deepEqual(await snapshot(p),before);}
+  const saved=await payloads(p,await save(p));assert.equal(saved.documents.length,base.expected.documents.length+1);
+  const added=saved.documents.at(-1);assert.match(Buffer.from(saved.payloads[added.id],'base64').toString(),/Unsaved recipient work must survive/);
+  report.unsaved.push({engine,malformed_rejected:true,compatible_replacement_refused:true,decoder_rejection_checked:!!incompatible,changed_project_retained:true});
  }
  report.status='PASS';
  }finally{for(const s of Object.values(sessions))await s.browser.close();fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
