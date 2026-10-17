@@ -21,9 +21,10 @@ A working view is explicit and can expose fewer editable fields than its source.
 | Decision reference-card ZIP | Rebuilt cards, companion checks and full decision JSON | Colour handoff; subsequent project/print/reference views |
 | Adobe handoff ZIP | Decision history, original ASE and both JSON companions | Colour handoff; companions retained as one original payload |
 | Single reference-card JSON | Native reference-card contract | Retained document; reference working view and print handoff |
-| Other formats including recipes, PNG, ASE, GPL, CSS and tokens | Byte integrity only, explicitly added as attachments | Exact retrieval; no editable schema conversion is claimed |
+| Mixing recipe JSON (`atlas-light-dependent-recipe-v1`, legacy row export, or `atlas-mixing-recipe-snapshot/1.0`) | Master ID/name, stored-result structure and snapshot digests when present | Exact download to standalone recipe-import preview; explicit reference-only view; no calculation or production conversion |
+| Other formats including unsupported recipes, PNG, ASE, GPL, CSS and tokens | Byte integrity only, explicitly added as attachments | Exact retrieval; no editable schema conversion is claimed |
 
-Standalone Mixing Atlas, Appearance/APF/MaterialX tools, standalone WordPress Hover/Picker installations and external ArtCraft/PhotoCraft integrations are not given new native importers by this preview. Their files may be kept intact as attachments; that is not a completed semantic integration. Existing native validators and limits remain in force.
+Standalone Mixing Atlas now has a separate development-only stored-result importer (see `mischatlas/RECIPE_IMPORT_PREVIEW.md`). The handoff is an explicit original-file download/import, not an embedded mixer or automatic session replay. Appearance/APF/MaterialX tools, standalone WordPress Hover/Picker installations and external ArtCraft/PhotoCraft integrations are not given new native importers by this preview. Their files may be kept intact as attachments; that is not a completed semantic integration. Existing native validators and limits remain in force.
 
 ## Workflow
 

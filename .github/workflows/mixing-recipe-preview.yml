@@ -1,0 +1,39 @@
+name: Mixing recipe return import preview
+on:
+  push:
+    branches: [feat/mixing-recipe-roundtrip-20261017]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  roundtrip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python mischatlas/build.py
+      - run: python mischatlas/build_recipe_import_preview.py
+      - run: node mischatlas/test_recipe_exchange.cjs
+      - run: python mischatlas/verify_recipe_exchange.py
+      - run: python browser-bundle/build_tool_exchange_preview.py
+      - run: node browser-bundle/tests/validate_tool_exchange.cjs
+      - run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          ATLAS_PLAYWRIGHT_MODULE=$PWD/browser-bundle/tests/node_modules/playwright node mischatlas/test_recipe_import_browser.cjs
+          node browser-bundle/tests/validate_tool_exchange_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mixing-recipe-import-development-preview
+          path: |
+            mischatlas/dist/recipe-import-preview/*
+            mischatlas/dist/recipe-exchange-test/*
+            browser-bundle/build-tool-exchange/*.zip
+            browser-bundle/build-tool-exchange/SHA256SUMS.txt
+          retention-days: 30

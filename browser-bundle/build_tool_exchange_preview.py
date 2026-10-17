@@ -4,7 +4,7 @@ from pathlib import Path
 from build_reduction_job_preview import build as build_jobs
 from build_image_exchange_pilot import zip_tree
 HERE=Path(__file__).resolve().parent
-VERSION='0.2.0-rc34.0-tool-exchange-preview'
+VERSION='0.2.0-rc34.1-mixing-recipe-preview'
 JOB_SHA='8d560275aade0528a4904e50839d29897cf336fa2000a65bf281628a97b6d05b'
 sha=lambda b:hashlib.sha256(b).hexdigest()
 def build(output):
@@ -20,7 +20,9 @@ def build(output):
     needle='  window.ATLAS_COLOUR_REDUCTION_UI.init({colors,master:MASTER,download,libraryViews});'
     assert after.count(needle)==1
     after=after.replace(needle,needle+'\n  window.ATLAS_TOOL_EXCHANGE_UI.init({colors,master:MASTER,libraryViews,designerLayer,download});')
-    modules=''
+    recipe_code=(HERE.parent/'mischatlas/recipe-exchange.js').read_text()
+    (dist/'assets/recipe-exchange.js').write_text(recipe_code)
+    modules='<script>'+recipe_code+'</script>'
     for name in ['tool-exchange','tool-exchange-ui']:
         code=(HERE/f'src/{name}.js').read_text();modules+='<script>'+code+'</script>';(dist/f'assets/{name}.js').write_text(code)
     html=html.replace('<script>'+before,modules+'<script>'+after)

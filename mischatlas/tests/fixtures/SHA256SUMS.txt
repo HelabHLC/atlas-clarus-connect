@@ -1,0 +1,1 @@
+479966da75e11d094df6d07d79a8c6327dd1038d770bfb115e3201615a81cbef  mischatlas/tests/fixtures/light-recipe-v1.json

@@ -1,0 +1,1233 @@
+{
+   "schema": "atlas-light-dependent-recipe-v1",
+   "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+   "physical_measurements": false,
+   "reflectance_interval_nm": [
+      380,
+      730,
+      10
+   ],
+   "provenance": {
+      "url": "https://arbe-lambda-star.com/pkl-image-explorer/",
+      "plugin_version": "0.9.1",
+      "library_metadata": [
+         {
+            "label": "LED-B1",
+            "description": "Phosphor-type LEDs in different CCT categories",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_LEDs_1nm.csv",
+            "file_name": "CIE_illum_LEDs_1nm.csv",
+            "file_sha256": "2a065526e1502f138d5b96aa8c9b337320e08667aac028ab5ad428bf1179a4b7",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "LED-B2",
+            "description": "Phosphor-type LEDs in different CCT categories",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_LEDs_1nm.csv",
+            "file_name": "CIE_illum_LEDs_1nm.csv",
+            "file_sha256": "2a065526e1502f138d5b96aa8c9b337320e08667aac028ab5ad428bf1179a4b7",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "LED-B3",
+            "description": "Phosphor-type LEDs in different CCT categories",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_LEDs_1nm.csv",
+            "file_name": "CIE_illum_LEDs_1nm.csv",
+            "file_sha256": "2a065526e1502f138d5b96aa8c9b337320e08667aac028ab5ad428bf1179a4b7",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "LED-B4",
+            "description": "Phosphor-type LEDs in different CCT categories",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_LEDs_1nm.csv",
+            "file_name": "CIE_illum_LEDs_1nm.csv",
+            "file_sha256": "2a065526e1502f138d5b96aa8c9b337320e08667aac028ab5ad428bf1179a4b7",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "LED-B5",
+            "description": "Phosphor-type LEDs in different CCT categories",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_LEDs_1nm.csv",
+            "file_name": "CIE_illum_LEDs_1nm.csv",
+            "file_sha256": "2a065526e1502f138d5b96aa8c9b337320e08667aac028ab5ad428bf1179a4b7",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "LED-BH1",
+            "description": "Hybrid-type",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_LEDs_1nm.csv",
+            "file_name": "CIE_illum_LEDs_1nm.csv",
+            "file_sha256": "2a065526e1502f138d5b96aa8c9b337320e08667aac028ab5ad428bf1179a4b7",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "LED-RGB1",
+            "description": "RGB-type",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_LEDs_1nm.csv",
+            "file_name": "CIE_illum_LEDs_1nm.csv",
+            "file_sha256": "2a065526e1502f138d5b96aa8c9b337320e08667aac028ab5ad428bf1179a4b7",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "LED-V1",
+            "description": "violet-pumped phosphor-type LEDs",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_LEDs_1nm.csv",
+            "file_name": "CIE_illum_LEDs_1nm.csv",
+            "file_sha256": "2a065526e1502f138d5b96aa8c9b337320e08667aac028ab5ad428bf1179a4b7",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "LED-V2",
+            "description": "violet-pumped phosphor-type LEDs",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_LEDs_1nm.csv",
+            "file_name": "CIE_illum_LEDs_1nm.csv",
+            "file_sha256": "2a065526e1502f138d5b96aa8c9b337320e08667aac028ab5ad428bf1179a4b7",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL1",
+            "description": "standard",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL2",
+            "description": "standard",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3",
+            "description": "standard",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL4",
+            "description": "standard",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL5",
+            "description": "standard",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL6",
+            "description": "standard",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL7",
+            "description": "broad-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL8",
+            "description": "broad-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL9",
+            "description": "broad-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL10",
+            "description": "narrow-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL11",
+            "description": "narrow-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL12",
+            "description": "narrow-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.1",
+            "description": "Standard halophosphate",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.2",
+            "description": "Standard halophosphate",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.3",
+            "description": "Standard halophosphate",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.4",
+            "description": "DeLuxe type",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.5",
+            "description": "DeLuxe type",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.6",
+            "description": "DeLuxe type",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.7",
+            "description": "Three-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.8",
+            "description": "Three-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.9",
+            "description": "Three-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.10",
+            "description": "Three-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.11",
+            "description": "Three-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.12",
+            "description": "Multi-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.13",
+            "description": "Multi-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.14",
+            "description": "Multi-band",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         },
+         {
+            "label": "FL3.15",
+            "description": "D65 simulator",
+            "source_url": "https://files.cie.co.at/Publications-datasets/CIE_illum_FLs_1nm.csv",
+            "file_name": "CIE_illum_FLs_1nm.csv",
+            "file_sha256": "929ee966bf465fca2073ada8965afbc332d163f6f2cb54c710a6e193251ab0cc",
+            "source_data_quality": "approximated",
+            "source_interpolation": "linear",
+            "license": "CC-BY-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+         }
+      ],
+      "validation_max_lab_error": {
+         "D50": 2.2382096176443156e-13,
+         "D65": 1.0658141036401503e-14
+      },
+      "source_checksums_verified": true,
+      "master_spectrum_exact_match": true,
+      "integration": "linear reflectance 10nm to 1nm, sum over 380–730 nm, CIE1931 2 degree, same as Explorer",
+      "file_hashes": {
+         "CIE_xyz_1931_2deg.csv": "fa663e3535a7e0763a745993a1f0a192eb0275ac46ad2d1befd7626841e713c1",
+         "CIE_std_illum_D50.csv": "b23049c6f7b266c1c1fbe147aa271e8930ca02d6e569c5ae1804c036faea4193",
+         "CIE_std_illum_D65.csv": "e76f210bffff3d552ef7113025da5f325d5dfec200dd4b878b1a2f3a507032cb"
+      }
+   },
+   "result": {
+      "atlas_reference": "H140_L055_C040",
+      "atlas_row_id": 5332,
+      "reference_spectrum": [
+         0.030700000002980232,
+         0.033399999141693115,
+         0.03970000147819519,
+         0.04839999973773956,
+         0.059300001710653305,
+         0.06870000064373016,
+         0.07970000058412552,
+         0.09149999916553497,
+         0.10480000078678131,
+         0.12139999866485596,
+         0.14910000562667847,
+         0.19359999895095825,
+         0.241799995303154,
+         0.27079999446868896,
+         0.28279998898506165,
+         0.287200003862381,
+         0.2874000072479248,
+         0.28220000863075256,
+         0.27070000767707825,
+         0.25600001215934753,
+         0.2354000061750412,
+         0.20759999752044678,
+         0.16990000009536743,
+         0.1306000053882599,
+         0.10140000283718109,
+         0.08389999717473984,
+         0.0722000002861023,
+         0.06289999932050705,
+         0.059300001710653305,
+         0.06369999796152115,
+         0.07450000196695328,
+         0.09009999781847,
+         0.10779999941587448,
+         0.12219999730587006,
+         0.1306000053882599,
+         0.13920000195503235
+      ],
+      "model_spectrum": [
+         0.05203114719409018,
+         0.06312797112254917,
+         0.0771431143920753,
+         0.08352624520197831,
+         0.08302325643649001,
+         0.07950410227478046,
+         0.07742490790644242,
+         0.08409944587560228,
+         0.10993773196001279,
+         0.14632522075165236,
+         0.17753262608159454,
+         0.21111605160734231,
+         0.2479419141827305,
+         0.2911618541703096,
+         0.3444106642415525,
+         0.3593181341653738,
+         0.3216138156045708,
+         0.27080420421435564,
+         0.2301339034407227,
+         0.19815107707692567,
+         0.17501979255934094,
+         0.16193380256263692,
+         0.15817618553614798,
+         0.16111441427226614,
+         0.1661600205640755,
+         0.17236935049668736,
+         0.18468990338813637,
+         0.2086054672389148,
+         0.2472722190322027,
+         0.29875394371900993,
+         0.35418639686422665,
+         0.3995109599616766,
+         0.4354469033970202,
+         0.4660437877832809,
+         0.4980794624756174,
+         0.5395006121029632
+      ],
+      "recipe": [
+         {
+            "index": 10,
+            "parts": 19,
+            "id": "GHB-10",
+            "name": "PG17 Golden H.Body Acrylic: 1060-Chromium Oxide Green",
+            "reflectance": [
+               0.0362,
+               0.0562,
+               0.1033,
+               0.1328,
+               0.1094,
+               0.0771,
+               0.0574,
+               0.0484,
+               0.046,
+               0.0473,
+               0.0521,
+               0.0624,
+               0.0771,
+               0.0998,
+               0.1441,
+               0.1928,
+               0.2057,
+               0.1777,
+               0.1378,
+               0.1059,
+               0.0852,
+               0.0747,
+               0.0714,
+               0.0726,
+               0.0768,
+               0.0831,
+               0.0918,
+               0.1039,
+               0.1193,
+               0.1361,
+               0.1532,
+               0.1695,
+               0.1868,
+               0.2061,
+               0.2312,
+               0.2689
+            ]
+         },
+         {
+            "index": 27,
+            "parts": 19,
+            "id": "GHB-27",
+            "name": "PY35 Golden H.Body Acrylic: 1135-C.P. Cadmium Yellow Primrose",
+            "reflectance": [
+               0.021,
+               0.0204,
+               0.0206,
+               0.0209,
+               0.0212,
+               0.0216,
+               0.0229,
+               0.0285,
+               0.0514,
+               0.1206,
+               0.2544,
+               0.4119,
+               0.5505,
+               0.6745,
+               0.7678,
+               0.8138,
+               0.8362,
+               0.8481,
+               0.8534,
+               0.8599,
+               0.862,
+               0.8649,
+               0.8667,
+               0.8707,
+               0.8782,
+               0.8896,
+               0.8986,
+               0.9017,
+               0.9001,
+               0.8914,
+               0.8822,
+               0.8787,
+               0.8761,
+               0.8699,
+               0.8618,
+               0.8587
+            ]
+         },
+         {
+            "index": 24,
+            "parts": 56,
+            "id": "GHB-24",
+            "name": "PW6 Golden H.Body Acrylic: 1380-Titanium White",
+            "reflectance": [
+               0.1253,
+               0.2045,
+               0.388,
+               0.6492,
+               0.841,
+               0.9133,
+               0.9286,
+               0.9333,
+               0.9381,
+               0.9403,
+               0.9421,
+               0.9466,
+               0.9487,
+               0.9501,
+               0.9528,
+               0.9517,
+               0.9516,
+               0.9522,
+               0.9506,
+               0.9538,
+               0.9528,
+               0.9534,
+               0.953,
+               0.9536,
+               0.9535,
+               0.9522,
+               0.952,
+               0.9521,
+               0.9524,
+               0.951,
+               0.9513,
+               0.9507,
+               0.9515,
+               0.9529,
+               0.9512,
+               0.9515
+            ]
+         },
+         {
+            "index": 3,
+            "parts": 6,
+            "id": "GHB-03",
+            "name": "PB36:1 Golden H.Body Acrylic: 1050-Cerulean Blue, Chromium",
+            "reflectance": [
+               0.1442,
+               0.1812,
+               0.2139,
+               0.2262,
+               0.2372,
+               0.2517,
+               0.2583,
+               0.2614,
+               0.2702,
+               0.2759,
+               0.2727,
+               0.2817,
+               0.2803,
+               0.2329,
+               0.1588,
+               0.0992,
+               0.0627,
+               0.0444,
+               0.0361,
+               0.0312,
+               0.0281,
+               0.0264,
+               0.0261,
+               0.0269,
+               0.0274,
+               0.0277,
+               0.0299,
+               0.0364,
+               0.0513,
+               0.0839,
+               0.152,
+               0.2619,
+               0.3981,
+               0.5254,
+               0.6151,
+               0.6722
+            ]
+         }
+      ],
+      "total_parts": 100,
+      "lights": [
+         {
+            "name": "D50",
+            "DE00": 2.2889960305463437,
+            "target_lab": [
+               54.96879249129546,
+               -30.47699018027639,
+               25.578661679531567
+            ],
+            "model_lab": [
+               55.82983737327427,
+               -25.55793941110557,
+               24.17737664456737
+            ]
+         },
+         {
+            "name": "D65",
+            "DE00": 1.588464200794826,
+            "target_lab": [
+               55.25197628852558,
+               -32.06228662126137,
+               27.18705517667064
+            ],
+            "model_lab": [
+               56.078547358514484,
+               -28.700221343919974,
+               25.748967782247277
+            ]
+         },
+         {
+            "name": "LED-B1",
+            "DE00": 3.253138795555459,
+            "target_lab": [
+               53.72841691966134,
+               -24.135791822335385,
+               22.431120955256254
+            ],
+            "model_lab": [
+               53.83715578552223,
+               -17.85267770117488,
+               20.674208979001364
+            ]
+         },
+         {
+            "name": "LED-B2",
+            "DE00": 2.7761352118537626,
+            "target_lab": [
+               54.068237616133615,
+               -24.752228799368226,
+               23.570443455523872
+            ],
+            "model_lab": [
+               54.170752011625396,
+               -19.215178923703668,
+               21.96809117405859
+            ]
+         },
+         {
+            "name": "LED-B3",
+            "DE00": 1.2935029131327291,
+            "target_lab": [
+               54.92943566135109,
+               -27.14135824572156,
+               26.972181080983436
+            ],
+            "model_lab": [
+               55.100892478715366,
+               -24.302158941324812,
+               25.952101764747894
+            ]
+         },
+         {
+            "name": "LED-B4",
+            "DE00": 0.521949856088998,
+            "target_lab": [
+               55.57033583425273,
+               -27.776556896413453,
+               29.330567970915954
+            ],
+            "model_lab": [
+               55.61150728066528,
+               -26.846242590278514,
+               28.225383636428603
+            ]
+         },
+         {
+            "name": "LED-B5",
+            "DE00": 0.5434989420263563,
+            "target_lab": [
+               55.758171625869124,
+               -29.33142904378,
+               29.437980357914316
+            ],
+            "model_lab": [
+               55.885336979407015,
+               -29.541328832937474,
+               28.388592001642156
+            ]
+         },
+         {
+            "name": "LED-BH1",
+            "DE00": 3.5005792057649656,
+            "target_lab": [
+               53.81191589761279,
+               -29.4817000008204,
+               25.19666485195966
+            ],
+            "model_lab": [
+               54.865187359196156,
+               -22.65253047078597,
+               25.237801033004693
+            ]
+         },
+         {
+            "name": "LED-RGB1",
+            "DE00": 6.719698106608509,
+            "target_lab": [
+               53.03095196602362,
+               -38.71233140682767,
+               15.851270121505912
+            ],
+            "model_lab": [
+               56.098298792266064,
+               -26.17970494145666,
+               18.645052104576678
+            ]
+         },
+         {
+            "name": "LED-V1",
+            "DE00": 4.814413828277115,
+            "target_lab": [
+               53.297901539406226,
+               -28.514282993091335,
+               21.149305175303102
+            ],
+            "model_lab": [
+               54.43991517355202,
+               -18.89856854174854,
+               18.78290579212718
+            ]
+         },
+         {
+            "name": "LED-V2",
+            "DE00": 2.9029404660208846,
+            "target_lab": [
+               54.454128180738564,
+               -29.735871230660404,
+               23.906467965232647
+            ],
+            "model_lab": [
+               55.359223345323784,
+               -23.54592511759429,
+               21.705525601356545
+            ]
+         },
+         {
+            "name": "FL1",
+            "DE00": 1.6910039903363063,
+            "target_lab": [
+               55.87456526462799,
+               -27.0972897569855,
+               29.700268664954866
+            ],
+            "model_lab": [
+               55.56262502699684,
+               -27.91574207736508,
+               26.569959863884907
+            ]
+         },
+         {
+            "name": "FL2",
+            "DE00": 2.087089874821473,
+            "target_lab": [
+               55.42071183993026,
+               -22.780739999705258,
+               29.66153875739037
+            ],
+            "model_lab": [
+               54.44115846461064,
+               -21.845169662802643,
+               25.469868235573124
+            ]
+         },
+         {
+            "name": "FL3",
+            "DE00": 2.4346878223761794,
+            "target_lab": [
+               55.06928280954796,
+               -20.874200460019864,
+               29.99535247961639
+            ],
+            "model_lab": [
+               53.75371784952651,
+               -18.63889171726002,
+               25.339736231737486
+            ]
+         },
+         {
+            "name": "FL4",
+            "DE00": 2.864485599471485,
+            "target_lab": [
+               54.61788602247907,
+               -19.66852359173482,
+               30.387942601779294
+            ],
+            "model_lab": [
+               53.08469401344715,
+               -16.075742145978676,
+               25.50363373495914
+            ]
+         },
+         {
+            "name": "FL5",
+            "DE00": 1.8986800002795001,
+            "target_lab": [
+               56.0517169866642,
+               -26.319570592792108,
+               29.962863395760543
+            ],
+            "model_lab": [
+               55.65358458386234,
+               -27.538774943980272,
+               26.673219289471906
+            ]
+         },
+         {
+            "name": "FL6",
+            "DE00": 2.2716890215408907,
+            "target_lab": [
+               55.60781989181892,
+               -21.790723332937745,
+               30.136807924036425
+            ],
+            "model_lab": [
+               54.483096393021185,
+               -21.17583811775725,
+               25.714492798694476
+            ]
+         },
+         {
+            "name": "FL7",
+            "DE00": 1.1367645885033906,
+            "target_lab": [
+               55.533065330931336,
+               -31.323460320507646,
+               28.975813627908188
+            ],
+            "model_lab": [
+               55.99738944468851,
+               -28.976267601988013,
+               27.147707256024855
+            ]
+         },
+         {
+            "name": "FL8",
+            "DE00": 2.2543237660426674,
+            "target_lab": [
+               55.101693416406874,
+               -31.162286363745515,
+               26.83964578482151
+            ],
+            "model_lab": [
+               55.936924336110906,
+               -26.251752175692644,
+               25.592320168953353
+            ]
+         },
+         {
+            "name": "FL9",
+            "DE00": 2.3981437749493435,
+            "target_lab": [
+               54.86460710373521,
+               -28.739570333836006,
+               26.874292103055662
+            ],
+            "model_lab": [
+               55.31230523146911,
+               -23.48290111285656,
+               25.013248524160403
+            ]
+         },
+         {
+            "name": "FL10",
+            "DE00": 1.6965770001614806,
+            "target_lab": [
+               55.507637528749456,
+               -31.155540187783714,
+               29.50944630578348
+            ],
+            "model_lab": [
+               56.39867124015599,
+               -27.72221256965518,
+               28.891779109527548
+            ]
+         },
+         {
+            "name": "FL11",
+            "DE00": 2.204969770405262,
+            "target_lab": [
+               54.984481850767736,
+               -30.424592250405226,
+               28.767471353713447
+            ],
+            "model_lab": [
+               55.98954340950152,
+               -26.029336836464523,
+               28.364752496826206
+            ]
+         },
+         {
+            "name": "FL12",
+            "DE00": 2.7304404771826887,
+            "target_lab": [
+               54.14979448949168,
+               -28.38494846799666,
+               27.216776126928742
+            ],
+            "model_lab": [
+               55.18728682717857,
+               -23.074563534715598,
+               26.80745767004925
+            ]
+         },
+         {
+            "name": "FL3.1",
+            "DE00": 2.8231441475464214,
+            "target_lab": [
+               54.64399228266535,
+               -19.961152497898315,
+               31.24546893584348
+            ],
+            "model_lab": [
+               53.16601841297744,
+               -16.34307800695156,
+               26.311421128593615
+            ]
+         },
+         {
+            "name": "FL3.2",
+            "DE00": 1.8147324539439846,
+            "target_lab": [
+               55.13796475187132,
+               -24.478400631556816,
+               29.66908523867291
+            ],
+            "model_lab": [
+               54.51944324277754,
+               -21.87222897973057,
+               26.011332047025093
+            ]
+         },
+         {
+            "name": "FL3.3",
+            "DE00": 1.8201551794980586,
+            "target_lab": [
+               56.037133024499866,
+               -26.695708802642493,
+               30.377493559687586
+            ],
+            "model_lab": [
+               55.67029944027402,
+               -27.709192123413217,
+               27.088223328997074
+            ]
+         },
+         {
+            "name": "FL3.4",
+            "DE00": 4.124898597600666,
+            "target_lab": [
+               54.04766719707655,
+               -28.677236997878776,
+               27.637326217435632
+            ],
+            "model_lab": [
+               54.857992190435866,
+               -20.272412675992722,
+               26.385392655693884
+            ]
+         },
+         {
+            "name": "FL3.5",
+            "DE00": 2.8127695267506128,
+            "target_lab": [
+               54.6069495797956,
+               -29.770086395722483,
+               26.046900097752157
+            ],
+            "model_lab": [
+               55.33239776388935,
+               -23.694652183384513,
+               24.526269099480448
+            ]
+         },
+         {
+            "name": "FL3.6",
+            "DE00": 2.2190694279892105,
+            "target_lab": [
+               55.0345544656963,
+               -30.607864645864847,
+               26.502741741079937
+            ],
+            "model_lab": [
+               55.80948516756402,
+               -25.760222129308175,
+               25.04689169495965
+            ]
+         },
+         {
+            "name": "FL3.7",
+            "DE00": 2.521091609243903,
+            "target_lab": [
+               54.16068726511806,
+               -28.029127985572554,
+               27.819741243376118
+            ],
+            "model_lab": [
+               55.14797036693059,
+               -23.0784390688456,
+               27.157556047035236
+            ]
+         },
+         {
+            "name": "FL3.8",
+            "DE00": 2.0031060913372074,
+            "target_lab": [
+               55.11027852017027,
+               -30.025707677439616,
+               29.20531110931123
+            ],
+            "model_lab": [
+               56.06900352561814,
+               -26.023145553528636,
+               28.6172022698969
+            ]
+         },
+         {
+            "name": "FL3.9",
+            "DE00": 1.740235718975913,
+            "target_lab": [
+               55.47934260485957,
+               -31.409759068959207,
+               30.139036450891986
+            ],
+            "model_lab": [
+               56.422014780311,
+               -27.936422679646135,
+               29.611075490838513
+            ]
+         },
+         {
+            "name": "FL3.10",
+            "DE00": 1.8538905170060478,
+            "target_lab": [
+               55.243055887980574,
+               -31.10545147420862,
+               27.865810411198833
+            ],
+            "model_lab": [
+               56.17566951128293,
+               -27.32597457343422,
+               27.186763988606664
+            ]
+         },
+         {
+            "name": "FL3.11",
+            "DE00": 1.3875213404388431,
+            "target_lab": [
+               55.85121692861637,
+               -32.190584799649145,
+               30.779477823969337
+            ],
+            "model_lab": [
+               56.72305403529438,
+               -29.465551608159444,
+               30.134234910908873
+            ]
+         },
+         {
+            "name": "FL3.12",
+            "DE00": 3.456925850150764,
+            "target_lab": [
+               53.87534897976555,
+               -27.156022441797823,
+               23.278078300341065
+            ],
+            "model_lab": [
+               54.50889366650273,
+               -20.105563802350012,
+               21.3391994563096
+            ]
+         },
+         {
+            "name": "FL3.13",
+            "DE00": 2.477834678452849,
+            "target_lab": [
+               54.3931507021823,
+               -28.116521483027736,
+               24.44125359984588
+            ],
+            "model_lab": [
+               54.92414817908467,
+               -22.825539711850695,
+               22.336425645085377
+            ]
+         },
+         {
+            "name": "FL3.14",
+            "DE00": 2.2523257513925046,
+            "target_lab": [
+               54.84674779900948,
+               -31.03048741829495,
+               24.48678863098771
+            ],
+            "model_lab": [
+               55.8533753573186,
+               -26.288161104520146,
+               23.181255018225166
+            ]
+         },
+         {
+            "name": "FL3.15",
+            "DE00": 1.6342169772971005,
+            "target_lab": [
+               55.24667906156476,
+               -32.446002942201126,
+               27.277040901631878
+            ],
+            "model_lab": [
+               56.069181737607195,
+               -28.92750976068481,
+               25.985635087110847
+            ]
+         }
+      ],
+      "search": {
+         "objective": "minimum worst CIEDE2000 across selected illuminants",
+         "optimized_lights": [
+            "D50",
+            "D65",
+            "FL11",
+            "LED-B3"
+         ],
+         "seed": 42,
+         "poolSize": 16,
+         "evaluations": 4188,
+         "max_components": 4,
+         "model": "Kubelka–Munk S=1",
+         "global_optimum_proven": false,
+         "physical_measurements": false
+      }
+   }
+}
