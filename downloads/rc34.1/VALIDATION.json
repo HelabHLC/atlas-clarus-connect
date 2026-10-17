@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "plugin_version": "0.1.16-beta1",
+  "runtime": "0.2.0-rc34.1-tool-exchange",
+  "master_unchanged": true,
+  "unchanged_preview_assets": 70,
+  "changes_to_preview": [
+    "version/status metadata",
+    "link to separately tested recipe importer"
+  ],
+  "bundle_sha256": "e662761293864beea3573eca4273194174f1b3d4430af924c3be9304ba02626d",
+  "plugin_sha256": "5d7c76a796e13888c5d6ca5c5aaca888ebef9e63158ab406087ba4e5d468ef25",
+  "ionos_live_acceptance": "PENDING",
+  "automatic_runtime_switch": false
+}
