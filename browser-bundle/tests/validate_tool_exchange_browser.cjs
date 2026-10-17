@@ -6,7 +6,7 @@ const target=path.resolve(__dirname,'../build-tool-exchange/atlas-clarus-browser
 (async()=>{const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),args:['--no-sandbox','--disable-dev-shm-usage']});const errors=[];
  try{
  const context=await browser.newContext({acceptDownloads:true}),p=await context.newPage();p.setDefaultTimeout(120000);p.on('pageerror',e=>errors.push(e.message));
- const open=async p=>{await p.goto(pathToFileURL(target).href+'#exchange');await p.waitForFunction(()=>!document.getElementById('xe-add').disabled);};await open(p);console.log('PASS exchange startup');
+ const open=async p=>{await p.goto(pathToFileURL(target).href+'#exchange');await p.waitForFunction(()=>!document.getElementById('xe-add').disabled);};await open(p);assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Desktop page overflow');console.log('PASS exchange startup');
  const source=JSON.parse(fixture.bundle_origin.document_text);source.custom_metadata={owner:'Source owner',fraction:.25};const raw=Buffer.from(' \n'+JSON.stringify(source,null,3)+'\n');fs.writeFileSync(path.join(out,'original-palette.json'),raw);
  const ready=async(prefix)=>{await p.waitForFunction(()=>!document.getElementById('xe-add').disabled);const text=await p.locator('#xe-status').innerText();assert(!await p.locator('#xe-status').getAttribute('data-error')||await p.locator('#xe-status').getAttribute('data-error')!=='true',text);assert(text.startsWith(prefix),text);};
  const add=async(name,bytes)=>{await p.locator('#xe-add').setInputFiles({name,mimeType:'application/json',buffer:bytes});await ready('Files added');};
@@ -37,7 +37,7 @@ const target=path.resolve(__dirname,'../build-tool-exchange/atlas-clarus-browser
  await p2.locator('#xe-document').selectOption(rootId);const[d2]=await Promise.all([p2.waitForEvent('download'),p2.locator('#xe-original').click()]);await d2.saveAs(path.join(out,'reopened-original.json'));assert.deepEqual(fs.readFileSync(path.join(out,'reopened-original.json')),raw);
  const before=await p2.locator('#xe-files').innerText();await p2.locator('#xe-import').setInputFiles({name:'bad.zip',mimeType:'application/zip',buffer:fs.readFileSync(zipPath).subarray(0,100)});await p2.waitForFunction(()=>document.getElementById('xe-status').dataset.error==='true');assert.equal(await p2.locator('#xe-files').innerText(),before);
  // Narrow-screen layout must remain usable, without horizontal overflow.
- await p2.setViewportSize({width:390,height:844});const layout=await p2.locator('#exchange').evaluate(e=>({w:e.clientWidth,s:e.scrollWidth}));assert(layout.s<=layout.w+2,JSON.stringify(layout));
+ await p2.setViewportSize({width:390,height:844});const layout=await p2.locator('#exchange').evaluate(e=>({w:e.clientWidth,s:e.scrollWidth}));assert(layout.s<=layout.w+2,JSON.stringify(layout));assert(await p2.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile page overflow');
  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'checks.json'),JSON.stringify({status:'PASS',documents:count,source_bytes_exact:true,fresh_profile:true,palette_decisions_project_cards_print:true,linked_image_reduction_output_and_source_return:true,invalid_import_preserves_package:true,mobile_width:390},null,2));console.log('PASS browser tool chains, exact source download, fresh-profile full exchange reopen, invalid import preservation and mobile width');
  await context.close();await c2.close();
  }finally{await browser.close();}
