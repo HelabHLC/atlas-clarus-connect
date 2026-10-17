@@ -34,8 +34,8 @@ async function payloads(p,bytes){return p.evaluate(async b=>{const H=ClarusHando
     const at=(3*decoded.width+2)*4;image=await I.edit(image,{kind:'RECOLOUR',rect:[2,3,1,1],match:Array.from(decoded.rgba.slice(at,at+3)),replacement:[17,34,51],note:'Recorded pixel selection'},ctx.native);
     image=await I.edit(image,{kind:'UNDO',note:'Undo preserved'},ctx.native);image=await I.edit(image,{kind:'REDO',note:'Redo preserved'},ctx.native);
     const imageId=await add('image.json',enc(image),[cpId]);
-    const settings={protectionMode:'ORIGINAL_RGBA',libraryId:'core',libraryName:D.views.core.name,libraryIds:D.views.core.ids.map(Number),k:4,lockedIds:[],originalRgbs:[],protectedRectangles:[[0,0,3,3]],regionCorrections:[]};
-    const input={...decoded,name,sourceName:name,sourceBytes:source,sourceMime:name.endsWith('.png')?'image/png':'image/jpeg',project:image};
+    const settings={protectionMode:'ORIGINAL_RGBA',libraryId:'core',libraryName:D.views.core.name,libraryIds:D.views.core.ids.map(Number),k:32,lockedIds:[],originalRgbs:[],protectedRectangles:[[0,0,3,3]],regionCorrections:[]};
+    const input={...decoded,rgba:(await I.verify(image,ctx.native)).frame,name,sourceName:name,sourceBytes:source,sourceMime:name.endsWith('.png')?'image/png':'image/jpeg',project:image};
     const result=ATLAS_COLOUR_REDUCTION.reduce({...settings,...input,colors:D.colors,master:D.master_sha256});
     const job={schema:J.SCHEMA,master_sha256:D.master_sha256,input,settings,result,uncleaned:result,variants:[],view:{zoom:1,x:.5,y:.5,selected:null,region:null,active:'current',overlay:false,difference:false,threshold:40,cleanupMin:16,cleanupScope:'MASK_ONLY'}};
     await add('protected-job.zip',H.zipStored(await J.exportFiles(job,{},ctx.job)),[imageId]);
