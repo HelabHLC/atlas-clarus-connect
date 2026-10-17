@@ -82,3 +82,17 @@ This executes the real unchanged numerical engine, checks exact results and copi
 inputs, and rejects missing replay data, changed engines, kernels and whitepoints.
 The browser regression now also tests adoption without Worker startup, explicit
 calculation, exact reproduction, changed-input labeling and original-byte retention.
+
+### Runtime precision check
+
+The browser regression distinguishes exact input restoration from cross-runtime
+floating-point equality. The committed Node fixture and Chromium produced the
+same recipe and model spectrum; some per-light observations differed in the last
+digits (observed maximum DE00 delta about 3.1e-14). The application correctly
+reports `DIFFERENT` and retains the unrounded values. It now also reports
+`max_abs_delta_DE00` and explains that the comparison applies no tolerance.
+The test requires an identical complete worker request and tightly bounded light
+observations for this fixed cross-runtime fixture. A second capture/import/replay
+within the same Chromium runtime requires `EXACT_NUMERICAL_MATCH` and unchanged
+original bytes. A test tolerance is not an application equality rule or physical
+acceptance criterion.

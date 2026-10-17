@@ -14,6 +14,7 @@ const R=global.ATLAS_MIXING_RECIPE,S=global.ATLAS_RECIPE_RESUME;
  const result=JSON.parse(JSON.stringify(box.searchLight(job,()=>{})));
  assert.equal(S.compare(saved.result,result,job,saved.replay.job).status,'EXACT_NUMERICAL_MATCH');
  assert.equal(S.compare(saved.result,result,job,saved.replay.job).same_inputs,true);
+ assert.equal(S.compare(saved.result,result,job,saved.replay.job).max_abs_delta_DE00,0);
  const changed=structuredClone(result);changed.lights[0].DE00+=.1;
  assert.equal(S.compare(saved.result,changed,job,saved.replay.job).status,'DIFFERENT');
  assert(Math.abs(S.compare(saved.result,changed,job,saved.replay.job).illuminants[0].delta_DE00-.1)<1e-10);
