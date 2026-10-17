@@ -11,6 +11,7 @@ source=source.replace('lcWorker.postMessage({samples,', 'lcWorker.postMessage(mr
 source=source.replace("else if(m.type==='done'){lcResult=","else if(m.type==='done'){mrCompletedJob=structuredClone(mrJob);lcResult=")
 extra=''.join('<script>'+ (ROOT/n).read_text()+'</script>' for n in ['recipe-exchange.js','recipe-import-ui.js'])
 preview=source.replace('</body>',extra+'</body>').replace('38-light experimental mixing · 0.1.5</title>', 'Recipe return import · DEVELOPMENT PREVIEW</title>')
+preview=preview.replace('</head>','<style>main{overflow-wrap:anywhere}input,select,button{max-width:100%}.filters>label{max-width:100%;min-width:0}#downloadPanel a{overflow-wrap:anywhere}</style></head>')
 assert re.search(r'<script id="data".*?</script>',source,re.S)[0]==re.search(r'<script id="data".*?</script>',preview,re.S)[0]
 out=ROOT/'dist/recipe-import-preview';out.mkdir(exist_ok=True)
 p=out/'atlas-clarus-mixing-recipe-import-preview.html';p.write_text(preview)
