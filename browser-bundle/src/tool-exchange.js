@@ -133,7 +133,15 @@
   else if(target==='REFERENCE_VIEW'){
    const ids=[...new Set(referenceIds(native))];need(ids.length>0,'No recorded reference IDs. Original colours are not silently converted.');
    for(let start=0;start<ids.length;start+=64)outputs.push({filename:'reference-view-'+(1+start/64)+'.clarus.json',bytes:encode(E.clarus(ids.slice(start,start+64).map(id=>ctx.colors[id]),ctx.master,'Reference view; complete original retained in exchange'))});
+  }else if(target==='COLOUR_PROJECT_SOURCE'){
+   const p=native.kind==='COLOUR_PROJECT'?native.data:native.kind==='IMAGE_PROJECT'?native.data.colour_project:native.kind==='REDUCTION_JOB'?native.data.input.project?.colour_project:null;
+   need(p,'No complete source Colour Project is attached. Select its retained native file instead.');outputs=[{filename:'source-colour-project.clarus.json',bytes:encode(p)}];
+  }else if(target==='PRINT_SOURCE'){
+   const seen=new Set();let frontier=[id],candidates=new Map();
+   while(frontier.length&&!candidates.size){const next=[];for(const key of frontier){if(seen.has(key))continue;seen.add(key);const d=pkg.documents.find(d=>d.id===key);if(parsed.get(key).kind==='PRINT_HANDOFF')candidates.set(d.sha256,d);else next.push(...d.parents);}frontier=next;}
+   need(candidates.size===1,'Choose a source with exactly one nearest retained print request; no profile/settings guess was made.');const d=[...candidates.values()][0];outputs=[{filename:d.filename,bytes:pkg.payloads[d.id]}];
   }else if(target==='DECISIONS')outputs=(await decisions(native,ctx)).map((bytes,i)=>({bytes,filename:'decisions-'+(i+1)+'.clarus.json'}));
+  else if(target==='COLOUR_PROJECT'&&native.kind==='COLOUR_PROJECT')outputs=[{filename:'project.clarus.json',bytes:encode(native.data)}];
   else if(target==='COLOUR_PROJECT'){
    const sets=await decisions(native,ctx);
    for(let start=0;start<sets.length;start+=10){let p=await P.create('Clarus exchange colours '+(1+start/10),ctx.native);for(let i=start;i<Math.min(sets.length,start+10);i++)p=await P.add(p,'Transferred set '+(i+1),json(sets[i]),ctx.native);outputs.push({filename:'project-'+(1+start/10)+'.clarus.json',bytes:encode(p)});}
@@ -143,7 +151,8 @@
    need(native.kind==='REDUCTION_JOB','Choose a complete reduction job.');const s=native.data,b=root.ATLAS_IMAGE_CODECS.png(s.input.width,s.input.height,s.result.pixels),decoded=await ctx.decodeSource(b);
    need(decoded.width===s.input.width&&decoded.height===s.input.height&&decoded.rgba.length===s.result.pixels.length&&decoded.rgba.every((v,i)=>v===s.result.pixels[i]),'The browser changes output RGBA during PNG decoding. Exact transfer was refused; the original job remains intact.');
    const p=await I.create({name:'Reduction output',filename:'reduced.png',bytes:b,...decoded,colourProject:s.input.project?.colour_project||null},ctx.native);outputs=[{filename:'reduced-image-project.clarus.json',bytes:encode(p)}];
-  }else if(target==='PRINT_HANDOFF'){
+  }else if(target==='PRINT_HANDOFF'&&native.kind==='PRINT_HANDOFF')outputs=[{filename:'source.print-handoff.json',bytes:pkg.payloads[id]}];
+  else if(target==='PRINT_HANDOFF'){
    const ids=[...new Set(referenceIds(native))];need(ids.length>0,'No recorded references.');const Pn=root.ATLAS_CLARUS_PRINT;
    for(let start=0;start<ids.length;start+=64){const d=await Pn.create({entries:ids.slice(start,start+64).map(id=>ctx.colors[id]),colors:ctx.colors,master:ctx.master,name:'Exchange reference print handoff '+(1+start/64),paths:{'4C':Pn.emptySettings(),ECG:Pn.emptySettings()}});outputs.push({filename:'exchange-'+(1+start/64)+'.print-handoff.json',bytes:encode(d)});}
   }else if(target==='REFERENCE_CARDS'){

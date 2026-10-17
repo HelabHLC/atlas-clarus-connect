@@ -42,6 +42,7 @@ Capture suppresses the intermediate native download and puts its bytes in the in
 - Reference-only views are labelled. Original source RGB and history remain in the complete parent file.
 - Reduction output colours adopted for a new design are explicitly new inputs, not a rewrite of source pixel identities.
 - More than 250 decision inputs are split into complete native sets; more than 10 colour sets split into complete Colour Projects; reference and print views split at 64. No hidden truncation.
+- Complete attached Colour Projects can be recovered with their choices and history. A print request can be recovered from a reference view when exactly one nearest retained print source is identifiable; profiles and settings are not guessed or reset.
 - A native tool's stale-version, conflicting-branch, source-decoder or capacity rejection remains in force. The carrier retains every file even if native opening fails.
 - At most 100 documents and 384 MiB per exchange ZIP; native tools retain their stricter limits. An over-limit operation fails as a whole.
 - Source bytes use generated UUID payload paths; filenames are display/download metadata. CRC, SHA-256, schema/master checks and acyclic source links are checked before an imported exchange replaces the open one.
