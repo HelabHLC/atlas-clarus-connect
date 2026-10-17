@@ -4,7 +4,8 @@ const mrContext={master:D.summary.master_sha256,colors:Object.fromEntries(D.rows
 let mrSaved=null,mrJob=null,mrCompletedJob=null,mrPrepared=null,mrRunSource=null;
 function mrCapture(job){
  mrRunSource=mrPrepared?.saved||null;
- if(mrPrepared && job.target.atlas_row_id===mrPrepared.job.target.atlas_row_id){job.seed=mrPrepared.job.seed;job.seedRecipe=structuredClone(mrPrepared.job.seedRecipe);}
+ if(mrPrepared && job.target.atlas_row_id===mrPrepared.job.target.atlas_row_id){job.seed=mrPrepared.job.seed;job.seedRecipe=structuredClone(mrPrepared.job.seedRecipe);
+ if(MR.canon([...job.lights].sort())===MR.canon([...mrPrepared.job.lights].sort()))job.lights=structuredClone(mrPrepared.job.lights);}
  $('mr-compare').textContent=mrRunSource?'New calculation running; comparison available after completion.':'';
  mrJob=structuredClone(job);return job;
 }
