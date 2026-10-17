@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package the reviewed RC33.2 reference-card payload for Android beta.9.
+"""Package the reviewed RC34.1 Tool Exchange payload for Android beta.10.
 
 The exact public pilot is rebuilt offline and pinned before adding the unchanged
 Android adapter. Existing releases, storage contracts and master remain frozen.
@@ -17,9 +17,9 @@ from build_colour_id_locale import localize
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-EXPECTED_BUNDLE_VERSION = '0.2.0-rc33.2-colour-reduction-update'
-EXPECTED_ZIP_SHA256 = '95342c346fc8c73acb89a365ba9f4818184630e45b71b0e1726a9a1c76bf3aee'
-BUNDLE_BUILDER = 'build_colour_reduction_release.py'
+EXPECTED_BUNDLE_VERSION = '0.2.0-rc34.1-mixing-recipe-preview'
+EXPECTED_ZIP_SHA256 = 'd32596dad50e63419ee107af469c9203267f2ba240c67dfce68f095eac6ac8e3'
+BUNDLE_BUILDER = 'build_tool_exchange_preview.py'
 REFERENCE_CARD_SHA256 = {
     'colour-reference-card.js': '32dff3a94ed98099aaae8b93365e94b66ba4262112564b91757304afe687e2e2',
 }
@@ -38,11 +38,15 @@ TARGET = HERE / 'app/src/main/assets/bundle'
 BUILD_SOURCE_BINDING_SHA256 = {'image-projects.js': '3b5b6e90abd28f52b5236ea0793ff6b9394cb0754f504951df2f0da6117e2c45',
     'image-projects-ui.js': '648bb3f2486a8cb6cd1a054a6c512fc241bcbe2ffe0c4551fdf9b117b21c6082'}
 
-def verify_source_binding(directory, built=False):
+def verify_source_binding(directory, built=False, html=None):
     for name, expected in {**(BUILD_SOURCE_BINDING_SHA256 if built else SOURCE_BINDING_SHA256), **REFERENCE_CARD_SHA256}.items():
         actual = hashlib.sha256((directory / name).read_bytes()).hexdigest()
         if actual != expected:
             raise SystemExit(f'Reviewed implementation changed: {name}; review before repinning')
+        if html is not None:
+            embedded = (directory / name).read_text().replace('</script', '<\\/script')
+            if '<script>' + embedded + '</script>' not in html:
+                raise SystemExit(f'Embedded implementation differs from reviewed asset: {name}')
 
 
 def add_bridge(html):
@@ -90,7 +94,7 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     if digest != EXPECTED_ZIP_SHA256:
         raise SystemExit(f'Bundle checksum changed: {digest}; review the payload and allocate a new Android version before updating the pin.')
     source = output / 'atlas-clarus-browser-bundle'
-    verify_source_binding(source / 'assets', built=True)
+    verify_source_binding(source / 'assets', built=True, html=(source / 'index.html').read_text())
     # Prepare and validate everything before replacing the generated asset tree.
     index = source / 'index.html'
     index.write_text(add_bridge(index.read_text(encoding='utf-8')), encoding='utf-8')
@@ -98,7 +102,7 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     (source / 'colour-id.html').write_text(localize(colour_html, 'de'), encoding='utf-8')
     (source / 'colour-id-en.html').write_text(localize(colour_html, 'en'), encoding='utf-8')
     (source / 'ANDROID_CANDIDATE.json').write_text(json.dumps({
-        'version_name': '0.4.0-beta.9', 'version_code': 9,
+        'version_name': '0.4.0-beta.10', 'version_code': 10,
         'application_id': 'com.atlasclarus.connect',
         'bundle_version': EXPECTED_BUNDLE_VERSION, 'bundle_zip_sha256': digest,
         'source_binding_commit': SOURCE_BINDING_COMMIT,
@@ -107,10 +111,13 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
         'built_source_binding_sha256': BUILD_SOURCE_BINDING_SHA256,
         'reference_card_sha256': REFERENCE_CARD_SHA256,
         'master_sha256': MASTER_SHA256,
+        'candidate_status': 'INTERNAL_TEST_ONLY',
+        'native_export_max_bytes': 64 * 1024 * 1024,
+        'tool_exchange_scope': 'Bundle tools; standalone Mixing Atlas recipe search is not embedded',
         'device_acceptance': 'NOT_TESTED', 'play_submission': 'NOT_PERFORMED',
         'note': 'Build-time candidate record, not a device acceptance or authorship certificate.'
     }, indent=2) + '\n', encoding='utf-8')
     if TARGET.exists():
         shutil.rmtree(TARGET)
     shutil.copytree(source, TARGET)
-    print(f'Android beta.9 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')
+    print(f'Android beta.10 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')

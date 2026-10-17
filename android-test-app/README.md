@@ -1,5 +1,15 @@
 # ATLAS Clarus Android test app
 
+## Current preparation: 0.4.0-beta.10 / versionCode 10
+
+This development candidate packages the exact RC34.1 Tool Exchange preview.
+See [BETA10_PREPARATION.md](BETA10_PREPARATION.md) for scope, build pins, update
+checks, export limits and outstanding physical-device acceptance. It retains
+the existing application ID, native signing boundary and WebView origin/storage.
+VTracer/SVG experiments and standalone Mixing Atlas recipe search are not embedded.
+
+## Historical preparation notes
+
 ## Current preparation: 0.4.0-beta.7 / versionCode 7
 
 This candidate brings the reviewed **RC32.1 Colour Reference Card** into the

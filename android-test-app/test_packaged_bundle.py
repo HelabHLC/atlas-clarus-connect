@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check beta.9 source binding and every prepared asset in the actual APK/AAB."""
+"""Check beta.10 source binding and every prepared asset in the actual APK/AAB."""
 import gzip
 import hashlib
 import json
@@ -18,7 +18,8 @@ def check_package(path):
     required = {'index.html', 'colour-id.html', 'colour-id-en.html', 'BUNDLE_MANIFEST.json',
                 'ANDROID_CANDIDATE.json', 'assets/image-projects.js', 'assets/image-projects-ui.js',
                 'assets/colour-reduction.js', 'assets/colour-reduction-loupe.js', 'assets/colour-reduction-ui.js',
-                'assets/image-project-codecs.js', 'assets/colour-projects.js', 'assets/colour-reference-card.js'}
+                'assets/tool-exchange.js', 'assets/tool-exchange-ui.js', 'assets/reduction-job.js',
+                'assets/recipe-exchange.js', 'assets/image-project-codecs.js', 'assets/colour-projects.js', 'assets/colour-reference-card.js'}
     assert required <= prepared.keys(), 'Missing prepared Android assets'
     expected = {name: source.read_bytes() for name, source in prepared.items()}
     gzip_name = 'assets/name-search-index-v030.json.gz'
@@ -42,7 +43,9 @@ def check_package(path):
         assert candidate['application_id'] == 'com.atlasclarus.connect'
         assert candidate['bundle_zip_sha256'] == BUNDLE_SHA256
         assert candidate['built_source_binding_sha256'] == BUILD_SOURCE_BINDING_SHA256
-        assert manifest['colour_reduction_max_colours'] == 256 and manifest['deployment_allowed'] is True
+        assert manifest['colour_reduction_max_colours'] == 256 and manifest['deployment_allowed'] is False
+        assert manifest['tool_exchange_schema'] == 'atlas-clarus-tool-exchange/1.0'
+        assert 'id="xe-add"' in archive.read(prefix + 'index.html').decode('utf-8')
         assert 'id="cr-pixel-inspector"' in archive.read(prefix + 'index.html').decode('utf-8')
         assert candidate['reference_card_sha256'] == REFERENCE_CARD_SHA256
         assert 'id="ch-reference-card"' in archive.read(prefix + 'index.html').decode('utf-8')
@@ -51,7 +54,7 @@ def check_package(path):
             assert hashlib.sha256(raw).hexdigest() == digest, f'Wrong source-binding module: {name}'
             embedded = raw.decode('utf-8').replace('</script', '<\\/script')
             assert ('<script>' + embedded + '</script>') in archive.read(prefix + 'index.html').decode('utf-8'), f'Wrong embedded source-binding module: {name}'
-    print(f'PASS: {path.name}: {len(expected)} beta.9/Colour ID assets match; source binding and name-index expansion verified')
+    print(f'PASS: {path.name}: {len(expected)} beta.10/Colour ID assets match; source binding and name-index expansion verified')
 
 
 if __name__ == '__main__':
