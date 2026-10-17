@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package the reviewed RC33.2 reference-card payload for Android beta.9.
+"""Package the reviewed RC34.1 Tool Exchange payload for Android beta.10.
 
 The exact public pilot is rebuilt offline and pinned before adding the unchanged
 Android adapter. Existing releases, storage contracts and master remain frozen.
@@ -17,9 +17,9 @@ from build_colour_id_locale import localize
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-EXPECTED_BUNDLE_VERSION = '0.2.0-rc33.2-colour-reduction-update'
-EXPECTED_ZIP_SHA256 = '95342c346fc8c73acb89a365ba9f4818184630e45b71b0e1726a9a1c76bf3aee'
-BUNDLE_BUILDER = 'build_colour_reduction_release.py'
+EXPECTED_BUNDLE_VERSION = '0.2.0-rc34.1-mixing-recipe-preview'
+EXPECTED_ZIP_SHA256 = 'c703ccc4145f67b6bb39ad7d69e16fc3b34b38b89cdfc2f760aef3a135bab2a5'
+BUNDLE_BUILDER = 'build_tool_exchange_preview.py'
 REFERENCE_CARD_SHA256 = {
     'colour-reference-card.js': '32dff3a94ed98099aaae8b93365e94b66ba4262112564b91757304afe687e2e2',
 }
@@ -98,7 +98,7 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     (source / 'colour-id.html').write_text(localize(colour_html, 'de'), encoding='utf-8')
     (source / 'colour-id-en.html').write_text(localize(colour_html, 'en'), encoding='utf-8')
     (source / 'ANDROID_CANDIDATE.json').write_text(json.dumps({
-        'version_name': '0.4.0-beta.9', 'version_code': 9,
+        'version_name': '0.4.0-beta.10', 'version_code': 10,
         'application_id': 'com.atlasclarus.connect',
         'bundle_version': EXPECTED_BUNDLE_VERSION, 'bundle_zip_sha256': digest,
         'source_binding_commit': SOURCE_BINDING_COMMIT,
@@ -107,10 +107,13 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
         'built_source_binding_sha256': BUILD_SOURCE_BINDING_SHA256,
         'reference_card_sha256': REFERENCE_CARD_SHA256,
         'master_sha256': MASTER_SHA256,
+        'candidate_status': 'INTERNAL_TEST_ONLY',
+        'native_export_max_bytes': 64 * 1024 * 1024,
+        'tool_exchange_scope': 'Bundle tools; standalone Mixing Atlas recipe search is not embedded',
         'device_acceptance': 'NOT_TESTED', 'play_submission': 'NOT_PERFORMED',
         'note': 'Build-time candidate record, not a device acceptance or authorship certificate.'
     }, indent=2) + '\n', encoding='utf-8')
     if TARGET.exists():
         shutil.rmtree(TARGET)
     shutil.copytree(source, TARGET)
-    print(f'Android beta.9 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')
+    print(f'Android beta.10 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')
