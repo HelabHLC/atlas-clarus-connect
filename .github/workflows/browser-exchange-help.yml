@@ -1,0 +1,25 @@
+name: Publish browser text help package
+on:
+  push:
+    branches: [feat/browser-exchange-help-20261017]
+    paths: ['wordpress-browser-edition/help/**', '.github/workflows/browser-exchange-help.yml']
+permissions:
+  contents: write
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python wordpress-browser-edition/help/build.py
+      - run: php wordpress-browser-edition/help/test.php
+      - name: Make reviewed plugin package downloadable
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add downloads/exchange-help
+          git commit -m 'Package text-only Browser Edition help; embedded runtime unchanged'
+          git push
+      - uses: actions/upload-artifact@v4
+        with:
+          name: browser-exchange-help-plugin
+          path: downloads/exchange-help/*
