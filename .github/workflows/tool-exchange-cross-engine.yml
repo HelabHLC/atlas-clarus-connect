@@ -1,0 +1,38 @@
+name: RC34 Tool Exchange cross-engine compatibility
+on:
+  push:
+    branches: [test/tool-exchange-cross-engine-20261017]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare pinned engines, legacy fixtures and RC34 preview
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium firefox webkit
+          python -m pip install Pillow
+          python browser-bundle/tests/prepare_source_binding.py /tmp/atlas-source-binding
+          python browser-bundle/build_tool_exchange_preview.py
+      - name: Native regression
+        run: node browser-bundle/tests/validate_tool_exchange.cjs
+      - name: Transfer complete exchange ZIPs through all nine engine pairs
+        run: node browser-bundle/tests/validate_tool_exchange_cross_engine.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RC34-cross-engine-matrix-and-packages
+          path: |
+            /tmp/atlas-source-binding/tool-exchange/
+            /tmp/atlas-source-binding/fixtures-sha256.json
+          retention-days: 30
