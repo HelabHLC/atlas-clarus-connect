@@ -51,6 +51,7 @@
   }
   need(bytes.length<=64*1024*1024,'JSON file exceeds the supported native limit.');
   let d;try{d=json(bytes);}catch(_){throw Error('No supported native JSON/ZIP. Use Add unchanged attachment for other formats.');}
+  if(root.ATLAS_MIXING_RECIPE&&(d.schema===root.ATLAS_MIXING_RECIPE.SCHEMA||d.schema===root.ATLAS_MIXING_RECIPE.LIGHT||(!d.schema&&d.row&&d.labels))){const recipe=await root.ATLAS_MIXING_RECIPE.inspect(bytes,ctx);return {kind:'MIXING_RECIPE',data:recipe.record,restoration:recipe};}
   if(d.format==='ATLAS_CLARUS_PALETTE'){E.parseClarus(d,ctx.colors,ctx.master);return {kind:'REFERENCE_PALETTE',data:d};}
   if(d.schema===H.SCHEMA){await A.verify(d,ctx.native);return {kind:'COLOUR_DECISIONS',data:d};}
   if(d.schema===P.SCHEMA){await P.verify(d,ctx.native);return {kind:'COLOUR_PROJECT',data:d};}
@@ -100,6 +101,7 @@
   return [];
  }
  function referenceIds(native){
+  if(native.kind==='MIXING_RECIPE')return [(native.data.result||native.data.row).atlas_row_id];
   if(native.kind==='REFERENCE_PALETTE')return native.data.references.map(r=>r.atlas_row_id);
   if(native.kind==='REDUCTION_JOB')return native.data.result.report.palette.filter(c=>c.kind!=='ORIGINAL_RGB').map(c=>c.atlas_row_id);
   if(native.kind==='PRINT_HANDOFF')return native.data.references.map(r=>r.source_atlas_row_id);
@@ -129,6 +131,7 @@
  }
  async function derive(pkg,id,target,ctx){
   const parsed=await verify(pkg,ctx),native=parsed.get(id);need(native,'Choose a source document.');let outputs=[],operation=target;
+  if(native.kind==='MIXING_RECIPE')need(target==='REFERENCE_VIEW','Recipes support only an explicit reference view. Download the original for standalone result restoration; no recipe-to-production conversion is provided.');
   if(target==='SOURCE_PALETTE')outputs=(await sourcePalettes(native,ctx)).map((bytes,i)=>({bytes,filename:'source-palette-'+(i+1)+'.clarus.json'}));
   else if(target==='REFERENCE_VIEW'){
    const ids=[...new Set(referenceIds(native))];need(ids.length>0,'No recorded reference IDs. Original colours are not silently converted.');
