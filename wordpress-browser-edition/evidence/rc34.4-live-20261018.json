@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "live_url": "https://arbe-lambda-star.com/atlas-clarus-browser-bundle/#library",
+  "runtime_version": "0.2.0-rc34.4-reference-libraries",
+  "plugin_version": "0.1.16-beta2",
+  "active_bundle_sha256": "0163cfd86adf51219bdc1eaf051ba0f656fca03a1fb8ae5ae8478ebcefbe976e",
+  "previous_bundle_sha256": "e662761293864beea3573eca4273194174f1b3d4430af924c3be9304ba02626d",
+  "public_manifest_exact": true,
+  "asset_verification_query": "?version=0.2.0-rc34.4-reference-libraries",
+  "asset_cache_control": "public, max-age=86400; verification uses explicit release version query",
+  "public_atlas_data_sha256": "35ab43e432259aa2607814e0393e068f2e14f0be8e1fac47af9a2576dcbe079e",
+  "public_atlas_data_exact_release": true,
+  "master_rows": 13283,
+  "master_exact": true,
+  "legacy_views_original_metadata_and_ids_preserved": 16,
+  "visible_library_choices": 78,
+  "visible_reduction_choices": 78,
+  "browser_FOGRA51": 9034,
+  "browser_FOGRA52": 5513,
+  "browser_COMMON": 5492,
+  "github_runs_release_commit_895f98bf": {
+    "total": 24,
+    "success": 24
+  },
+  "physical_device_acceptance": "NOT_TESTED"
+}

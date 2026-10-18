@@ -29,9 +29,24 @@ e662761293864beea3573eca4273194174f1b3d4430af924c3be9304ba02626d.
 Hover Library `hover-library/atlas-clarus-hover-library.php` was active at
 0.2.6-beta2. The differently named duplicate plugin was inactive.
 
-Deployment is pending. Browser authentication was submitted, but subsequent
-browser control was blocked by credential protection. WPVibe then returned a
-504 on a read and timed out on the permitted retry. No live plugin, runtime,
-page or option was changed. Continue via the normal WordPress ZIP updater and
-Tools > ATLAS Clarus Browser Edition; then verify the public runtime and retain
-the prior bundle for rollback. Do not report this candidate as live until verified.
+## Live acceptance completed
+
+The owner installed Browser Edition 0.1.16-beta2 and Hover Library 0.2.7-beta1.
+The native `atlas-clarus/install-browser-bundle` ability then validated the
+embedded archive and switched from RC34.1 to RC34.4, retaining the previous
+runtime. Active ZIP SHA256:
+0163cfd86adf51219bdc1eaf051ba0f656fca03a1fb8ae5ae8478ebcefbe976e.
+
+All 24 GitHub Actions runs for release commit
+895f98bf0411c480c920a09c9dc1d829ddbab5ab completed successfully.
+
+Live browser acceptance confirmed exactly 78 options in both the library and
+Colour Reduction selectors. FOGRA51 showed 9,034 references; FOGRA52 5,513;
+the common selection 5,492. The public manifest equals the release manifest,
+and public atlas-data.js equals the packaged file byte-for-byte. Asset checks use
+an explicit release-version query because the asset route permits one-day caching. All 13,283
+master rows and all 16 retained legacy definitions match their pinned originals.
+The live screenshot and machine-readable checks are in evidence/rc34.4-live-20261018.*.
+
+Public URL: https://arbe-lambda-star.com/atlas-clarus-browser-bundle/#library
+Physical-device and press acceptance are not claimed by this desktop check.
