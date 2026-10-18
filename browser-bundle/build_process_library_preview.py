@@ -5,7 +5,7 @@ from build_tool_exchange_preview import build as base_build,VERSION as BASE_VERS
 from build_image_exchange_pilot import zip_tree
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parent
-VERSION='0.2.0-rc34.3-gamutmap-catalog-preview'
+VERSION='0.2.0-rc34.4-reference-libraries-preview'
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def once(text,old,new):
     assert text.count(old)==1,old[:100]
@@ -48,11 +48,11 @@ def build(output):
     # Expose inspectable data and source evidence in the downloadable package.
     process_docs=dist/'docs/process-libraries'
     if process_docs.exists():shutil.rmtree(process_docs)
-    shutil.copytree(REPO/'process-libraries',process_docs,ignore=shutil.ignore_patterns('__pycache__'))
+    shutil.copytree(REPO/'process-libraries',process_docs,ignore=shutil.ignore_patterns('__pycache__','.rsync-tmp'))
     m_path=dist/'BUNDLE_MANIFEST.json';m=json.loads(m_path.read_text());m.update(version=VERSION,status='PROCESS_LIBRARIES_OFFLINE_PREVIEW',deployment_allowed=False,process_library_snapshot='2026-10-18',legacy_hidden_views=[k for k,v in views['views'].items() if v.get('hidden_from_new_selection')],legacy_replay='ORIGINAL_ID_NAME_AND_IDS_RETAINED',process_library_views={k:v['entry_count'] for k,v in views['views'].items() if v.get('type')=='SOURCE_DECLARED_GAMUT_MEMBERSHIP'});m_path.write_text(json.dumps(m,indent=2)+'\n')
     (dist/'SHA256SUMS.txt').write_text(''.join(f'{sha(p)}  {p.relative_to(dist).as_posix()}\n' for p in sorted(dist.rglob('*')) if p.is_file() and p.name!='SHA256SUMS.txt'))
     archive=output/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip';zip_tree(dist,archive)
     (output/'SHA256SUMS.txt').write_text(f'{sha(archive)}  {archive.name}\n')
     print(json.dumps({'archive':str(archive),'sha256':sha(archive)}));return archive
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--output-dir',type=Path,default=HERE/'build-process-libraries');build(p.parse_args().output_dir.resolve())
+    p=argparse.ArgumentParser();p.add_argument('--output-dir',type=Path,default=HERE/'build-reference-libraries');build(p.parse_args().output_dir.resolve())

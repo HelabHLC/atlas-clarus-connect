@@ -32,7 +32,7 @@ jobs:
           python browser-bundle/build_process_library_preview.py
           node browser-bundle/tests/validate_process_libraries.cjs
           node browser-bundle/tests/validate_process_libraries_browser.cjs
-          EXCHANGE_HTML=$PWD/browser-bundle/build-process-libraries/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_tool_exchange_browser.cjs
+          EXCHANGE_HTML=$PWD/browser-bundle/build-reference-libraries/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_tool_exchange_browser.cjs
           node browser-bundle/tests/validate_reduction_job.cjs
           node browser-bundle/tests/validate_exports.js
           node browser-bundle/tests/validate_source_assignments.js
@@ -45,10 +45,10 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: RC34.3-gamutmap-catalog-and-evidence
+          name: RC34.4-reference-libraries-and-evidence
           path: |
-            browser-bundle/build-process-libraries/*.zip
-            browser-bundle/build-process-libraries/SHA256SUMS.txt
+            browser-bundle/build-reference-libraries/*.zip
+            browser-bundle/build-reference-libraries/SHA256SUMS.txt
             /tmp/atlas-process-libraries-core/*
             /tmp/atlas-process-libraries-browser/*
           retention-days: 30

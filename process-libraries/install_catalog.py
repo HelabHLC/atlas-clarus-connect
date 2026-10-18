@@ -24,7 +24,10 @@ def install():
   group=r['category']+(' historical' if r['historical'] else '')
   views[key]={'name':f"ATLAS – {r['source_name']} [{group}]",'type':'SOURCE_DECLARED_GAMUT_MEMBERSHIP','status':'Gamutmap selection · not measured','ids':r['ids'],'entry_count':r['entry_count'],'source_n':r['entry_count'],'gamutmap_filter_ids':[204,fid],'source_response_sha256':r['source_sha256']['atlas'],'source_category':r['category'],'historical':r['historical'],'measured_qc_status':'NOT_MEASURED','identity_change':'NONE','note':'GamutMap snapshot 2026-10-18. Exact HLC join with frozen master. No RGB replacement or production approval.'}
  for key,(name,ids) in old.items():assert views[key]['name']==name and views[key]['ids']==ids
- views['xgc'].update(hidden_from_new_selection=True,lifecycle='LEGACY_RETAINED')
+ legacy=json.loads((ROOT/'legacy-view-baseline.json').read_text())
+ for key,original in legacy.items():
+  assert all(views[key][field]==value for field,value in original.items())
+  views[key].update(hidden_from_new_selection=True,lifecycle='LEGACY_RETAINED',legacy_notice='Retained only for existing work; unavailable for new selections.')
  v['gamutmap_catalog']={'snapshot':'2026-10-18','source_filters':78,'aliases':{'204':'core','206':'gamutmap_186'},'master_unchanged':True}
  vp.write_text(json.dumps(v,ensure_ascii=False,separators=(',',':'))+'\n');assert mp.read_bytes()==before
  with (ROOT/'CATALOG_COUNTS.csv').open('w',newline='') as f:

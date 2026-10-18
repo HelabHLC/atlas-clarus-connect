@@ -204,7 +204,7 @@
         select = document.createElement('select');
         Object.entries(views).filter(([key,v]) => v.hidden_from_new_selection !== true || key === activeView).forEach(([key,v]) => {
           const o = document.createElement('option');
-          o.value = key; o.textContent = v.name;
+          o.value = key; o.textContent = v.name + (v.hidden_from_new_selection ? " · legacy / retained" : "");
           if (key === activeView) o.selected = true;
           select.appendChild(o);
         });
@@ -449,7 +449,7 @@
         }
       };
 
-      if (select) select.addEventListener('change',()=>{activeView=select.value;page=0;render();});
+      if (select) select.addEventListener('change',()=>{activeView=select.value;for(const option of Array.from(select.options)){if(views[option.value]?.hidden_from_new_selection && option.value!==activeView)option.remove();}page=0;render();});
       if (search) search.addEventListener('input',debounce(()=>{query=search.value;page=0;render();}));
       prev.addEventListener('click',()=>{if(page>0){page--;render();}});
       next.addEventListener('click',()=>{const n=Math.ceil(filteredIds().length/perPage);if(page<n-1){page++;render();}});

@@ -34,6 +34,15 @@ function atlas_clarus_hover_view_labels() {
     return $labels;
 }
 
+function atlas_clarus_hover_hidden_views() {
+    static $hidden = null;
+    if ($hidden === null) {
+        $data = json_decode(file_get_contents(__DIR__ . '/data/views.json'), true);
+        $hidden = array_keys(array_filter($data['views'], function($view) { return !empty($view['hidden_from_new_selection']); }));
+    }
+    return $hidden;
+}
+
 function atlas_clarus_hover_defaults() {
     return array('default_view'=>'core','per_page'=>120,'show_status'=>1,'show_search'=>1,'show_library_selector'=>1);
 }
@@ -81,7 +90,7 @@ function atlas_clarus_hover_settings_page() {
             <?php settings_fields('atlas_clarus_hover_group'); ?>
             <table class="form-table" role="presentation">
                 <tr><th scope="row"><label for="atlas-default-view">Default view</label></th><td><select id="atlas-default-view" name="atlas_clarus_hover_options[default_view]">
-                <?php foreach (atlas_clarus_hover_view_labels() as $key=>$label): if (in_array($key, array('solid_c','solid_u','xgc'), true) && $o['default_view'] !== $key) { continue; } ?><option value="<?php echo esc_attr($key); ?>" <?php selected($o['default_view'], $key); ?>><?php echo esc_html($label); ?></option><?php endforeach; ?>
+                <?php foreach (atlas_clarus_hover_view_labels() as $key=>$label): if (in_array($key, atlas_clarus_hover_hidden_views(), true) && $o['default_view'] !== $key) { continue; } ?><option value="<?php echo esc_attr($key); ?>" <?php selected($o['default_view'], $key); ?>><?php echo esc_html($label . (in_array($key, atlas_clarus_hover_hidden_views(), true) ? ' · legacy / retained' : '')); ?></option><?php endforeach; ?>
                 </select></td></tr>
                 <tr><th scope="row"><label for="atlas-per-page">Swatches per page</label></th><td><input id="atlas-per-page" type="number" min="24" max="480" step="12" name="atlas_clarus_hover_options[per_page]" value="<?php echo esc_attr($o['per_page']); ?>"></td></tr>
                 <tr><th scope="row">Interface</th><td>

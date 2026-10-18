@@ -49,3 +49,18 @@ its source beta label. Membership is source-declared, not physical print QC.
 Run `python process-libraries/install_catalog.py` to verify the captured source
 hashes, independent intersections and installed membership without networking.
 No website or Android release is changed by this offline preview.
+
+
+## RC34.4: clean public selection
+
+All 16 pre-GamutMap observed views are retained only for existing work. New
+selectors expose exactly 78 choices: full Core and 77 source-backed selections
+(including the FOGRA common selection). Legacy names, ordered IDs and original
+metadata are preserved against the pinned RC28 definitions. Restored browser
+jobs show their retained option only while it is active. Explicit WordPress
+defaults/shortcodes remain compatible and are marked legacy; after leaving a
+legacy view, it cannot be selected again in that session.
+
+RC34.3 commit 1ddbfca9644f1a378d9fcab6b2827ad7e1768312 completed all
+22 GitHub Actions runs successfully before this follow-up. RC34.4 requires its
+own checks; previous successes do not substitute for those.
