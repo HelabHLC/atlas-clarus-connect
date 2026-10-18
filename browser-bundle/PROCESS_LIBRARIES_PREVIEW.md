@@ -20,7 +20,7 @@ node browser-bundle/tests/validate_process_libraries.cjs
 node browser-bundle/tests/validate_process_libraries_browser.cjs
 ```
 
-The wrapper preserves baseline builders and their checksum pins. Browser output is in `browser-bundle/build-process-libraries/`. Local `CHROMIUM_PATH` may specify an installed browser; default CI uses Playwright Chromium.
+The wrapper preserves baseline builders and their checksum pins. The historical RC28–RC31 builder reads a checksum-pinned copy of its original 17-view data; current Hover views evolve independently. Browser output is in `browser-bundle/build-process-libraries/`. Local `CHROMIUM_PATH` may specify an installed browser; default CI uses Playwright Chromium.
 
 ## Validation completed locally
 
@@ -31,4 +31,4 @@ The wrapper preserves baseline builders and their checksum pins. Browser output 
 - Hover frontend: new choices and explicit retained defaults, tested with jsdom.
 - Existing native reduction jobs, palette exports and source-assignment regression checks.
 
-No WordPress live activation, public runtime replacement, APK rebuild, physical-device acceptance or print measurement is included. The Hover PHP changes have not been executed locally; CI runs its data validation and syntax check before release.
+No WordPress live activation, public runtime replacement, APK rebuild, physical-device acceptance or print measurement is included. Hover PHP syntax and full data validation also passed locally under PHP 8.3.

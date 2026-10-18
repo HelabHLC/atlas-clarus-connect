@@ -51,7 +51,10 @@ for name in ('index.html','app.css','designer-layer.js','basis23-recipes.js','ac
 source=json.loads((ROOT/'hover-library/data/colors.json').read_text(encoding='utf-8'))
 assert source['master_sha256']==MASTER
 assert source['entry_count']==13283 and len(source['colors'])==13283
-view_source=json.loads((ROOT/'hover-library/data/views.json').read_text(encoding='utf-8'))
+# Preserve historical RC28–RC31 release identities while current Hover views evolve.
+pinned_views=HERE/'pinned/rc28-views.json.gz'
+assert sha(pinned_views)=='f3836baaca430b8e0a5509d2f5d829d59253bda18fb4bbc2f13de73aff973941'
+view_source=json.loads(gzip.decompress(pinned_views.read_bytes()))
 assert view_source['master_sha256']==MASTER and len(view_source['views']['core']['ids'])==13283
 source['views']=view_source['views']
 payload='window.ATLAS_CLARUS_DATA='+json.dumps(source,separators=(',',':'),ensure_ascii=False)+';\n'
@@ -226,8 +229,6 @@ if ARGS.colour_projects:
 if ARGS.image_projects:
     manifest=json.loads((HERE/('manifest-rc31.1.json' if ARGS.public_pilot else 'manifest-rc31.json')).read_text(encoding='utf-8'))
 assert manifest['version']==VERSION and manifest['master_sha256']==MASTER
-manifest['observed_library_views']=len(source['views'])
-manifest['hidden_legacy_views']=[key for key,view in source['views'].items() if view.get('hidden_from_new_selection')]
 assert manifest['name_search_index_sha256']==sha(name_index)
 assert manifest['descriptor_sha256']==sha(DIST/'assets/designer-layer-data.js')
 assert manifest['acms_source_sha256']==sha(ROOT/'hover-library/data/acms-solid-recipe-candidates.json')

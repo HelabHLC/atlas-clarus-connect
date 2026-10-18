@@ -25,6 +25,8 @@ jobs:
       - run: |
           npm ci --prefix browser-bundle/tests --ignore-scripts
           browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python browser-bundle/tests/validate_bundle.py
+          python browser-bundle/tests/validate_colour_projects_build.py
           python browser-bundle/build_process_library_preview.py
           node browser-bundle/tests/validate_process_libraries.cjs
           node browser-bundle/tests/validate_process_libraries_browser.cjs
