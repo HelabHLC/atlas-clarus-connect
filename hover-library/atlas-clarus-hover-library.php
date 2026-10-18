@@ -21,18 +21,17 @@ define('ATLAS_CLARUS_WHEEL_URL', 'https://atlas-clarus-reference-wheel.arbe-lamb
 define('ATLAS_CLARUS_BASIS23_VERSION', 'ATLAS_COMBINED_BASIS23_v0_8');
 
 function atlas_clarus_hover_allowed_views() {
-    return array('core','pso_coated_v3_fogra51','pso_uncoated_v3_fogra52','pso_fogra51_fogra52_common','xgc','solid_c','solid_u','bridge_c','bridge_u','neons_c','neons_u','metallics_c','cmyk_c','cmyk_u','tcx','tpg','tsx','tn','tpm','skintone');
+    return array_keys(atlas_clarus_hover_view_labels());
 }
 
 function atlas_clarus_hover_view_labels() {
-    return array(
-        'core'=>'HLC Core Reference','pso_coated_v3_fogra51'=>'ATLAS – PSO Coated v3 (FOGRA51)','pso_uncoated_v3_fogra52'=>'ATLAS – PSO Uncoated v3 (FOGRA52)','pso_fogra51_fogra52_common'=>'ATLAS – FOGRA51 / FOGRA52 common','xgc'=>'Extended Gamut Coated','solid_c'=>'Solid Coated',
-        'solid_u'=>'Solid Uncoated','bridge_c'=>'Color Bridge Coated','bridge_u'=>'Color Bridge Uncoated',
-        'neons_c'=>'Pastels & Neons Coated','neons_u'=>'Pastels & Neons Uncoated',
-        'metallics_c'=>'Metallics Coated','cmyk_c'=>'CMYK Coated','cmyk_u'=>'CMYK Uncoated',
-        'tcx'=>'FHI Cotton TCX','tpg'=>'FHI Paper TPG','tsx'=>'FHI Polyester TSX',
-        'tn'=>'FHI Nylon Brights TN','tpm'=>'FHI Metallic Shimmers TPM','skintone'=>'SkinTone Guide',
-    );
+    static $labels = null;
+    if ($labels === null) {
+        $data = json_decode(file_get_contents(__DIR__ . '/data/views.json'), true);
+        $labels = array();
+        foreach ($data['views'] as $key => $view) { $labels[$key] = $view['name']; }
+    }
+    return $labels;
 }
 
 function atlas_clarus_hover_defaults() {
@@ -82,7 +81,7 @@ function atlas_clarus_hover_settings_page() {
             <?php settings_fields('atlas_clarus_hover_group'); ?>
             <table class="form-table" role="presentation">
                 <tr><th scope="row"><label for="atlas-default-view">Default view</label></th><td><select id="atlas-default-view" name="atlas_clarus_hover_options[default_view]">
-                <?php foreach (atlas_clarus_hover_view_labels() as $key=>$label): if (in_array($key, array('solid_c','solid_u'), true) && $o['default_view'] !== $key) { continue; } ?><option value="<?php echo esc_attr($key); ?>" <?php selected($o['default_view'], $key); ?>><?php echo esc_html($label); ?></option><?php endforeach; ?>
+                <?php foreach (atlas_clarus_hover_view_labels() as $key=>$label): if (in_array($key, array('solid_c','solid_u','xgc'), true) && $o['default_view'] !== $key) { continue; } ?><option value="<?php echo esc_attr($key); ?>" <?php selected($o['default_view'], $key); ?>><?php echo esc_html($label); ?></option><?php endforeach; ?>
                 </select></td></tr>
                 <tr><th scope="row"><label for="atlas-per-page">Swatches per page</label></th><td><input id="atlas-per-page" type="number" min="24" max="480" step="12" name="atlas_clarus_hover_options[per_page]" value="<?php echo esc_attr($o['per_page']); ?>"></td></tr>
                 <tr><th scope="row">Interface</th><td>

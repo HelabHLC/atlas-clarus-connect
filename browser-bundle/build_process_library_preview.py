@@ -5,7 +5,7 @@ from build_tool_exchange_preview import build as base_build,VERSION as BASE_VERS
 from build_image_exchange_pilot import zip_tree
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parent
-VERSION='0.2.0-rc34.2-process-libraries-preview'
+VERSION='0.2.0-rc34.3-gamutmap-catalog-preview'
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def once(text,old,new):
     assert text.count(old)==1,old[:100]
@@ -41,14 +41,15 @@ def build(output):
     job=once(job,"const s=restored.settings;$('cr-protection-mode').value=s.protectionMode;$('cr-library').value=s.libraryId;", "const s=restored.settings;root.ATLAS_LIBRARY_VISIBILITY.ensureRestoredOption($('cr-library'),libraryViews,s.libraryId);$('cr-protection-mode').value=s.protectionMode;$('cr-library').value=s.libraryId;root.ATLAS_LIBRARY_VISIBILITY.pruneRestoredOptions($('cr-library'));")
     job=once(job,'function updateMode(){','function updateMode(){\n      root.ATLAS_LIBRARY_VISIBILITY.pruneRestoredOptions($(\'cr-library\'));')
     html=once(html,old,job);job_path.write_text(job)
+    html=html.replace('</head>','<style>.library-toolbar label{min-width:0;max-width:100%}.library-toolbar select,#cr-library{min-width:0;max-width:100%;width:100%}</style></head>',1)
     html=html.replace(BASE_VERSION,VERSION)
     (dist/'index.html').write_text(html)
     (dist/'assets/library-visibility.js').write_text(policy)
     # Expose inspectable data and source evidence in the downloadable package.
     process_docs=dist/'docs/process-libraries'
     if process_docs.exists():shutil.rmtree(process_docs)
-    shutil.copytree(REPO/'process-libraries',process_docs)
-    m_path=dist/'BUNDLE_MANIFEST.json';m=json.loads(m_path.read_text());m.update(version=VERSION,status='PROCESS_LIBRARIES_OFFLINE_PREVIEW',deployment_allowed=False,process_library_snapshot='2026-10-18',legacy_hidden_views=['solid_c','solid_u'],legacy_replay='ORIGINAL_ID_NAME_AND_IDS_RETAINED',process_library_views={k:v['entry_count'] for k,v in views['views'].items() if k.startswith('pso_')});m_path.write_text(json.dumps(m,indent=2)+'\n')
+    shutil.copytree(REPO/'process-libraries',process_docs,ignore=shutil.ignore_patterns('__pycache__'))
+    m_path=dist/'BUNDLE_MANIFEST.json';m=json.loads(m_path.read_text());m.update(version=VERSION,status='PROCESS_LIBRARIES_OFFLINE_PREVIEW',deployment_allowed=False,process_library_snapshot='2026-10-18',legacy_hidden_views=[k for k,v in views['views'].items() if v.get('hidden_from_new_selection')],legacy_replay='ORIGINAL_ID_NAME_AND_IDS_RETAINED',process_library_views={k:v['entry_count'] for k,v in views['views'].items() if v.get('type')=='SOURCE_DECLARED_GAMUT_MEMBERSHIP'});m_path.write_text(json.dumps(m,indent=2)+'\n')
     (dist/'SHA256SUMS.txt').write_text(''.join(f'{sha(p)}  {p.relative_to(dist).as_posix()}\n' for p in sorted(dist.rglob('*')) if p.is_file() and p.name!='SHA256SUMS.txt'))
     archive=output/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip';zip_tree(dist,archive)
     (output/'SHA256SUMS.txt').write_text(f'{sha(archive)}  {archive.name}\n')

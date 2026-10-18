@@ -32,3 +32,20 @@ The wrapper preserves baseline builders and their checksum pins. The historical 
 - Existing native reduction jobs, palette exports and source-assignment regression checks.
 
 No WordPress live activation, public runtime replacement, APK rebuild, physical-device acceptance or print measurement is included. Hover PHP syntax and full data validation also passed locally under PHP 8.3.
+
+
+## RC34.3: complete GamutMap filter catalog
+
+The 2026-10-18 catalog lists 78 filters. Capture every filter independently and
+with Atlas XL, then require exact set-intersection agreement. The Atlas XL
+filter aliases Core; sRGB HEX aliases sRGB after exact membership equality.
+FOGRA51/52 retain their established IDs. This adds 74 views; all existing view
+names and ordered reference IDs remain unchanged. Extended Gamut Coated joins
+the two Solid views as retained-only historical job choices.
+
+All views use immutable master RGB values, joined by exact HLC identifiers.
+Labels distinguish RGB, LAB, CMYK and historical profiles; TextileRGB retains
+its source beta label. Membership is source-declared, not physical print QC.
+Run `python process-libraries/install_catalog.py` to verify the captured source
+hashes, independent intersections and installed membership without networking.
+No website or Android release is changed by this offline preview.

@@ -27,6 +27,8 @@ jobs:
           browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
           python browser-bundle/tests/validate_bundle.py
           python browser-bundle/tests/validate_colour_projects_build.py
+          python process-libraries/install_catalog.py
+          git diff --exit-code -- hover-library/data/views.json
           python browser-bundle/build_process_library_preview.py
           node browser-bundle/tests/validate_process_libraries.cjs
           node browser-bundle/tests/validate_process_libraries_browser.cjs
@@ -43,7 +45,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: RC34.2-process-libraries-and-evidence
+          name: RC34.3-gamutmap-catalog-and-evidence
           path: |
             browser-bundle/build-process-libraries/*.zip
             browser-bundle/build-process-libraries/SHA256SUMS.txt
