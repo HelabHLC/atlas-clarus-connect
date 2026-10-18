@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package the reviewed RC34.1 Tool Exchange payload for Android beta.10.
+"""Package the reviewed RC34.4 reference-library payload for Android beta.11.
 
 The exact public pilot is rebuilt offline and pinned before adding the unchanged
 Android adapter. Existing releases, storage contracts and master remain frozen.
@@ -17,9 +17,9 @@ from build_colour_id_locale import localize
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-EXPECTED_BUNDLE_VERSION = '0.2.0-rc34.1-mixing-recipe-preview'
-EXPECTED_ZIP_SHA256 = 'd32596dad50e63419ee107af469c9203267f2ba240c67dfce68f095eac6ac8e3'
-BUNDLE_BUILDER = 'build_tool_exchange_preview.py'
+EXPECTED_BUNDLE_VERSION = '0.2.0-rc34.4-reference-libraries'
+EXPECTED_ZIP_SHA256 = '0163cfd86adf51219bdc1eaf051ba0f656fca03a1fb8ae5ae8478ebcefbe976e'
+BUNDLE_BUILDER = 'build_reference_libraries_release.py'
 REFERENCE_CARD_SHA256 = {
     'colour-reference-card.js': '32dff3a94ed98099aaae8b93365e94b66ba4262112564b91757304afe687e2e2',
 }
@@ -102,11 +102,13 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     (source / 'colour-id.html').write_text(localize(colour_html, 'de'), encoding='utf-8')
     (source / 'colour-id-en.html').write_text(localize(colour_html, 'en'), encoding='utf-8')
     (source / 'ANDROID_CANDIDATE.json').write_text(json.dumps({
-        'version_name': '0.4.0-beta.10', 'version_code': 10,
+        'version_name': '0.4.0-beta.11', 'version_code': 11,
         'application_id': 'com.atlasclarus.connect',
         'bundle_version': EXPECTED_BUNDLE_VERSION, 'bundle_zip_sha256': digest,
         'source_binding_commit': SOURCE_BINDING_COMMIT,
         'exchange_ui_commit': '57b132b46044344588ce2c5f6a3d86389ce9070c',
+        'reference_library_release_commit': '895f98bf0411c480c920a09c9dc1d829ddbab5ab',
+        'visible_reference_libraries': 78, 'legacy_libraries_retained': 16,
         'source_binding_sha256': SOURCE_BINDING_SHA256,
         'built_source_binding_sha256': BUILD_SOURCE_BINDING_SHA256,
         'reference_card_sha256': REFERENCE_CARD_SHA256,
@@ -120,4 +122,4 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     if TARGET.exists():
         shutil.rmtree(TARGET)
     shutil.copytree(source, TARGET)
-    print(f'Android beta.10 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')
+    print(f'Android beta.11 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')

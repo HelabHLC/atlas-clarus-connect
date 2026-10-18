@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check beta.10 source binding and every prepared asset in the actual APK/AAB."""
+"""Check beta.11 source binding and every prepared asset in the actual APK/AAB."""
 import gzip
 import hashlib
 import json
@@ -43,7 +43,11 @@ def check_package(path):
         assert candidate['application_id'] == 'com.atlasclarus.connect'
         assert candidate['bundle_zip_sha256'] == BUNDLE_SHA256
         assert candidate['built_source_binding_sha256'] == BUILD_SOURCE_BINDING_SHA256
-        assert manifest['colour_reduction_max_colours'] == 256 and manifest['deployment_allowed'] is False
+        assert manifest['colour_reduction_max_colours'] == 256 and manifest['deployment_allowed'] is True
+        assert manifest['library_views_visible']==78 and manifest['legacy_library_views_retained']==16
+        data=json.loads(archive.read(prefix+'assets/atlas-data.js').decode()[len('window.ATLAS_CLARUS_DATA='):].strip().removesuffix(';'))
+        assert len(data['colors'])==13283 and sum(not v.get('hidden_from_new_selection') for v in data['views'].values())==78
+        assert sum(bool(v.get('hidden_from_new_selection')) for v in data['views'].values())==16
         assert manifest['tool_exchange_schema'] == 'atlas-clarus-tool-exchange/1.0'
         assert 'id="xe-add"' in archive.read(prefix + 'index.html').decode('utf-8')
         assert 'id="cr-pixel-inspector"' in archive.read(prefix + 'index.html').decode('utf-8')
@@ -54,7 +58,7 @@ def check_package(path):
             assert hashlib.sha256(raw).hexdigest() == digest, f'Wrong source-binding module: {name}'
             embedded = raw.decode('utf-8').replace('</script', '<\\/script')
             assert ('<script>' + embedded + '</script>') in archive.read(prefix + 'index.html').decode('utf-8'), f'Wrong embedded source-binding module: {name}'
-    print(f'PASS: {path.name}: {len(expected)} beta.10/Colour ID assets match; source binding and name-index expansion verified')
+    print(f'PASS: {path.name}: {len(expected)} beta.11/Colour ID assets match; source binding and name-index expansion verified')
 
 
 if __name__ == '__main__':
