@@ -1,0 +1,49 @@
+{
+  "status": "PASS",
+  "master_table_sha256_before": "96866cacb09d712409b8f361111a73b3cbcd07252e3a7f1ba4e694fef9369361",
+  "master_table_sha256_after": "96866cacb09d712409b8f361111a73b3cbcd07252e3a7f1ba4e694fef9369361",
+  "master_identity_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "complete_atlas_exact_reference_match": 13283,
+  "FOGRA51": 9034,
+  "FOGRA52": 5513,
+  "COMMON": 5492,
+  "FOGRA51_ONLY": 3542,
+  "FOGRA52_ONLY": 21,
+  "NEITHER": 4228,
+  "independent_single_filter_intersections_match": true,
+  "direct_multiple_filter_intersection_matches": true,
+  "duplicate_neutral_axis_occurrences_removed": {
+    "atlas": 1349,
+    "51": 1278,
+    "52": 1065,
+    "atlas51": 1278,
+    "atlas52": 1065,
+    "atlas_both": 1065
+  },
+  "all_ids_unique_and_exist_in_master": true,
+  "source_sha256": {
+    "atlas": "e66372d67c78bbabd6d303d7b9311eeb12c921815993c9b3531f68d65445fc43",
+    "51": "d507ff3777e96d9bfc454412e7fb51c791550b14ce5b1f68537c574463152be2",
+    "52": "d040bdc023aac14c1d4c3fb53cda30009b9e2462fc2145e29a1868d56e0e6c91",
+    "atlas51": "0ac5cc643be570ca2844ab7728f4990497ae2fef8259d21d0b8d9191c012526b",
+    "atlas52": "e9567c60c6ff65a38d47ae9617fcd60e1f6239982c7aed365aec25927038e9a4",
+    "atlas_both": "6eb1092f715b64e78f15693b7d79073200bff8cb80a3cb12bcf41f95d0cacfef"
+  },
+  "limits": [
+    "Membership snapshot taken directly from gamutmap, not an independent reconstruction of its unpublished internal gamut algorithm.",
+    "No new physical measurements; no production approval or certification.",
+    "Site display RGB values do not replace active master RGB.",
+    "No library integration or deployment performed."
+  ],
+  "original_XL_package": {
+    "url": "https://freiefarbe.de/wp-content/uploads/2022/12/HLC-Colour-Atlas-XL_Set_DE_v1-2.zip",
+    "sha256": "49d0bc10aeb90ee4b6f30d20305dd919caa37eca94e81a80ebf8e23b36ed1bdd",
+    "published_sha256_match": true,
+    "all_13283_identifiers_match": true,
+    "populated_source_RGB_rows": 10979,
+    "populated_source_RGB_rows_equal_master": 10979,
+    "source_RGB_blank_rows": 2304,
+    "blank_source_RGB_not_overwritten_or_fabricated": true
+  },
+  "gpl_export_reopen_exact_RGB_check": "PASS"
+}

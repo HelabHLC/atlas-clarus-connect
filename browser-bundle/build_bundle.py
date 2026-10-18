@@ -226,6 +226,8 @@ if ARGS.colour_projects:
 if ARGS.image_projects:
     manifest=json.loads((HERE/('manifest-rc31.1.json' if ARGS.public_pilot else 'manifest-rc31.json')).read_text(encoding='utf-8'))
 assert manifest['version']==VERSION and manifest['master_sha256']==MASTER
+manifest['observed_library_views']=len(source['views'])
+manifest['hidden_legacy_views']=[key for key,view in source['views'].items() if view.get('hidden_from_new_selection')]
 assert manifest['name_search_index_sha256']==sha(name_index)
 assert manifest['descriptor_sha256']==sha(DIST/'assets/designer-layer-data.js')
 assert manifest['acms_source_sha256']==sha(ROOT/'hover-library/data/acms-solid-recipe-candidates.json')

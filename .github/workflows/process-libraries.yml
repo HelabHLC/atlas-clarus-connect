@@ -1,0 +1,50 @@
+name: Process library compatibility
+on:
+  push:
+    branches: [feat/process-libraries-20261018]
+  pull_request:
+    paths:
+      - 'process-libraries/**'
+      - 'browser-bundle/**'
+      - 'hover-library/**'
+      - '.github/workflows/process-libraries.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          python browser-bundle/build_process_library_preview.py
+          node browser-bundle/tests/validate_process_libraries.cjs
+          node browser-bundle/tests/validate_process_libraries_browser.cjs
+          EXCHANGE_HTML=$PWD/browser-bundle/build-process-libraries/atlas-clarus-browser-bundle/index.html node browser-bundle/tests/validate_tool_exchange_browser.cjs
+          node browser-bundle/tests/validate_reduction_job.cjs
+          node browser-bundle/tests/validate_exports.js
+          node browser-bundle/tests/validate_source_assignments.js
+          NODE_PATH=$PWD/browser-bundle/tests/node_modules node hover-library/tests/validate-process-ui.cjs
+          php -l hover-library/atlas-clarus-hover-library.php
+          php hover-library/tests/validate-data.php
+          python process-libraries/build_process_libraries.py hover-library/data/colors.json process-libraries/sources /tmp/rebuilt-process-libraries
+          cmp process-libraries/ATLAS_Process_Views_v0_1.json /tmp/rebuilt-process-libraries/ATLAS_Process_Views_v0_1.json
+          git diff --exit-code -- hover-library/data/colors.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RC34.2-process-libraries-and-evidence
+          path: |
+            browser-bundle/build-process-libraries/*.zip
+            browser-bundle/build-process-libraries/SHA256SUMS.txt
+            /tmp/atlas-process-libraries-core/*
+            /tmp/atlas-process-libraries-browser/*
+          retention-days: 30

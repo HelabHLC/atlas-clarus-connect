@@ -202,7 +202,7 @@
         field.className = 'atlas-clarus-field';
         field.innerHTML = '<label>Library / View</label>';
         select = document.createElement('select');
-        Object.entries(views).forEach(([key,v]) => {
+        Object.entries(views).filter(([key,v]) => v.hidden_from_new_selection !== true || key === activeView).forEach(([key,v]) => {
           const o = document.createElement('option');
           o.value = key; o.textContent = v.name;
           if (key === activeView) o.selected = true;
