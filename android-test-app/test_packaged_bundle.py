@@ -22,9 +22,11 @@ def check_package(path):
                 'assets/recipe-exchange.js', 'assets/image-project-codecs.js', 'assets/colour-projects.js', 'assets/colour-reference-card.js'}
     assert required <= prepared.keys(), 'Missing prepared Android assets'
     expected = {name: source.read_bytes() for name, source in prepared.items()}
-    gzip_name = 'assets/name-search-index-v030.json.gz'
-    assert gzip_name[:-3] not in expected, 'Ambiguous compressed/uncompressed index'
-    expected[gzip_name[:-3]] = gzip.decompress(expected.pop(gzip_name))
+    # AAPT expands every gzip asset and removes .gz, including source-evidence tables.
+    for gzip_name in list(expected):
+        if not gzip_name.endswith('.gz'): continue
+        assert gzip_name[:-3] not in expected, 'Ambiguous compressed/uncompressed asset: '+gzip_name
+        expected[gzip_name[:-3]] = gzip.decompress(expected.pop(gzip_name))
     with zipfile.ZipFile(path) as archive:
         assert archive.testzip() is None, f'Corrupt package: {path}'
         packed = {n[len(prefix):] for n in archive.namelist() if n.startswith(prefix) and not n.endswith('/')}

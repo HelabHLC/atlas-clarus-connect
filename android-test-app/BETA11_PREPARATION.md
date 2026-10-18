@@ -30,3 +30,10 @@ export/reopen, including files opened outside the app.
 
 Status: preparation and automated validation in progress; signed APK/AAB and
 physical device acceptance are not yet claimed.
+
+Android AAPT expands all `.gz` assets and removes their suffix, including source
+evidence tables. The APK/AAB validator models that transformation for every
+gzip file and compares every resulting byte. The source-control-only .gitignore
+is explicitly omitted during Android adaptation. No evidence table, master row
+or runtime implementation is dropped. The original public ZIP hash remains the
+input pin before those documented Android adaptations.

@@ -101,6 +101,8 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     colour_html = add_bridge(colour_id_source())
     (source / 'colour-id.html').write_text(localize(colour_html, 'de'), encoding='utf-8')
     (source / 'colour-id-en.html').write_text(localize(colour_html, 'en'), encoding='utf-8')
+    # AAPT excludes source-control metadata. Omit this non-runtime file explicitly.
+    (source / 'docs/process-libraries/.gitignore').unlink()
     (source / 'ANDROID_CANDIDATE.json').write_text(json.dumps({
         'version_name': '0.4.0-beta.11', 'version_code': 11,
         'application_id': 'com.atlasclarus.connect',
@@ -109,6 +111,8 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
         'exchange_ui_commit': '57b132b46044344588ce2c5f6a3d86389ce9070c',
         'reference_library_release_commit': '895f98bf0411c480c920a09c9dc1d829ddbab5ab',
         'visible_reference_libraries': 78, 'legacy_libraries_retained': 16,
+        'android_asset_packaging': 'AAPT_GZIP_EXPANSION_WITH_SUFFIX_REMOVAL',
+        'excluded_build_metadata': ['docs/process-libraries/.gitignore'],
         'source_binding_sha256': SOURCE_BINDING_SHA256,
         'built_source_binding_sha256': BUILD_SOURCE_BINDING_SHA256,
         'reference_card_sha256': REFERENCE_CARD_SHA256,
