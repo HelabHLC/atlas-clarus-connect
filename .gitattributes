@@ -1,0 +1,3 @@
+
+# Preserve upstream notices byte-for-byte, including original CRLF and whitespace.
+process-libraries/sources/Original_XL_*_unchanged.txt -text -diff

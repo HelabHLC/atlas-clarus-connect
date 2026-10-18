@@ -85,4 +85,4 @@ foreach ($acms['rows'] as $row) {
     }
 }
 $check($acmsViewCount === 4100 && $goldenCount === 171 && $otherCount === 73*12, 'ACMS candidate totals');
-echo "PASS: 13283 colors, 17 views and 13283 derived Basis-23 recipes valid\n";
+echo "PASS: 13283 colors, 20 views and 13283 derived Basis-23 recipes valid\n";
