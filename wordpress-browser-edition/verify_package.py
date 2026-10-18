@@ -32,7 +32,13 @@ def verify(root):
         block = source.split("$expected = array(", 1)[1].split(");", 1)[0]
         expected = {k: v[1:-1] if v.startswith("'") else int(v)
                     for k, v in re.findall(r"'([^']+)'\s*=>\s*('[^']*'|\d+)\s*,", block)}
-        if version in ('0.1.15-beta9', '0.1.15-beta10', '0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14', '0.1.15-beta15', '0.1.15-beta16', '0.1.15-beta17'):
+        if version == '0.1.16-beta2':
+            pilot = json.loads((Path(__file__).resolve().parents[1]/'browser-bundle/manifest-rc34.4.json').read_text())
+            assert manifest == pilot
+            assert len(expected) == sum(type(v) in (str, int) for v in pilot.values())
+            booleans = {k: v == 'true' for k, v in re.findall(r"'([^']+)'\s*=>\s*(true|false)\s*,", block)}
+            assert booleans == {k: v for k, v in pilot.items() if type(v) is bool}
+        elif version in ('0.1.15-beta9', '0.1.15-beta10', '0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14', '0.1.15-beta15', '0.1.15-beta16', '0.1.15-beta17'):
             manifest_file = {'0.1.15-beta9': 'manifest-rc29.1.json', '0.1.15-beta10': 'manifest-rc30.1.json', '0.1.15-beta11': 'manifest-rc31.1.json', '0.1.15-beta12': 'manifest-rc32.1.json', '0.1.15-beta13': 'manifest-rc32.2.json', '0.1.15-beta14': 'manifest-rc33.2.json', '0.1.15-beta15': 'manifest-rc33.5.json', '0.1.15-beta16': 'manifest-rc33.7.json', '0.1.15-beta17': 'manifest-rc33.8.json'}[version]
             pilot = json.loads((Path(__file__).resolve().parents[1]/'browser-bundle'/manifest_file).read_text())
             assert manifest == pilot
@@ -63,6 +69,7 @@ def verify(root):
             "update_option( self::OPTION_RUNTIME_PATH, $runtime")
         exit_block = source.split("private static function inject_canvas_exit_button", 1)[1].split(
             "public static function serve_runtime_file", 1)[0]
+        exit_block = exit_block.split("    /** Text-only help.", 1)[0]
         assert "position:fixed" not in exit_block
         assert "stripos( $html, '</nav>' )" in exit_block
     report = {
@@ -103,6 +110,8 @@ def verify(root):
         report.update(source_base_commit='42e26adf988a08384d8e543c2a0c0712f6236d82', source_candidate='RC33.7 result region correction public beta', source_review='browser-bundle/REGION_CORRECTION_PREVIEW.md')
     if version == '0.1.15-beta17':
         report.update(source_candidate='RC33.8 source-based region correction public beta',source_review='releases/rc33.8/README.md')
+    if version == '0.1.16-beta2':
+        report.update(source_base_commit='35b7a7fc136ed063899733159521e821461cc085', source_candidate='RC34.4 source-backed reference libraries', source_review='browser-bundle/PROCESS_LIBRARIES_PREVIEW.md')
     return report
 
 

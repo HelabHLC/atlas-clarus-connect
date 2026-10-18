@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: ATLAS Clarus Hover Library
- * Description: Interactive ATLAS Clarus HLC reference library with hover details, search, pagination, and documented observed-coverage views.
+ * Description: Interactive ATLAS Clarus HLC reference library with source-backed GamutMap selections and retained legacy compatibility.
  * Version: 0.2.7-beta1
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -85,7 +85,7 @@ function atlas_clarus_hover_settings_page() {
     <div class="wrap">
         <h1><?php echo esc_html__('ATLAS Clarus Hover Library', 'atlas-clarus-hover-library'); ?></h1>
         <p><strong>Workflow:</strong> ATLAS Clarus Workflow v3.4.0<br><strong>Active master SHA-256:</strong> <code><?php echo esc_html(ATLAS_CLARUS_MASTER_SHA256); ?></code></p>
-        <p>The Core view contains exact ATLAS identities. Other named views are documented observed-coverage views and do not assert Pantone identity equivalence.</p>
+        <p>Core contains the complete frozen ATLAS. New selections use documented GamutMap memberships. Earlier observed views are retained only for existing work. Gamut membership is not measured production approval.</p>
         <form method="post" action="options.php">
             <?php settings_fields('atlas_clarus_hover_group'); ?>
             <table class="form-table" role="presentation">

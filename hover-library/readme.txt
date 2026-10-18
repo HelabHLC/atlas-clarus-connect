@@ -3,16 +3,16 @@ Contributors: atlas-clarus
 Tags: color, colour, hlc, atlas, swatches
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.2.6-beta1
+Stable tag: 0.2.7-beta1
 License: GPLv2 or later
 
 Interactive ATLAS Clarus HLC reference library with exact active-PKL RGB swatches and hover details.
 
 == Description ==
 
-Use `[atlas_clarus_library]` or, for example, `[atlas_clarus_library view="solid_c" per_page="120" show_status="yes" show_search="yes" show_library_selector="yes"]`.
+Use `[atlas_clarus_library]` or, for example, `[atlas_clarus_library view="pso_coated_v3_fogra51" per_page="120" show_status="yes" show_search="yes" show_library_selector="yes"]`.
 
-The Core view contains 13,283 exact active-master ATLAS identities. The 16 named source-context views are observed ATLAS coverage views derived from previously documented v3.4.0 screenshot-RGB mappings. They are not Pantone libraries and do not assert Pantone identity equivalence.
+The Core view contains 13,283 exact active-master ATLAS identities. 77 additional selections use the captured GamutMap memberships joined by exact HLC identifiers. New selectors expose 78 choices in total. All 16 earlier screenshot-derived views retain their original definitions only for compatibility with existing work and are hidden from new selections. Gamut memberships are source declarations, not measured production approvals.
 
 Workflow: ATLAS Clarus Workflow v3.4.0
 Active master SHA-256: 8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4
@@ -37,6 +37,11 @@ Spectral source data: Cultural Heritage Science Open Source (CHSOS), published b
 4. Add `[atlas_clarus_library]` to a page or post.
 
 == Changelog ==
+
+= 0.2.7-beta1 =
+* Source-backed GamutMap selections; 78 visible choices.
+* All 16 earlier views retained only for existing work and marked legacy.
+* Frozen master RGB, identifiers and provenance remain unchanged.
 
 = 0.2.6-beta1 =
 * Adds paired ATLAS target and model mix screen previews to ACMS recipe candidates; both remain unmeasured.

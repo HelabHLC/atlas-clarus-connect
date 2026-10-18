@@ -1,6 +1,6 @@
 {
   "plugin": "ATLAS Clarus Hover Library",
-  "version": "0.2.6-beta1",
+  "version": "0.2.7-beta1",
   "workflow": "ATLAS Clarus Workflow v3.4.0",
   "master_file": "atlas_master__active_master__v2_illumext.pkl",
   "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
@@ -11,7 +11,7 @@
   "measured_qc_status": "NOT_MEASURED",
   "pantone_identity_claim": "NONE",
   "production_branches_materialized": false,
-  "ui_update": "active_0.2.3_beta1_features_plus_ACMS_solid_spot_candidates",
+  "ui_update": "SOURCE_BACKED_SELECTIONS_WITH_LEGACY_REPLAY",
   "basis23_recipes": {
     "version": "ATLAS_COMBINED_BASIS23_v0_8",
     "rows": 13283,
@@ -36,5 +36,10 @@
     "measured_qc_status": "NOT_MEASURED",
     "paper_specific_qc": "NOT_MEASURED",
     "screen_preview": "OPAQUE_LIMIT_KS_D50_BRADFORD_SRGB_NOT_MEASURED"
-  }
+  },
+  "visible_view_count": 78,
+  "total_view_count": 94,
+  "legacy_retained_view_count": 16,
+  "gamutmap_source_selection_count": 77,
+  "gamutmap_snapshot": "2026-10-18"
 }
