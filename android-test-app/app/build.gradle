@@ -10,8 +10,8 @@ android {
         applicationId 'com.atlasclarus.connect'
         minSdk 26
         targetSdk 36
-        versionCode 10
-        versionName '0.4.0-beta.10'
+        versionCode 11
+        versionName '0.4.0-beta.11'
     }
 
     def signingEnvironment = [
@@ -73,6 +73,8 @@ def prepareBundle = tasks.register('prepareBundle', Exec) {
             fileTree(new File(rootProject.projectDir, '../browser-bundle/vendor')),
             fileTree(new File(rootProject.projectDir, '../browser-bundle')).matching { include '*.md' },
             fileTree(new File(rootProject.projectDir, '../hover-library/data')),
+            fileTree(new File(rootProject.projectDir, '../process-libraries')),
+            fileTree(new File(rootProject.projectDir, '../browser-bundle/pinned')),
             fileTree(new File(rootProject.projectDir, '../designer-layer')),
             fileTree(new File(rootProject.projectDir, '../name-search')),
             new File(rootProject.projectDir, '../browser-bundle/build_bundle.py'),

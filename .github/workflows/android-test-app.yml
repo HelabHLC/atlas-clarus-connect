@@ -6,6 +6,7 @@ on:
       - 'android-test-app/**'
       - 'browser-bundle/**'
       - 'hover-library/data/**'
+      - 'process-libraries/**'
       - 'designer-layer/**'
       - 'mischatlas/recipe-exchange.js'
       - 'releases/rc33.8/recovered/**'
@@ -36,7 +37,7 @@ jobs:
         run: python3 browser-bundle/tests/validate_bundle.py
       - name: Check Android export adapter
         run: node android-test-app/test-export-adapter.js
-      - name: Build debug APK with pinned RC34.1 Tool Exchange candidate
+      - name: Build debug APK with pinned RC34.4 reference-library payload
         run: gradle -p android-test-app :app:assembleDebug --no-daemon
       - name: Check DE/EN identity and scripts
         run: |
@@ -47,7 +48,7 @@ jobs:
         run: |
           test -s android-test-app/app/build/outputs/apk/debug/app-debug.apk
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging android-test-app/app/build/outputs/apk/debug/app-debug.apk |
-            grep -F "package: name='com.atlasclarus.connect.dev' versionCode='10' versionName='0.4.0-beta.10-debug'"
+            grep -F "package: name='com.atlasclarus.connect.dev' versionCode='11' versionName='0.4.0-beta.11-debug'"
           python3 android-test-app/test_packaged_bundle.py android-test-app/app/build/outputs/apk/debug/app-debug.apk
           sha256sum android-test-app/app/build/outputs/apk/debug/app-debug.apk
       - name: Validate Image Projects in Android-prepared HTML
@@ -89,12 +90,31 @@ jobs:
           node browser-bundle/tests/validate_tool_exchange.cjs
           node browser-bundle/tests/validate_tool_exchange_browser.cjs
           python3 browser-bundle/tests/verify_tool_exchange_exports.py /tmp/atlas-android-exchange
+      - name: Verify reference-library visibility and retained legacy jobs in Android HTML
+        env:
+          PROCESS_HTML: android-test-app/app/src/main/assets/bundle/index.html
+        run: |
+          node browser-bundle/tests/validate_process_libraries.cjs
+          node browser-bundle/tests/validate_process_libraries_browser.cjs
+      - name: Check out immutable beta.10 baseline for current update regression
+        uses: actions/checkout@v4
+        with:
+          ref: 628bc43c62317fb492042075350acdaae22baed6
+          path: .beta10-baseline
+      - name: Verify stored work survives beta.10 to beta.11 update
+        env:
+          BASELINE_ASSETS: .beta10-baseline/android-test-app/app/src/main/assets/bundle
+          BASELINE_VERSION: 0.4.0-beta.10
+          ANDROID_UPGRADE_OUTPUT: /tmp/atlas-android-beta10-upgrade
+        run: |
+          python3 .beta10-baseline/android-test-app/prepare_bundle.py
+          node android-test-app/test-card-upgrade.cjs
       - name: Check out immutable beta.9 baseline for current update regression
         uses: actions/checkout@v4
         with:
           ref: 0e149e257070b94792350b84d5468beb5a1e5471
           path: .beta9-baseline
-      - name: Verify stored work survives beta.9 to beta.10 update
+      - name: Verify stored work survives beta.9 to beta.11 update
         env:
           BASELINE_ASSETS: .beta9-baseline/android-test-app/app/src/main/assets/bundle
           BASELINE_VERSION: 0.4.0-beta.9
@@ -107,24 +127,25 @@ jobs:
         with:
           ref: e83b8165bb4c7ef4c9e37522310b9c60b7e2d19c
           path: .beta8-baseline
-      - name: Verify stored work survives beta.8 to beta.10 document update
+      - name: Verify stored work survives beta.8 to beta.11 document update
         run: |
           python3 .beta8-baseline/android-test-app/prepare_bundle.py
           node android-test-app/test-card-upgrade.cjs
       - name: Save Android update and card evidence
         uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Android-Beta10-card-and-update-evidence
+          name: ATLAS-Clarus-Android-Beta11-card-and-update-evidence
           path: |
             /tmp/atlas-android-upgrade/
             /tmp/atlas-android-beta9-upgrade/
+            /tmp/atlas-android-beta10-upgrade/
             /tmp/atlas-android-exchange/
             /tmp/atlas-android-reduction/
             /tmp/atlas-colour-reference-card/
           retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Android-Beta10-DEBUG-NOT-AN-UPDATE
+          name: ATLAS-Clarus-Android-Beta11-DEBUG-NOT-AN-UPDATE
           path: android-test-app/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
       - name: Verify APK and AAB signing paths with disposable CI key
@@ -146,7 +167,7 @@ jobs:
           gradle -p android-test-app :app:assembleRelease :app:bundleRelease --no-daemon
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify "$apk"
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
-            grep -F "package: name='com.atlasclarus.connect' versionCode='10' versionName='0.4.0-beta.10'"
+            grep -F "package: name='com.atlasclarus.connect' versionCode='11' versionName='0.4.0-beta.11'"
           test -s "$aab"
           jarsigner -verify "$aab"
           python3 android-test-app/test_packaged_bundle.py "$apk" "$aab"
