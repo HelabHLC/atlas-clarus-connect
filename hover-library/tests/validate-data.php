@@ -7,7 +7,7 @@ $check = static function ($condition, $message) { if (!$condition) { fwrite(STDE
 $check($colors['entry_count'] === 13283, 'entry_count');
 $check(count($colors['colors']) === 13283, 'colors length');
 $check($colors['master_sha256'] === $expected && $views['master_sha256'] === $expected, 'master SHA metadata');
-$check(count($views['views']) === 17 && count($views['views']['core']['ids']) === 13283, 'view counts');
+$check(count($views['views']) === 94 && count($views['views']['core']['ids']) === 13283, 'view counts');
 $ids = array_column($colors['colors'], 'id');
 $check(count($ids) === count(array_unique($ids)), 'duplicate ids');
 $valid = array_fill_keys($ids, true);
@@ -85,4 +85,4 @@ foreach ($acms['rows'] as $row) {
     }
 }
 $check($acmsViewCount === 4100 && $goldenCount === 171 && $otherCount === 73*12, 'ACMS candidate totals');
-echo "PASS: 13283 colors, 17 views and 13283 derived Basis-23 recipes valid\n";
+echo "PASS: 13283 colors, 94 views and 13283 derived Basis-23 recipes valid\n";

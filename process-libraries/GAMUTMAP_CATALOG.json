@@ -1,0 +1,1104 @@
+{
+  "schema": "ATLAS_GAMUTMAP_CATALOG_V1",
+  "captured_date": "2026-10-18",
+  "source": "https://www.gamutmap.de/",
+  "catalog_sha256": "0ac1c52f232db6981c3bb4705ea6dfb9b601bcc8c882b03296b1a3e20160af99",
+  "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "master_rows": 13283,
+  "identity_change": "NONE",
+  "method": "Exact HLC identifier intersection; independent single-filter and combined-filter membership must agree",
+  "filters": [
+    {
+      "source_name": "freieFarbe CIELAB HLC Colour Atlas XL",
+      "filter_id": 204,
+      "category": "LAB",
+      "historical": false,
+      "entry_count": 13283,
+      "source_sha256": {
+        "single": "e66372d67c78bbabd6d303d7b9311eeb12c921815993c9b3531f68d65445fc43",
+        "atlas": "e66372d67c78bbabd6d303d7b9311eeb12c921815993c9b3531f68d65445fc43"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "freieFarbe CIELAB HLC Colour Atlas XL matte",
+      "filter_id": 202,
+      "category": "LAB",
+      "historical": false,
+      "entry_count": 9008,
+      "source_sha256": {
+        "single": "0d01b035e39d4849548bdd76c11a16b81722ee8a7532bd58cc5e01b9f6373893",
+        "atlas": "57476229b4705cacc03d2e40eb5837d2b4f6c29418625f55d403685a31eb02c7"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "sRGB",
+      "filter_id": 186,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 10896,
+      "source_sha256": {
+        "single": "f2bd3e275d1093acb458c62a1c34a773200dcf341bdd084ac371108d299bdd8d",
+        "atlas": "3200150aabf95260dae20276cf23d315cbe63c910cfb84a9526d3a11dd89e907"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "sRGB (HEX)",
+      "filter_id": 206,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 10896,
+      "source_sha256": {
+        "single": "2d8e1d77a399b090e236d3a8777f4bb0878a89a1edf969ffcc64996426e92718",
+        "atlas": "a7940627d5348a053bf786dcff04c6dd449d0ad0cf22b06e2b7ac768bc7f20f3"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Adobe RGB (1998)",
+      "filter_id": 126,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 12383,
+      "source_sha256": {
+        "single": "4628e9f9d123936c537de416770640dfc5f3aef50d4a34acd40740f98ef11b9a",
+        "atlas": "f8ee18a882feb8018f19a0120ff5be8439fa28a10fe45cc0b1940556fa79009a"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "ECI-RGB v2",
+      "filter_id": 187,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 12745,
+      "source_sha256": {
+        "single": "82422e2b13ddaaa6e4ee91f5eb195d39fdb4ab84a0054e5fc76c5161211485ed",
+        "atlas": "a7935f083bc9f04765853ae55edf3d89069d4fba3d1671b64908094bbda19a6b"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "ProPhoto RGB",
+      "filter_id": 188,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 13283,
+      "source_sha256": {
+        "single": "1b9bf9091f9c914d17c111bea06837cb22f2f04586ddabac215a00b0c3fbb194",
+        "atlas": "c0cc9bd8ce01b2bc39de1ae5b1386784bfbaf86d5f26f6246d5a41c7376850b0"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PAL-SECAM",
+      "filter_id": 147,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 11031,
+      "source_sha256": {
+        "single": "b3c5e292ad3f59639f50a310f3b3a98c7f526c6214cfeab67a1111499ab46fc5",
+        "atlas": "2b0fa72c1188b4edd9d64ea0c2883874710ac8d9d7bb5fd72b0528d84e01916d"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Rec. ITU-R BT.2020-1",
+      "filter_id": 143,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 13136,
+      "source_sha256": {
+        "single": "b3cd0974b5e72d9d041a18b4e90da99c01e7ec555384bd7582d408afb88dcaf1",
+        "atlas": "5cb72de5e79fac6d019f11ea5d0fdc8def0aef0a3e7e81d2ff0b57c0a919af25"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Rec. ITU-R BT.709-5",
+      "filter_id": 144,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 10897,
+      "source_sha256": {
+        "single": "9594108eec1db111b546046f25a80e6e86393a3b2a193950a6328bf7da333732",
+        "atlas": "6abb81641e1a62878464514d36b194034042897d619ffbc74f979de8748b57f2"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "TextileRGB - FOGRA58beta",
+      "filter_id": 196,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 10001,
+      "source_sha256": {
+        "single": "49626eb6e4e331c2cd015df1b6a8066d2bb221bfb43e647a9808e15f86cf9a7b",
+        "atlas": "ee22223b4d5dafbe2f231dd3023e76c814b738d41b9e971627fd34701cfbbae5"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "DCI P3 DCI",
+      "filter_id": 198,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 11930,
+      "source_sha256": {
+        "single": "f9eff592fee20bfb4c54382e87865cfd99dbfcffff617d35a4c2896b1e3dd1e7",
+        "atlas": "e9cb936425b478299a53fbb45f87c0ed111e8d3001fc2c4613a797d2b67287af"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "DCI P3 D65",
+      "filter_id": 197,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 12132,
+      "source_sha256": {
+        "single": "c24b9c46508be30162d7a1d9a7a29879d69c073664b6fa61cf84f81c1c9b4389",
+        "atlas": "fdaf7d308c8d5deb933508ae000e4a730a526e9088dcecc3be77ee007a659464"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Display P3",
+      "filter_id": 200,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 12132,
+      "source_sha256": {
+        "single": "bf2d3f3de3c1440a3f1c30aaaba7dbd88566a2712f90e5e2c60daf21e3bc0b12",
+        "atlas": "3b0b14848477bd014718fc994aebe0d41e507939644aa552dccd9389ce96b9de"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "DCI P3 RGB (Gamma 2.6) 5900K (by Adobe)",
+      "filter_id": 199,
+      "category": "RGB",
+      "historical": false,
+      "entry_count": 11799,
+      "source_sha256": {
+        "single": "7ef309064a301fa3b9455275e5fb6472c7c96c928096014d4223dccff90f1416",
+        "atlas": "b953d31dc68a3b1ae9101e057131e9c5a26bef84b926160f04ed20b1518a2946"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO Coated v3",
+      "filter_id": 148,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 9034,
+      "source_sha256": {
+        "single": "d507ff3777e96d9bfc454412e7fb51c791550b14ce5b1f68537c574463152be2",
+        "atlas": "0ac5cc643be570ca2844ab7728f4990497ae2fef8259d21d0b8d9191c012526b"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "ISO Coated V2 (ECI)",
+      "filter_id": 167,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 8929,
+      "source_sha256": {
+        "single": "be2f25b842a7ea8dee1e2cf5220bebedcc680957d503d931c58a9e25bb0cce2a",
+        "atlas": "295e27e26844717c07179de0ed35f724e3c56fb43bed9b979be6f871de15a830"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "ISO Coated v2 300% (ECI)",
+      "filter_id": 132,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 8915,
+      "source_sha256": {
+        "single": "6b58b3364559f451c2d2955619334e3fef177338df6a5866a5bfe2a877cbefa7",
+        "atlas": "86424c90768de1b4b809bb59ceb36c115019b5da2817c497537037c811bb6090"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO Uncoated V3 (FOGRA52)",
+      "filter_id": 140,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 5513,
+      "source_sha256": {
+        "single": "d040bdc023aac14c1d4c3fb53cda30009b9e2462fc2145e29a1868d56e0e6c91",
+        "atlas": "e9567c60c6ff65a38d47ae9617fcd60e1f6239982c7aed365aec25927038e9a4"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO Uncoated ISO 12647 (ECI)",
+      "filter_id": 139,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 5290,
+      "source_sha256": {
+        "single": "21cde82daf30e4acfb1168adf592fd8a3411c7e440f06f52a226d4b36560d4c5",
+        "atlas": "92a35037bf0be27a21761feacfda837bb53d763e8156c43c7263b985ff9393f4"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "GRACoL 2013",
+      "filter_id": 156,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 9241,
+      "source_sha256": {
+        "single": "a3f0ad38428cfd451b0a072167cd09653752e59ce7419406b9492da1fa56cc3b",
+        "atlas": "4e73dd7d6748f8e5a5b9e5ca907864b4762d9994cc11ed6551adbdb6e71595de"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "GRACoL2013 Uncoated",
+      "filter_id": 155,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 5377,
+      "source_sha256": {
+        "single": "6688240f7124cecfe75887399b675999a42290efcd3b0bd3e43fbca3e1315611",
+        "atlas": "baecb4532d45c1817e407a527218354f9cd72734d351d6206256b86610739baf"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "SWOP 2013 C3 CRPC5",
+      "filter_id": 164,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 8290,
+      "source_sha256": {
+        "single": "710ea5d330d8c3d6f4562ad2af4d674a429008800ad86eac83ecde51deb9a89a",
+        "atlas": "53b125d535713bbf654810384ddd8365ad1d2d02f101711783d300bcd176b7e8"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "SWOP2013C5",
+      "filter_id": 165,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 7691,
+      "source_sha256": {
+        "single": "7ee7282c0e05ef58a9ed9f8ecbdc98f02ca2b79cadca22c8d79675c8e4964b5c",
+        "atlas": "306349a0dcb9c9aa297cf5feb3004c1f62af59548925bde44ba92a680f6c5f5f"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "WAN-IFRAnewspaper 26v5",
+      "filter_id": 184,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 3570,
+      "source_sha256": {
+        "single": "1db88934fd24ab5d2af89cd5ecc284b69d8a711a34e3caa22dd54a6fa3e0609a",
+        "atlas": "e9ade7561c4552e339d55bddcd5944077098626df2b1aa1e00ce9493349f3966"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "ISO Newspaper 26v4",
+      "filter_id": 134,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 3848,
+      "source_sha256": {
+        "single": "6d065df60a88eb546793d1749b22b9b6ec5594924a8e2a1e39f6874b52a8f1ff",
+        "atlas": "c3beb532692d057de6117651432fff8396f6fb50e7bc9fbfe3d76d4525ddafc2"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO INP Paper (ECI)",
+      "filter_id": 174,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 4894,
+      "source_sha256": {
+        "single": "3f7b264b0d33b8753372a0cd3c57fa1a9f354af52a0731341ddf4cc8d2474563",
+        "atlas": "a2fc67dae95cd31e403328d9fd641a793fc6aa39837e77c6f1f066fb1a399047"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO LWC Improved (ECI)",
+      "filter_id": 175,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 9308,
+      "source_sha256": {
+        "single": "4dc731b319a71836e2bb040fb7c420779224d061f3158578e55e039f5565d668",
+        "atlas": "0cede444561eaa2b52a7d078d40b65282d8c1b0b792226c63fc0d78f0d847254"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO LWC Standard (ECI)",
+      "filter_id": 176,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 7761,
+      "source_sha256": {
+        "single": "ec20ca4cbe4aa4c1b8623895222148040540ad62cf5b455ba9e8b5faf039989d",
+        "atlas": "6a4c8fe32b02adb6ff0c00c13dcccdf669bb0f5df064024ec1d5c2750f9eb216"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO MFC Paper (ECI)",
+      "filter_id": 141,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 6647,
+      "source_sha256": {
+        "single": "9ed1adfe467bb608723d20c88a242056edc5d4e711cfc6d5b305d71abd302514",
+        "atlas": "e9fd3e7f85b465c79bf0b92c70f81ac544cede334a873d1a3cc23806e040bf80"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO SNP Paper (ECI)",
+      "filter_id": 177,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 4176,
+      "source_sha256": {
+        "single": "8832fefd305f7061ce21f7bd921aea696a0cacaaa4134ea0cef82bd0c82f816e",
+        "atlas": "96abb90c5206795e0f565237dd895cc72cc7dc9b290de38dccd2710be25279e6"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO SC-B Paper v3 FOGRA54",
+      "filter_id": 178,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 5669,
+      "source_sha256": {
+        "single": "d03add52d51b7c203ad4abb34332db994018d9e81e8aa29386a459a7e6dba639",
+        "atlas": "a1c0e27c7f1808844aacdb0f7ae746bd9496d1315cccd7615770a79b5edfc1da"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSR_LWC_PLUS_V2_PT",
+      "filter_id": 158,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 7959,
+      "source_sha256": {
+        "single": "8bcde904362f315759d4ab4f6b4d36fb2a73c80146f4ac8706df594120a49326",
+        "atlas": "dc81917e79f09c3f3ea15d7245c1c338247f696ba4a59be0c8bbbe170bc495e4"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSR LWC PLUS V2 M1",
+      "filter_id": 179,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 8447,
+      "source_sha256": {
+        "single": "f9cf29d86f4c17693eae3f317764a6026dcbe263794274b1528582dc4e966903",
+        "atlas": "e8483a32a169f4442393397a83b97728ca0f67fe90d2ec41ee48e527864aed3d"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSR_LWC_STD_V2_PT",
+      "filter_id": 159,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 7958,
+      "source_sha256": {
+        "single": "5cc4f8f975d31582c395bf38864f2bd9709c046093d6cf2816c1e5f14b7d8c3c",
+        "atlas": "e4c69b78eb90e3a156627923b2e98db1ff35fbef1963fb9440ce1111825e57e7"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSR_LWC_STD_V2_M1",
+      "filter_id": 180,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 7503,
+      "source_sha256": {
+        "single": "e76fe65e3f48b404a264b95f4c5d3f5489db996a22bc44673ca344d8963e36f3",
+        "atlas": "701d5647c591f293d155e017092bba0202d5eabe9ecb8040d88d40b9c5fd2767"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSR_MF_V2_M1",
+      "filter_id": 181,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 10759,
+      "source_sha256": {
+        "single": "bd36f110c66a3c52d6533655418000da2fba7846613552de03a41cc251567ffd",
+        "atlas": "148fa4d31b15422eba771658410e1a438646333c1f166e25c05fb7b6161957fc"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSR_SC_PLUS_V2_PT",
+      "filter_id": 160,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 7479,
+      "source_sha256": {
+        "single": "50b39b73609d563fdebc80d0ec361b6dc264831c1a41516d2311ef9719f01b38",
+        "atlas": "f88c4ca77fbe70fbfda6325272dbaa9f7339002e859d163bcc474f54b2f84c55"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSR_SC_PLUS_V2_M1",
+      "filter_id": 182,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 10015,
+      "source_sha256": {
+        "single": "33dfdaa458fdaeae754279f50bd4e2ba2b2c0db53e39ab4160e207c46cbd4ec6",
+        "atlas": "18e89cde34c4404d949deba63ca2d4f88caf15a76b2283c7e10d3238877b14ca"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSR_SC_STD_V2_PT",
+      "filter_id": 161,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 7252,
+      "source_sha256": {
+        "single": "7cc55eb74c154adfa2fed28de70d197f431754a4626ac956f6dd5bd481c2c594",
+        "atlas": "4f9e33482ececf10a157e0b6513d81a3638df0d819ef3ce63c63d5b4b8c1a76f"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSR_SC_STD_V2_M1",
+      "filter_id": 183,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 10382,
+      "source_sha256": {
+        "single": "bbed4ae30c363d0e0f93b21b20c518b2f42c7fc9b51d25991138ebd5bd8a036b",
+        "atlas": "529a7dbfdf16adb57c8a3f39b4d03f65bc587f01e987509ff013bbf812934f59"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSRgravureMF / News Plus",
+      "filter_id": 162,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 4973,
+      "source_sha256": {
+        "single": "b4d75d61a4c2da08a60eef70aeb63f9476591d04eb13def56f895a8c8298f23c",
+        "atlas": "7f0e0f7cb09656e67171c0a28b8ac54c8c52698193d9c4e563a6099977019026"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "SC Paper (ECI)",
+      "filter_id": 194,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 6103,
+      "source_sha256": {
+        "single": "7954feabee1a94f40cb3aea96065f815ac4a4d5e3ecb087e2ab5965dba4d3229",
+        "atlas": "129a30fd93835000b7670675b14c23acf26db9a82012b97d44e393f856266449"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "eciCMYK",
+      "filter_id": 185,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 10703,
+      "source_sha256": {
+        "single": "11bddbd12b2de85f574aa2cd4a8835d1f1290b1dd159e072b58b7537a1a4da76",
+        "atlas": "fc6d2e0f7ce6d2f1fed5adbef063caffe9dbe36d4ace6ffec53c95a762995529"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "eciCMYK V2",
+      "filter_id": 205,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 10706,
+      "source_sha256": {
+        "single": "cd2d262685d37cf6038ac910cb6358d085ffc8545b2e139ffeb3b293cd2fa517",
+        "atlas": "0ebcf997ffd2605ba974363aec62bc173bac45ceb4aba57912eb59d2b0bbd357"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PaC.Space CMYK gravure V1a",
+      "filter_id": 163,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 10469,
+      "source_sha256": {
+        "single": "738c58d165dfa95b8e7ec1a6dfcde67f36f821460dd825e084e021844f5f9fc1",
+        "atlas": "d4fb6f705619472efc817eebbe4fc36886d5ef0c9def234e5982f07d2ef53f51"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "CGATS21_CRPC1",
+      "filter_id": 149,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 3422,
+      "source_sha256": {
+        "single": "1668ff39136bb50d75d2315ec10bdbf0eb0efc0e26cea0aefddfc677510dea80",
+        "atlas": "859eac819f4f2dcdd3e4347f4aa22038af85bdfd64b809e6be8c9bed686cb8f2"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "CGATS21_CRPC2",
+      "filter_id": 150,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 4966,
+      "source_sha256": {
+        "single": "f91119e4103c2f8c6519fd9de58638c4199e839ae93284154156584d0013ea5e",
+        "atlas": "18c737dd2e2f6019cd71cf07dc5ad429109bc84e6f248d41e9662024c6e98f7e"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "CGATS21_CRPC3",
+      "filter_id": 151,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 5377,
+      "source_sha256": {
+        "single": "4cddd90744b646b814ae6bf55881ad295fffc743e31828008608f6bdbdedc492",
+        "atlas": "362d645f8c137aadfde16a73f98d63c83222f4c6fe5ed0a22c4dcf2741e44cc3"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "CGATS21_CRPC4",
+      "filter_id": 189,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 6870,
+      "source_sha256": {
+        "single": "d0786d82ce3fe791e5772999dcd11074136759a958acbb8accef3b9e0249d735",
+        "atlas": "a04ebe60492d80333ea661cc4c4a3572998f907297b45596c9b6b1be9f6b3c47"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "CGATS21_CRPC5",
+      "filter_id": 152,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 8290,
+      "source_sha256": {
+        "single": "afeea21c953f84496d68c5c3be4e39d2d469bd7ef2c3972e84d3aba44f866428",
+        "atlas": "42979b14f92946e92717d671bd5652c4c6880dafbac42db6c12ad5d93279ba9b"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "CGATS21_CRPC6",
+      "filter_id": 153,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 9241,
+      "source_sha256": {
+        "single": "3aacfa0877e158fbb2114a64fd63da108da9007d2fb360c270836e0148e03eee",
+        "atlas": "81e72577411b247bf9652c4cee844719a41f0bd69d25b393a028475736fe3a22"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "CGATS21_CRPC7",
+      "filter_id": 154,
+      "category": "CMYK",
+      "historical": false,
+      "entry_count": 10841,
+      "source_sha256": {
+        "single": "c546744042c4d8a95b54631cb8d7012a253a69b90658174a58afabfab35028a2",
+        "atlas": "e4f9b0b40f725f98fd1c11e941c3515bb588cdb08a73eb6b719f77de9dd29bba"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO Coated NPscreen ISO 12647 (ECI)",
+      "filter_id": 193,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 9316,
+      "source_sha256": {
+        "single": "ffaed3f276e5f9b63ced1f831903f67e341e303e4c8f78c925d723bd34592695",
+        "atlas": "f888a8678419ba088effd84556687a6a6c37266f6a563819ba0fb460508aed85"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO Uncoated NPscreen ISO12647 (ECI)",
+      "filter_id": 142,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 5455,
+      "source_sha256": {
+        "single": "fab5bea4bc3f24f465b4f1c8a5ac07f9809f772127da295323f552f536f6b27e",
+        "atlas": "0a662d1ddb4691990f2840d7ddd055f0dbb3cb755483d84f0789ce7f015d9198"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO Coated 300% NPscreen ISO12647 (ECI)",
+      "filter_id": 171,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 9316,
+      "source_sha256": {
+        "single": "836a78e6bf4afc89be82484062f22caee4d251778bf08c5ffe69e5b65084ee18",
+        "atlas": "aeee804b2ffc35df6e256a8e1324baddcb4d63c60f38e09982c93f5a6f0f2430"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO Coated v2 300% Glossy laminate (ECI)",
+      "filter_id": 172,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 9308,
+      "source_sha256": {
+        "single": "4dc731b319a71836e2bb040fb7c420779224d061f3158578e55e039f5565d668",
+        "atlas": "0cede444561eaa2b52a7d078d40b65282d8c1b0b792226c63fc0d78f0d847254"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "PSO Coated v2 300% Matte laminate (ECI)",
+      "filter_id": 173,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 7499,
+      "source_sha256": {
+        "single": "fbbe978b0feee0cb1ee9fcd69e9d0fdf40dd21bd7dea8fc4a7c4f5e1f92d9712",
+        "atlas": "20b282d40c44891b08551b0d8a60e7ed2c04475adca1a43cc917a9d4126b1c5f"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "ISO Coated",
+      "filter_id": 133,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 9422,
+      "source_sha256": {
+        "single": "076ba9215ae960446372ee25f1f6dd815256747ab705088b4c68e6f447f5119f",
+        "atlas": "19c0c69058886849cc7a3e63123857e213dadc5b3aea3c69cd86f40eaf1ab77e"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "GRACol2006 Coated 1v2",
+      "filter_id": 131,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 9470,
+      "source_sha256": {
+        "single": "c310c0f8354cbf84e98acd906de96b0ceac0855ccd73919c8905694d816ca09a",
+        "atlas": "bebdeb257e24e9483d878791f63c6c32ecb74b5d14a2db55540db9f6d32d5603"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Web Coated SWOP 2006 Grade 3 Paper",
+      "filter_id": 146,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 7587,
+      "source_sha256": {
+        "single": "b266400a30ad1d2d43fb43f50cbff959b280d66e10b3c3e827fa9eeb06f9905a",
+        "atlas": "6913700674648333ee172accc64203e1fadf64a5181a1aef45b6f79d4a17386f"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "SWOP2006 Coated 3v2",
+      "filter_id": 191,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 8500,
+      "source_sha256": {
+        "single": "ecc82f6602b94cc6ff7b1c1a7223d477ca59d340267a49b2d50c34673decc5f0",
+        "atlas": "6a32fe63b59f8e57f96fe2ce40414b724ae9a1e7a048a8589254e0991aff5de4"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "SWOP2006 Coated 5v2",
+      "filter_id": 190,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 7513,
+      "source_sha256": {
+        "single": "e5293eff6cedbf5a581257abe55074300257003bab02c9fb97e2830a5b6452df",
+        "atlas": "2ad3dcddf26d0abce04c16ba5d8c1f3ed767d853ea205abebf876259c3d22374"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "SNAP 2007",
+      "filter_id": 195,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 3515,
+      "source_sha256": {
+        "single": "174bab3f800808ea6ec1abea494020b4f381bf44966d79484e05c62abcaa1894",
+        "atlas": "c0a5f2aea36ff43bc306206d555cd9d652665c7d40c73dac8edbc5fbe7cfdde0"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Coated Fogra27",
+      "filter_id": 129,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 8370,
+      "source_sha256": {
+        "single": "f6aeb092c33c422da78dbaf009cde7b70559f9088798222d9f8055c83c06fa6d",
+        "atlas": "6e1a6f97d743938c42f191d71a4798d22544096f40a8a0c4d9fc406778eb9004"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Coated Fogra39",
+      "filter_id": 130,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 8815,
+      "source_sha256": {
+        "single": "951165a075edc2265de9b2c09b4c41a5226fba908c64b64fef12070655b888b6",
+        "atlas": "f45145b43b19c2aad240750598542443092422e3dc8075f9e60ba3bc59b982db"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "ISO Uncoated",
+      "filter_id": 203,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 5714,
+      "source_sha256": {
+        "single": "d75a855aa0724718b912911908a64569f6585cd2b01aae8641268a564e5ef4f2",
+        "atlas": "2fdcf127dfe6188b14e2265a8f60e98e404568bdff66e2e6f4ef136533e6761b"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "ISO Web Coated",
+      "filter_id": 168,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 8245,
+      "source_sha256": {
+        "single": "229fa548611447ef842cd07f0de29676859d8fa876f9ffe723c6aab76d4fb2db",
+        "atlas": "41184c4e53b53ff8a4a741cea7201ce62f5ae5bf11ea029d4db52af12d2e8a4c"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "ISO Uncoated Yellowish",
+      "filter_id": 169,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 6235,
+      "source_sha256": {
+        "single": "76af80d76a3c0347a1c3b73fc95feeb190587976409e2671c4c8fc40d7778765",
+        "atlas": "8a9237c56764852217600e394512a0c0641585de9a0c3f8aa4a8c3f3a49961cf"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Japan Color 2001 Coated",
+      "filter_id": 135,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 8319,
+      "source_sha256": {
+        "single": "db296926b0ee2930f327eee3abb2cf600ccd53cc12cdaf02534c73e9e50cfbed",
+        "atlas": "28cd256f9411b6dac10636405f750d6df019b367ddc7749cfe147f6556c5ea42"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Japan Color 2011 Coated",
+      "filter_id": 192,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 8509,
+      "source_sha256": {
+        "single": "bebccc9e8c8d4703c090a2f6f618a4d4a9e3fa63c31c386989adf4df86abefed",
+        "atlas": "37f8d023f6612041806b7b515ebb3377d9521b8ea85657229830ad93d4a87406"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Japan Color 2001 Uncoated",
+      "filter_id": 136,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 4309,
+      "source_sha256": {
+        "single": "003680e20559aa786b376615ea0fac9a50cd77377869b165a672d04ae0ac99c4",
+        "atlas": "40fb8b5d6eef2b6dbdd2c34eeb396c15631cd123f14f6136e66643edfa20cf44"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Japan Color 2002 Newspaper",
+      "filter_id": 170,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 2461,
+      "source_sha256": {
+        "single": "ee6feb872ea83e3c67ed3350525d3350025de57a58da9b4f3d927291c9705514",
+        "atlas": "1fb14016e4b0654fc8c4b5bb2e88b243331adb47bc75192bc471bcee708d2641"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Japan Color 2003 Web Coated",
+      "filter_id": 137,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 8514,
+      "source_sha256": {
+        "single": "c3133ef58c24c314d7e786e6460168cf60b6d0684f40a42def969c93bbec93b6",
+        "atlas": "7318c89d352a3d4bd728dc397e75b1690d06a1cc816f403d70a4c2540dc4a9f0"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Japan Web Coated (Ad)",
+      "filter_id": 138,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 7018,
+      "source_sha256": {
+        "single": "79abcdc4ae96d8ca2b9987adb312d6d1d67c666897db7669713bcc13ab01e4a4",
+        "atlas": "7bc2a2703ac11ad9950cd2b49fe5bacbf072cdc3762b3e7f43f8fd313ebf3dfc"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Heaven42_AM_U280_K98_G80_HD",
+      "filter_id": 157,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 7568,
+      "source_sha256": {
+        "single": "c8f5f19a40f6cb114742c2d760e22c44a230ec40c62ab6887a76e67e032eada9",
+        "atlas": "e86be923fb75d5fb7ddd4487dfe6e5ac8c001a48f5ccf61534c47ded74b38116"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "Heaven42_FM_U280_K98_G80_HD",
+      "filter_id": 166,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 7333,
+      "source_sha256": {
+        "single": "e88071ae76c3fa7c21f801d08f1c7e631d558dd259e707f762f0895cbe688e8e",
+        "atlas": "e368b17f57b29e0bb69f9337d9bb847ec88fb2b529a50b0f8717c6536fb453f2"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    },
+    {
+      "source_name": "U.S. Sheetfed Coated v2",
+      "filter_id": 145,
+      "category": "CMYK",
+      "historical": true,
+      "entry_count": 8847,
+      "source_sha256": {
+        "single": "5195c027a5ab2ed268c3c6a78d7e004f0daa3319c37595c1b136731262e3f057",
+        "atlas": "46293c227fd729932c1910c19649fa55f2cf63459b086edb1699653b8abce3ae"
+      },
+      "validation": "PASS",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "measured_qc_status": "NOT_MEASURED"
+    }
+  ]
+}

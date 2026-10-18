@@ -1,0 +1,62 @@
+ATLAS CLARUS – PROCESS LIBRARIES v0.1
+Stand: 18. Oktober 2026
+
+ERGEBNIS
+PSO Coated v3 / FOGRA51: 9.034 Referenzen
+PSO Uncoated v3 / FOGRA52: 5.513 Referenzen
+Gemeinsame Auswahl: 5.492 Referenzen
+Pruefstatus: PASS fuer Quellenuebernahme, Referenzverknuepfung und GPL-Export.
+
+GRUNDLAGE
+Die Auswahl stammt unmittelbar aus den Tabellenantworten von gamutmap.de.
+Auswahl 204: freieFarbe CIELAB HLC Colour Atlas XL.
+Auswahl 148: PSO Coated v3.
+Auswahl 140: PSO Uncoated V3 (FOGRA52).
+Originalanfrage: POST https://www.gamutmap.de/site/ajax
+Felder: ajax=1, action=setfilter, filterId[]=204 usw.
+Die Antworten sind verlustfrei gzip-komprimiert in sources/ abgelegt.
+
+Die HLC-Bezeichner aller 13.283 Referenzen stimmen exakt mit dem aktiven
+ATLAS-Master und den Bezeichnern der Original-XL-Tabelle ueberein.
+Zugehoerigkeit erfolgt ausschliesslich per Referenzbezeichner; keine RGB-
+Naeherung, kein Lab-/DeltaE-Neumatching und keine neue Gamutberechnung.
+Neutrale Achseneintraege werden auf H000 normalisiert und dedupliziert.
+Die 72 Farbtonseiten sind vollstaendig auf ihr 21x26-Koordinatenraster geprueft.
+
+Die Referenz-RGB-Werte in den GPL-Paletten stammen ausschliesslich aus dem
+bestehenden Master. Abweichende Anzeige-RGB-Werte von gamutmap wurden nicht
+uebernommen. Der Master wurde nicht veraendert.
+
+DATEIEN
+ATLAS_Process_Views_v0_1.json: additive Bibliotheksdefinitionen mit bestehenden IDs.
+ATLAS_Process_Membership_v0_1.csv wird beim erneuten Aufbau erzeugt.
+GPL-Paletten sind im separat bereitgestellten Datenpaket enthalten.
+VALIDATION.json: vollstaendige Pruefung, Mengen und Quellen-Pruefsummen.
+build_process_libraries.py: reproduzierbarer Aufbau mit Python-Standardbibliothek.
+
+WIEDERHOLUNG
+python build_process_libraries.py /pfad/zu/colors.json sources neu_aufgebaut
+Die colors.json muss die zum angegebenen Master gehoerende Tabelle sein.
+Die Tabelle selbst wird nicht neu geschrieben.
+
+BEDEUTUNG UND GRENZEN
+Dies sind ATLAS-Prozessansichten der von gamutmap fuer diese Druckbedingungen
+ausgewaehlten Referenzen. Es sind keine Pantone-Solid-Coated-/Uncoated-
+Bibliotheken und keine paarweise C-nach-U-Konvertierung.
+Der Quellenfilter wurde uebernommen; sein internes Gamutverfahren und seine
+Toleranz wurden nicht unabhaengig rekonstruiert. Der Datenstand ist ein Snapshot.
+Es gibt 21 Referenzen nur in der FOGRA52-Auswahl; eine vollstaendige
+Teilmengenbeziehung wurde daher nicht unterstellt.
+NOT_MEASURED: keine neuen physischen Messungen, keine Druckfreigabe oder
+Normzertifizierung. Keine Website, Anwendung oder Repository-Datei wurde geaendert.
+
+QUELLEN UND ATTRIBUTION
+Referenzgrundlage: Copyright (c) freieFarbe e.V., HLC Colour Atlas XL.
+Auswahlquelle: gamutmap.de, betrieben im Umfeld der Proof GmbH.
+Originalpaket: HLC-Colour-Atlas-XL_Set_DE_v1-2.zip, SHA-256 in VALIDATION.json.
+https://www.gamutmap.de/site/content/howto
+https://freiefarbe.de/en/thema-farbe/software/
+Die unveraenderten Original-Hinweise sind in sources/ abgelegt.
+Die Dateien sind fuer ATLAS indexierte und selektierte Ableitungen; keine
+unveraenderten Originalpaletten von freieFarbe und keine Empfehlung/Zertifizierung
+durch freieFarbe, gamutmap, Fogra, ECI oder DIN.

@@ -52,6 +52,10 @@ function home_url($path) { return 'https://example.test' . $path; }
 function esc_url($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 function esc_attr($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 function esc_html__($s, $domain) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
+if (!defined('OBJECT')) { define('OBJECT', 'OBJECT'); }
+function get_page_by_path(...$args) { return $GLOBALS['exchange_help_page'] ?? null; }
+function parse_blocks($content) { return array(array('blockName'=>'core/html','innerHTML'=>$content)); }
+function wp_kses_post($content) { return $content; }
 function WP_Filesystem() { $GLOBALS['wp_filesystem'] = new stdClass(); return true; }
 function unzip_file($zip, $target) {
     wp_mkdir_p($target);
@@ -144,7 +148,7 @@ if ($pilot) {
         check(is_wp_error(invoke_private('validate_manifest', $bad)), 'Accepted invalid handoff ' . $key);
     }
 }
-if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta10', '0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14', '0.1.15-beta15', '0.1.15-beta16', '0.1.15-beta17'), true)) {
+if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta10', '0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14', '0.1.15-beta15', '0.1.15-beta16', '0.1.15-beta17', '0.1.16-beta2'), true)) {
     foreach (array('colour_projects_schema' => 'wrong', 'colour_projects_selection' => 'PRODUCTION_APPROVED',
         'colour_projects_max_versions' => '200', 'colour_projects_origin' => 'DISCARDED') as $key => $value) {
         $bad = $manifest; $bad[$key] = $value;
@@ -153,7 +157,7 @@ if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta10', '0.1.
     check(strpos($html, 'id="colour-projects"') !== false, 'Colour Projects missing from runtime');
     check(strpos($html, 'ATLAS_COLOUR_PROJECTS_UI.init({colors') !== false, 'Project initialization missing');
 }
-if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14', '0.1.15-beta15', '0.1.15-beta16', '0.1.15-beta17'), true)) {
+if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta11', '0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14', '0.1.15-beta15', '0.1.15-beta16', '0.1.15-beta17', '0.1.16-beta2'), true)) {
     foreach (array('image_projects_schema' => 'wrong', 'image_projects_original' => 'DISCARDED',
         'image_projects_max_pixels' => '4194304', 'image_projects_history' => 'NONE') as $key => $value) {
         $bad = $manifest; $bad[$key] = $value;
@@ -163,7 +167,7 @@ if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta11', '0.1.
     check(strpos($html, 'ATLAS_IMAGE_PROJECTS_UI.init({colors') !== false, 'Image editor initialization missing');
 }
 
-if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14', '0.1.15-beta15', '0.1.15-beta16', '0.1.15-beta17'), true)) {
+if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta12', '0.1.15-beta13', '0.1.15-beta14', '0.1.15-beta15', '0.1.15-beta16', '0.1.15-beta17', '0.1.16-beta2'), true)) {
     foreach (array('colour_reference_card_schema' => 'wrong', 'reference_card_signature_status' => 'SIGNED') as $key => $value) {
         $bad = $manifest; $bad[$key] = $value;
         check(is_wp_error(invoke_private('validate_manifest', $bad)), 'Accepted invalid reference-card ' . $key);
@@ -171,7 +175,7 @@ if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta12', '0.1.
     check(strpos($html, 'id="ch-reference-card"') !== false, 'Reference card button missing');
 }
 
-if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta14', '0.1.15-beta15', '0.1.15-beta16', '0.1.15-beta17'), true)) {
+if (in_array(ATLAS_Clarus_Browser_Edition::VERSION, array('0.1.15-beta14', '0.1.15-beta15', '0.1.15-beta16', '0.1.15-beta17', '0.1.16-beta2'), true)) {
     foreach (array('colour_reduction_max_colours' => '256', 'colour_reduction_method' => 'PERCEPTUAL',
         'colour_reduction_schema' => 'wrong', 'colour_reduction_input_loupe' => 'OUTPUT_ONLY') as $key => $value) {
         $bad = $manifest; $bad[$key] = $value;
@@ -240,6 +244,20 @@ check(strpos($injected, 'id="atlas-clarus-canvas-exit"') < strpos($injected, '</
 preg_match_all('#<script\b[^>]*>.*?</script>#s', $html, $before);
 preg_match_all('#<script\b[^>]*>.*?</script>#s', $injected, $after);
 check($before[0] === $after[0], 'Canvas injection changed application scripts');
+
+if (ATLAS_Clarus_Browser_Edition::VERSION === '0.1.16-beta2') {
+    foreach (array('library_views_visible'=>77,'legacy_library_views_retained'=>0,'library_views_total'=>78) as $key=>$value) {
+        $bad=$manifest; $bad[$key]=$value;
+        check(is_wp_error(invoke_private('validate_manifest',$bad)), 'Accepted wrong reference-library count');
+    }
+    $GLOBALS['exchange_help_page']=(object)array('post_status'=>'publish','post_content'=>'<section id="exchange-between-tools"><h2>Exchange help</h2></section>');
+    $with_help=invoke_private('inject_exchange_help',$injected);
+    check(substr_count($with_help,'id="atlas-exchange-help"')===1,'Help missing or duplicated');
+    check(strpos($with_help,'id="atlas-exchange-help"')>strrpos($with_help,'</script>'),'Help inserted into application script');
+    preg_match_all('#<script\b[^>]*>.*?</script>#s',$with_help,$help_scripts);
+    check($before[0]===$help_scripts[0],'Help injection changed application scripts');
+    check(invoke_private('inject_exchange_help',$with_help)===$with_help,'Repeated help injection changed document');
+}
 
 // Rollback handler deliberately exits after redirect: check final state at shutdown.
 register_shutdown_function(function () use ($old) {

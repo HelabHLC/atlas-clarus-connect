@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: ATLAS Clarus Hover Library
- * Description: Interactive ATLAS Clarus HLC reference library with hover details, search, pagination, and documented observed-coverage views.
- * Version: 0.2.6-beta1
+ * Description: Interactive ATLAS Clarus HLC reference library with source-backed GamutMap selections and retained legacy compatibility.
+ * Version: 0.2.7-beta1
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: ATLAS Clarus
@@ -12,7 +12,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('ATLAS_CLARUS_HOVER_VERSION', '0.2.6-beta1');
+define('ATLAS_CLARUS_HOVER_VERSION', '0.2.7-beta1');
 define('ATLAS_CLARUS_HOVER_FILE', __FILE__);
 define('ATLAS_CLARUS_HOVER_DIR', plugin_dir_path(__FILE__));
 define('ATLAS_CLARUS_HOVER_URL', plugin_dir_url(__FILE__));
@@ -21,18 +21,26 @@ define('ATLAS_CLARUS_WHEEL_URL', 'https://atlas-clarus-reference-wheel.arbe-lamb
 define('ATLAS_CLARUS_BASIS23_VERSION', 'ATLAS_COMBINED_BASIS23_v0_8');
 
 function atlas_clarus_hover_allowed_views() {
-    return array('core','xgc','solid_c','solid_u','bridge_c','bridge_u','neons_c','neons_u','metallics_c','cmyk_c','cmyk_u','tcx','tpg','tsx','tn','tpm','skintone');
+    return array_keys(atlas_clarus_hover_view_labels());
 }
 
 function atlas_clarus_hover_view_labels() {
-    return array(
-        'core'=>'HLC Core Reference','xgc'=>'Extended Gamut Coated','solid_c'=>'Solid Coated',
-        'solid_u'=>'Solid Uncoated','bridge_c'=>'Color Bridge Coated','bridge_u'=>'Color Bridge Uncoated',
-        'neons_c'=>'Pastels & Neons Coated','neons_u'=>'Pastels & Neons Uncoated',
-        'metallics_c'=>'Metallics Coated','cmyk_c'=>'CMYK Coated','cmyk_u'=>'CMYK Uncoated',
-        'tcx'=>'FHI Cotton TCX','tpg'=>'FHI Paper TPG','tsx'=>'FHI Polyester TSX',
-        'tn'=>'FHI Nylon Brights TN','tpm'=>'FHI Metallic Shimmers TPM','skintone'=>'SkinTone Guide',
-    );
+    static $labels = null;
+    if ($labels === null) {
+        $data = json_decode(file_get_contents(__DIR__ . '/data/views.json'), true);
+        $labels = array();
+        foreach ($data['views'] as $key => $view) { $labels[$key] = $view['name']; }
+    }
+    return $labels;
+}
+
+function atlas_clarus_hover_hidden_views() {
+    static $hidden = null;
+    if ($hidden === null) {
+        $data = json_decode(file_get_contents(__DIR__ . '/data/views.json'), true);
+        $hidden = array_keys(array_filter($data['views'], function($view) { return !empty($view['hidden_from_new_selection']); }));
+    }
+    return $hidden;
 }
 
 function atlas_clarus_hover_defaults() {
@@ -77,12 +85,12 @@ function atlas_clarus_hover_settings_page() {
     <div class="wrap">
         <h1><?php echo esc_html__('ATLAS Clarus Hover Library', 'atlas-clarus-hover-library'); ?></h1>
         <p><strong>Workflow:</strong> ATLAS Clarus Workflow v3.4.0<br><strong>Active master SHA-256:</strong> <code><?php echo esc_html(ATLAS_CLARUS_MASTER_SHA256); ?></code></p>
-        <p>The Core view contains exact ATLAS identities. Other named views are documented observed-coverage views and do not assert Pantone identity equivalence.</p>
+        <p>Core contains the complete frozen ATLAS. New selections use documented GamutMap memberships. Earlier observed views are retained only for existing work. Gamut membership is not measured production approval.</p>
         <form method="post" action="options.php">
             <?php settings_fields('atlas_clarus_hover_group'); ?>
             <table class="form-table" role="presentation">
                 <tr><th scope="row"><label for="atlas-default-view">Default view</label></th><td><select id="atlas-default-view" name="atlas_clarus_hover_options[default_view]">
-                <?php foreach (atlas_clarus_hover_view_labels() as $key=>$label): ?><option value="<?php echo esc_attr($key); ?>" <?php selected($o['default_view'], $key); ?>><?php echo esc_html($label); ?></option><?php endforeach; ?>
+                <?php foreach (atlas_clarus_hover_view_labels() as $key=>$label): if (in_array($key, atlas_clarus_hover_hidden_views(), true) && $o['default_view'] !== $key) { continue; } ?><option value="<?php echo esc_attr($key); ?>" <?php selected($o['default_view'], $key); ?>><?php echo esc_html($label . (in_array($key, atlas_clarus_hover_hidden_views(), true) ? ' · legacy / retained' : '')); ?></option><?php endforeach; ?>
                 </select></td></tr>
                 <tr><th scope="row"><label for="atlas-per-page">Swatches per page</label></th><td><input id="atlas-per-page" type="number" min="24" max="480" step="12" name="atlas_clarus_hover_options[per_page]" value="<?php echo esc_attr($o['per_page']); ?>"></td></tr>
                 <tr><th scope="row">Interface</th><td>
@@ -94,7 +102,7 @@ function atlas_clarus_hover_settings_page() {
             <?php submit_button(); ?>
         </form>
         <h2>Usage</h2><p><code>[atlas_clarus_library]</code></p>
-        <p><code>[atlas_clarus_library view="solid_c" per_page="120" show_status="yes" show_search="yes" show_library_selector="yes"]</code></p>
+        <p><code>[atlas_clarus_library view="pso_coated_v3_fogra51" per_page="120" show_status="yes" show_search="yes" show_library_selector="yes"]</code></p>
         <h2>Technical boundary</h2>
         <p><code>SOURCE_AUTHORITY = UNRESOLVED</code> for Pantone-derived observed views<br><code>FREEZE_STATUS = NOT_FROZEN_EXPERIMENTAL</code><br><code>measured_qc_status = NOT_MEASURED</code></p>
         <p>4C, ECG, device values and measured QC are not generated by this plugin.</p>

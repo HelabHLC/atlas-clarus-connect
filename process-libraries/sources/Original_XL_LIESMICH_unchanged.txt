@@ -1,0 +1,137 @@
+﻿freieFarbe HLC Colour Atlas XL Version 1 Dateipaket
+=====================================================
+
+Im vorliegenden Ordner stehen die Daten des freieFarbe HLC Colour Atlas XL Version 1 zur Verfügung:
+
+- HLC-Colour-Atlas-XL_Layers_DE_v1.pdf: PDF-Version mit Ebenen für verschiedene Ausgabe-Gamuts
+- HLC-Colour-Atlas-XL_ColourValues_v1.pdf: Liste mit sRGB/Hex- und CMYK-Farbwerten zu den HLC-Farben
+- HLC-Colour-Atlas-XL_ColourValues_v1.xls: Farbwerte-Liste als Excel-Tabelle
+- HLC-Colour-Atlas-XL_SpectralData_v1-1.cxf: Spektraldaten (z. B. für Rezeptursoftware)
+- HLC-Colour-Atlas-XL_SpectralData_v1-1.xls: Spektraldaten als Excel-Tabelle
+- HLC-Colour-Atlas-XL_SpectralData_CGATS_v1-1.txt: Spektraldaten im CGATS-Textformat
+- liesmich_v1-1.txt: Hinweise zu den Dateien
+
+Die Werte und Berechnungen gelten für die Normlichtart D50 und 2° Beobachterwinkel (Standard in der Druckindustrie).
+
+
+PDF-Version (Layers)
+====================
+
+Bitte öffnen Sie diese in einer aktuellen Version von Adobe Acrobat Professional oder Adobe Acrobat Reader. Andere PDF-Viewer oder Browser/Plug-Ins können die enthaltenen Lab-Farben, PDF-Ebenen und bestimmte Elemente oft nicht korrekt darstellen.
+
+Die PDF-Version entspricht weitgehend dem gedruckten Farbatlas. Im PDF können einzelne Gamut-Ebenen ein- und ausgeblendet werden, in denen nur der jeweils darstellbare Farbraum (Gamut) für die entsprechende Ausgabe angezeigt wird. So sieht man auf einen Blick, für welche Ausgabeziele ein beliebiger HLC-Farbton umgesetzt werden kann und, falls dies nicht der Fall ist, wie er umgesetzt würde: als nächstliegende Randfarbe des betreffenden Gamuts.
+
+- HLC Colour Atlas XL (Epson SC-Px000V, semi-matt, non-OBA): Die hier gezeigten Farbfelder entsprechen denen im gedruckten Farbatlas.
+- PSO Uncoated v3 (FOGRA 52)
+- PSO Coated v3 (FOGRA 51)
+- ISO Coated v2 300 (ECI) [FOGRA 39]
+- Coated FOGRA 39 (Adobe)
+- sRGB: Standard-RGB für Office und Internet-Anwendungen nach IEC 61699 und W3C Spezifikation
+- CIELAB coordinate space: Auf dieser Ebene werden alle CIELAB-Koordinaten in den Abstufungen des Farbatlas als Farbfeld angezeigt. Manche davon lassen sich am Monitor und/oder im Druck nicht wiedergeben; diese Einschränkung gilt je nach verwendetem Monitor und Druckverfahren auch für die anderen Gamuts.
+
+Zusätzlich können die Beschriftungen (Ebene "Text") und die Feldbegrenzungen (Ebene "White Grid") ein- und ausgeblendet werden.
+
+Der jeweils verfügbare Gamut wurde in Adobe Photoshop ermittelt, bei der Druckausgabe des HLC Colour Atlas XL (Epson-Proofer) kam ColorLogic ZePrA zum Einsatz.
+
+Es ist zu beachten, dass nur die Beschriftungsebene einen transparenten Hintergrund aufweist; bei den Farbtafeln wird jeweils nur die oberste sichtbar gestellte Ebene angezeigt.
+
+
+Druckstandards und ICC-Farbprofile
+==================================
+
+Für die im HLC Colour Atlas XL dargestellten Farbumfänge sowie für die Umrechnung in CMYK-Werte liegen folgende Normen für den Bogenoffsetdruck und aus den entsprechenden Charakterisierungsdaten (FOGRA xx) erzeugten Farbprofile zugrunde:
+
+ISO 12647-2:2004 / PSO v2 (ProzessStandard Offsetdruck nach bvdm und FOGRA)
+
+- für gestrichene Papiere ohne optische Aufheller: "ISO Coated v2 300% (ECI)", dieses Profil nach FOGRA 39 weist einen maximalen Gesamtfarbauftrag (GFA) von 300% auf wie von den meisten Druckereien empfohlen; es kann bei der ECI kostenlos heruntergeladen werden: www.eci.org/de/downloads
+- ebenfalls für gestrichene Papiere ohne optische Aufheller: "Coated FOGRA 39 (ISO 12647-2:2004)", dieses Profil von Adobe wird mit der Creative Cloud vorinstalliert und kann z.B. über die mitgelieferte Farbeinstellung "Europa, Druckvorstufe 3" ausgewählt werden; es separiert mit einem höheren max. GFA von 330%, was in gewissen Fällen problematisch sein kann und daher von einigen Druckereien über eine zusätzliche (evtl. automatische) Profilumrechnung reduziert wird.
+
+ISO 12647-2:2013 / PSO v3
+
+- für gestrichene Papiere mit optischen Aufhellern: "PSO Coated v3" (FOGRA 51)
+- für ungestrichene Papiere mit optischen Aufhellern: "PSO Uncoated v3 (FOGRA 52)"
+Diese beiden Farbprofile werden wiederum von der ECI als kostenlose Downloads bereitgestellt: www.eci.org/de/downloads
+
+
+Farbwerte (Colour Values)
+=========================
+
+Die Excel-Tabelle enthält die RGB/CMYK-Farbwerte der 13283 HLC-Farbtöne ihn mehreren Varianten.
+
+- RGB: sRGB gemäß IEC 61699 (Standard Monitor- und Druckerausgabe)
+- Hex: sRGB in hexadezimaler Schreibweise (z. B. für Webdesign)
+- ISO Coated v2: CMYK nach Wandlung mittels ICC-Profil "ISO Coated v2 300% (ECI)"
+- PSO Coated v3: CMYK nach Wandlung mittels ICC-Profil "PSO Coated v3"
+- PSO Uncoated v3: CMYK nach Wandlung mittels ICC-Profil "PSO Uncoated v3 (FOGRA 52)"
+
+Falls die verwendete Software eine Eingabe der Lab-Farbwerte zulässt, sollten Sie diese verwenden. Die Lab-Farbwerte stehen auf den einzelnen Atlasseiten (PDF und gedruckte Version). Verwenden Sie ansonsten die CMYK-Farbwerte in der Druckvorstufe und die RGB-Werte in Software aller Art.
+
+Falls für einen Farbton keine RGB- und/oder CMYK-Farbwerte angegeben sind, ist dieser zwar im gedruckten HLC Colour Atlas XL enthalten, kann aber im betreffenden Ausgabeverfahren nicht abgebildet werden (out of Gamut). Verwenden Sie in diesen Fällen eine benachbarte Farbe, die im Gamut enthalten ist.
+
+
+Spektraldaten (Spectral Data)
+============================
+
+Die optimierten Spektraldaten aller 13283 Farbtöne des HLC Colour Atlas XL stehen in den Formaten CxF, CGATS und Excel zur Verfügung. Das CxF-Dateiformat kann in zahlreichen Programmen eingelesen werden. Hiermit wird die Rezeptur aller Farben des HLC Colour Atlas XL möglich, z.B. als Druck-Sonderfarbe. Bei Einbindung in X-Rite InkFormulation sollte die Datei zuvor in den Ordner "C:\Program Files\X-Rite\ColorLibraries" kopiert werden, um eine lange Ladezeit zu vermeiden.
+
+Die Excel-Tabelle enthält zusätzlich auch die in einem Exemplar des Farbatlas gemessenen Spektraldaten. Diese dienen als Musterbeispiel und stimmen wahrscheinlich besser mit den tatsächlichen Spektren anderer Farbatlas-Exemplare überein, jedoch weichen diese Messwerte leicht von den CIELAB-Sollwerten ab und haben daher keinen Referenzcharakter.
+
+A. Measurement Report
+
+Zur Qualitätskontrolle wurden an einem mehrere Monate nach den Messreihen komplett neu gedruckten XL Atlas sämtliche 13283 abgebildeten HLC-Farbtöne spektralfotometrisch mit einem Messgerät X-Rite i1 Pro 2 vermessen. Die hieraus hervorgehenden Lab-Farbwerte zeigen ein mittleres DeltaE00 von 0,53 zur jeweiligen Sollfarbe. Die meisten Farbtöne liegen unterhalb DeltaE00 = 0,47. Die größten Abweichungen vom Soll existieren in den Farben mit hohem Chroma (rechts in den Atlas-Farbtafeln), die maximale Abweichung von der Sollfarbe beträgt 2,17. Die Delta E-Werte und -Mittelwerte finden Sie am rechten Rand und am unteren Ende der Tabelle.
+
+Bewertung: Die Bedingungen der FOGRA-Zertifizierung für den Prüfdruck sind erfüllt, und die hohe Druckqualität gegenüber dem 4C-Offsetdruck wird deutlich - dies bei einem stark erweiterten Farbraum, der auch 99% der üblichen Sonderfarben (ohne Leucht- und Metallicfarben) umfasst. 
+
+B. Optimisation
+
+Die gemessenen Spektraldaten wurden rechnerisch weiter optimiert. In einem iterativen Verfahren (Excel-Solver) wurde jedes gemessene Spektrum stufenweise immer weiter an die Lab-Sollwerte angepasst.
+
+Es ergibt sich für die derart überarbeiteten Spektren:
+- mittleres DeltaE00 = 0,00003 zum Sollwert
+- maximales DeltaE00 = 0,00993
+- 50% aller Spektren sind DeltaE00 < 0,0000001
+- 99% aller Spektren sind DeltaE00 < 0,00076
+
+Bewertung: Die optimierten Atlas-Farbspektren liegen in einem Toleranzbereich, der für industrielle Anwendungen aller Art ausreicht. Auch die größte Abweichung von der Lab-Sollfarbe bleibt so gering, dass sie nicht wahrnehmbar ist. 
+
+
+Haftungsausschluss
+==================
+
+Trotz sorgfältiger Herstellung und aufwendiger Tests ist nicht auszuschließen, dass sich in den vorliegenden Dateien Fehler befinden, welche evtl. nur unter bestimmten Konstellationen auftreten. Für Hinweise sind wir dankbar, Haftung wird nicht übernommen.
+
+
+Hersteller, Copyright
+=====================
+
+freieFarbe e. V.
+Grünteweg 31
+26127 Oldenburg
+Deutschland
+info@freiefarbe.de
+www.freiefarbe.de
+
+Autoren/Bearbeiter: 
+Matthias Betz, Holger Everding, Jan-Peter Homann, Peter Jäger, Eric A. Soder
+
+Der gemeinnützige Verein freieFarbe ist ein Zusammenschluss aus deutschen und Schweizer Farbspezialisten, die sich die Förderung der Farbkommunikation auf der Basis offener Standards zur Aufgabe gemacht haben. 
+
+Die vorliegenden Daten dürfen im privaten und kommerziellen Umfeld in unveränderter Form frei genutzt und kopiert werden. Der Urheber und die Lizenz sind hierbei zu nennen.
+
+Creative Commons CC-BY-ND 4.0
+
+Den vollständigen Wortlaut der Lizenz finden Sie hier:
+https://creativecommons.org/licenses/by-nd/4.0/legalcode.de
+
+
+Versionsgeschichte
+==================
+
+1.2	(30.01.2019)
+Korrektur des fehlerhaften Farbtons H250_L040_C065 und Änderung des Dezimalseparators in der CGATS Datei 
+
+1.1	(5.12.2018)
+Korrektur der optimierten Spektraldaten bei 12 Farbtönen (maximale Remission in einem Wellenlängenbereich auf 95% begrenzt in CxF, CGATS, Excel)
+
+1.0	(4.11.2018)
+erste Veröffentlichung
