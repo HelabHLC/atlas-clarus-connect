@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guard beta.11, RC34.4 and the unchanged Android storage boundary before CI or reserved-key signing."""
+"""Guard beta.12, RC34.4 and the unchanged Android storage boundary before CI or reserved-key signing."""
 import ast
 import hashlib
 from pathlib import Path
@@ -7,8 +7,8 @@ import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION_CODE = 11
-VERSION_NAME = '0.4.0-beta.11'
+VERSION_CODE = 12
+VERSION_NAME = '0.4.0-beta.12'
 BUNDLE_VERSION = '0.2.0-rc34.4-reference-libraries'
 BUNDLE_SHA256 = '0163cfd86adf51219bdc1eaf051ba0f656fca03a1fb8ae5ae8478ebcefbe976e'
 DEFAULT_BUNDLE_VERSION = '0.2.0-rc28-source-provenance'
@@ -83,10 +83,10 @@ class ReleaseIdentityTests(unittest.TestCase):
         check_identity(self.files)
 
     def test_reject_prior_version_codes(self):
-        for code in (4, 5, 6, 7, 8, 9, 10):
+        for code in (4, 5, 6, 7, 8, 9, 10, 11):
             with self.subTest(code=code):
                 changed = dict(self.files)
-                changed[FILES[0]] = changed[FILES[0]].replace('versionCode 11', f'versionCode {code}')
+                changed[FILES[0]] = changed[FILES[0]].replace('versionCode 12', f'versionCode {code}')
                 with self.assertRaisesRegex(ValueError, 'versionCode'):
                     check_identity(changed)
 
