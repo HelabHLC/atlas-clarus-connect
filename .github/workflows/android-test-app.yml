@@ -26,6 +26,8 @@ jobs:
           python-version: '3.12'
       - name: Check Android version and bundle pin contract
         run: python3 android-test-app/test_release_identity.py
+      - name: Check Image Picker touch interactions
+        run: node browser-bundle/tests/validate_picker_touch.cjs
       - name: Check preinstalled Android SDK
         run: |
           test -f "$ANDROID_HOME/platforms/android-36/android.jar"
@@ -48,7 +50,7 @@ jobs:
         run: |
           test -s android-test-app/app/build/outputs/apk/debug/app-debug.apk
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging android-test-app/app/build/outputs/apk/debug/app-debug.apk |
-            grep -F "package: name='com.atlasclarus.connect.dev' versionCode='11' versionName='0.4.0-beta.11-debug'"
+            grep -F "package: name='com.atlasclarus.connect.dev' versionCode='12' versionName='0.4.0-beta.12-debug'"
           python3 android-test-app/test_packaged_bundle.py android-test-app/app/build/outputs/apk/debug/app-debug.apk
           sha256sum android-test-app/app/build/outputs/apk/debug/app-debug.apk
       - name: Validate Image Projects in Android-prepared HTML
@@ -96,12 +98,25 @@ jobs:
         run: |
           node browser-bundle/tests/validate_process_libraries.cjs
           node browser-bundle/tests/validate_process_libraries_browser.cjs
+      - name: Check out immutable beta.11 baseline
+        uses: actions/checkout@v4
+        with:
+          ref: ab4d364fbde292f0477dadd24a9976b3afe518bc
+          path: .beta11-baseline
+      - name: Verify stored work survives beta.11 to beta.12 update
+        env:
+          BASELINE_ASSETS: .beta11-baseline/android-test-app/app/src/main/assets/bundle
+          BASELINE_VERSION: 0.4.0-beta.11
+          ANDROID_UPGRADE_OUTPUT: /tmp/atlas-android-beta11-upgrade
+        run: |
+          python3 .beta11-baseline/android-test-app/prepare_bundle.py
+          node android-test-app/test-card-upgrade.cjs
       - name: Check out immutable beta.10 baseline for current update regression
         uses: actions/checkout@v4
         with:
           ref: 628bc43c62317fb492042075350acdaae22baed6
           path: .beta10-baseline
-      - name: Verify stored work survives beta.10 to beta.11 update
+      - name: Verify stored work survives beta.10 to beta.12 update
         env:
           BASELINE_ASSETS: .beta10-baseline/android-test-app/app/src/main/assets/bundle
           BASELINE_VERSION: 0.4.0-beta.10
@@ -114,7 +129,7 @@ jobs:
         with:
           ref: 0e149e257070b94792350b84d5468beb5a1e5471
           path: .beta9-baseline
-      - name: Verify stored work survives beta.9 to beta.11 update
+      - name: Verify stored work survives beta.9 to beta.12 update
         env:
           BASELINE_ASSETS: .beta9-baseline/android-test-app/app/src/main/assets/bundle
           BASELINE_VERSION: 0.4.0-beta.9
@@ -127,25 +142,26 @@ jobs:
         with:
           ref: e83b8165bb4c7ef4c9e37522310b9c60b7e2d19c
           path: .beta8-baseline
-      - name: Verify stored work survives beta.8 to beta.11 document update
+      - name: Verify stored work survives beta.8 to beta.12 document update
         run: |
           python3 .beta8-baseline/android-test-app/prepare_bundle.py
           node android-test-app/test-card-upgrade.cjs
       - name: Save Android update and card evidence
         uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Android-Beta11-card-and-update-evidence
+          name: ATLAS-Clarus-Android-Beta12-card-and-update-evidence
           path: |
             /tmp/atlas-android-upgrade/
             /tmp/atlas-android-beta9-upgrade/
             /tmp/atlas-android-beta10-upgrade/
+            /tmp/atlas-android-beta11-upgrade/
             /tmp/atlas-android-exchange/
             /tmp/atlas-android-reduction/
             /tmp/atlas-colour-reference-card/
           retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Android-Beta11-DEBUG-NOT-AN-UPDATE
+          name: ATLAS-Clarus-Android-Beta12-DEBUG-NOT-AN-UPDATE
           path: android-test-app/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
       - name: Verify APK and AAB signing paths with disposable CI key
@@ -167,7 +183,7 @@ jobs:
           gradle -p android-test-app :app:assembleRelease :app:bundleRelease --no-daemon
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify "$apk"
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
-            grep -F "package: name='com.atlasclarus.connect' versionCode='11' versionName='0.4.0-beta.11'"
+            grep -F "package: name='com.atlasclarus.connect' versionCode='12' versionName='0.4.0-beta.12'"
           test -s "$aab"
           jarsigner -verify "$aab"
           python3 android-test-app/test_packaged_bundle.py "$apk" "$aab"
