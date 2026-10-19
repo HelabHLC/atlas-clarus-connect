@@ -64,6 +64,8 @@ jobs:
           node browser-bundle/tests/validate_image_source_binding.cjs
           node browser-bundle/tests/validate_image_projects_browser.cjs
           python3 browser-bundle/tests/validate_image_png.py /tmp/atlas-image-projects-browser/project.zip
+      - name: Verify Image Picker with actual mobile Chromium touch input
+        run: node browser-bundle/tests/validate_picker_touch_browser.cjs
       - name: Validate RC33.2 cards and printable companion in Android HTML
         env:
           CARD_HTML: android-test-app/app/src/main/assets/bundle/index.html
