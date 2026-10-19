@@ -1,0 +1,16 @@
+const assert=require('node:assert/strict');
+const {install}=require('../src/picker-touch.js');
+let selected=[],moved=[],hidden=0,captured=null;
+const canvas={style:{},onpointermove:e=>moved.push([e.clientX,e.clientY]),onpointerleave:()=>hidden++,onclick:e=>selected.push([e.clientX,e.clientY]),setPointerCapture:id=>captured=id,hasPointerCapture:id=>captured===id,releasePointerCapture:()=>captured=null};
+install(canvas,{classList:{remove:()=>hidden++}});
+const e=(type,id=1,x=10,y=20)=>({pointerType:type,pointerId:id,clientX:x,clientY:y,isPrimary:true,preventDefault(){}});
+assert.equal(canvas.style.touchAction,'none');
+canvas.onpointerdown(e('touch'));assert.equal(captured,1);assert.equal(moved.length,1);
+canvas.onpointermove(e('touch',1,30,40));canvas.onpointerleave(e('touch'));assert.equal(hidden,0);
+canvas.onpointerdown(e('touch',2));canvas.onpointermove(e('touch',2,99,99));assert.equal(captured,1);assert.equal(moved.length,2);
+canvas.onpointerup(e('touch',1,30,40));assert.deepEqual(selected,[[30,40]]);assert.equal(captured,null);
+canvas.onclick(e('touch'));assert.equal(selected.length,1);
+canvas.onpointermove(e('touch'));assert.equal(moved.length,3);
+canvas.onpointerdown(e('pen'));canvas.onpointercancel(e('pen'));canvas.onpointerup(e('pen'));assert.equal(selected.length,1);assert.equal(hidden,1);assert.equal(captured,null);
+canvas.onpointermove(e('mouse'));canvas.onpointerleave(e('mouse'));canvas.onclick(e('mouse'));assert.equal(hidden,2);assert.equal(selected.length,2);
+console.log('PASS touch drag/release, persistent loupe, secondary touch, cancellation, pen and mouse');

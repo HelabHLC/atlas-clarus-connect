@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check beta.11 source binding and every prepared asset in the actual APK/AAB."""
+"""Check beta.12 source binding and every prepared asset in the actual APK/AAB."""
 import gzip
 import hashlib
 import json
@@ -16,7 +16,7 @@ def check_package(path):
     prefix = 'base/assets/bundle/' if path.suffix == '.aab' else 'assets/bundle/'
     prepared = {p.relative_to(ASSETS).as_posix(): p for p in ASSETS.rglob('*') if p.is_file()}
     required = {'index.html', 'colour-id.html', 'colour-id-en.html', 'BUNDLE_MANIFEST.json',
-                'ANDROID_CANDIDATE.json', 'assets/image-projects.js', 'assets/image-projects-ui.js',
+                'ANDROID_CANDIDATE.json', 'assets/picker-touch.js', 'assets/image-projects.js', 'assets/image-projects-ui.js',
                 'assets/colour-reduction.js', 'assets/colour-reduction-loupe.js', 'assets/colour-reduction-ui.js',
                 'assets/tool-exchange.js', 'assets/tool-exchange-ui.js', 'assets/reduction-job.js',
                 'assets/recipe-exchange.js', 'assets/image-project-codecs.js', 'assets/colour-projects.js', 'assets/colour-reference-card.js'}
@@ -53,6 +53,9 @@ def check_package(path):
         assert manifest['tool_exchange_schema'] == 'atlas-clarus-tool-exchange/1.0'
         assert 'id="xe-add"' in archive.read(prefix + 'index.html').decode('utf-8')
         assert 'id="cr-pixel-inspector"' in archive.read(prefix + 'index.html').decode('utf-8')
+        touch = archive.read(prefix + 'assets/picker-touch.js')
+        assert hashlib.sha256(touch).hexdigest() == candidate['picker_touch_sha256']
+        assert '<script>' + touch.decode() + '</script>' in archive.read(prefix + 'index.html').decode()
         assert candidate['reference_card_sha256'] == REFERENCE_CARD_SHA256
         assert 'id="ch-reference-card"' in archive.read(prefix + 'index.html').decode('utf-8')
         for name, digest in {**BUILD_SOURCE_BINDING_SHA256, **REFERENCE_CARD_SHA256}.items():
@@ -60,7 +63,7 @@ def check_package(path):
             assert hashlib.sha256(raw).hexdigest() == digest, f'Wrong source-binding module: {name}'
             embedded = raw.decode('utf-8').replace('</script', '<\\/script')
             assert ('<script>' + embedded + '</script>') in archive.read(prefix + 'index.html').decode('utf-8'), f'Wrong embedded source-binding module: {name}'
-    print(f'PASS: {path.name}: {len(expected)} beta.11/Colour ID assets match; source binding and name-index expansion verified')
+    print(f'PASS: {path.name}: {len(expected)} beta.12/Colour ID assets match; source binding and name-index expansion verified')
 
 
 if __name__ == '__main__':

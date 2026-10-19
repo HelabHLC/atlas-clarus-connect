@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package the reviewed RC34.4 reference-library payload for Android beta.11.
+"""Package the reviewed RC34.4 reference-library payload for Android beta.12.
 
 The exact public pilot is rebuilt offline and pinned before adding the unchanged
 Android adapter. Existing releases, storage contracts and master remain frozen.
@@ -96,7 +96,15 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     source = output / 'atlas-clarus-browser-bundle'
     verify_source_binding(source / 'assets', built=True, html=(source / 'index.html').read_text())
     # Prepare and validate everything before replacing the generated asset tree.
+    # Overlay only the reviewed touch interaction; the RC34.4 archive pin stays frozen.
+    touch = (ROOT / 'browser-bundle/src/picker-touch.js').read_text()
+    (source / 'assets/picker-touch.js').write_text(touch)
     index = source / 'index.html'
+    html = index.read_text()
+    head, tail = html.rsplit('</body>', 1)
+    index.write_text(head + '<script>' + touch + '</script></body>' + tail)
+    html = index.read_text().replace('Image ready. Move the loupe over the image and click its marked centre pixel.', 'Image ready. Mouse: move and click. Touch: press and drag on the image; release to select the marked centre pixel.')
+    index.write_text(html)
     index.write_text(add_bridge(index.read_text(encoding='utf-8')), encoding='utf-8')
     colour_html = add_bridge(colour_id_source())
     (source / 'colour-id.html').write_text(localize(colour_html, 'de'), encoding='utf-8')
@@ -104,7 +112,7 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     # AAPT excludes source-control metadata. Omit this non-runtime file explicitly.
     (source / 'docs/process-libraries/.gitignore').unlink()
     (source / 'ANDROID_CANDIDATE.json').write_text(json.dumps({
-        'version_name': '0.4.0-beta.11', 'version_code': 11,
+        'version_name': '0.4.0-beta.12', 'version_code': 12,
         'application_id': 'com.atlasclarus.connect',
         'bundle_version': EXPECTED_BUNDLE_VERSION, 'bundle_zip_sha256': digest,
         'source_binding_commit': SOURCE_BINDING_COMMIT,
@@ -120,10 +128,11 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
         'candidate_status': 'INTERNAL_TEST_ONLY',
         'native_export_max_bytes': 64 * 1024 * 1024,
         'tool_exchange_scope': 'Bundle tools; standalone Mixing Atlas recipe search is not embedded',
+        'picker_touch_sha256': hashlib.sha256(touch.encode()).hexdigest(),
         'device_acceptance': 'NOT_TESTED', 'play_submission': 'NOT_PERFORMED',
         'note': 'Build-time candidate record, not a device acceptance or authorship certificate.'
     }, indent=2) + '\n', encoding='utf-8')
     if TARGET.exists():
         shutil.rmtree(TARGET)
     shutil.copytree(source, TARGET)
-    print(f'Android beta.11 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')
+    print(f'Android beta.12 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')
