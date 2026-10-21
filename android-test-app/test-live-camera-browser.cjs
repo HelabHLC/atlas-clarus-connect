@@ -13,7 +13,7 @@ data.views=JSON.parse(fs.readFileSync(path.join(root,'hover-library/data/views.j
   window.ATLAS_CLARUS_DATA=data;window.AndroidExport={};window.received=null;window.records=[];window.stopped=0;
   const canvas=document.createElement('canvas');canvas.width=640;canvas.height=480;window.scene=canvas;
   window.paint=colour=>{canvas.getContext('2d').fillStyle=colour;canvas.getContext('2d').fillRect(0,0,640,480);};paint('rgb(80,100,120)');
-  let n=0;const animate=()=>{n++;canvas.getContext('2d').fillRect(0,0,0,0);requestAnimationFrame(animate);};animate();
+  let n=0;const animate=()=>{n++;canvas.getContext('2d').fillRect(0,0,1,1);requestAnimationFrame(animate);};animate();
   Object.defineProperty(navigator,'mediaDevices',{value:{getUserMedia:async request=>{
    if(window.rejectCamera)throw Error('Denied');
    const stream=canvas.captureStream(30);window.testStream=stream;const track=stream.getVideoTracks()[0];const stop=track.stop.bind(track);track.stop=()=>{window.stopped++;stop();};track.getCapabilities=()=>({torch:true});track.getSettings=()=>({torch:!!window.torchRequested});track.applyConstraints=async c=>{window.torchRequested=c.advanced[0].torch;};
@@ -26,7 +26,7 @@ data.views=JSON.parse(fs.readFileSync(path.join(root,'hover-library/data/views.j
  await page.addScriptTag({path:path.join(__dirname,'live-camera.js')});
  assert.equal(await page.locator('.atlas-live-button').count(),1);
  await page.locator('.atlas-live-button').click();
- await page.waitForFunction(()=>!document.querySelector('[data-lock]').disabled);
+ await page.waitForFunction(()=>!document.querySelector('[data-lock]').disabled).catch(async error=>{console.error(await page.evaluate(()=>({readout:document.querySelector('output')?.textContent,video:{width:document.querySelector('video')?.videoWidth,ready:document.querySelector('video')?.readyState},stream:window.testStream?.getTracks().map(t=>({state:t.readyState,enabled:t.enabled}))})));throw error;});
  assert.match(await page.locator('output').innerText(),/#506478/);
  const lib=Object.entries(data.views).find(([id,v])=>id!=='core'&&!v.hidden_from_new_selection&&v.ids.length>0)[0];
  await page.locator('[data-library]').selectOption(lib);
