@@ -158,7 +158,7 @@ jobs:
       - name: Save Android update and card evidence
         uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Android-Beta12-card-and-update-evidence
+          name: ATLAS-Clarus-Android-Beta14-card-and-update-evidence
           path: |
             /tmp/atlas-android-upgrade/
             /tmp/atlas-android-beta9-upgrade/
@@ -170,7 +170,7 @@ jobs:
           retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
-          name: ATLAS-Clarus-Android-Beta12-DEBUG-NOT-AN-UPDATE
+          name: ATLAS-Clarus-Android-Beta14-DEBUG-NOT-AN-UPDATE
           path: android-test-app/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
       - name: Verify APK and AAB signing paths with disposable CI key
