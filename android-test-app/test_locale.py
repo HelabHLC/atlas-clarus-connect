@@ -3,6 +3,7 @@
 from pathlib import Path
 import json
 import subprocess
+import re
 import tempfile
 
 HERE = Path(__file__).resolve().parent
@@ -18,10 +19,12 @@ for name, html in [('de', de), ('en', en)]:
     rows = json.loads(html[start:html.index(';', start)])
     assert len(rows) == 13283 and rows[0][:4] == [0, 'H000_L095_C000', [240, 240, 240], '#F0F0F0']
     assert rows[-1][0] == 13282
-    script = html[html.rfind('<script>') + len('<script>'):html.rfind('</script>')]
+    scripts = re.findall(r'<script>([\s\S]*?)</script>', html)
+    assert any('let language = ' in script for script in scripts)
     with tempfile.TemporaryDirectory() as directory:
-        file = Path(directory) / f'{name}-adapter.js'
-        file.write_text(script, encoding='utf-8')
-        subprocess.run(['node', '--check', str(file)], check=True)
+        for i, script in enumerate(scripts):
+            file = Path(directory) / f'{name}-adapter-{i}.js'
+            file.write_text(script, encoding='utf-8')
+            subprocess.run(['node', '--check', str(file)], check=True)
 assert len(json.loads((HERE / 'colour-id-en.json').read_text())) >= 180
 print('PASS: 14 tabs and 13,283 identical identities in DE/EN; generated scripts parse')

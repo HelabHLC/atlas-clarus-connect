@@ -10,8 +10,8 @@ android {
         applicationId 'com.atlasclarus.connect'
         minSdk 26
         targetSdk 36
-        versionCode 12
-        versionName '0.4.0-beta.12'
+        versionCode 14
+        versionName '0.4.0-beta.14'
     }
 
     def signingEnvironment = [
@@ -44,6 +44,7 @@ android {
             }
         }
     }
+    testOptions { unitTests.includeAndroidResources = true }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -86,7 +87,9 @@ def prepareBundle = tasks.register('prepareBundle', Exec) {
             new File(rootProject.projectDir, '../mischatlas/recipe-exchange.js'),
             fileTree(new File(rootProject.projectDir, '../browser-bundle')).matching { include 'manifest*.json' },
             new File(rootProject.projectDir, 'prepare_bundle.py'),
-            new File(rootProject.projectDir, 'android-export.js')
+            new File(rootProject.projectDir, 'android-export.js'),
+            new File(rootProject.projectDir, 'live-camera-core.js'),
+            new File(rootProject.projectDir, 'live-camera.js')
     inputs.files new File(rootProject.projectDir, 'build_colour_id_locale.py'),
             new File(rootProject.projectDir, 'colour-id-en.json'),
             new File(rootProject.projectDir, 'colour-id-dynamic-en.json'),
@@ -97,3 +100,9 @@ def prepareBundle = tasks.register('prepareBundle', Exec) {
 tasks.named('preBuild').configure { dependsOn prepareBundle }
 tasks.matching { it.name.startsWith('merge') && it.name.endsWith('Assets') }
         .configureEach { dependsOn prepareBundle }
+
+dependencies {
+    implementation 'androidx.core:core:1.15.0'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.14.1'
+}

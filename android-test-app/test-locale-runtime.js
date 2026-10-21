@@ -60,7 +60,9 @@ const context = {
   DOMParser:class {}
 };
 const html = fs.readFileSync(__dirname + '/app/src/main/assets/bundle/colour-id-en.html', 'utf8');
-const script = html.slice(html.lastIndexOf('<script>') + 8, html.lastIndexOf('</script>'));
+const localeScripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]).filter(s => s.includes('let language = "en";'));
+assert.equal(localeScripts.length, 1, 'identify the locale adapter independently of camera script order');
+const script = localeScripts[0];
 vm.runInNewContext(script, context);
 assert.equal(text.nodeValue, 'Choose image');
 assert.equal(statusText.nodeValue, 'Create a closed region first.');
