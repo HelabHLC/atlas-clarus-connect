@@ -106,3 +106,13 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.14.1'
 }
+
+// Preserve the underlying exception (including provider path failures) in CI output.
+tasks.withType(Test).configureEach {
+    testLogging {
+        events 'failed'
+        exceptionFormat 'full'
+        showCauses true
+        showStackTraces true
+    }
+}
