@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.webkit.ValueCallback;
 import org.junit.Test;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
@@ -20,6 +21,15 @@ import static org.robolectric.Shadows.shadowOf;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 35)
 public class CameraInputTest {
+    @Before public void resetProviderRootsForTemporaryTestSandbox() throws Exception {
+        // Robolectric assigns a fresh data directory per test but AndroidX retains its
+        // static authority/path cache. Clear only that test-process cache so every
+        // case resolves its own sandbox; real app data paths do not change per test.
+        Field cache = androidx.core.content.FileProvider.class.getDeclaredField("sCache");
+        cache.setAccessible(true);
+        ((java.util.Map<?, ?>) cache.get(null)).clear();
+    }
+
     @Test public void onlyJpegCompatibleInputsOfferCamera() {
         assertTrue(MainActivity.acceptsJpeg(new String[]{"image/png,image/jpeg"}));
         assertTrue(MainActivity.acceptsJpeg(new String[]{"image/*"}));
@@ -94,8 +104,7 @@ public class CameraInputTest {
     }
 
     @Test public void cancellationAndEmptyOutputDoNotReplaceImage() throws Exception {
-        // Repeated attempts belong to one live activity, as on a phone. Creating a second
-        // Robolectric activity here changes its cache context while FileProvider caches roots.
+        // Exercise cancellation and retry within the same running activity.
         try (var controller = Robolectric.buildActivity(MainActivity.class).setup()) {
             MainActivity activity = controller.get();
             for (int result : new int[]{Activity.RESULT_CANCELED, Activity.RESULT_OK}) {
