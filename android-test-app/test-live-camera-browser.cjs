@@ -27,17 +27,19 @@ data.views=JSON.parse(fs.readFileSync(path.join(root,'hover-library/data/views.j
  assert.equal(await page.locator('.atlas-live-button').count(),1);
  await page.locator('.atlas-live-button').click();
  await page.waitForFunction(()=>!document.querySelector('[data-lock]').disabled).catch(async error=>{console.error(await page.evaluate(()=>({readout:document.querySelector('output')?.textContent,video:{width:document.querySelector('video')?.videoWidth,ready:document.querySelector('video')?.readyState},stream:window.testStream?.getTracks().map(t=>({state:t.readyState,enabled:t.enabled}))})));throw error;});
- assert.match(await page.locator('output').innerText(),/#506478/);
+ const liveText=await page.locator('output').innerText(),liveHex=liveText.match(/^#[0-9A-F]{6}/)[0];
+ const observed=[1,3,5].map(i=>parseInt(liveHex.slice(i,i+2),16));
+ observed.forEach((v,i)=>assert.ok(Math.abs(v-[80,100,120][i])<=3,'video decoding remains near the synthetic scene')); // Canvas capture can pass through YUV.
  const lib=Object.entries(data.views).find(([id,v])=>id!=='core'&&!v.hidden_from_new_selection&&v.ids.length>0)[0];
  await page.locator('[data-library]').selectOption(lib);
- await page.locator('[data-lock]').click();const fixed=await page.locator('output').innerText();
+ await page.locator('[data-lock]').click();const fixed=await page.locator('output').innerText(),fixedHex=fixed.match(/^#[0-9A-F]{6}/)[0];
  await page.evaluate(()=>paint('rgb(200,30,40)'));
  await page.waitForTimeout(600);assert.equal(await page.locator('output').innerText(),fixed);
  await page.locator('[data-use]').click();await page.waitForFunction(()=>window.records.length===1);
  const saved=await page.evaluate(()=>({record:records[0],name:received.name,type:received.type,stopped,hidden:document.querySelector('.atlas-camera').hidden}));
- assert.equal(saved.record.source_hex,'#506478');assert.equal(saved.record.library_id,lib);assert.equal(saved.type,'image/png');assert.equal(saved.hidden,true);assert.ok(saved.stopped>0);assert.ok(data.views[lib].ids.map(Number).includes(saved.record.atlas_row_id));
+ assert.equal(saved.record.source_hex,fixedHex);assert.equal(saved.record.library_id,lib);assert.equal(saved.type,'image/png');assert.equal(saved.hidden,true);assert.ok(saved.stopped>0);assert.ok(data.views[lib].ids.map(Number).includes(saved.record.atlas_row_id));
  // Decode the actual transferred PNG: locking must preserve the same scene, not the later live frame.
- const pixels=await page.evaluate(async()=>{const img=await createImageBitmap(received),c=document.createElement('canvas');c.width=img.width;c.height=img.height;c.getContext('2d').drawImage(img,0,0);return [...c.getContext('2d').getImageData(320,240,1,1).data];});assert.deepEqual(pixels,[80,100,120,255]);
+ const pixels=await page.evaluate(async()=>{const img=await createImageBitmap(received),c=document.createElement('canvas');c.width=img.width;c.height=img.height;c.getContext('2d').drawImage(img,0,0);return [...c.getContext('2d').getImageData(320,240,1,1).data];});assert.deepEqual(pixels,[...saved.record.source_rgb,255]);
  await page.locator('.atlas-live-button').click();await page.waitForFunction(()=>!document.querySelector('[data-lock]').disabled);
  await page.locator('[data-lock]').click();await page.locator('[data-torch]').click();
  await page.waitForFunction(()=>window.torchRequested===true);assert.equal(await page.locator('[data-use]').isDisabled(),true);assert.equal(await page.locator('[data-torch]').getAttribute('aria-pressed'),'true');
