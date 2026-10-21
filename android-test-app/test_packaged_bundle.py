@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check beta.12 source binding and every prepared asset in the actual APK/AAB."""
+"""Check beta.14 source binding and every prepared asset in the actual APK/AAB."""
 import gzip
 import hashlib
 import json
@@ -16,7 +16,7 @@ def check_package(path):
     prefix = 'base/assets/bundle/' if path.suffix == '.aab' else 'assets/bundle/'
     prepared = {p.relative_to(ASSETS).as_posix(): p for p in ASSETS.rglob('*') if p.is_file()}
     required = {'index.html', 'colour-id.html', 'colour-id-en.html', 'BUNDLE_MANIFEST.json',
-                'ANDROID_CANDIDATE.json', 'assets/picker-touch.js', 'assets/image-projects.js', 'assets/image-projects-ui.js',
+                'ANDROID_CANDIDATE.json', 'assets/live-camera-core.js', 'assets/live-camera.js', 'assets/atlas-data.js', 'assets/picker-touch.js', 'assets/image-projects.js', 'assets/image-projects-ui.js',
                 'assets/colour-reduction.js', 'assets/colour-reduction-loupe.js', 'assets/colour-reduction-ui.js',
                 'assets/tool-exchange.js', 'assets/tool-exchange-ui.js', 'assets/reduction-job.js',
                 'assets/recipe-exchange.js', 'assets/image-project-codecs.js', 'assets/colour-projects.js', 'assets/colour-reference-card.js'}
@@ -63,7 +63,7 @@ def check_package(path):
             assert hashlib.sha256(raw).hexdigest() == digest, f'Wrong source-binding module: {name}'
             embedded = raw.decode('utf-8').replace('</script', '<\\/script')
             assert ('<script>' + embedded + '</script>') in archive.read(prefix + 'index.html').decode('utf-8'), f'Wrong embedded source-binding module: {name}'
-    print(f'PASS: {path.name}: {len(expected)} beta.12/Colour ID assets match; source binding and name-index expansion verified')
+    print(f'PASS: {path.name}: {len(expected)} beta.14/Colour ID assets match; source binding and name-index expansion verified')
 
 
 if __name__ == '__main__':

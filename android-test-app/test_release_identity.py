@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Guard beta.12, RC34.4 and the unchanged Android storage boundary before CI or reserved-key signing."""
+"""Guard beta.14, RC34.4 and the reviewed Android camera boundary before CI or reserved-key signing."""
 import ast
 import hashlib
 from pathlib import Path
 import re
 import unittest
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION_CODE = 12
-VERSION_NAME = '0.4.0-beta.12'
+VERSION_CODE = 14
+VERSION_NAME = '0.4.0-beta.14'
 BUNDLE_VERSION = '0.2.0-rc34.4-reference-libraries'
 BUNDLE_SHA256 = '0163cfd86adf51219bdc1eaf051ba0f656fca03a1fb8ae5ae8478ebcefbe976e'
 DEFAULT_BUNDLE_VERSION = '0.2.0-rc28-source-provenance'
@@ -21,10 +22,10 @@ REFERENCE_CARD_SHA256 = {
 }
 BUILD_SOURCE_BINDING_SHA256 = {'image-projects.js': '3b5b6e90abd28f52b5236ea0793ff6b9394cb0754f504951df2f0da6117e2c45',
     'image-projects-ui.js': '648bb3f2486a8cb6cd1a054a6c512fc241bcbe2ffe0c4551fdf9b117b21c6082'}
-# Frozen beta.6 native boundary: app origin, WebView storage and document adapter.
-BETA6_NATIVE_SHA256 = {
-    'app/src/main/java/com/atlasclarus/browseredition/test/MainActivity.java': 'c58e97ff4736a3f8b4257845bea0a39f2f9fea157d9bfa837a9221442ed6d7fd',
-    'app/src/main/AndroidManifest.xml': 'ccba42a166f4e314265544971e312d72d3340c6ee492ca1a6c673a4c6ee363dc',
+# Reviewed beta.14 native camera boundary; app origin, storage and export adapter retained.
+NATIVE_SHA256 = {
+    'app/src/main/java/com/atlasclarus/browseredition/test/MainActivity.java': 'fcaa95f535b616dc34883bc662213c76d2e3b8147c9a67034e4f077566634e5c',
+    'app/src/main/AndroidManifest.xml': 'b350bc7280a81776cd4a7fa0a5f9b494f4c0cf4c1574d7959cc9ecdccd4d9d96',
     'android-export.js': '1fdecb97a14561df0bd7fc440b654d68727ecca018da187501716a4db5cfb4b3',
 }
 FILES = (
@@ -83,10 +84,10 @@ class ReleaseIdentityTests(unittest.TestCase):
         check_identity(self.files)
 
     def test_reject_prior_version_codes(self):
-        for code in (4, 5, 6, 7, 8, 9, 10, 11):
+        for code in (4, 5, 6, 7, 8, 9, 10, 11, 12, 13):
             with self.subTest(code=code):
                 changed = dict(self.files)
-                changed[FILES[0]] = changed[FILES[0]].replace('versionCode 12', f'versionCode {code}')
+                changed[FILES[0]] = changed[FILES[0]].replace('versionCode 14', f'versionCode {code}')
                 with self.assertRaisesRegex(ValueError, 'versionCode'):
                     check_identity(changed)
 
@@ -105,9 +106,23 @@ class ReleaseIdentityTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'RC34.4 builder'):
             check_identity(self.files)
 
-    def test_native_storage_and_export_boundary_unchanged_since_beta6(self):
-        for name, expected in BETA6_NATIVE_SHA256.items():
+    def test_reviewed_native_camera_boundary(self):
+        for name, expected in NATIVE_SHA256.items():
             self.assertEqual(hashlib.sha256((ROOT / 'android-test-app' / name).read_bytes()).hexdigest(), expected, name)
+
+    def test_camera_provider_is_private_and_narrow(self):
+        ns = '{http://schemas.android.com/apk/res/android}'
+        root = ET.parse(ROOT / 'android-test-app/app/src/main/AndroidManifest.xml').getroot()
+        permissions = {entry.get(ns + 'name') for entry in root.findall('uses-permission')}
+        self.assertFalse(permissions & {'android.permission.INTERNET', 'android.permission.RECORD_AUDIO',
+                                       'android.permission.READ_EXTERNAL_STORAGE', 'android.permission.WRITE_EXTERNAL_STORAGE'})
+        self.assertEqual(permissions, {'android.permission.CAMERA'})
+        provider = root.find('application/provider')
+        self.assertEqual(provider.get(ns + 'exported'), 'false')
+        self.assertEqual(provider.get(ns + 'grantUriPermissions'), 'true')
+        self.assertEqual(provider.get(ns + 'authorities'), '${applicationId}.camera')
+        paths = ET.parse(ROOT / 'android-test-app/app/src/main/res/xml/camera_paths.xml').getroot()
+        self.assertEqual([(p.tag, p.get('path')) for p in paths], [('cache-path', 'camera/')])
 
     def test_reject_changed_default_browser_version(self):
         self.files[FILES[2]] = self.files[FILES[2]].replace(DEFAULT_BUNDLE_VERSION, '0.2.0-rc99')

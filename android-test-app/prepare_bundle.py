@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Package the reviewed RC34.4 reference-library payload for Android beta.12.
+"""Package the reviewed RC34.4 reference-library payload for Android beta.14.
 
-The exact public pilot is rebuilt offline and pinned before adding the unchanged
-Android adapter. Existing releases, storage contracts and master remain frozen.
+The exact public pilot is rebuilt offline and pinned before adding the
+Android export and live-camera overlays. Existing releases, storage contracts and master remain frozen.
 """
 from pathlib import Path
 import hashlib
@@ -57,6 +57,17 @@ def add_bridge(html):
     return html.replace(marker, '<script>\n' + bridge + '\n</script>\n' + marker, 1)
 
 
+def add_live_camera(html, standalone=False):
+    scripts = ''
+    if standalone:
+        scripts += '<script src="assets/atlas-data.js"></script>'
+    for name in ('live-camera-core.js', 'live-camera.js'):
+        script = (HERE / name).read_text().replace('</script', '<\\/script')
+        scripts += '<script>' + script + '</script>'
+    head, tail = html.rsplit('</body>', 1)
+    return head + scripts + '</body>' + tail
+
+
 def colour_id_source():
     local = os.environ.get('ATLAS_COLOUR_ID_SOURCE')
     if local:
@@ -105,14 +116,16 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     index.write_text(head + '<script>' + touch + '</script></body>' + tail)
     html = index.read_text().replace('Image ready. Move the loupe over the image and click its marked centre pixel.', 'Image ready. Mouse: move and click. Touch: press and drag on the image; release to select the marked centre pixel.')
     index.write_text(html)
-    index.write_text(add_bridge(index.read_text(encoding='utf-8')), encoding='utf-8')
+    index.write_text(add_live_camera(add_bridge(index.read_text(encoding='utf-8'))), encoding='utf-8')
     colour_html = add_bridge(colour_id_source())
-    (source / 'colour-id.html').write_text(localize(colour_html, 'de'), encoding='utf-8')
-    (source / 'colour-id-en.html').write_text(localize(colour_html, 'en'), encoding='utf-8')
+    (source / 'colour-id.html').write_text(add_live_camera(localize(colour_html, 'de'), standalone=True), encoding='utf-8')
+    (source / 'colour-id-en.html').write_text(add_live_camera(localize(colour_html, 'en'), standalone=True), encoding='utf-8')
+    for name in ('live-camera-core.js', 'live-camera.js'):
+        shutil.copyfile(HERE / name, source / 'assets' / name)
     # AAPT excludes source-control metadata. Omit this non-runtime file explicitly.
     (source / 'docs/process-libraries/.gitignore').unlink()
     (source / 'ANDROID_CANDIDATE.json').write_text(json.dumps({
-        'version_name': '0.4.0-beta.12', 'version_code': 12,
+        'version_name': '0.4.0-beta.14', 'version_code': 14,
         'application_id': 'com.atlasclarus.connect',
         'bundle_version': EXPECTED_BUNDLE_VERSION, 'bundle_zip_sha256': digest,
         'source_binding_commit': SOURCE_BINDING_COMMIT,
@@ -128,6 +141,8 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
         'candidate_status': 'INTERNAL_TEST_ONLY',
         'native_export_max_bytes': 64 * 1024 * 1024,
         'tool_exchange_scope': 'Bundle tools; standalone Mixing Atlas recipe search is not embedded',
+        'live_camera_sha256': {name: hashlib.sha256((HERE / name).read_bytes()).hexdigest() for name in ('live-camera-core.js', 'live-camera.js')},
+        'camera_selection_schema': 'atlas-clarus-camera-selection/1.0',
         'picker_touch_sha256': hashlib.sha256(touch.encode()).hexdigest(),
         'device_acceptance': 'NOT_TESTED', 'play_submission': 'NOT_PERFORMED',
         'note': 'Build-time candidate record, not a device acceptance or authorship certificate.'
@@ -135,4 +150,4 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     if TARGET.exists():
         shutil.rmtree(TARGET)
     shutil.copytree(source, TARGET)
-    print(f'Android beta.12 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')
+    print(f'Android beta.14 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')

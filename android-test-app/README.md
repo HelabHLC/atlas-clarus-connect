@@ -1,3 +1,125 @@
+# Live camera development candidate — beta.14
+
+Beta.14 adds an app-owned live camera view to the existing beta.13 photo input.
+This candidate is local source, not a signed APK or a device-accepted release.
+The pinned RC34.4 browser archive, master identities, app ID and storage remain
+unchanged. Camera scripts are Android-only overlays applied after archive checks.
+
+**Flow:** open Live camera beside an image input → aim at the centre crosshair →
+read the observed HEX and nearest ATLAS reference → Fix → Use image + selection.
+The camera keeps running while the sample is fixed. Fixing captures the same
+frame used to calculate the sample; accepting imports that fixed PNG, not a later
+scene. It is a video-frame snapshot at the negotiated stream resolution (ideally
+1920 × 1080), not the full sensor-resolution photo from the system camera option.
+
+The sample averages an 11 × 11 source-pixel square at the frame centre, updates
+at most four times per second, and matches by nearest squared RGB with lower row
+ID breaking ties. Source and reference RGB/HEX are displayed separately. The
+library initially follows Colour Reduction's library or the Bundle library
+selector; the live view offers all 78 visible libraries. Standalone Colour ID
+starts with Core and loads the same pinned master/library data. No library is
+silently substituted if its references are invalid. JSON/ZIP/ICC inputs do not
+get live-camera buttons. PNG-compatible image inputs receive the fixed snapshot
+through their existing change handler.
+
+**Lamp:** a torch button appears but is disabled if the active camera/WebView
+cannot report torch support. An enabled command is confirmed against the camera
+track's reported settings. Switching the lamp releases a fixed sample because
+the illumination has changed. The result records lamp state and camera-reported
+white-balance/exposure settings when available. These are not measured illuminant
+values. There is no control over the LED spectrum or a guaranteed D50/D65 light.
+The LED illuminates a broad area; it cannot project the crosshair onto the wall.
+The crosshair is displayed only in the camera view.
+
+The result remains a **CAMERA_ESTIMATE**. Fixing does not freeze the hardware
+white balance or exposure; it preserves the already sampled frame and values.
+A selection card lets the user save the PNG and a companion JSON record with
+coordinates, area size, observed RGB, reference ID, library, master hash, timestamp
+and image SHA-256. Current tool-project formats do not embed this camera record;
+save both files together to retain that evidence.
+
+Android requests CAMERA permission only on camera use. The WebView grants only
+video access to the exact local app origin, never microphone access. No network
+or broad storage permission is introduced. Denial leaves existing image import
+available. Closing, navigation or backgrounding stops the video tracks; late
+permission/stream results are discarded. Camera switching and library changes
+release any fixed sample. Torch support, focus, exposure, image orientation and
+WebRTC availability still require actual-device acceptance.
+
+**Validation:** the core test checks all 94 library definitions (78 visible and
+16 historical), exact membership, tie handling and averaging. Synthetic UI tests
+cover fixing while the scene changes, image/record handoff, lamp changes,
+permission denial and late-stream cleanup. Prepared assets and all three HTML
+entry points are checked against source hashes. Existing locale, provenance,
+touch and export checks are retained. A real Chromium video/PNG test and Android
+Robolectric permission/intent tests are configured for CI. Locally, the Chromium
+download was incomplete; Android SDK/Gradle are unavailable. Neither those tests,
+an APK build, nor physical camera/torch behaviour is claimed as verified.
+
+Before distribution, test rear/front cameras, denied/revoked permission, back,
+background/restore, rotation, lamp availability and light changes on a real
+Android device. Verify that a moved scene after Fix cannot replace the accepted
+sample, and that the saved PNG reproduces the companion record's centre RGB and
+reference within the selected library. Check imports and existing project exports
+in Image Picker, Colour ID, Colour Reduction and Softproof Preview.
+
+---
+
+The following beta.13 notes are historical. Beta.14 adds the CAMERA permission
+and live camera functionality described above.
+
+# Camera input development candidate — beta.13
+
+This branch builds on the beta.12 touch-loupe fix and keeps its pinned RC34.4
+browser payload and master references. The changed native app has versionCode
+13 / versionName 0.4.0-beta.13. It has not been signed, distributed or accepted
+on a physical device.
+
+Opening a single-image input that accepts JPEG now offers **Take photo / Foto
+aufnehmen** and **Choose image / Bild auswählen**. This shared native chooser
+serves the existing image inputs in Image Picker, Colour ID, Colour Reduction
+and Softproof Preview without separate camera code in each tool. Existing
+in-tool limits and decoders still apply. Inputs for JSON, ZIP, ICC and other
+non-image documents retain their document picker. PNG-only inputs do not offer
+a JPEG camera capture.
+
+The system camera activity takes a full-resolution JPEG and returns it to the
+original WebView file callback. This is an app-launched system camera, not an
+embedded live camera view. A non-exported FileProvider exposes only the private
+camera cache, through temporary read/write grants. No CAMERA, storage or network
+permission is added. Confirmed photos remain in app cache for asynchronous
+WebView reads and are removed when the activity is destroyed; Android can also
+evict cache files. Aborted/empty captures are removed immediately. A photo is
+not automatically added to the public gallery. Process termination during
+capture requires reopening the image import and taking the photo again.
+
+Camera RGB is an image observation, not a physical colour measurement. Existing
+reference, reduction and project workflows apply after import. This change does
+not add cross-tool image synchronization.
+
+Validation: release identity, touch regression, export adapter and diff checks
+pass locally. Robolectric camera tests are added to Android CI; Android SDK and
+Gradle are unavailable in the editing environment, so those tests and the APK
+build still require CI. No physical-device camera test is claimed.
+
+Device acceptance before distribution:
+
+1. In each JPEG-compatible image tool, photograph a detailed subject; confirm
+   the full-size image is loaded in that tool and existing processing works.
+2. Cancel the source dialog, cancel the camera, and return with the Android back
+   gesture; the previous image must remain and another import must work.
+3. Choose an existing image; check JSON/ZIP/ICC imports still open documents.
+4. Capture portrait and landscape images, switch front/back camera, rotate,
+   and background/restore the app. Verify orientation and EXIF decoding.
+5. Test missing camera handler, empty output, limited storage and a large JPEG;
+   verify a clear failure and working retry without losing the previous image.
+6. Save/reopen an image project and compare source bytes and reference identity.
+
+---
+
+The following baseline notes describe beta.12 and its predecessors; the camera
+candidate and its outstanding acceptance checks above take precedence.
+
 # Android test app
 
 ## Current preparation: 0.4.0-beta.11 / versionCode 11
