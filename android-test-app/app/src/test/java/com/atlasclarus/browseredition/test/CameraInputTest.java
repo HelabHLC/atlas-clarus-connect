@@ -94,9 +94,11 @@ public class CameraInputTest {
     }
 
     @Test public void cancellationAndEmptyOutputDoNotReplaceImage() throws Exception {
-        for (int result : new int[]{Activity.RESULT_CANCELED, Activity.RESULT_OK}) {
-            try (var controller = Robolectric.buildActivity(MainActivity.class).setup()) {
-                MainActivity activity = controller.get();
+        // Repeated attempts belong to one live activity, as on a phone. Creating a second
+        // Robolectric activity here changes its cache context while FileProvider caches roots.
+        try (var controller = Robolectric.buildActivity(MainActivity.class).setup()) {
+            MainActivity activity = controller.get();
+            for (int result : new int[]{Activity.RESULT_CANCELED, Activity.RESULT_OK}) {
                 int[] calls = {0};
                 capture(activity, value -> { assertNull(value); calls[0]++; });
                 File file = (File) field(activity, "cameraFile");
