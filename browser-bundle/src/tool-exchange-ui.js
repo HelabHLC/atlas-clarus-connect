@@ -52,6 +52,13 @@
 
   $('xe-new').onclick=()=>run('Creating a new exchange workspace …',async()=>{if(pkg?.documents.length&&summary(pkg)!==lastSaved)throw Error('Save the current exchange ZIP before starting another package.');pkg=X.create(ctx);activeByTool={};lastSaved='';status('New package. Add a native file or capture a tool state.');});
   $('xe-import').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;run('Verifying all exchange files and native documents …',async()=>{const candidate=await X.importZip(await fileBytes(f),ctx);if(pkg?.documents.length&&summary(pkg)!==lastSaved)throw Error('Save the current changed exchange package before opening another one.');pkg=candidate;activeByTool={};lastSaved=summary(pkg);status('Exchange opened. Every native document and retained source file verified.');});};
+  // Optional isolated-preview controls; production pages are not changed.
+  if($('xe-camera-add'))$('xe-camera-add').onclick=()=>run('Verifying original camera companions …',async()=>{
+   const image=$('xe-camera-image').files[0],record=$('xe-camera-record').files[0];
+   if(!image||!record)throw Error('Choose both the original camera PNG and selection JSON.');
+   const result=await X.addCamera(pkg,{imageBytes:await fileBytes(image),recordBytes:await fileBytes(record)},ctx);
+   pkg=result.package;status('Camera evidence retained together. Original observation preserved; no new measurement or reference assignment.');
+  });
   $('xe-add').onchange=e=>{const files=[...e.target.files];e.target.value='';if(!files.length)return;run('Checking complete native files …',async()=>{let next=pkg;for(const f of files){const r=await X.add(next,{filename:f.name,bytes:await fileBytes(f),attachment:$('xe-attachment').checked},ctx);next=r.package;}pkg=next;status('Files added in full. Attachments are retained as bytes; no editable interpretation is claimed.');});};
   $('xe-save').onclick=()=>run('Verifying the full exchange before download …',async()=>{const snapshot=pkg,bytes=await X.exportZip(snapshot,ctx);download('ATLAS_Clarus_Exchange.zip',bytes,'application/zip',true);lastSaved=summary(snapshot);status('Complete exchange ZIP download started. Check the downloaded file before closing.');});
   $('xe-original').onclick=()=>{try{const d=selected();download(d.filename,pkg.payloads[d.id],'application/octet-stream',true);status('Original native file download started; bytes and filename preserved.');}catch(e){status(e.message,true);}};

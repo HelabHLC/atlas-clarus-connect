@@ -1,0 +1,22 @@
+name: Camera evidence exchange draft
+on:
+  push:
+    branches: [feat/camera-evidence-exchange-20261022]
+  pull_request:
+    paths:
+      - 'browser-bundle/src/tool-exchange*'
+      - 'browser-bundle/tests/validate_camera_exchange.cjs'
+      - '.github/workflows/camera-evidence-exchange.yml'
+permissions:
+  contents: read
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node browser-bundle/tests/validate_camera_exchange.cjs
+      - run: node browser-bundle/tests/validate_tool_exchange.cjs
+      - run: git diff --check

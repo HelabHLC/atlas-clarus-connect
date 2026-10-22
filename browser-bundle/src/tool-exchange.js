@@ -22,12 +22,39 @@
   for(const name of ['palette.clarus.json','palette.ase'])need(files[prefix+name]&&await sha(files[prefix+name])===m.files[name],'Handoff companion hash differs.');
   need(await sha(files[prefix+'palette.ase'])===await sha(expected['palette.ase']),'Handoff ASE differs from decisions.');
  }
+ // Camera evidence is an archival native document, never a source for automatic derivation.
+ async function cameraFiles(files,ctx){
+  need(keys(files,['camera-selection.json','camera-image.png']),'Camera evidence requires exactly PNG and JSON companions.');
+  const recordBytes=files['camera-selection.json'],imageBytes=files['camera-image.png'];
+  need(recordBytes instanceof Uint8Array&&recordBytes.length>0&&recordBytes.length<=1024*1024&&imageBytes instanceof Uint8Array&&imageBytes.length<=MAX_BYTES-2*1024*1024,'Invalid camera companion sizes.');
+  const d=json(recordBytes),digest=x=>typeof x==='string'&&/^[0-9a-f]{64}$/.test(x);
+  need(d.schema==='atlas-clarus-camera-selection/1.0'&&digest(d.master_sha256)&&d.master_sha256===ctx.master,'Wrong camera schema or master.');
+  need(d.image&&d.image.mime==='image/png'&&safeText(d.image.name,255)&&digest(d.image.sha256)&&await sha(imageBytes)===d.image.sha256,'Camera image checksum mismatch.');
+  need(imageBytes.length>=33&&[137,80,78,71,13,10,26,10].every((v,i)=>imageBytes[i]===v),'Camera image is not PNG.');
+  const view=new DataView(imageBytes.buffer,imageBytes.byteOffset,imageBytes.byteLength);
+  need(view.getUint32(8)===13&&new TextDecoder().decode(imageBytes.slice(12,16))==='IHDR'&&view.getUint32(16)===d.image.width&&view.getUint32(20)===d.image.height&&d.image.width>0&&d.image.height>0,'Camera PNG dimensions differ.');
+  const rgb=a=>Array.isArray(a)&&a.length===3&&a.every(v=>Number.isInteger(v)&&v>=0&&v<=255),hex=a=>'#'+a.map(v=>v.toString(16).padStart(2,'0')).join('').toUpperCase();
+  need(rgb(d.source_rgb)&&rgb(d.reference_rgb)&&d.source_hex===hex(d.source_rgb)&&d.reference_hex===hex(d.reference_rgb),'Invalid recorded camera RGB.');
+  const row=ctx.colors.find(c=>c.id===d.atlas_row_id);
+  need(row&&row.ref===d.atlas_reference&&equal(row.rgb,d.reference_rgb),'Recorded camera reference differs from master.');
+  // Historical library identity is retained even if the receiving selection differs or is absent.
+  need(safeText(d.library_id,255)&&safeText(d.library_name,255)&&d.status==='CAMERA_ESTIMATE'&&d.assignment==='RGB_NEAREST_LOWER_ROW_ID_TIEBREAK'&&typeof d.captured_at==='string'&&Number.isFinite(Date.parse(d.captured_at)),'Invalid camera identity or timestamp.');
+  const a=d.sampling,b=a?.bounds;
+  need(a?.mode==='AREA_MEAN_RGB'&&a.width===d.image.width&&a.height===d.image.height&&Array.isArray(b)&&b.length===4&&b.every(Number.isInteger)&&b[0]>=0&&b[1]>=0&&b[2]>=b[0]&&b[3]>=b[1]&&b[2]<a.width&&b[3]<a.height&&a.pixel_count===(b[2]-b[0]+1)*(b[3]-b[1]+1),'Invalid camera sampling bounds.');
+  return {kind:'CAMERA_EVIDENCE',data:d,editable:false};
+ }
+ async function addCamera(pkg,{imageBytes,recordBytes,filename='camera-evidence.zip'},ctx){
+  const files={'camera-image.png':imageBytes,'camera-selection.json':recordBytes};
+  await cameraFiles(files,ctx);
+  return add(pkg,{filename,bytes:H.zipStored(files),operation:'IMPORTED_CAMERA_EVIDENCE'},ctx);
+ }
  async function inspect(bytes,ctx,attachment=false){
   need(bytes instanceof Uint8Array&&bytes.length<=MAX_BYTES&&(attachment||bytes.length>0),'Empty or oversized native file.');
   if(attachment)return {kind:'ATTACHMENT',data:null,editable:false};
   if(bytes[0]===80&&bytes[1]===75){
    const files=J.unzip(bytes);
    if(files['exchange.json'])throw Error('Open this exchange package as a workspace; do not nest it as a file.');
+   if(files['camera-selection.json']||files['camera-image.png'])return cameraFiles(files,ctx);
    if(files['job.json'])return {kind:'REDUCTION_JOB',data:await J.importZip(bytes,ctx.job)};
    if(files['image-project.clarus.json'])return {kind:'IMAGE_PROJECT',data:await I.importZip(bytes,ctx.native)};
    if(files['project.clarus.json']){
@@ -130,7 +157,7 @@
   throw Error('No supported design-colour inputs. Use an explicit reference view first.');
  }
  async function derive(pkg,id,target,ctx){
-  const parsed=await verify(pkg,ctx),native=parsed.get(id);need(native,'Choose a source document.');let outputs=[],operation=target;
+  const parsed=await verify(pkg,ctx),native=parsed.get(id);need(native,'Choose a source document.');need(native.kind!=='CAMERA_EVIDENCE','Camera evidence is archival only; no measurement, palette or print derivation is permitted.');let outputs=[],operation=target;
   if(native.kind==='MIXING_RECIPE')need(target==='REFERENCE_VIEW','Recipes support only an explicit reference view. Download the original for standalone result restoration; no recipe-to-production conversion is provided.');
   if(target==='SOURCE_PALETTE')outputs=(await sourcePalettes(native,ctx)).map((bytes,i)=>({bytes,filename:'source-palette-'+(i+1)+'.clarus.json'}));
   else if(target==='REFERENCE_VIEW'){
@@ -164,5 +191,5 @@
   need(outputs.length>0&&pkg.documents.length+outputs.length<=MAX_ITEMS,'Transition exceeds file limits. No partial transfer.');
   let next=pkg;const added=[];for(const out of outputs){const r=await add(next,{...out,parents:[id],operation},ctx);next=r.package;added.push(r.id);}return {package:next,ids:added};
  }
- root.ATLAS_TOOL_EXCHANGE={SCHEMA,MAX_BYTES,MAX_ITEMS,context,create,inspect,verify,add,exportZip,importZip,derive,decisionSets,referenceIds};
+ root.ATLAS_TOOL_EXCHANGE={SCHEMA,MAX_BYTES,MAX_ITEMS,context,create,inspect,verify,add,addCamera,cameraFiles,exportZip,importZip,derive,decisionSets,referenceIds};
 })(typeof window==='undefined'?globalThis:window);
