@@ -1,3 +1,27 @@
+# Device compatibility correction — beta.15
+
+Version 0.4.0-beta.15 / versionCode 15 preserves beta.14 camera behaviour and
+reference data. Google Play reported 437 previously supported device models
+excluded after the beta.14 upload. CAMERA permission can imply required rear
+camera and autofocus features; camera.any alone does not opt out of those filters.
+The manifest now explicitly marks camera, camera.any, camera.autofocus and
+camera.flash optional. Normal image/project workflows remain available without
+camera hardware. The source manifest regression guards these declarations.
+
+Beta.14 was reserved-key signed in Actions run 39758722153 and uploaded to Play
+as an unpublished internal-test draft. Code 14 must not be reused. Beta.15 needs
+a new reserved-key signing run and verification of Play device-catalog coverage;
+restoration of all 437 models is not yet claimed. APK/AAB signing, Play rollout
+and physical-device acceptance remain separate checks. No automatic Play upload.
+
+Before distribution, test camera-less/unsupported camera behaviour, permission
+denial/revocation, rear/front cameras, rotation, background/restore, torch and
+fixed PNG/selection handoff. Export projects before updating; never uninstall to
+bypass a certificate mismatch. Existing beta.14 notes below describe behaviour
+and historical preparation status, not the beta.15 release status.
+
+---
+
 # Live camera development candidate — beta.14
 
 Beta.14 adds an app-owned live camera view to the existing beta.13 photo input.

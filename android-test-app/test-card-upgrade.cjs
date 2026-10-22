@@ -1,5 +1,5 @@
 'use strict';
-// Actual beta.8 -> beta.14 documents, one persisted Chromium profile and the
+// Actual beta.8 -> beta.15 documents, one persisted Chromium profile and the
 // unchanged Android HTTPS origin. Native Save Document is a captured boundary,
 // not an emulated device acceptance or evidence of a Play update.
 const fs = require('node:fs'), path = require('node:path'), os = require('node:os');
@@ -18,7 +18,7 @@ const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-upgrade-profile-'))
 
 (async () => {
   assert.equal(JSON.parse(fs.readFileSync(path.join(oldAssets, 'ANDROID_CANDIDATE.json'))).version_name, process.env.BASELINE_VERSION || '0.4.0-beta.8');
-  assert.equal(JSON.parse(fs.readFileSync(path.join(newAssets, 'ANDROID_CANDIDATE.json'))).version_name, '0.4.0-beta.14');
+  assert.equal(JSON.parse(fs.readFileSync(path.join(newAssets, 'ANDROID_CANDIDATE.json'))).version_name, '0.4.0-beta.15');
   let context, page, activeAssets = oldAssets;
   const errors = [], unexpected = [];
   async function open() {
@@ -157,7 +157,7 @@ const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-upgrade-profile-'))
     assert.equal(new Set(projection.cards.map(c=>c.decision_id)).size,2);
     assert.deepEqual(await storage(),before,'export changed stored work');
     assert.deepEqual(errors,[]); assert.deepEqual(unexpected,[]);
-    const report = {status:'PASS',baseline:process.env.BASELINE_VERSION || '0.4.0-beta.8',candidate:'0.4.0-beta.14',
+    const report = {status:'PASS',baseline:process.env.BASELINE_VERSION || '0.4.0-beta.8',candidate:'0.4.0-beta.15',
       persistent_profile_restart:true,origin,storage_keys:keys,stored_values_unchanged:true,
       project_revisions_and_chosen_colour_preserved:true,image_project_json_and_zip_reopen:true,
       android_adapter_card_zip_and_checksums:true,two_distinct_sources_and_decisions:true,
