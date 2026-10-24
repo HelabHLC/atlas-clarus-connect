@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check beta.14 source binding and every prepared asset in the actual APK/AAB."""
+"""Check beta.15 source binding and every prepared asset in the actual APK/AAB."""
 import gzip
 import hashlib
 import json
@@ -63,7 +63,7 @@ def check_package(path):
             assert hashlib.sha256(raw).hexdigest() == digest, f'Wrong source-binding module: {name}'
             embedded = raw.decode('utf-8').replace('</script', '<\\/script')
             assert ('<script>' + embedded + '</script>') in archive.read(prefix + 'index.html').decode('utf-8'), f'Wrong embedded source-binding module: {name}'
-    print(f'PASS: {path.name}: {len(expected)} beta.14/Colour ID assets match; source binding and name-index expansion verified')
+    print(f'PASS: {path.name}: {len(expected)} beta.15/Colour ID assets match; source binding and name-index expansion verified')
 
 
 if __name__ == '__main__':
