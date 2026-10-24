@@ -32,8 +32,8 @@ def verify(root):
         block = source.split("$expected = array(", 1)[1].split(");", 1)[0]
         expected = {k: v[1:-1] if v.startswith("'") else int(v)
                     for k, v in re.findall(r"'([^']+)'\s*=>\s*('[^']*'|\d+)\s*,", block)}
-        if version == '0.1.16-beta2':
-            pilot = json.loads((Path(__file__).resolve().parents[1]/'browser-bundle/manifest-rc34.4.json').read_text())
+        if version in ('0.1.16-beta2', '0.1.16-beta3'):
+            pilot = json.loads((Path(__file__).resolve().parents[1]/('browser-bundle/manifest-rc34.5.json' if version == '0.1.16-beta3' else 'browser-bundle/manifest-rc34.4.json')).read_text())
             assert manifest == pilot
             assert len(expected) == sum(type(v) in (str, int) for v in pilot.values())
             booleans = {k: v == 'true' for k, v in re.findall(r"'([^']+)'\s*=>\s*(true|false)\s*,", block)}
