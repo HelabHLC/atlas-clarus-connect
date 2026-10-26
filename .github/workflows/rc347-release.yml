@@ -29,7 +29,7 @@ jobs:
         run: |
           npm ci --prefix browser-bundle/tests --ignore-scripts
           python -m pip install Pillow pypdf
-          sudo apt-get install -y liblcms2-2 poppler-utils
+          python -c "import ctypes, ctypes.util; ctypes.CDLL(ctypes.util.find_library('lcms2'))"
       - name: Install native Chromium
         timeout-minutes: 5
         run: browser-bundle/tests/node_modules/.bin/playwright install chromium
