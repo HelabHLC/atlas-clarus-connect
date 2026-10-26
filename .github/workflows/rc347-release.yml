@@ -7,10 +7,11 @@ permissions:
   contents: write
 concurrency:
   group: rc347-owner-authorized-release
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   verify-and-release:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,13 +24,19 @@ jobs:
         with:
           php-version: '8.5'
           extensions: zip
-      - name: Prepare test dependencies and pinned profile
+      - name: Prepare test dependencies
+        timeout-minutes: 5
         run: |
           npm ci --prefix browser-bundle/tests --ignore-scripts
-          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
           python -m pip install Pillow pypdf
           sudo apt-get install -y liblcms2-2 poppler-utils
-          curl --fail --location --retry 3 'https://fogra.org/fileadmin/files/1_forschen/Digitaldruck/13.006_Textile-RGB/TextileRGB_FOGRA58.icc' --output /tmp/TextileRGB_FOGRA58.icc
+      - name: Install native Chromium
+        timeout-minutes: 5
+        run: browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+      - name: Fetch and verify the final ICC profile
+        timeout-minutes: 4
+        run: |
+          curl --ipv4 --fail --location --retry 2 --connect-timeout 15 --max-time 60 'https://fogra.org/fileadmin/files/1_forschen/Digitaldruck/13.006_Textile-RGB/TextileRGB_FOGRA58.icc' --output /tmp/TextileRGB_FOGRA58.icc
           echo 'fad691cc0f25e3d6a91942599755b7f9cf906b91f9e4f4834c3364e6c50a972d  /tmp/TextileRGB_FOGRA58.icc' | sha256sum --check
           echo 'TEXTILE_PROFILE=/tmp/TextileRGB_FOGRA58.icc' >> "$GITHUB_ENV"
       - name: Build the exact candidate and run real ICC tests
