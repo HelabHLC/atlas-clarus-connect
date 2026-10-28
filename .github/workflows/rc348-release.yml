@@ -1,0 +1,52 @@
+name: RC34.8 CorelDRAW XML release
+on:
+  push:
+    branches: [release/rc34.8-coreldraw-20261028]
+    paths: ['releases/rc34.8/**', '.github/workflows/rc348-release.yml']
+permissions:
+  contents: write
+concurrency:
+  group: rc348-coreldraw-release
+  cancel-in-progress: true
+jobs:
+  verify-and-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: zip
+      - name: Build from the verified deployed RC34.7 package
+        run: |
+          python releases/rc34.8/package.py
+          python releases/rc34.8/verify.py release348
+          php -l release348/plugin-source/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php -d memory_limit=1024M wordpress-browser-edition/tests/validate_plugin.php release348/plugin-source/atlas-clarus-browser-edition
+      - name: Install browser test dependencies
+        timeout-minutes: 5
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install chromium
+      - name: Real Chromium exports and reduction-job round trip
+        env:
+          NODE_PATH: ${{ github.workspace }}/browser-bundle/tests/node_modules
+        run: node releases/rc34.8/acceptance.cjs
+      - name: Publish verified homepage and IONOS update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create 'v0.2.0-rc34.8-coreldraw-xml' --target "$GITHUB_SHA" --title 'ATLAS Clarus RC34.8 — CorelDRAW XML' --notes-file releases/rc34.8/README.md --prerelease release348/ATLAS_Clarus_*.zip release348/ATLAS_Clarus_*.sha256 release348/release-info.json release348/BUNDLE_MANIFEST.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RC34.8-browser-acceptance
+          path: release348/evidence/
+          retention-days: 30
