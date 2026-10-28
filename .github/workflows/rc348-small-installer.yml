@@ -1,0 +1,30 @@
+name: RC34.8 small installer
+on:
+  push:
+    branches: [fix/rc34.8-small-installer-20261028]
+    paths: ['releases/rc34.8/build_small_installer.py', '.github/workflows/rc348-small-installer.yml']
+permissions:
+  contents: write
+jobs:
+  verify-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: zip
+      - name: Build the small installer from the pinned released package
+        run: python releases/rc34.8/build_small_installer.py
+      - name: Test exact payload, download failure, cleanup and runtime rollback
+        run: |
+          php -l small348/plugin-source/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php -d memory_limit=1024M small348/validate_small.php small348/plugin-source/atlas-clarus-browser-edition small348/bundle-fixture.zip
+      - name: Add the tested small installer to the existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload v0.2.0-rc34.8-coreldraw-xml small348/ATLAS_Clarus_RC34.8_Small_Installer.zip small348/ATLAS_Clarus_RC34.8_Small_Installer.zip.sha256 small348/small-installer-info.json
