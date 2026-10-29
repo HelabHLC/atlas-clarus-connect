@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "native_lcms_version": 2140,
+  "native_lcms_version": 2170,
   "wasm_engine": "LittleCMS 2.16",
   "real_profile_test_vectors": 64,
   "max_rgb16_difference": 0,

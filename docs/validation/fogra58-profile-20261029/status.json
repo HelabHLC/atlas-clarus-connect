@@ -1,6 +1,6 @@
 {
   "date": "2026-10-29",
-  "status": "LOCAL_CORRECTION_VALIDATED_BROWSER_DOWNLOADS_PENDING",
+  "status": "PASS_INCLUDING_NATIVE_BROWSER_DOWNLOADS",
   "ui_profile_regression": {
     "status": "PASS",
     "assertions": 89,
@@ -9,11 +9,22 @@
   "integration": "PASS: real WASM, native canvas, repeated export, busy guard, settings and legacy-import invalidation",
   "existing_handoff_and_card_regressions": "PASS",
   "native_colour_vectors": 64,
-  "native_browser_downloads": "NOT_VERIFIED",
-  "github_workflow": "NOT_RUN",
-  "github_push": "REJECTED_BY_AUTOMATIC_APPROVAL_REVIEW_NO_REMOTE_BRANCH",
+  "native_browser_downloads": "PASS",
+  "github_workflow": "PASS",
   "master_changed": false,
-  "published": false,
   "physical_textile": "NOT_MEASURED",
-  "production_approval": "NOT_PROVIDED"
+  "production_approval": "NOT_PROVIDED",
+  "actual_browser_download_count": 24,
+  "github_workflow_run_id": 40803992017,
+  "github_workflow_url": "https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/40803992017",
+  "tested_commit": "b4ca3ddf737461631427d5669bd0d0492466fad3",
+  "github_branch": "PUBLISHED_WITH_EXPLICIT_USER_APPROVAL",
+  "public_correction_branch": true,
+  "application_deployed": false,
+  "publication_scope": "CORRECTION_BRANCH_ONLY_NO_RELEASE",
+  "repository_validation": "ALL_9_JOBS_PASS",
+  "browser": "Chromium 151.0.7922.34",
+  "browser_platform": "GitHub Actions Ubuntu",
+  "http_file_pdf_png_byte_identical": true,
+  "http_file_json_identical_except_timestamps": true
 }

@@ -1,0 +1,116 @@
+{
+  "status": "PASS",
+  "browser": "151.0.7922.34",
+  "transport": "file",
+  "actual_browser_downloads": 12,
+  "profile_sha256": "fad691cc0f25e3d6a91942599755b7f9cf906b91f9e4f4834c3364e6c50a972d",
+  "reference": {
+    "atlas_row_id": 4665,
+    "atlas_address": "H125_L075_C080",
+    "rgb16": [
+      25943,
+      64883,
+      4455
+    ]
+  },
+  "settings": {
+    "printing_condition": "FOGRA58 regression download",
+    "substrate": "Synthetic test; no textile measurement",
+    "rendering_intent": "Perceptual",
+    "black_point_compensation": "true"
+  },
+  "missing_profile_blocked": true,
+  "invalid_files_rejected": 3,
+  "repeated_exports_identical": true,
+  "stale_result_invalidation": true,
+  "legacy_import_invalidation": true,
+  "page_errors": [],
+  "downloads": [
+    {
+      "group": "reference-1",
+      "filename": "ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.profiled-reference.json",
+      "relative_path": "reference-1/ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.profiled-reference.json",
+      "bytes": 1829,
+      "sha256": "df41a45c1b20024b2aab14ba89e7d094570660ee56f50f2c7cc76430258a556d"
+    },
+    {
+      "group": "reference-1",
+      "filename": "ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.fogra58-iccbased-rgb.pdf",
+      "relative_path": "reference-1/ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.fogra58-iccbased-rgb.pdf",
+      "bytes": 2933778,
+      "sha256": "a203cba56aff21ae530260d858820bbb4974b888709c6d9866d8d67eebf5b168"
+    },
+    {
+      "group": "reference-2",
+      "filename": "ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.profiled-reference.json",
+      "relative_path": "reference-2/ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.profiled-reference.json",
+      "bytes": 1829,
+      "sha256": "d00cb36e21554b762045d8de4af264186268da54c7c8af4f78bc2a7a5c06b69e"
+    },
+    {
+      "group": "reference-2",
+      "filename": "ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.fogra58-iccbased-rgb.pdf",
+      "relative_path": "reference-2/ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.fogra58-iccbased-rgb.pdf",
+      "bytes": 2933778,
+      "sha256": "a203cba56aff21ae530260d858820bbb4974b888709c6d9866d8d67eebf5b168"
+    },
+    {
+      "group": "image-1",
+      "filename": "ATLAS_TEXTILE_RGB_Before_After.png",
+      "relative_path": "image-1/ATLAS_TEXTILE_RGB_Before_After.png",
+      "bytes": 63829,
+      "sha256": "f08c2917c9ba947fc254874add69b426fcd4d19f72a69890d51fe49a22e9af25"
+    },
+    {
+      "group": "image-1",
+      "filename": "ATLAS_TEXTILE_RGB_Before_After.preview.json",
+      "relative_path": "image-1/ATLAS_TEXTILE_RGB_Before_After.preview.json",
+      "bytes": 2200,
+      "sha256": "24d48d62a5df77058ec9d2e84a1b51780d913812e182beb6c4a039ce9b58e316"
+    },
+    {
+      "group": "reference-settings-changed",
+      "filename": "ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.profiled-reference.json",
+      "relative_path": "reference-settings-changed/ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.profiled-reference.json",
+      "bytes": 1817,
+      "sha256": "24c30b27bea3c0a2e670873f832c7a1660d0148488c571086cb723963778f6cd"
+    },
+    {
+      "group": "reference-settings-changed",
+      "filename": "ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.fogra58-iccbased-rgb.pdf",
+      "relative_path": "reference-settings-changed/ATLAS_Profiled_Reference_H125_L075_C080_TEXTILE_RGB.fogra58-iccbased-rgb.pdf",
+      "bytes": 2933766,
+      "sha256": "b03a0757b5015e090d4c9d85f873e48eaa2a95ed7f462f759969c5a4522421fa"
+    },
+    {
+      "group": "image-settings-changed",
+      "filename": "ATLAS_TEXTILE_RGB_Before_After.png",
+      "relative_path": "image-settings-changed/ATLAS_TEXTILE_RGB_Before_After.png",
+      "bytes": 62543,
+      "sha256": "2d4ee5c2998648b34aed1796a2a011460e3c4fcebc3e729a310383c519e2197f"
+    },
+    {
+      "group": "image-settings-changed",
+      "filename": "ATLAS_TEXTILE_RGB_Before_After.preview.json",
+      "relative_path": "image-settings-changed/ATLAS_TEXTILE_RGB_Before_After.preview.json",
+      "bytes": 2188,
+      "sha256": "fd95b91e12f8f1745cc4e2b1ade4da13d806b75559a387249ce1536396dccd6e"
+    },
+    {
+      "group": "image-reloaded",
+      "filename": "ATLAS_TEXTILE_RGB_Before_After.png",
+      "relative_path": "image-reloaded/ATLAS_TEXTILE_RGB_Before_After.png",
+      "bytes": 62543,
+      "sha256": "2d4ee5c2998648b34aed1796a2a011460e3c4fcebc3e729a310383c519e2197f"
+    },
+    {
+      "group": "image-reloaded",
+      "filename": "ATLAS_TEXTILE_RGB_Before_After.preview.json",
+      "relative_path": "image-reloaded/ATLAS_TEXTILE_RGB_Before_After.preview.json",
+      "bytes": 2188,
+      "sha256": "cf6d71ef8c098205ff869ecbb4b1125dd006ab0fa392f41d8c3c1ce03d0c5e58"
+    }
+  ],
+  "physical_textile": "NOT_MEASURED",
+  "production_approval": "NOT_PROVIDED"
+}

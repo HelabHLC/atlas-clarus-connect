@@ -1,0 +1,96 @@
+{
+  "status": "PASS",
+  "independent_readers": [
+    "pypdf",
+    "Pillow",
+    "native LittleCMS"
+  ],
+  "verified_downloads": 12,
+  "results": [
+    {
+      "kind": "REFERENCE_JSON_AND_ICCBASED_PDF",
+      "folder": "reference-1",
+      "rgb16": [
+        25943,
+        64883,
+        4455
+      ],
+      "profile_sha256": "fad691cc0f25e3d6a91942599755b7f9cf906b91f9e4f4834c3364e6c50a972d",
+      "independent_pdf_readback": true
+    },
+    {
+      "kind": "REFERENCE_JSON_AND_ICCBASED_PDF",
+      "folder": "reference-2",
+      "rgb16": [
+        25943,
+        64883,
+        4455
+      ],
+      "profile_sha256": "fad691cc0f25e3d6a91942599755b7f9cf906b91f9e4f4834c3364e6c50a972d",
+      "independent_pdf_readback": true
+    },
+    {
+      "kind": "REFERENCE_JSON_AND_ICCBASED_PDF",
+      "folder": "reference-settings-changed",
+      "rgb16": [
+        27457,
+        64282,
+        7771
+      ],
+      "profile_sha256": "fad691cc0f25e3d6a91942599755b7f9cf906b91f9e4f4834c3364e6c50a972d",
+      "independent_pdf_readback": true
+    },
+    {
+      "kind": "IMAGE_PNG_AND_METADATA_JSON",
+      "folder": "image-1",
+      "png_size": [
+        1032,
+        680
+      ],
+      "native_roundtrip_rgb8": [
+        117,
+        205,
+        37
+      ],
+      "pixel_hashes_verified": true,
+      "profile_sha256": "fad691cc0f25e3d6a91942599755b7f9cf906b91f9e4f4834c3364e6c50a972d",
+      "intent": "Relative colorimetric",
+      "bpc": false
+    },
+    {
+      "kind": "IMAGE_PNG_AND_METADATA_JSON",
+      "folder": "image-reloaded",
+      "png_size": [
+        1032,
+        680
+      ],
+      "native_roundtrip_rgb8": [
+        123,
+        207,
+        58
+      ],
+      "pixel_hashes_verified": true,
+      "profile_sha256": "fad691cc0f25e3d6a91942599755b7f9cf906b91f9e4f4834c3364e6c50a972d",
+      "intent": "Perceptual",
+      "bpc": true
+    },
+    {
+      "kind": "IMAGE_PNG_AND_METADATA_JSON",
+      "folder": "image-settings-changed",
+      "png_size": [
+        1032,
+        680
+      ],
+      "native_roundtrip_rgb8": [
+        123,
+        207,
+        58
+      ],
+      "pixel_hashes_verified": true,
+      "profile_sha256": "fad691cc0f25e3d6a91942599755b7f9cf906b91f9e4f4834c3364e6c50a972d",
+      "intent": "Perceptual",
+      "bpc": true
+    }
+  ],
+  "physical_textile": "NOT_MEASURED"
+}
