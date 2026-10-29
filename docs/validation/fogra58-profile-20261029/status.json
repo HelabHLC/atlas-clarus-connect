@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-29",
+  "status": "LOCAL_CORRECTION_VALIDATED_BROWSER_DOWNLOADS_PENDING",
+  "ui_profile_regression": {
+    "status": "PASS",
+    "assertions": 89,
+    "invalid_file_cases": 7
+  },
+  "integration": "PASS: real WASM, native canvas, repeated export, busy guard, settings and legacy-import invalidation",
+  "existing_handoff_and_card_regressions": "PASS",
+  "native_colour_vectors": 64,
+  "native_browser_downloads": "NOT_VERIFIED",
+  "github_workflow": "NOT_RUN",
+  "github_push": "REJECTED_BY_AUTOMATIC_APPROVAL_REVIEW_NO_REMOTE_BRANCH",
+  "master_changed": false,
+  "published": false,
+  "physical_textile": "NOT_MEASURED",
+  "production_approval": "NOT_PROVIDED"
+}

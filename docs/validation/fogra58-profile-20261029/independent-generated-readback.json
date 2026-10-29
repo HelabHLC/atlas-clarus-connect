@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "execution": "JSDOM + real LittleCMS WASM + native canvas",
+  "actual_browser_download": "NOT_VERIFIED",
+  "independent_readers": [
+    "pypdf",
+    "Pillow",
+    "native LittleCMS"
+  ],
+  "reference": {
+    "atlas_row_id": 4665,
+    "atlas_address": "H125_L075_C080",
+    "master_rgb": [
+      118,
+      205,
+      39
+    ],
+    "master_hex": "#76CD27",
+    "master_lab": [
+      75,
+      -45.8861,
+      65.5322
+    ]
+  },
+  "profile_sha256": "fad691cc0f25e3d6a91942599755b7f9cf906b91f9e4f4834c3364e6c50a972d",
+  "rgb16": [
+    25943,
+    64883,
+    4455
+  ],
+  "profile_bytes_embedded_unchanged": true,
+  "pdf_settings_match_json": true,
+  "png_decoded": true,
+  "png_size": [
+    1032,
+    680
+  ],
+  "preview_settings_match_reference": true,
+  "source_pkl_output_pixel_hashes_verified": true,
+  "physical_textile": "NOT_MEASURED",
+  "production_approval": "NOT_PROVIDED"
+}

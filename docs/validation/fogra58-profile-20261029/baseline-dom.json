@@ -1,0 +1,1 @@
+{"status":"REPRODUCED","environment":"JSDOM","action":"init with selection -> renderReferences -> lock(false) -> click FOGRA58 reference","message":"Profile-bound reference blocked: Cannot read properties of null (reading 'data_base64')","workers":0,"downloads":0}

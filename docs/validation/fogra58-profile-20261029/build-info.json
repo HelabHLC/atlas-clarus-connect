@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0-rc34.8-fogra58-profile-fix-preview",
+  "base_archive_sha256": "ceac038f92a9c6f29e4a2421013f7c95a2db2266214b4fc6f6c6e5be06562273",
+  "archive_sha256": "e7ff1c64d2bc531d180f622618f806e6c5556a175034bf3493cb825dabc924da",
+  "changed_base_files": [
+    "BUNDLE_MANIFEST.json",
+    "assets/print-ui.js",
+    "docs/textile-handoff/source/print-ui.js",
+    "index.html",
+    "SHA256SUMS.txt"
+  ],
+  "unchanged_base_files": 266,
+  "master_and_engines_unchanged": true,
+  "deployment_allowed": false
+}

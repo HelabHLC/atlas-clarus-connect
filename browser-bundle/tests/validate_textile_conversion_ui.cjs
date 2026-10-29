@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),{webcrypto}=require('node:crypto'),{JSDOM}=require('jsdom');
-const {createCanvas,loadImage}=require('/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas');
+const {createCanvas,loadImage}=require('@napi-rs/canvas');
 const dir=process.env.TEXTILE_BUNDLE_DIR||'browser-bundle/build-textile-conversion/atlas-clarus-browser-bundle',html=fs.readFileSync(dir+'/index.html','utf8'),workerCode=fs.readFileSync(dir+'/assets/lcms-worker.js','utf8');
 const dom=new JSDOM(html,{url:'https://offline.test/#print',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window,d=w.document,$=s=>d.querySelector(s),downloads=[],blobMap=new Map(),backing=new WeakMap();
 Object.defineProperty(w.crypto,'subtle',{value:webcrypto.subtle});w.TextEncoder=TextEncoder;w.TextDecoder=TextDecoder;
@@ -18,7 +18,7 @@ w.Worker=LocalWorker;
 for(const file of ['reference-card.js','profiled-reference-card.js','pkl-image-binding.js'])w.eval(fs.readFileSync('browser-bundle/src/'+file,'utf8'));
 for(const file of ['print-handoff.js','print-preview-ui.js','textile-reference-card.js','print-ui.js'])w.eval(fs.readFileSync(dir+'/assets/'+file,'utf8'));
 const master=require('../../hover-library/data/colors.json');const picker=d.createElement('canvas');picker.width=2;picker.height=2;const pc=picker.getContext('2d');['#37791A','#AB34CD','#123456','#FFCC00'].forEach((c,i)=>{pc.fillStyle=c;pc.fillRect(i%2,Math.floor(i/2),1,1)});
-const context={colors:master.colors,master:master.master_sha256,getSelected:()=>master.colors[4966],getPalette:()=>[master.colors[4966]],getPaletteName:()=> 'Test',getPickerImage:()=>({canvas:picker,name:'Synthetic four-pixel test'}),download:(name,value,type)=>downloads.push({name,value,type})};
+const context={colors:master.colors,master:master.master_sha256,getSelected:()=>master.colors[4665],getPalette:()=>[master.colors[4966]],getPaletteName:()=> 'Test',getPickerImage:()=>({canvas:picker,name:'Synthetic four-pixel test'}),download:(name,value,type)=>downloads.push({name,value,type})};
 w.ATLAS_CLARUS_PRINT_UI.init(context);
 const input=(s,v)=>{const el=$(s);el.value=v;el.dispatchEvent(new w.Event('input',{bubbles:true}))};
 async function until(f){let end=Date.now()+30000;while(!f()){assert(Date.now()<end,'UI timeout: '+$('#print-message').textContent);await new Promise(r=>setTimeout(r,20))}}
@@ -26,13 +26,23 @@ const sel='[data-print-path="TEXTILE_RGB"] ',pv='[data-preview-path="TEXTILE_RGB
 (async()=>{
  const b=fs.readFileSync(process.env.TEXTILE_PROFILE),el=$(sel+'[data-profile-file]');Object.defineProperty(el,'files',{value:[{name:'TextileRGB_FOGRA58.icc',size:b.length,arrayBuffer:async()=>b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength)}]});el.dispatchEvent(new w.Event('change'));await until(()=>!$('#print-import').disabled);
  for(const [key,value]of Object.entries({printing_condition:'Test workflow',substrate:'Fabric not measured',rendering_intent:'Relative colorimetric',black_point_compensation:'false'}))input(sel+`[data-setting="${key}"]`,value);
- assert.equal($(sel+'[data-profiled-reference]').disabled,false);await $(sel+'[data-profiled-reference]').onclick();
+ assert.equal($(sel+'[data-profiled-reference]').disabled,false);const firstRun=$(sel+'[data-profiled-reference]').onclick();await $(sel+'[data-profiled-reference]').onclick();await firstRun;
  assert.match($('#print-message').textContent,/ICCBased FOGRA58 RGB/);assert.equal(downloads.length,2);const data=JSON.parse(downloads[0].value);assert.equal(data.production.conversion_status,'CALCULATED_ICC_TRANSFORM');assert.match(downloads[1].name,/fogra58-iccbased-rgb.pdf$/);assert.match($(sel+'[data-result-values]').textContent,/16-bit/);
+ assert.equal(data.reference.atlas_row_id,4665);assert.equal(data.reference.atlas_address,'H125_L075_C080');assert.deepEqual(data.production.transform.rgb16,[25943,64883,4455]);
+ fs.mkdirSync('tmp/textile-conversion',{recursive:true});fs.writeFileSync('tmp/textile-conversion/ui-reference.json',downloads[0].value);fs.writeFileSync('tmp/textile-conversion/ui-reference.pdf',downloads[1].value);
+ await $(sel+'[data-profiled-reference]').onclick();assert.equal(downloads.length,4);const repeated=JSON.parse(downloads[2].value);assert.deepEqual(data.production,repeated.production);assert.deepEqual(data.reference,repeated.reference);
  await $('#preview-use-picker').onclick();assert.equal($(pv+'[data-preview-run]').disabled,false);$(pv+'[data-preview-run]').click();await until(()=>!$(pv+'[data-preview-save]').disabled);
  $(pv+'[data-preview-metadata]').click();const meta=JSON.parse(downloads.at(-1).value);assert.equal(meta.path,'TEXTILE_RGB');assert.equal(meta.input_kind,'PKL_FULL_REFERENCE_IMAGE');assert.equal(meta.calculation.channels,3);assert.equal(meta.calculation.profile_role,'TEXTILE_RGB_EXCHANGE_SPACE');assert.equal(meta.production_approval,'NOT_PROVIDED');assert.equal(meta.calculation.measured_qc,'NOT_MEASURED');assert.match(meta.source.rgba_sha256,/^[a-f0-9]{64}$/);
  $(pv+'[data-preview-save]').click();await until(()=>downloads.some(x=>x.name.endsWith('Before_After.png')));
  const png=downloads.find(x=>x.name.endsWith('Before_After.png'));const bytes=await new Promise((resolve,reject)=>{const reader=new w.FileReader();reader.onload=()=>resolve(Buffer.from(reader.result));reader.onerror=reject;reader.readAsArrayBuffer(png.blob)});assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a');const img=await loadImage(bytes);assert(img.width>=1000);fs.writeFileSync('tmp/textile-conversion/ui-before-after.png',bytes);fs.writeFileSync('tmp/textile-conversion/ui-preview.json',JSON.stringify(meta,null,2));
  input(sel+'[data-setting="rendering_intent"]','Perceptual');assert.equal($(pv+'[data-preview-save]').disabled,true);assert.match($(sel+'[data-result-values]').textContent,/Not calculated/);
  assert.equal(d.querySelector('[data-preview-path="4C"] [data-preview-save]').disabled,true);
- console.log('PASS: real WASM through candidate UI, reference JSON/PDF, PKL-first image roundtrip, real PNG B/A encode/decode and metadata, stale-result invalidation, path isolation (jsdom + real canvas; not native browser acceptance)');dom.window.close();
+ $(pv+'[data-preview-run]').click();await until(()=>!$(pv+'[data-preview-save]').disabled);
+ const legacy=await w.ATLAS_CLARUS_PRINT.create({entries:[master.colors[4665]],colors:master.colors,paths:{'4C':w.ATLAS_CLARUS_PRINT.emptySettings(),ECG:w.ATLAS_CLARUS_PRINT.emptySettings()}});
+ const legacyText=JSON.stringify(legacy),importEl=$('#print-import-file');Object.defineProperty(importEl,'files',{configurable:true,value:[{name:'legacy.json',size:legacyText.length,text:async()=>legacyText}]});
+ await importEl.onchange({target:importEl});assert.match($('#print-message').textContent,/Handoff restored/);
+ assert.equal($(pv+'[data-preview-save]').disabled,true);assert.equal($(pv+'[data-preview-metadata]').disabled,true);assert.equal($(pv+'[data-preview-after]').hidden,true);
+ assert.equal($(sel+'[data-profiled-reference]').disabled,true);
+
+ console.log('PASS: real WASM through candidate UI, reference JSON/PDF, PKL-first image roundtrip, real PNG B/A encode/decode and metadata, stale-result and legacy-import invalidation, repeated export, busy guard, path isolation (jsdom + real canvas; not native browser acceptance)');dom.window.close();
 })().catch(e=>{console.error(e);process.exitCode=1;dom.window.close()});

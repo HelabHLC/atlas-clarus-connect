@@ -17,7 +17,8 @@
       section.querySelectorAll('button,input,select').forEach(el => { if (!el.closest('#print-image-preview')) el.disabled = value; });
       $('#print-export').disabled = value || !entries.length;
       $('#print-report').disabled = value || !entries.length;
-      P.ALL_PATHS.forEach(id => { $(`[data-print-path="${id}"] [data-profile-clear]`).disabled = value || !settings[id].profile; });
+      // Generic unlock must never override a path's profile/selection requirements.
+      P.ALL_PATHS.forEach(renderPath);
     }
     function renderReferences() {
       $('#print-references').innerHTML = entries.length ? entries.map(c =>
@@ -25,20 +26,30 @@
       $('#print-count').textContent = `${entries.length} frozen reference${entries.length === 1 ? '' : 's'} · shared by all three paths`;
       lock(busy);
     }
+    function profileRequired(id) {
+      return id === 'TEXTILE_RGB' ? 'Load the official final TextileRGB_FOGRA58.icc file from Fogra above. The beta profile or another RGB profile cannot be used.' :
+        `Load a matching ${id === '4C' ? 'CMYK' : 'seven-channel (7CLR)'} output ICC profile above.`;
+    }
+    function referenceBlocker(id) {
+      const s = settings[id];
+      if (!s.profile) return profileRequired(id);
+      if (entries.length !== 1) return 'Choose exactly one frozen ATLAS reference.';
+      if (!s.printing_condition.trim() || !s.substrate.trim() || !P.INTENTS.includes(s.rendering_intent) ||
+        typeof s.black_point_compensation !== 'boolean') return 'Complete the workflow, substrate, rendering intent and black-point compensation settings above.';
+      return '';
+    }
     function renderPath(id) {
       const s = settings[id], card = $(`[data-print-path="${id}"]`);
       const status = card.querySelector('[data-path-status]');
-      if (id === 'TEXTILE_RGB') {
-        status.textContent = s.profile ? 'FOGRA58 verified · conversion available on request' : 'Attach the official FOGRA58 profile';
-      }
-      else status.textContent = !s.profile ? 'Profile missing' : !s.printing_condition.trim() || !s.substrate.trim() ||
-        s.rendering_intent === null || s.black_point_compensation === null ? 'Complete the print settings' : 'Prepared · reference output calculation still required';
+      const blocker = referenceBlocker(id);
+      status.textContent = blocker ? (!s.profile ? (id === 'TEXTILE_RGB' ? 'Load final TextileRGB_FOGRA58.icc' : 'Output ICC profile required') :
+        entries.length !== 1 ? 'Choose exactly one ATLAS reference' : 'Complete the print settings') :
+        (id === 'TEXTILE_RGB' ? 'FOGRA58 verified · conversion available on request' : 'Prepared · reference output calculation still required');
       const p = s.profile;
       card.querySelector('[data-profile-summary]').innerHTML = p ?
         `<b>${escape(p.file_name)}</b><span>ICC ${escape(p.version)} · ${escape(p.device_space)} / ${escape(p.pcs)}</span><code>${escape(p.sha256)}</code><small>File structure checked. Transform not validated.</small>` : '<span>No output profile attached.</span>';
       card.querySelector('[data-profile-clear]').disabled = busy || !p;
-      card.querySelector('[data-profiled-reference]').disabled = busy || entries.length !== 1 || !p ||
-        !s.printing_condition.trim() || !s.substrate.trim() || s.rendering_intent === null || s.black_point_compensation === null;
+      card.querySelector('[data-profiled-reference]').disabled = busy || !!blocker;
     }
     const invalidatePreview = id => { preview?.invalidate(id); $(`[data-print-path="${id}"] [data-result-values]`)?.replaceChildren(document.createTextNode('Not calculated for current settings')); };
     const profileBytes = profile => {
@@ -71,14 +82,20 @@
     }
     async function createProfiledReference(id) {
       if (busy) return;
-      const card = $(`[data-print-path="${id}"]`), s = settings[id]; lock(true);
+      const card = $(`[data-print-path="${id}"]`);
+      const blocker = referenceBlocker(id);
+      if (blocker) { message(blocker, true); renderPath(id); return; }
+      // Keep every async stage bound to the same reference, profile and settings.
+      const s = { ...settings[id] }, entry = entries[0]; lock(true);
       try {
-        if (entries.length !== 1) throw Error('Choose exactly one frozen ATLAS reference.');
+        const bytes = profileBytes(s.profile);
+        const verified = await P.readProfile(bytes, s.profile.file_name, id);
+        if (verified.sha256 !== s.profile.sha256) throw Error('The profile hash does not match. ' + profileRequired(id));
         const channelOrder = id === 'ECG' ? card.querySelector('[data-profiled-channel-order]').value.split(',').map(x => x.trim()).filter(Boolean) : undefined;
         message(`Calculating ${id} device channels locally with LittleCMS…`);
-        const separation = await runSeparation({ operation: 'reference-separation', path: id, rgb: [...entries[0].rgb],
+        const separation = await runSeparation({ operation: 'reference-separation', path: id, rgb: [...entry.rgb],
           profile: profileBytes(s.profile), intent: s.rendering_intent, bpc: s.black_point_compensation, channelOrder });
-        const data = await (id === 'TEXTILE_RGB' ? root.ATLAS_CLARUS_TEXTILE_CARD : root.ATLAS_CLARUS_PROFILED_REFERENCE_CARD).create({ entry: entries[0], colors: context.colors,
+        const data = await (id === 'TEXTILE_RGB' ? root.ATLAS_CLARUS_TEXTILE_CARD : root.ATLAS_CLARUS_PROFILED_REFERENCE_CARD).create({ entry, colors: context.colors,
           master: context.master, profile: s.profile, profileBytes: profileBytes(s.profile), settings: { ...s, path_id: id }, separation });
         card.querySelector('[data-result-values]')?.replaceChildren(document.createTextNode(separation.device_values_16bit.join(' / ') + ' (16-bit)'));
         const stem = `ATLAS_Profiled_Reference_${data.reference.atlas_address}_${id}`;
@@ -116,6 +133,7 @@
       const intent = card.querySelector('[data-setting="rendering_intent"]');
       P.INTENTS.forEach(value => { const option = document.createElement('option'); option.value = value; option.textContent = value; intent.append(option); });
       card.querySelectorAll('[data-setting]').forEach(input => input.addEventListener('input', () => {
+        if (busy) return;
         const key = input.dataset.setting;
         settings[id][key] = key === 'black_point_compensation' ? (input.value === '' ? null : input.value === 'true') :
           key === 'rendering_intent' ? input.value || null : input.value;
@@ -138,10 +156,11 @@
             }
           }
           message(`${id} profile attached. The other paths are unchanged. No device values have been calculated.`);
-        } catch (error) { message(`${id} profile rejected: ${error.message}`, true); }
+        } catch (error) { message(`${id} profile rejected: ${error.message} ${profileRequired(id)}`, true); }
         finally { lock(false); renderPath(id); }
       });
       card.querySelector('[data-profile-clear]').onclick = () => {
+        if (busy) return;
         settings[id].profile = null; invalidatePreview(id); renderPath(id); message(`${id} profile removed. The other paths are unchanged.`);
       };
       card.querySelector('[data-profiled-reference]').onclick = () => createProfiledReference(id);
@@ -187,7 +206,7 @@
           settings.TEXTILE_RGB = P.emptySettings();
           const card = $('[data-print-path="TEXTILE_RGB"]');
           card.querySelectorAll('[data-setting]').forEach(input => { input.value = ''; });
-          renderPath('TEXTILE_RGB');
+          invalidatePreview('TEXTILE_RGB'); renderPath('TEXTILE_RGB');
         }
         renderReferences(); message('Handoff restored: identities, independent paths and embedded profile hashes verified.');
       } catch (error) { message(`Import blocked: ${error.message} The current handoff was retained.`, true); }

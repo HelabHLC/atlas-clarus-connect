@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "native_lcms_version": 2140,
+  "wasm_engine": "LittleCMS 2.16",
+  "real_profile_test_vectors": 64,
+  "max_rgb16_difference": 0,
+  "max_preview_rgb8_difference": 0,
+  "alpha_preserved": true,
+  "profile_tamper_rejected": true,
+  "source_mismatch_rejected": true,
+  "network_calls": 0,
+  "physical_textile": "NOT_MEASURED"
+}

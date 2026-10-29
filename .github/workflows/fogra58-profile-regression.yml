@@ -1,0 +1,79 @@
+name: Isolated FOGRA58 profile and download regression
+on:
+  push:
+    branches: [fix/fogra58-profile-validation-20261029]
+    paths: ['browser-bundle/textile/**', 'browser-bundle/tests/**', 'browser-bundle/build_fogra58_profile_fix.py', '.github/workflows/fogra58-profile-regression.yml']
+permissions:
+  contents: read
+jobs:
+  profile-and-downloads:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test dependencies
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          python -m pip install Pillow pypdf
+          browser-bundle/tests/node_modules/.bin/playwright install chromium
+      - name: Fetch hash-pinned inputs
+        run: |
+          mkdir -p tmp/fogra58
+          curl --fail --location --retry 2 --connect-timeout 15 --max-time 120 'https://github.com/HelabHLC/atlas-clarus-connect/releases/download/v0.2.0-rc34.8-coreldraw-xml/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.8-coreldraw-xml.zip' -o tmp/fogra58/base.zip
+          echo 'ceac038f92a9c6f29e4a2421013f7c95a2db2266214b4fc6f6c6e5be06562273  tmp/fogra58/base.zip' | sha256sum --check
+          curl --fail --location --retry 2 --connect-timeout 15 --max-time 120 'https://fogra.org/fileadmin/files/1_forschen/Digitaldruck/13.006_Textile-RGB/TextileRGB_FOGRA58.icc' -o tmp/fogra58/TextileRGB_FOGRA58.icc
+          echo 'fad691cc0f25e3d6a91942599755b7f9cf906b91f9e4f4834c3364e6c50a972d  tmp/fogra58/TextileRGB_FOGRA58.icc' | sha256sum --check
+          echo "TEXTILE_PROFILE=$PWD/tmp/fogra58/TextileRGB_FOGRA58.icc" >> "$GITHUB_ENV"
+      - name: Build isolated candidate with unchanged master and engines
+        run: |
+          python browser-bundle/build_fogra58_profile_fix.py --base tmp/fogra58/base.zip --output-dir tmp/fogra58/candidate
+          echo "TEXTILE_BUNDLE_DIR=$PWD/tmp/fogra58/candidate/atlas-clarus-browser-bundle" >> "$GITHUB_ENV"
+      - name: Profile regression and independent native colour comparison
+        run: |
+          python -m zipfile -e tmp/fogra58/base.zip tmp/fogra58/baseline
+          TEXTILE_BUNDLE_DIR=tmp/fogra58/baseline/atlas-clarus-browser-bundle node browser-bundle/tests/validate_fogra58_profile_ui.cjs --reproduce
+          node browser-bundle/tests/validate_fogra58_profile_ui.cjs
+          node browser-bundle/tests/validate_textile_conversion.cjs
+          node browser-bundle/tests/validate_textile_conversion_ui.cjs
+          python browser-bundle/tests/verify_fogra58_generated_artifacts.py
+          node browser-bundle/tests/validate_textile_ui.cjs
+          node browser-bundle/tests/validate_textile_handoff.cjs
+          node browser-bundle/tests/validate_print_handoff.js
+          node browser-bundle/tests/validate_profiled_reference_card.js
+      - name: Reproduce original UI failure with a real browser
+        env:
+          TEXTILE_BUNDLE_DIR: tmp/fogra58/baseline/atlas-clarus-browser-bundle
+          FOGRA58_EVIDENCE_DIR: tmp/fogra58/evidence/baseline
+        run: |
+          python -m zipfile -e tmp/fogra58/base.zip tmp/fogra58/baseline
+          node browser-bundle/tests/validate_fogra58_browser.cjs --reproduce
+      - name: HTTP downloads and independent file readback
+        env:
+          FOGRA58_EVIDENCE_DIR: tmp/fogra58/evidence/http
+        run: |
+          node browser-bundle/tests/validate_fogra58_browser.cjs
+          python browser-bundle/tests/verify_fogra58_downloads.py tmp/fogra58/evidence/http
+      - name: Offline file downloads and independent file readback
+        env:
+          FOGRA58_EVIDENCE_DIR: tmp/fogra58/evidence/file
+          FOGRA58_TRANSPORT: file
+        run: |
+          node browser-bundle/tests/validate_fogra58_browser.cjs
+          python browser-bundle/tests/verify_fogra58_downloads.py tmp/fogra58/evidence/file
+      - name: Keep review artifacts only; no release or deployment
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fogra58-isolated-correction-evidence
+          path: |
+            tmp/fogra58/evidence/
+            tmp/fogra58/candidate/build-info.json
+            tmp/fogra58/candidate/ATLAS_Clarus_FOGRA58_Profile_Fix_Preview.zip
+            tmp/textile-conversion/results.json
+          retention-days: 30
