@@ -1,0 +1,24 @@
+<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ATLAS Clarus → QuarkXPress</title>
+<style>body{font:17px/1.6 system-ui,sans-serif;max-width:850px;margin:48px auto;padding:0 24px;color:#17202a}h1,h2{line-height:1.2}code{background:#edf2f5;padding:2px 5px}a{color:#005b99}.note{background:#edf5f8;padding:18px;border-left:4px solid #1684a4}li{margin:10px 0}</style>
+<h1>ATLAS Clarus → QuarkXPress</h1>
+<p><b>RC34.9 · XPress-Tags-Export · Testfassung</b></p>
+<p>Überträgt bis zu 256 benannte RGB-Farben als <code>.xtg</code>-Datei. Die ATLAS-Adressen und die RGB-Werte bleiben erhalten. Geschützte Originalfarben behalten ihre eigenen Namen und Werte.</p>
+<h2>1. Aus ATLAS Clarus exportieren</h2>
+<ol><li><b>PALETTE → My Palettes</b> öffnen und Referenzen hinzufügen.</li><li><b>QuarkXPress XTG</b> wählen. Alternativ in <b>Colour Reduction → Palette format → QuarkXPress XPress Tags</b> wählen und <b>Download palette</b> anklicken.</li><li>Für die vollständigen Referenz- und Ursprungsdaten zusätzlich Clarus JSON bzw. den vollständigen Reduktionsjob sichern. Der Job enthält auch <code>palette.xtg</code>.</li></ol>
+<h2>2. In QuarkXPress importieren</h2>
+<ol><li>Für den ersten Test ein <b>neues, leeres Projekt</b> anlegen. So vermeiden Sie Konflikte mit schon vorhandenen, gleichnamigen Farben.</li><li>Einen <b>Textrahmen</b> erstellen und den Textcursor darin platzieren.</li><li><b>Datei → Importieren / File → Import</b> wählen und die <code>.xtg</code>-Datei auswählen. Falls nötig den Dateifilter auf Textdateien oder alle Dateien umstellen.</li><li><b>Interpret XPress Tags</b> (XPress Tags interpretieren) aktivieren. Die Kodierung ist <b>UTF-8</b>; sie ist in der Datei als <code>&lt;e9&gt;</code> angegeben.</li><li>Die Datei erzeugt eine farbige Textliste und die zugehörigen Farbfelder. Unter <b>Bearbeiten → Farben / Edit → Colors</b> Namen und RGB-Werte kontrollieren.</li></ol>
+<h2>3. sRGB als Quellprofil verwenden</h2>
+<p>Die XTG-Datei enthält RGB-Zahlen, aber kein eingebettetes ICC-Profil. Unter <b>Edit → Color Setups → Source</b> für <b>RGB-Volltonfarben / RGB solid colours</b> das Profil <b>sRGB IEC61966-2.1</b> verwenden und diese Quelleinstellung im Projekt auswählen. „Solid colours“ bezeichnet hier die im Layout angelegten Farben. Die exportierten Farben sind <b>RGB-Prozessfarben</b>, keine Sonderfarben.</p>
+<h2>Kontrollbeispiel</h2>
+<p><code>H075_L060_C045</code> muss als <b>RGB 180 / 136 / 67</b> erscheinen (<code>#B48843</code>). Die mitgelieferte Testdatei enthält dieses und weitere Farbfelder; ihre Vergleichswerte stehen in <code>examples/QUARKXPRESS_EXPECTED.json</code>.</p>
+<p>Bei bereits vorhandenen gleichnamigen Farben kann QuarkXPress einen Namenskonflikt melden oder vorhandene Definitionen verwenden. Prüfen Sie die Werte erneut, bevor Sie die Farben in ein bestehendes Projekt übernehmen.</p>
+<div class="note"><b>Prüfstatus:</b> Der Export folgt dem offiziellen XPress-Tags-Handbuch. Dateistruktur, RGB-Zahlen und Farbnamen werden geprüft. Der tatsächliche Import in einer installierten QuarkXPress-Version ist noch offen. Die Dokumentation richtet sich nach QuarkXPress 2026; ältere Versionen sind nicht zugesichert. Eine Farbreferenz ist keine Druckfreigabe.</div>
+<h2>English quick start</h2>
+<p>Export <b>QuarkXPress XTG</b> from My Palettes or Colour Reduction. Create a new QuarkXPress project, draw a text box, place the text cursor inside it, then use <b>File → Import</b>. Enable <b>Interpret XPress Tags</b> and use <b>UTF-8</b>. Set the RGB solid-colour source profile to <b>sRGB IEC61966-2.1</b>. Check the imported swatch names and RGB numbers in <b>Edit → Colors</b>. Keep Clarus JSON/the complete reduction job for provenance. Existing names may conflict; validate in an empty project first. Native QuarkXPress import has not yet been tested.</p>
+<h2>Offizielle Formatquellen</h2>
+<ul><li><a href="https://www.quark.com/documentation/quarkxpress/2026/english/A%20Guide%20to%20XPress%20Tags%202026/">Import und Versionskennung</a></li>
+<li><a href="https://www.quark.com/documentation/quarkxpress/2026/english/A%20Guide%20to%20XPress%20Tags%202026/_4fbdefc9-7693-47ed-8a02-a99b02b941f7.html">Benannte RGB-Farben</a></li>
+<li><a href="https://www.quark.com/documentation/quarkxpress/2026/english/A%20Guide%20to%20XPress%20Tags%202026/_3a3e18a3-bb3e-4f28-a660-39c6521b2f34.html">UTF-8 und Escape-Zeichen</a></li>
+<li><a href="https://www.quark.com/documentation/quarkxpress/2026/english/A%20Guide%20to%20QuarkXPress%202026/_7_65678458149255E7_9.html">Farbfelder und Farbmanagement</a></li></ul>
+</html>

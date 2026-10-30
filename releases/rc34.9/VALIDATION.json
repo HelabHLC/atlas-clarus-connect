@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-30",
+  "export": {
+    "master_rows": 13283,
+    "batches": 52,
+    "all_rgb8_channel_values": 256,
+    "invalid_palettes_rejected": 17,
+    "corrupt_files_rejected": 8,
+    "quark_documented_example": "PASS",
+    "utf8_and_text_escaping": "PASS",
+    "master_unchanged": true,
+    "offline_script_syntax_count": 47,
+    "native_quarkxpress_import": "NOT_TESTED"
+  },
+  "dom_integration": {
+    "environment": "JSDOM_WITH_NATIVE_CANVAS_AND_VM_WORKER_HARNESS",
+    "palette_button": "PASS",
+    "empty_palette": "PASS",
+    "coreldraw_regression": "PASS",
+    "ase_regression": "PASS",
+    "mixed_reduction": "PASS",
+    "reference_only_reduction": "PASS",
+    "reduction_zip_xtg": "PASS",
+    "job_reimport": "PASS",
+    "script_errors": [],
+    "browser_rendering": "NOT_TESTED",
+    "native_quarkxpress_import": "NOT_TESTED"
+  },
+  "package": {
+    "version": "0.2.0-rc34.9-quarkxpress-preview",
+    "bundle": "ATLAS_Clarus_Browser_Bundle_RC34.9_QuarkXPress_Test.zip",
+    "bundle_sha256": "5c814e2b4ffa0e6c897799c3f993b1dd3196b19cc8a96b5f6b56e6b84a0ab279",
+    "bytes": 19427881,
+    "base_sha256": "ceac038f92a9c6f29e4a2421013f7c95a2db2266214b4fc6f6c6e5be06562273",
+    "changed_existing_files": [
+      "BUNDLE_MANIFEST.json",
+      "SHA256SUMS.txt",
+      "assets/app.js",
+      "assets/reduction-job-ui.js",
+      "docs/README.html",
+      "index.html"
+    ],
+    "native_quarkxpress_import": "NOT_TESTED",
+    "deployment_allowed": false
+  },
+  "independent_archive_validation": "PASS"
+}
