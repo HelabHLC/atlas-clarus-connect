@@ -1,0 +1,67 @@
+name: RC34.9 QuarkXPress release
+on:
+  push:
+    branches: [release/rc34.9-quarkxpress-20261031]
+permissions:
+  contents: write
+concurrency:
+  group: rc349-quarkxpress-release
+  cancel-in-progress: true
+jobs:
+  verify-and-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: zip
+      - name: Download the immutable RC34.8 inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p inputs
+          gh release download v0.2.0-rc34.8-coreldraw-xml --pattern 'ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.8-coreldraw-xml.zip' --dir inputs
+          gh release download v0.2.0-rc34.8-coreldraw-xml --pattern 'ATLAS_Clarus_Browser_Edition_v0.1.17-beta2_RC34.8.zip' --dir inputs
+      - name: Build and verify preview, release and both installers
+        run: |
+          python releases/rc34.9/package.py --base inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.8-coreldraw-xml.zip --output-dir candidate349
+          python releases/rc34.9/promote_release.py --candidate candidate349/ATLAS_Clarus_Browser_Bundle_RC34.9_QuarkXPress_Test.zip --base-plugin inputs/ATLAS_Clarus_Browser_Edition_v0.1.17-beta2_RC34.8.zip --output-dir release349
+          python releases/rc34.9/build_small_installer.py --full release349/ATLAS_Clarus_Browser_Edition_v0.1.18-beta1_RC34.9.zip --output-dir small349
+          node releases/rc34.9/verify.cjs release349/atlas-clarus-browser-bundle
+          python releases/rc34.9/verify.py inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.8-coreldraw-xml.zip release349
+          php -l release349/plugin-source/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php -l small349/plugin-source/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php -d memory_limit=1024M wordpress-browser-edition/tests/validate_plugin.php release349/plugin-source/atlas-clarus-browser-edition
+          php -d memory_limit=1024M small349/validate_small.php small349/plugin-source/atlas-clarus-browser-edition small349/bundle-fixture.zip
+      - name: Install Chromium
+        timeout-minutes: 5
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install chromium
+      - name: QuarkXPress downloads and CorelDRAW regression
+        env:
+          NODE_PATH: ${{ github.workspace }}/browser-bundle/tests/node_modules
+          CORELDRAW_BUNDLE_DIR: release349/atlas-clarus-browser-bundle
+          CORELDRAW_EVIDENCE_DIR: release349/evidence/coreldraw
+        run: |
+          node releases/rc34.9/browser-acceptance.cjs release349/atlas-clarus-browser-bundle release349/evidence/quarkxpress
+          node releases/rc34.8/acceptance.cjs
+      - name: Publish verified Browser Edition and IONOS packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v0.2.0-rc34.9-quarkxpress --target "$GITHUB_SHA" --title 'ATLAS Clarus RC34.9 — QuarkXPress XTG' --notes-file releases/rc34.9/RELEASE.md --prerelease release349/ATLAS_Clarus_*.zip release349/ATLAS_Clarus_*.sha256 small349/ATLAS_Clarus_*.zip small349/ATLAS_Clarus_*.sha256 release349/release-info.json release349/BUNDLE_MANIFEST.json small349/small-installer-info.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RC34.9-browser-acceptance
+          path: release349/evidence/
+          retention-days: 30
