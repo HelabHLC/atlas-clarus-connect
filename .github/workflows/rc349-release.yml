@@ -2,7 +2,6 @@ name: RC34.9 QuarkXPress release
 on:
   push:
     branches: [release/rc34.9-quarkxpress-20261031]
-    paths: ['releases/rc34.9/**', '.github/workflows/rc349-release.yml']
 permissions:
   contents: write
 concurrency:
