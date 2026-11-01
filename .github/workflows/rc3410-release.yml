@@ -1,0 +1,71 @@
+name: RC34.10 QuarkXPress provenance ZIP release
+on:
+  push:
+    branches: [release/rc34.10-source-zip-20261101]
+permissions:
+  contents: write
+concurrency:
+  group: rc3410-source-zip-release
+  cancel-in-progress: true
+jobs:
+  verify-and-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: zip
+      - name: Download pinned RC34.9 inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p inputs
+          gh release download v0.2.0-rc34.9-quarkxpress --pattern 'ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.9-quarkxpress.zip' --dir inputs
+          gh release download v0.2.0-rc34.9-quarkxpress --pattern 'ATLAS_Clarus_Browser_Edition_v0.1.18-beta1_RC34.9.zip' --dir inputs
+      - name: Build and verify release and both guarded installers
+        run: |
+          python releases/rc34.10/package.py --base inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.9-quarkxpress.zip --output-dir candidate3410
+          python releases/rc34.10/promote_release.py --candidate candidate3410/ATLAS_Clarus_Browser_Bundle_RC34_10_Source_ZIP_Preview.zip --base-plugin inputs/ATLAS_Clarus_Browser_Edition_v0.1.18-beta1_RC34.9.zip --output-dir release3410
+          python releases/rc34.10/build_small_installer.py --full release3410/ATLAS_Clarus_Browser_Edition_v0.1.19-beta1_RC34.10.zip --output-dir small3410
+          node releases/rc34.9/verify.cjs release3410/atlas-clarus-browser-bundle
+          python releases/rc34.10/verify.py inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.9-quarkxpress.zip release3410
+          php -l release3410/plugin-source/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php -l small3410/plugin-source/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          php -d memory_limit=1024M wordpress-browser-edition/tests/validate_plugin.php release3410/plugin-source/atlas-clarus-browser-edition
+          php -d memory_limit=1024M small3410/validate_small.php small3410/plugin-source/atlas-clarus-browser-edition small3410/bundle-fixture.zip
+      - name: Install Chromium
+        timeout-minutes: 5
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install chromium
+      - name: Source provenance and existing export regressions
+        env:
+          NODE_PATH: ${{ github.workspace }}/browser-bundle/tests/node_modules
+          ATLAS_BUNDLE_VERSION: 0.2.0-rc34.10-quarkxpress-source-zip
+          CORELDRAW_BUNDLE_DIR: release3410/atlas-clarus-browser-bundle
+          CORELDRAW_EVIDENCE_DIR: release3410/evidence/coreldraw
+        run: |
+          python -m zipfile -e inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.9-quarkxpress.zip inputs-unpacked
+          node releases/rc34.9/provenance-regression.cjs inputs-unpacked/atlas-clarus-browser-bundle release3410/evidence/rc349-provenance
+          node releases/rc34.10/browser-acceptance.cjs release3410/atlas-clarus-browser-bundle release3410/evidence/source-zip
+          node releases/rc34.9/browser-acceptance.cjs release3410/atlas-clarus-browser-bundle release3410/evidence/quarkxpress
+          node releases/rc34.8/acceptance.cjs
+      - name: Publish verified Browser Edition and IONOS packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v0.2.0-rc34.10-quarkxpress-source-zip --target "$GITHUB_SHA" --title 'ATLAS Clarus RC34.10 — QuarkXPress XTG + Source JSON ZIP' --notes-file releases/rc34.10/RELEASE.md --prerelease release3410/ATLAS_Clarus_*.zip release3410/ATLAS_Clarus_*.sha256 small3410/ATLAS_Clarus_*.zip small3410/ATLAS_Clarus_*.sha256 release3410/release-info.json release3410/BUNDLE_MANIFEST.json small3410/small-installer-info.json release3410/evidence/source-zip/two-sources.quarkxpress.zip
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RC34.10-browser-acceptance
+          path: release3410/evidence/
+          retention-days: 30
