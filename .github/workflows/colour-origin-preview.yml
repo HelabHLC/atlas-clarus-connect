@@ -1,0 +1,49 @@
+name: Colour origin preview
+on:
+  push:
+    branches: [feat/colour-origin-display-20261101]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Get the exact published baseline and test dependencies
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir inputs
+          gh release download v0.2.0-rc34.10-quarkxpress-source-zip --pattern 'ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.10-quarkxpress-source-zip.zip' --dir inputs
+          python -m pip install Pillow==12.0.0
+          npm install --prefix qa-runtime --ignore-scripts --no-audit --no-fund playwright@1.54.1
+          qa-runtime/node_modules/.bin/playwright install --with-deps chromium
+      - name: Build, inspect and compare with RC34.10
+        env:
+          NODE_PATH: ${{ github.workspace }}/qa-runtime/node_modules
+          ATLAS_BUNDLE_VERSION: 0.2.0-rc34.11-colour-origin-preview
+        run: |
+          python releases/rc34.11/package.py --base inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.10-quarkxpress-source-zip.zip --output-dir candidate
+          python -m zipfile -e inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.10-quarkxpress-source-zip.zip baseline
+          python releases/rc34.11/generate-fixtures.py fixtures
+          node releases/rc34.11/test-metadata.cjs fixtures candidate/atlas-clarus-browser-bundle
+          node releases/rc34.9/verify.cjs candidate/atlas-clarus-browser-bundle
+          node releases/rc34.11/browser-acceptance.cjs candidate/atlas-clarus-browser-bundle baseline/atlas-clarus-browser-bundle fixtures evidence/origin
+          node releases/rc34.10/browser-acceptance.cjs candidate/atlas-clarus-browser-bundle evidence/source-zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ATLAS-Clarus-RC34.11-Colour-Origin-Preview
+          path: |
+            candidate/ATLAS_Clarus_RC34_11_Colour_Origin_Preview.zip
+            candidate/release-info.json
+            evidence/origin/browser-results.json
+            fixtures/metadata-results.json
+          retention-days: 30
