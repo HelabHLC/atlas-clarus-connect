@@ -1,6 +1,9 @@
 # ATLAS Clarus Connect
 
-**Repository overview:** 6 October 2026  
+**Browser Edition / WordPress status checked:** 1 November 2026
+
+**Other component overview:** 6 October 2026 (historical inventory)
+
 **Status:** public source repository with separately versioned components  
 **Workflow:** ATLAS Clarus Workflow v3.4.0
 
@@ -17,12 +20,17 @@ historical records, not a release number or acceptance report for every componen
 
 ## Current components
 
+The Browser Bundle and WordPress rows describe the published/observed public
+versions on 1 November 2026. Other rows retain the 6 October inventory and have
+not been re-audited here. The [development baseline on `main`](#development-baseline-on-main)
+is versioned separately from the public Browser Edition.
+
 | Component | Version / source state | Publication and evidence boundary |
 | --- | --- | --- |
 | [Mixing Atlas](mischatlas/README.md) | **0.1.5**, 38-illuminant experimental search | [Published release](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/atlas-mixing-v0.1.5): WordPress ZIP, standalone HTML and SHA256SUMS; package/Chromium checks passed; mobile live visual acceptance open. |
 | [Adobe ASE libraries](downloads/adobe/README.md) | **1.0**, 13,283 RGB swatches and 73 hue libraries | Commit-pinned public downloads; binary/name/RGB readback verified; actual Adobe import **NOT_TESTED**. |
-| [Browser Bundle](browser-bundle/README.md) | **0.2.0-rc28-source-provenance** candidate | Source adds original RGB provenance; public moving prerelease [browser-bundle-current](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/browser-bundle-current); reproducible source build. Checked-in `dist/` is the older RC20 baseline. |
-| [WordPress Browser Edition](wordpress-browser-edition/) | **0.1.15-beta8**, RC28 candidate wrapper | Source and deterministic package checks; live activation and visual acceptance must be tracked separately. |
+| [Browser Bundle / public Browser Edition](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/v0.2.0-rc34.11-colour-origin) | **0.2.0-rc34.11-colour-origin**, public beta | Published 1 November; the public runtime manifest matches the release manifest byte-for-byte. Includes RC34.9 XTG, RC34.10 XTG + Source JSON ZIP and RC34.11 colour-origin metadata. Native QuarkXPress import remains **NOT_TESTED**. |
+| [WordPress Browser Edition](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/v0.2.0-rc34.11-colour-origin) | **0.1.20-beta1.1** active small installer; **0.1.20-beta1** full installer available | Active plugin version read from WordPress; runtime identity checked separately. See the [dated evidence](docs/BROWSER_EDITION_STATUS_2026-11-01.md). Publication, runtime activation and application acceptance are separate observations. |
 | [Hover Library](hover-library/manifest.json) | **0.2.6-beta1** | Public beta source/data; the older v0.1.5 approval does not establish acceptance of this version. |
 | [Colour Identity Wheel](colour-identity-wheel/SOURCE_PROVENANCE.md) | Sites v22 provenance baseline plus repository changes; embed **1.0.0** | Recorded baseline and receiver tests; current public Site/repository parity is not established by historical provenance. |
 | [Identity Handoff](identity-handoff/SPECIFICATION.md) | **0.1.0** | Protocol and executable valid/rejected transfer vectors. |
@@ -40,21 +48,90 @@ from the desktop workflow demonstrations inside the browser bundle.
 See the [public application download page](https://arbe-lambda-star.com/atlas-clarus-downloads/)
 and the handover inventory for the remaining licence-notice inconsistency.
 
-## Offline browser bundle
+## Public Browser Edition and downloads
 
-Build with `python3 browser-bundle/build_bundle.py`, then open the generated
-bundle's self-contained `index.html` in a modern browser. The public
-[current ZIP](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/browser-bundle-current/ATLAS_Clarus_Browser_Bundle_current.zip)
-has a [checksum companion](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/browser-bundle-current/ATLAS_Clarus_Browser_Bundle_current.zip.sha256).
-This endpoint moves; preserve the source commit and checksum for reproducible handover.
+Use the [online Browser Edition](https://arbe-lambda-star.com/atlas-clarus-browser-bundle/)
+or the version-specific **RC34.11 public-beta** packages:
+
+| Package | Download | Checksum |
+| --- | --- | --- |
+| Offline Browser Bundle RC34.11 | [ZIP](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/v0.2.0-rc34.11-colour-origin/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.11-colour-origin.zip) | [SHA-256](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/v0.2.0-rc34.11-colour-origin/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.11-colour-origin.zip.sha256) |
+| WordPress full installer 0.1.20-beta1 | [ZIP](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/v0.2.0-rc34.11-colour-origin/ATLAS_Clarus_Browser_Edition_v0.1.20-beta1_RC34.11.zip) | [SHA-256](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/v0.2.0-rc34.11-colour-origin/ATLAS_Clarus_Browser_Edition_v0.1.20-beta1_RC34.11.zip.sha256) |
+| WordPress small installer 0.1.20-beta1.1 | [ZIP](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/v0.2.0-rc34.11-colour-origin/ATLAS_Clarus_RC34.11_Small_Installer.zip) | [SHA-256](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/v0.2.0-rc34.11-colour-origin/ATLAS_Clarus_RC34.11_Small_Installer.zip.sha256) |
+
+Extract the complete offline ZIP and open
+`atlas-clarus-browser-bundle/index.html` in a modern browser. It is not a
+WordPress installer. Updating the WordPress plugin alone does not switch the
+runtime: its explicit verified installation step checks the pinned package and
+retains the preceding runtime for rollback. Save open work before switching.
+
+### Export formats and provenance
 
 The main path is image → reference → local palette → Clarus JSON backup/import.
-Palettes also export as ASE, GPL, Figma Tokens and CSS. Parallel 4C/ECG preparation
-and ICC previews retain the same fixed reference and separate profile contexts;
-see the [RC28 candidate manifest](browser-bundle/manifest-rc28.json) and
-[print-preview documentation](browser-bundle/PRINT_IMAGE_PREVIEW.md).
+The public RC34.11 [runtime manifest](https://arbe-lambda-star.com/atlas-clarus-browser-bundle/BUNDLE_MANIFEST.json)
+lists these palette exports:
+
+| Export | Scope and evidence retained |
+| --- | --- |
+| Clarus JSON | Fixed reference identities and all recorded source assignments; RC34.11 also retains recorded colour-origin metadata. |
+| ASE, GPL, Figma Tokens JSON, CSS, CorelDRAW XML | Swatch/design handoff; keep Clarus JSON or the complete job for source provenance. CorelDRAW XML was added in RC34.8. |
+| QuarkXPress XTG (Beta) | Added in RC34.9 to My Palettes and Colour Reduction; complete reduction jobs include `palette.xtg`. Named RGB process swatches do not contain the full source-to-reference records or an embedded ICC profile. |
+| QuarkXPress ZIP · XTG + Source JSON | Added in RC34.10 to My Palettes: `palette.xtg`, `palette.clarus.json`, SHA-256 manifest and DE/EN instructions together. Extract and import the JSON to restore recorded sources. QuarkXPress does not automatically attach the companion JSON. |
+
+The palette ZIP contains recorded samples and metadata, not original image or
+ICC bytes; missing source records are reported, never reconstructed. For Colour
+Reduction, keep the complete job ZIP with the source image, frozen pixels and
+assignments. Its individual palette JSON files do not retain full job provenance.
+See the [RC34.10 source-ZIP guide](https://github.com/HelabHLC/atlas-clarus-connect/blob/v0.2.0-rc34.10-quarkxpress-source-zip/releases/rc34.10/README.md).
+
+**Native QuarkXPress import remains NOT_TESTED.** Import XTG into a text box with
+Interpret XPress Tags enabled and set sRGB IEC61966-2.1 for RGB solid colours.
+Automated export checks and the live XTG download recorded in PR #107 do not
+establish native application or physical-print acceptance.
+
+Parallel 4C, ECG and FOGRA58 / TextileRGB preparation keeps separate output-profile
+contexts. Available print exports include JSON, readable HTML reports,
+profile-bound reference PDFs and B/A preview PNG with metadata JSON; see the
+[RC34.7 release](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/v0.2.0-rc34.7-textile-conversion).
 Software checks, visual acceptance, physical measurements and production approval
 are separate evidence levels. Local browser storage is not a backup.
+
+### Release history
+
+- **6 October 2026:** the previous overview recorded Browser Bundle
+  **RC28** and WordPress **0.1.15-beta8**. The
+  [dated handover inventory](docs/FREIEFARBE_BESTANDSUEBERSICHT_2026-10-06.md)
+  remains the historical record.
+- **31 October 2026:** [RC34.9 public-beta release](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/v0.2.0-rc34.9-quarkxpress).
+  [PR #107](https://github.com/HelabHLC/atlas-clarus-connect/pull/107) records
+  IONOS activation of **RC34.9 / WordPress 0.1.18-beta1.1**, live XTG download
+  verification and **RC34.8 retained as the rollback runtime at that time**.
+  The release also provides the full **0.1.18-beta1** installer. These packages
+  and evidence remain available; this is not a statement of today's rollback slot.
+- **1 November 2026:** [RC34.10](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/v0.2.0-rc34.10-quarkxpress-source-zip)
+  added the combined source ZIP (WordPress **0.1.19-beta1** full /
+  **0.1.19-beta1.1** small); [RC34.11](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/v0.2.0-rc34.11-colour-origin)
+  added colour-origin metadata. RC34.11 is the latest published and observed
+  public version in this check. See [evidence and link verification](docs/BROWSER_EDITION_STATUS_2026-11-01.md).
+
+### Development baseline on `main`
+
+At reviewed commit [`f8c9c8b8`](https://github.com/HelabHLC/atlas-clarus-connect/commit/f8c9c8b8867effbed77516090717bf6033f1b32d),
+`main` still contains the **RC28** source builder and
+**WordPress 0.1.15-beta8**, with the older **RC20** checked-in `dist/`.
+Running `python3 browser-bundle/build_bundle.py` there builds that baseline,
+not the public RC34.11 release. See the [source-build README](browser-bundle/README.md),
+[RC28 candidate manifest](browser-bundle/manifest-rc28.json) and
+[WordPress source](wordpress-browser-edition/atlas-clarus-browser-edition.php).
+Newer public packages are identified by their version-specific release tags;
+this documentation correction does not merge the stacked release branches.
+
+The existing moving [browser-bundle-current release](https://github.com/HelabHLC/atlas-clarus-connect/releases/tag/browser-bundle-current),
+[ZIP](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/browser-bundle-current/ATLAS_Clarus_Browser_Bundle_current.zip)
+and [checksum](https://github.com/HelabHLC/atlas-clarus-connect/releases/download/browser-bundle-current/ATLAS_Clarus_Browser_Bundle_current.zip.sha256)
+remain valid links. On 1 November they still identify the **6 October RC28 build**
+from commit `60bf765e771c3e6493c88a02a046237c9ba69db9`, not the current public
+Browser Edition. Preserve the exact source commit and checksum for handover.
 
 ## Verified reference baseline
 
@@ -97,3 +174,4 @@ Wheel application directly. See [source provenance](colour-identity-wheel/SOURCE
 - [Colour Identity Wheel](https://atlas-clarus-reference-wheel.arbe-lambda-star.chatgpt.site/)
 - [Colour ID](https://arbe-lambda-star.com/atlas-clarus-colour-id/)
 - [Mission](https://arbe-lambda-star.com/our-mission/)
+
