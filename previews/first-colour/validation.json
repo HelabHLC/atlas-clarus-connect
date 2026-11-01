@@ -1,0 +1,118 @@
+{
+  "recorded_date": "2026-11-01",
+  "scope": "LOCAL_PREVIEW_ONLY",
+  "server_deployed": false,
+  "results": {
+    "package": {
+      "version": "0.2.0-rc34.11-first-colour-preview.1",
+      "sha256": "5e39a602b90bdc9eed7e4f956b416d5fb804c765a78f2c1855dad76efd080513",
+      "zip": "ATLAS_Clarus_Meine_erste_Farbe_Test.zip",
+      "base_sha256": "6158babb2a0271b71658c989c79f08ad690c5b782b2c0565e33c849a6c0d6bfb",
+      "inherited_files_unchanged": 275,
+      "changed": [
+        "BUNDLE_MANIFEST.json",
+        "SHA256SUMS.txt",
+        "assets/app.js",
+        "index.html"
+      ],
+      "added": [
+        "assets/first-colour.css",
+        "assets/first-colour.js",
+        "robots.txt"
+      ],
+      "production_deployment": false
+    },
+    "guided_acceptance": {
+      "status": "PASS",
+      "browser": "139.0.7258.5",
+      "checks": 14,
+      "passes": [
+        "simple default entry and disabled empty download",
+        "actual image selection and Clarus JSON download",
+        "source/reference/metadata identical to published RC34.11",
+        "fresh-context import and lossless multiple-source re-export",
+        "tampered import rejected without replacing valid selection",
+        "missing source remains explicit, never reconstructed",
+        "all-tools round-trip restores original Picker and camera entry",
+        "keyboard selects exact original coordinates",
+        "transparent selection cannot export a stale colour",
+        "invalid image clears the guided export",
+        "continue to palette preserves all recorded sources",
+        "print action opens existing print workspace",
+        "390px mobile layout and download",
+        "no page errors or HTTP requests during local workflow"
+      ],
+      "physical_device_testing": "NOT_TESTED",
+      "usability_study": "NOT_RUN"
+    },
+    "master_and_exports": {
+      "master_rows": 13283,
+      "batches": 52,
+      "all_rgb8_channel_values": 256,
+      "invalid_palettes_rejected": 17,
+      "corrupt_files_rejected": 8,
+      "quark_documented_example": "PASS",
+      "utf8_and_text_escaping": "PASS",
+      "master_unchanged": true,
+      "offline_script_syntax_count": 47,
+      "native_quarkxpress_import": "NOT_TESTED"
+    },
+    "origin_regression": {
+      "status": "PASS",
+      "browser": "139.0.7258.5",
+      "source_images": 8,
+      "baseline_rgb_reference_equivalence": true,
+      "palette_json_roundtrip": true,
+      "source_zip_byte_identical_roundtrip": true,
+      "reload": true,
+      "tamper_rejected": true,
+      "legacy_not_inspected": true,
+      "mobile_panel_no_overflow": true,
+      "overlapping_loads": true,
+      "page_errors": []
+    },
+    "source_zip_regression": {
+      "status": "PASS",
+      "bundle_version": "0.2.0-rc34.11-first-colour-preview.1",
+      "browser": "139.0.7258.5",
+      "actual_picker_to_zip_download": "PASS",
+      "json_import_in_fresh_context": "PASS",
+      "whole_zip_roundtrip": "BYTE_IDENTICAL",
+      "standalone_xtg_and_json_equivalent": true,
+      "empty_palette_blocked": true,
+      "missing_sources_explicit": true,
+      "edge_cases": {
+        "invalid_source_rejected": true,
+        "invalid_address_rejected": true,
+        "invalid_master_rejected": true,
+        "too_many_sources_rejected": true,
+        "too_many_references_rejected": true,
+        "all_4096_sources_retained": true,
+        "partial_source_count": 2,
+        "partial_missing_references": 1,
+        "snapshot_sources": [
+          [
+            61,
+            123,
+            25
+          ],
+          [
+            60,
+            123,
+            25
+          ]
+        ],
+        "snapshot_reference_rgb": [
+          55,
+          121,
+          26
+        ]
+      },
+      "bundle_files_checked_before_and_after": 281,
+      "sample_zip_sha256": "08fe570e9ab96cbe1c618b369e9eb0b64c5f3896774b2b10904a08d35b58d0e6",
+      "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+      "page_errors": [],
+      "native_quarkxpress_import": "NOT_TESTED"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+<section id="start" class="view fc" lang="de" aria-labelledby="fc-title">
+  <div class="fc-intro"><p class="fc-kicker">ATLAS CLARUS · TESTVORSCHAU</p><h1 id="fc-title">Meine erste Farbe</h1><p>Eine Farbe finden. Ihre Herkunft behalten.</p></div>
+  <ol class="fc-steps" aria-label="Deine drei Schritte"><li id="fc-step-1" aria-current="step"><span>1</span> Bild öffnen</li><li id="fc-step-2"><span>2</span> Farbe auswählen</li><li id="fc-step-3"><span>3</span> Farbe sichern</li></ol>
+  <div class="fc-grid">
+    <div class="fc-image-card">
+      <div class="fc-image-heading"><h2>Dein Bild</h2><label class="fc-upload" id="fc-upload-slot">Bild auswählen</label></div>
+      <p id="fc-image-name">PNG, JPEG, WebP oder GIF · Verarbeitung in deinem Browser.</p>
+      <div id="fc-empty"><span class="fc-empty-mark" aria-hidden="true">+</span><p>Öffne ein Bild, dessen Farben du entdecken möchtest.</p><small>Dein Bild wird für diese Auswahl nicht hochgeladen.</small></div>
+      <div id="fc-stage-slot" hidden></div>
+      <p id="fc-picker-hint" hidden>Klicke oder tippe auf eine Farbe. Die Lupe hilft bei der Auswahl.<br><small>Mit Tastatur: Bild fokussieren, Pfeiltasten bewegen die Auswahl, Enter wählt die Mitte.</small></p>
+      <p id="fc-status" role="status" aria-live="polite">Starte mit „Bild auswählen“ oder öffne eine gesicherte Farbe.</p>
+    </div>
+    <div class="fc-result-card">
+      <h2>Deine Farbe und ihre Adresse</h2>
+      <p id="fc-awaiting">Nach deiner Auswahl siehst du hier beide Farben.</p>
+      <div id="fc-result" hidden>
+        <label id="fc-record-label" hidden>Gespeicherte Quelle<select id="fc-records"></select></label>
+        <div class="fc-swatches"><article><div id="fc-source-swatch" class="fc-swatch"></div><h3>Ausgewählte Farbe</h3><p id="fc-source-hex"></p><small id="fc-source-rgb"></small></article><article><div id="fc-reference-swatch" class="fc-swatch"></div><h3>ATLAS-Referenz</h3><p id="fc-reference-hex"></p><small id="fc-reference-rgb"></small></article></div>
+        <p class="fc-address" id="fc-address"></p>
+        <p id="fc-principle">Deine ausgewählte Farbe bleibt erhalten. Die ATLAS-Adresse ergänzt eine feste Referenz.</p>
+        <details><summary>Was bedeutet diese Adresse?</summary><p>H beschreibt den Farbton, L die Helligkeit und C die Buntheit der Referenz. Diese Adresse macht die Referenz wieder auffindbar. Die zugeordnete Referenz kann von deiner ausgewählten Bildfarbe abweichen.</p></details>
+        <details><summary>Herkunft ansehen</summary><div id="fc-origin"></div><p class="fc-fine">Die Auswahl verwendet die vom Browser gelesenen sRGB-Werte. Die Profilangaben dokumentieren die Datei; sie bestätigen keine korrekte Browserumrechnung oder Druckgenauigkeit.</p></details>
+      </div>
+      <div class="fc-save"><button id="fc-download" disabled>Farbe mit Herkunft herunterladen</button><p>Clarus-JSON-Datei mit Farbwerten, ATLAS-Adresse und aufgezeichneten Herkunftsangaben. <strong>Das Originalbild ist nicht enthalten.</strong> Bewahre es zusätzlich auf.</p><p id="fc-save-status" role="status" aria-live="polite"></p></div>
+    </div>
+  </div>
+  <div class="fc-reopen"><label class="fc-open-file">Gesicherte Farbe öffnen<input id="fc-import" type="file" accept=".json,application/json"></label><span>Eine zuvor heruntergeladene Clarus-JSON-Datei wieder ansehen.</span></div>
+  <details id="fc-next" class="fc-next" hidden><summary>Wie möchtest du weiterarbeiten?</summary><div class="fc-next-actions"><button id="fc-collect">Weitere Farben sammeln</button><button id="fc-design">In meinem Designprogramm verwenden</button><button id="fc-print">Für den Druck vorbereiten</button></div><p>Deine Auswahl wird mit Herkunft in eine eigene Palette übernommen. Die vollständigen Werkzeuge öffnen sich im bestehenden Arbeitsbereich.</p></details>
+  <footer class="fc-footer"><span>RGB-only · eine feste Referenz zu deiner Bildfarbe</span><a href="#credits">Quellen &amp; Lizenzen</a></footer>
+</section>
