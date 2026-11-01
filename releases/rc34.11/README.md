@@ -77,3 +77,14 @@ performed by its workflow. See `guide.html` for German/English instructions.
 
 Browser screenshots are internal QA only. No physical phone, Safari, native
 QuarkXPress or measured print acceptance is claimed.
+
+## Public release
+
+The owner requested Browser Edition and IONOS publication on 1 November 2026.
+`promote_release.py` accepts only the reviewed preview digest and the exact
+published RC34.10 WordPress package, updates release metadata and preserves
+the reviewed runtime code. `build_small_installer.py` emits a 16 KiB installer
+that downloads only the pinned official release URL. The release workflow
+checks both guarded installers, profile metadata and browser round trips
+before publishing. Installation alone does not switch the live runtime; the
+existing administrator ability performs the checked switch and retains rollback.

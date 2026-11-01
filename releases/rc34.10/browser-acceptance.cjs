@@ -9,7 +9,7 @@ const root = path.resolve(process.argv[2]);
 const out = path.resolve(process.argv[3] || 'source-zip-evidence');
 fs.mkdirSync(out, {recursive: true});
 const version = process.env.ATLAS_BUNDLE_VERSION || '0.2.0-rc34.10-quarkxpress-source-zip-preview';
-assert.ok(['0.2.0-rc34.10-quarkxpress-source-zip-preview', '0.2.0-rc34.10-quarkxpress-source-zip', '0.2.0-rc34.11-colour-origin-preview'].includes(version));
+assert.ok(['0.2.0-rc34.10-quarkxpress-source-zip-preview', '0.2.0-rc34.10-quarkxpress-source-zip', '0.2.0-rc34.11-colour-origin-preview', '0.2.0-rc34.11-colour-origin'].includes(version));
 const master = '8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4';
 const sources = [[61, 123, 25], [60, 123, 25]];
 const sha = b => createHash('sha256').update(b).digest('hex');
