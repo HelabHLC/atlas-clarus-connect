@@ -1,0 +1,6 @@
+.colour-origin{box-sizing:border-box;width:100%;max-width:100%;min-width:0;margin:12px 0;padding:12px 14px;border:1px solid #5b6978;border-radius:10px;background:#17202b;color:#f3f6fa;overflow-wrap:anywhere;text-align:left}
+.colour-origin>summary{font-weight:700;cursor:pointer;white-space:normal}
+.colour-origin dl{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;margin:14px 0}
+.colour-origin dt{font-weight:700;color:#c9daf0}.colour-origin dd{margin:0 0 10px;min-width:0;text-align:left}
+.colour-origin small,.colour-origin-note{font-size:.85rem;line-height:1.5;color:#ced7e3}
+.colour-origin code{display:block;font-size:.75rem;white-space:normal}
