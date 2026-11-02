@@ -8,9 +8,9 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 PREFIX = 'atlas-clarus-browser-bundle'
 BASE_SHA = '6158babb2a0271b71658c989c79f08ad690c5b782b2c0565e33c849a6c0d6bfb'
-VERSION = '0.2.0-rc34.11-first-colour-preview.1'
+VERSION = '0.2.0-rc34.11-first-colour-origin-preview.2'
 CHANGED = {'assets/app.js', 'index.html', 'BUNDLE_MANIFEST.json', 'SHA256SUMS.txt'}
-ADDED = {'assets/first-colour.js', 'assets/first-colour.css', 'robots.txt'}
+ADDED = {'assets/first-colour.js', 'assets/first-colour-origin.js', 'assets/first-colour.css', 'robots.txt'}
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
@@ -24,13 +24,14 @@ def patch_app(text):
     text = once(text, 'let hoverReturn=null,pickerReturn=false;', 'let hoverReturn=null,pickerReturn=false,firstColour=null;')
     text = once(text, "(location.hash||'#picker')", "(location.hash||'#start')")
     text = once(text, "    const previous=views.find", "    firstColour?.route(id);\n    const previous=views.find")
-    text = once(text, "$('#picker-result').innerHTML='<p>Unsupported image type.</p>';return", "$('#picker-result').innerHTML='<p>Unsupported image type.</p>';firstColour?.error('Dieses Bildformat wird nicht unterstützt. Wähle PNG, JPEG, WebP oder GIF.');return")
+    text = once(text, "$('#picker-result').innerHTML='<p>Unsupported image type.</p>';return", "$('#picker-result').innerHTML='<p>Unsupported image type.</p>';pickerLoadSequence++;firstColour?.error('Dieses Bildformat wird nicht unterstützt. Wähle PNG, JPEG, WebP oder GIF.');return")
     text = once(text, 'const sequence=++pickerLoadSequence,url=', 'firstColour?.loading();\n    const sequence=++pickerLoadSequence,url=')
-    text = once(text, "drawPickerImage();window.dispatchEvent(new Event('atlas-picker-image-loaded'));", "drawPickerImage();firstColour?.ready(pickerImageMeta);window.dispatchEvent(new Event('atlas-picker-image-loaded'));")
+    text = once(text, "drawPickerImage();window.dispatchEvent(new Event('atlas-picker-image-loaded'));", "drawPickerImage();firstColour?.ready(pickerImageMeta,file);window.dispatchEvent(new Event('atlas-picker-image-loaded'));")
     text = once(text, "if(sequence===pickerLoadSequence)$('#picker-result').innerHTML='<p>The image could not be decoded.</p>'", "if(sequence===pickerLoadSequence){$('#picker-result').innerHTML='<p>The image could not be decoded.</p>';firstColour?.error('Das Bild konnte nicht geöffnet werden. Versuche eine andere Datei.');}")
     text = once(text, "$('#picker-result').innerHTML='<p>No sufficiently opaque pixels were found in the selected area.</p>';return", "$('#picker-result').innerHTML='<p>No sufficiently opaque pixels were found in the selected area.</p>';firstColour?.noSample();return")
     text = once(text, 'createSourceAssignment(sample,point,pickerImageMeta,best,MASTER);', 'createSourceAssignment(sample,point,pickerImageMeta,best,MASTER);firstColour?.sample(best,assignment);')
     bridge = '''  firstColour=window.ATLAS_FIRST_COLOUR.init({colors,master:MASTER,download,
+    cancelImageLoad(){pickerLoadSequence++;},
     canvasPosition(x,y){
       if(!pickerDraw||!pickerImage)return null;
       const r=pickerCanvas.getBoundingClientRect(),px=pickerDraw.dx+(x+.5)*pickerDraw.scale,py=pickerDraw.dy+(y+.5)*pickerDraw.scale;
@@ -67,8 +68,8 @@ def package(base, output):
         archive.extractall(output)
     html=(root/'index.html').read_text()
     app=(root/'assets/app.js').read_text();patched=patch_app(app)
-    script=(HERE/'start.js').read_text();css=(HERE/'start.css').read_text()
-    html=once(html,app,script+'\n'+patched)
+    script=(HERE/'start.js').read_text();archive_script=(HERE/'origin-archive.js').read_text();css=(HERE/'start.css').read_text()
+    html=once(html,app,archive_script+'\n'+script+'\n'+patched)
     html=once(html,'    <section id="picker" class="view">',(HERE/'start.html').read_text()+'\n    <section id="picker" class="view">')
     html=once(html,'</head>\n<body>','<meta name="robots" content="noindex,nofollow"><style>'+css+'</style></head>\n<body>')
     html=once(html,'<nav id="primary-nav" aria-label="Primary navigation">','<a class="fc-tools" href="#picker">Alle Werkzeuge →</a><nav id="primary-nav" aria-label="Primary navigation"><a href="#start">Meine erste Farbe</a>')
@@ -77,12 +78,13 @@ def package(base, output):
     (root/'index.html').write_text(html)
     (root/'assets/app.js').write_text(patched)
     (root/'assets/first-colour.js').write_text(script)
+    (root/'assets/first-colour-origin.js').write_text(archive_script)
     (root/'assets/first-colour.css').write_text(css)
     (root/'robots.txt').write_text('User-agent: *\nDisallow: /\n')
     manifest=json.loads((root/'BUNDLE_MANIFEST.json').read_text())
     manifest.update(version=VERSION,status='FIRST_COLOUR_STAGING_PREVIEW',deployment_allowed=False,
                     owner_release_authorization='2026-11-01_SEPARATE_TEST_SERVER_REQUESTED',base_archive_sha256=BASE_SHA)
-    manifest['first_colour']={'default_route':'start','backup':'EXISTING_CLARUS_JSON_1_2','original_image_in_backup':False,
+    manifest['first_colour']={'default_route':'start','backup':'EXISTING_CLARUS_JSON_1_2','original_image_in_backup':False,'optional_origin_zip':'atlas-clarus-first-colour-origin/1.0','original_image_in_origin_zip':True,
                              'matching':'UNCHANGED_RGB_ONLY','production_deployment':False,'staging_target':'SEPARATE_IONOS_VPS_PENDING_ADDRESS'}
     (root/'BUNDLE_MANIFEST.json').write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+'\n')
     paths={p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()}
@@ -90,10 +92,10 @@ def package(base, output):
     assert changes==CHANGED-{'SHA256SUMS.txt'},changes
     assert paths-before.keys()==ADDED,paths-before.keys()
     (root/'SHA256SUMS.txt').write_text(''.join(digest((root/n).read_bytes())+'  '+n+'\n' for n in sorted(paths) if n!='SHA256SUMS.txt'))
-    target=output/'ATLAS_Clarus_Meine_erste_Farbe_Test.zip'
+    target=output/'ATLAS_Clarus_Meine_erste_Farbe_HerkunftsZIP_Test.zip'
     with zipfile.ZipFile(target,'w') as archive:
         for name in sorted(paths):
-            info=zipfile.ZipInfo(PREFIX+'/'+name,(2026,11,1,0,0,0));info.create_system=3;info.external_attr=0o100644<<16
+            info=zipfile.ZipInfo(PREFIX+'/'+name,(2026,11,2,0,0,0));info.create_system=3;info.external_attr=0o100644<<16
             archive.writestr(info,(root/name).read_bytes(),compress_type=zipfile.ZIP_DEFLATED,compresslevel=9)
     result={'version':VERSION,'sha256':digest(target.read_bytes()),'zip':target.name,
             'base_sha256':BASE_SHA,'inherited_files_unchanged':len(before)-len(CHANGED),

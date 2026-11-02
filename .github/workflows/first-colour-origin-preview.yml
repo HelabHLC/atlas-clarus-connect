@@ -1,0 +1,56 @@
+name: First colour original-file ZIP preview
+on:
+  push:
+    branches: [feat/first-colour-origin-archive-20261102]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Obtain pinned baselines and test tools
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir inputs
+          gh release download v0.2.0-rc34.11-colour-origin --pattern 'ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.11-colour-origin.zip' --dir inputs
+          gh release download v0.2.0-rc34.10-quarkxpress-source-zip --pattern 'ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.10-quarkxpress-source-zip.zip' --dir inputs
+          python -m pip install Pillow==12.0.0
+          npm install --prefix qa-runtime --ignore-scripts --no-audit --no-fund playwright@1.54.1
+          qa-runtime/node_modules/.bin/playwright install --with-deps chromium
+      - name: Build reproducibly and verify unchanged master
+        run: |
+          python previews/first-colour/package.py --base inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.11-colour-origin.zip --output-dir candidate
+          python previews/first-colour/package.py --base inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.11-colour-origin.zip --output-dir candidate-repeat
+          cmp candidate/ATLAS_Clarus_Meine_erste_Farbe_HerkunftsZIP_Test.zip candidate-repeat/ATLAS_Clarus_Meine_erste_Farbe_HerkunftsZIP_Test.zip
+          node releases/rc34.9/verify.cjs candidate/atlas-clarus-browser-bundle
+      - name: Test archive, JSON compatibility and inherited exports
+        env:
+          NODE_PATH: ${{ github.workspace }}/qa-runtime/node_modules
+        run: |
+          python -m zipfile -e inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.11-colour-origin.zip baseline3411
+          python -m zipfile -e inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.10-quarkxpress-source-zip.zip baseline3410
+          python releases/rc34.11/generate-fixtures.py fixtures
+          node previews/first-colour/archive-acceptance.cjs candidate/atlas-clarus-browser-bundle fixtures evidence/archive
+          python previews/first-colour/verify-archive.py fixtures evidence/archive
+          node previews/first-colour/browser-acceptance.cjs candidate/atlas-clarus-browser-bundle baseline3411/atlas-clarus-browser-bundle evidence/guided
+          node previews/first-colour/run-regression.cjs origin candidate/atlas-clarus-browser-bundle baseline3410/atlas-clarus-browser-bundle fixtures evidence/origin
+          node previews/first-colour/run-regression.cjs source-zip candidate/atlas-clarus-browser-bundle evidence/source-zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ATLAS-Clarus-First-Colour-Origin-ZIP-Preview
+          path: |
+            candidate/ATLAS_Clarus_Meine_erste_Farbe_HerkunftsZIP_Test.zip
+            candidate/ATLAS_Clarus_Meine_erste_Farbe_HerkunftsZIP_Test.zip.sha256
+            candidate/preview-info.json
+            evidence/
+          retention-days: 30

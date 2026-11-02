@@ -1,7 +1,7 @@
 (function(global){
   'use strict';
   global.ATLAS_FIRST_COLOUR={init(context){
-    const $=id=>document.getElementById(id),E=global.ATLAS_CLARUS_EXPORTS;
+    const $=id=>document.getElementById(id),E=global.ATLAS_CLARUS_EXPORTS,A=global.ATLAS_FIRST_COLOUR_ARCHIVE;
     const panel=$('start'),file=$('picker-file'),stage=$('picker-canvas').parentElement,canvas=$('picker-canvas');
     const fileHome=document.createComment('first-colour: original file input position');
     const stageHome=document.createComment('first-colour: original image stage position');
@@ -15,12 +15,18 @@
     const originalCanvas={tabindex:canvas.getAttribute('tabindex'),label:canvas.getAttribute('aria-label')};
     let documentData=null,records=[],references=[],recordIndex=0,imageMeta=null,imageReady=false,downloaded=false,generation=0;
     let cursor=null;
+    let originalFile=null,originalHash=null,zipBusy=false;
     const marker=document.createElement('span');marker.className='fc-key-position';marker.hidden=true;marker.setAttribute('aria-hidden','true');stage.append(marker);
     function text(id,value){$(id).textContent=value;}
     function status(message,error=false){text('fc-status',message);$('fc-status').dataset.error=String(error);}
     function saveStatus(message,error=false){text('fc-save-status',message);$('fc-save-status').dataset.error=String(error);}
     function step(n){for(let i=1;i<=3;i++){const el=$('fc-step-'+i);if(i===n)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current');}}
     function current(){const source=records[recordIndex]||null;return {source,reference:source?references.find(c=>c.id===source.atlas_row_id):references[0]};}
+    function zipControls(){
+      const eligible=!!documentData&&!!originalFile&&originalFile.size<=A.MAX_SOURCE&&!!originalHash&&records.length>0&&records.every(r=>r.image.sha256===originalHash);
+      $('fc-zip-download').disabled=!eligible||zipBusy;
+      text('fc-zip-note',zipBusy?'Das Herkunftspaket wird geprüft …':eligible?'Optional: Originalbild unverändert, Clarus JSON und SHA-256-Manifest gemeinsam sichern. Eingebettete ICC-Profile bleiben in der Bilddatei.':originalFile?.size>A.MAX_SOURCE?'Das Originalbild ist größer als 32 MiB. Der JSON-Download bleibt verfügbar.':'Für ein Herkunftspaket benötigst du eine Farbe aus dem hier geöffneten Originalbild oder ein vollständiges Herkunfts-ZIP. JSON allein enthält keine Bilddatei.');
+    }
     function setDocument(data){
       // The same parser as My Palettes validates every source/reference before mutation.
       const restored=E.parseClarus(data,context.colors,context.master);
@@ -35,6 +41,7 @@
     function render(){
       const available=!!documentData;
       $('fc-result').hidden=!available;$('fc-awaiting').hidden=available;$('fc-download').disabled=!available;$('fc-next').hidden=!available;
+      zipControls();
       if(!available)return;
       const {source,reference}=current();
       $('fc-source-swatch').style.background=source?source.source_hex:'';
@@ -59,11 +66,12 @@
       if(pos){marker.style.left=pos.percentX+'%';marker.style.top=pos.percentY+'%';}
     }
     const api={
-      loading(){clear();imageReady=false;imageMeta=null;$('fc-empty').hidden=false;$('fc-stage-slot').hidden=true;$('fc-picker-hint').hidden=true;status('Dein Bild wird geöffnet …');step(1);},
-      ready(meta){imageMeta=meta;imageReady=true;$('fc-empty').hidden=true;$('fc-stage-slot').hidden=false;$('fc-picker-hint').hidden=false;text('fc-image-name',`${meta.name} · ${meta.width} × ${meta.height} Pixel`);status('Wähle jetzt eine Farbe in deinem Bild.');step(2);},
-      error(message){clear();imageReady=false;imageMeta=null;$('fc-empty').hidden=false;$('fc-stage-slot').hidden=true;$('fc-picker-hint').hidden=true;status(message,true);step(1);},
+      loading(){originalFile=null;originalHash=null;clear();imageReady=false;imageMeta=null;$('fc-empty').hidden=false;$('fc-stage-slot').hidden=true;$('fc-picker-hint').hidden=true;status('Dein Bild wird geöffnet …');step(1);},
+      ready(meta,original){imageMeta=meta;imageReady=true;originalFile=original;originalHash=meta.sha256;zipControls();$('fc-empty').hidden=true;$('fc-stage-slot').hidden=false;$('fc-picker-hint').hidden=false;text('fc-image-name',`${meta.name} · ${meta.width} × ${meta.height} Pixel`);status('Wähle jetzt eine Farbe in deinem Bild.');step(2);},
+      error(message){originalFile=null;originalHash=null;clear();imageReady=false;imageMeta=null;$('fc-empty').hidden=false;$('fc-stage-slot').hidden=true;$('fc-picker-hint').hidden=true;status(message,true);step(1);},
       noSample(){clear();status('An dieser Stelle ist das Bild zu transparent. Wähle eine andere Stelle.',true);step(2);},
       sample(reference,source){
+        if(!imageReady)return;
         generation++;setDocument(E.clarus([reference],context.master,'Meine erste Farbe',[source]));
         cursor={x:source.sampling.centre[0],y:source.sampling.centre[1]};paintCursor();
         saveStatus('Noch nicht als Datei gesichert.');status('Farbe ausgewählt. Du kannst sie jetzt mit Herkunft herunterladen.');
@@ -93,16 +101,38 @@
         downloaded=true;saveStatus('Download gestartet. Prüfe deinen Downloadordner. Mit „Gesicherte Farbe öffnen“ kannst du die Datei wieder ansehen.');
       }catch(err){saveStatus('Download nicht gestartet: '+err.message,true);}
     };
+    $('fc-zip-download').onclick=async()=>{
+      if($('fc-zip-download').disabled)return;
+      const sequence=generation,snapshot=JSON.parse(JSON.stringify(documentData)),original=originalFile;
+      zipBusy=true;zipControls();
+      try{
+        const bytes=new Uint8Array(await original.arrayBuffer());
+        const zip=await A.pack(snapshot,{name:original.name,bytes},context);
+        // Never offer a previous selection as the backup of a newly opened one.
+        if(sequence!==generation)return;
+        context.download('ATLAS_Clarus_Herkunft.zip',zip,'application/zip',true);
+        downloaded=true;saveStatus('Herkunfts-ZIP-Download gestartet. Originaldatei, Farbwerte und Prüfsummen sind gemeinsam enthalten. Prüfe deinen Downloadordner.');
+      }catch(err){if(sequence===generation)saveStatus('Herkunfts-ZIP nicht erstellt: '+err.message,true);}
+      finally{zipBusy=false;zipControls();}
+    };
     $('fc-import').onchange=async event=>{
       const incoming=event.target.files?.[0];event.target.value='';if(!incoming)return;
       const sequence=++generation;
+      status('Datei wird geprüft …');
       try{
-        if(incoming.size>16*1024*1024)throw Error('Die Datei ist größer als 16 MiB. Öffne sie im vollständigen Arbeitsbereich.');
-        const data=JSON.parse(await incoming.text());if(sequence!==generation)return;
-        setDocument(data);downloaded=true;imageReady=false;imageMeta=null;cursor=null;marker.hidden=true;
+        const isZip=/\.zip$/i.test(incoming.name);
+        if(incoming.size>(isZip?A.MAX_ZIP:A.MAX_JSON))throw Error(isZip?'Das Herkunftspaket ist größer als 49 MiB.':'Die Datei ist größer als 16 MiB. Öffne sie im vollständigen Arbeitsbereich.');
+        const archive=isZip?await A.unpack(new Uint8Array(await incoming.arrayBuffer()),context):null;
+        const data=archive?archive.data:JSON.parse(await incoming.text());if(sequence!==generation)return;
+        // Validate before clearing the existing original or cancelling its load.
+        E.parseClarus(data,context.colors,context.master);
+        setDocument(data);context.cancelImageLoad();
+        originalFile=archive?new File([archive.original.bytes],archive.original.name,{type:archive.mime}):null;
+        originalHash=archive?.manifest.original.sha256||null;zipControls();
+        downloaded=true;imageReady=false;imageMeta=null;cursor=null;marker.hidden=true;
         $('fc-stage-slot').hidden=true;$('fc-picker-hint').hidden=true;$('fc-empty').hidden=false;
-        text('fc-image-name','Das Originalbild ist in dieser Farbdatei nicht enthalten.');
-        status('Gesicherte Farbe geöffnet. Alle enthaltenen Quellen und Referenzen bleiben beim erneuten Download erhalten.');saveStatus('Datei geprüft und geöffnet.');
+        text('fc-image-name',archive?`Originaldatei enthalten und SHA-256-geprüft: ${archive.original.name}. Für eine neue Farbauswahl das Originalbild erneut auswählen.`:'Das Originalbild ist in dieser Farbdatei nicht enthalten.');
+        status(archive?'Herkunftspaket geöffnet. Originaldatei und alle Prüfsummen geprüft; gespeicherte Source Colour und ATLAS-Referenz unverändert übernommen.':'Gesicherte Farbe geöffnet. Alle enthaltenen Quellen und Referenzen bleiben beim erneuten Download erhalten.');saveStatus('Datei geprüft und geöffnet.');
       }catch(err){if(sequence===generation)status('Datei konnte nicht geöffnet werden: '+err.message,true);}
     };
     async function continueWork(target){

@@ -1,12 +1,15 @@
 {
-  "recorded_date": "2026-11-01",
+  "recorded_date": "2026-11-02",
   "scope": "LOCAL_PREVIEW_ONLY",
+  "source_base_commit": "142dd9389599f28583a9bb6d41b1244cc563ef01",
   "server_deployed": false,
+  "production_changed": false,
+  "reproducible_build_byte_identical": true,
   "results": {
     "package": {
-      "version": "0.2.0-rc34.11-first-colour-preview.1",
-      "sha256": "5e39a602b90bdc9eed7e4f956b416d5fb804c765a78f2c1855dad76efd080513",
-      "zip": "ATLAS_Clarus_Meine_erste_Farbe_Test.zip",
+      "version": "0.2.0-rc34.11-first-colour-origin-preview.2",
+      "sha256": "232e37a938243c16067490296f955741c67f513fa3b218708d370991e925476b",
+      "zip": "ATLAS_Clarus_Meine_erste_Farbe_HerkunftsZIP_Test.zip",
       "base_sha256": "6158babb2a0271b71658c989c79f08ad690c5b782b2c0565e33c849a6c0d6bfb",
       "inherited_files_unchanged": 275,
       "changed": [
@@ -16,11 +19,127 @@
         "index.html"
       ],
       "added": [
+        "assets/first-colour-origin.js",
         "assets/first-colour.css",
         "assets/first-colour.js",
         "robots.txt"
       ],
       "production_deployment": false
+    },
+    "archive_acceptance": {
+      "status": "PASS",
+      "browser": "139.0.7258.5",
+      "checks": 10,
+      "passes": [
+        "8 PNG/JPEG/WebP/GIF fixtures: original bytes and embedded ICC bytes retained, independent Pillow ICC oracle, actual JSON/ZIP downloads and fresh-context byte-identical re-export",
+        "16 corrupt/unsafe archives rejected atomically; valid original and JSON remain unchanged",
+        "standalone JSON remains usable and never inherits an unrelated previous original",
+        "bounded ZIP and original-file sizes",
+        "all same-file sources retained; mixed or missing originals explicitly rejected",
+        "selection change during async export cancels stale ZIP without marking new colour as saved",
+        "overlapping import cannot overwrite a newer image selection",
+        "read/hash failure recovers controls; invalid image cannot export a stale original",
+        "mobile layout and real ZIP download",
+        "no page errors or HTTP requests during local workflow"
+      ],
+      "samples": [
+        {
+          "name": "declared-srgb.png",
+          "original_sha256": "64b04f57ffe439a32382880c7fcc35e5ebafa17eaf2526c58029af5675c041ed",
+          "icc_sha256": null,
+          "zip_sha256": "2ff588580d6aa50cbeb42539653dbd0b721dc87b44a5d9cdda5db48fb0545ecf"
+        },
+        {
+          "name": "uninspected.gif",
+          "original_sha256": "64ecd43b70a4cd4b2af96f509b019ba0740f62f326d8494f2fdc10bc9ac6e418",
+          "icc_sha256": null,
+          "zip_sha256": "224925be2ecb6fb1515af5931f17c401d85dbdbbc8b4e09235d703a1814309ae"
+        },
+        {
+          "name": "profiled.jpg",
+          "original_sha256": "25f084fdde6a13f2f399ae881ebbaa5cbf5a59312f94366930f7c60796627dcb",
+          "icc_sha256": "a6ec3f7b64f360408fbf3ce05d63d2a4d11ce666885494b59862ce010a0ae032",
+          "zip_sha256": "2ed3ede8317f717d4967ce7cbe2cb3c224eb010e0a47767c907f3cf8de1a243c"
+        },
+        {
+          "name": "untagged.jpg",
+          "original_sha256": "c661b4b5eb2779a435622617b379f9a8418d38e813ee10fee8cc0570872b27a4",
+          "icc_sha256": null,
+          "zip_sha256": "0157b13262cd3ca516e57a713679033615812f513feed1c7b3277f21573dca1f"
+        },
+        {
+          "name": "untagged.png",
+          "original_sha256": "86ebdf8ad614b33ab53341b6d653f99fe5b755c26762aee05a7fa66d3394b794",
+          "icc_sha256": null,
+          "zip_sha256": "86f7278380bfb07d1fe2d39691525bf27a1642599b3f2350d9909d23f4f5b94b"
+        },
+        {
+          "name": "profiled.png",
+          "original_sha256": "773cebf7bd23d6aaedef110629948a84b51cd4cb7748fd85b5c337df36ed8026",
+          "icc_sha256": "a6ec3f7b64f360408fbf3ce05d63d2a4d11ce666885494b59862ce010a0ae032",
+          "zip_sha256": "8d3a364c757708b545b2201df2ba4959096a574e76197b524ad3241a56846be6"
+        },
+        {
+          "name": "profiled.webp",
+          "original_sha256": "3fa3aafa8d53b2fd6339e208248cfbfbdbf4e594142bf1bc8f0ffefa186ce33d",
+          "icc_sha256": "a6ec3f7b64f360408fbf3ce05d63d2a4d11ce666885494b59862ce010a0ae032",
+          "zip_sha256": "5cce804684524900e30b1e2461b73d7601acd4e50992f7523cb236931d12ecfe"
+        },
+        {
+          "name": "untagged.webp",
+          "original_sha256": "f13da4a3cb6614587e78c6433c6de294a740561f6b306c065e43bf8d8882795e",
+          "icc_sha256": null,
+          "zip_sha256": "4a93c713f90ac316e7caf74efc68f2f3b2643361d00aa49cbf0358baa03725a2"
+        }
+      ],
+      "server_deployed": false,
+      "physical_device_testing": "NOT_TESTED"
+    },
+    "independent_original_and_icc": {
+      "status": "PASS",
+      "independent_reader": "Python zipfile + hashlib + Pillow",
+      "images": [
+        {
+          "image": "declared-srgb.png",
+          "original_byte_identical": true,
+          "embedded_icc_bytes": 0
+        },
+        {
+          "image": "uninspected.gif",
+          "original_byte_identical": true,
+          "embedded_icc_bytes": 0
+        },
+        {
+          "image": "profiled.jpg",
+          "original_byte_identical": true,
+          "embedded_icc_bytes": 588
+        },
+        {
+          "image": "untagged.jpg",
+          "original_byte_identical": true,
+          "embedded_icc_bytes": 0
+        },
+        {
+          "image": "untagged.png",
+          "original_byte_identical": true,
+          "embedded_icc_bytes": 0
+        },
+        {
+          "image": "profiled.png",
+          "original_byte_identical": true,
+          "embedded_icc_bytes": 588
+        },
+        {
+          "image": "profiled.webp",
+          "original_byte_identical": true,
+          "embedded_icc_bytes": 588
+        },
+        {
+          "image": "untagged.webp",
+          "original_byte_identical": true,
+          "embedded_icc_bytes": 0
+        }
+      ]
     },
     "guided_acceptance": {
       "status": "PASS",
@@ -73,7 +192,7 @@
     },
     "source_zip_regression": {
       "status": "PASS",
-      "bundle_version": "0.2.0-rc34.11-first-colour-preview.1",
+      "bundle_version": "0.2.0-rc34.11-first-colour-origin-preview.2",
       "browser": "139.0.7258.5",
       "actual_picker_to_zip_download": "PASS",
       "json_import_in_fresh_context": "PASS",
@@ -108,7 +227,7 @@
           26
         ]
       },
-      "bundle_files_checked_before_and_after": 281,
+      "bundle_files_checked_before_and_after": 282,
       "sample_zip_sha256": "08fe570e9ab96cbe1c618b369e9eb0b64c5f3896774b2b10904a08d35b58d0e6",
       "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
       "page_errors": [],

@@ -21,10 +21,10 @@
         <details><summary>Was bedeutet diese Adresse?</summary><p>H beschreibt den Farbton, L die Helligkeit und C die Buntheit der Referenz. Diese Adresse macht die Referenz wieder auffindbar. Die zugeordnete Referenz kann von deiner ausgewählten Bildfarbe abweichen.</p></details>
         <details><summary>Herkunft ansehen</summary><div id="fc-origin"></div><p class="fc-fine">Die Auswahl verwendet die vom Browser gelesenen sRGB-Werte. Die Profilangaben dokumentieren die Datei; sie bestätigen keine korrekte Browserumrechnung oder Druckgenauigkeit.</p></details>
       </div>
-      <div class="fc-save"><button id="fc-download" disabled>Farbe mit Herkunft herunterladen</button><p>Clarus-JSON-Datei mit Farbwerten, ATLAS-Adresse und aufgezeichneten Herkunftsangaben. <strong>Das Originalbild ist nicht enthalten.</strong> Bewahre es zusätzlich auf.</p><p id="fc-save-status" role="status" aria-live="polite"></p></div>
+      <div class="fc-save"><button id="fc-download" disabled>Farbe mit Herkunft herunterladen</button><p>Clarus-JSON-Datei mit Farbwerten, ATLAS-Adresse und aufgezeichneten Herkunftsangaben. <strong>Das Originalbild ist nicht enthalten.</strong> Bewahre es zusätzlich auf.</p><button id="fc-zip-download" disabled>Optional: Originalbild + Farbe als ZIP sichern</button><p id="fc-zip-note"></p><p id="fc-save-status" role="status" aria-live="polite"></p></div>
     </div>
   </div>
-  <div class="fc-reopen"><label class="fc-open-file">Gesicherte Farbe öffnen<input id="fc-import" type="file" accept=".json,application/json"></label><span>Eine zuvor heruntergeladene Clarus-JSON-Datei wieder ansehen.</span></div>
+  <div class="fc-reopen"><label class="fc-open-file">Gesicherte Farbe öffnen<input id="fc-import" type="file" accept=".json,.zip,application/json,application/zip"></label><span>Eine Clarus-JSON-Datei oder ein Herkunfts-ZIP wieder öffnen.</span></div>
   <details id="fc-next" class="fc-next" hidden><summary>Wie möchtest du weiterarbeiten?</summary><div class="fc-next-actions"><button id="fc-collect">Weitere Farben sammeln</button><button id="fc-design">In meinem Designprogramm verwenden</button><button id="fc-print">Für den Druck vorbereiten</button></div><p>Deine Auswahl wird mit Herkunft in eine eigene Palette übernommen. Die vollständigen Werkzeuge öffnen sich im bestehenden Arbeitsbereich.</p></details>
   <footer class="fc-footer"><span>RGB-only · eine feste Referenz zu deiner Bildfarbe</span><a href="#credits">Quellen &amp; Lizenzen</a></footer>
 </section>
