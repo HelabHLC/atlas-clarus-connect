@@ -11,9 +11,9 @@ if(kind==='origin'){
  once("pathToFileURL(path.join(root,'index.html')).href", "pathToFileURL(path.join(root,'index.html')).href+'#picker'");
 }else{
  once("pathToFileURL(path.join(root, 'index.html')).href", "pathToFileURL(path.join(root, 'index.html')).href+'#picker'");
- once("'0.2.0-rc34.11-colour-origin'].includes(version)","'0.2.0-rc34.11-colour-origin', '0.2.0-rc34.11-first-colour-preview.1'].includes(version)");
+ once("'0.2.0-rc34.11-colour-origin'].includes(version)","'0.2.0-rc34.11-colour-origin', '0.2.0-rc34.11-first-colour-origin-preview.2'].includes(version)");
  once("assert.equal(manifest.deployment_allowed, !version.endsWith('-preview'));",'assert.equal(manifest.deployment_allowed, false);');
- process.env.ATLAS_BUNDLE_VERSION='0.2.0-rc34.11-first-colour-preview.1';
+ process.env.ATLAS_BUNDLE_VERSION='0.2.0-rc34.11-first-colour-origin-preview.2';
 }
 const runner=new Module(file,module);runner.filename=file;runner.paths=Module._nodeModulePaths(path.dirname(file));
 process.argv=[process.argv[0],file,...args];runner._compile(source,file);
