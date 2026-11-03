@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "checks": [
+    "Frozen full-master count",
+    "Manual sRGB matching and source/reference separation",
+    "source: real ICC roundtrip, exact output16, deterministic ZIP, profile bytes, ASE and import invalidation",
+    "reference: real ICC roundtrip, exact output16, deterministic ZIP, profile bytes, ASE and import invalidation",
+    "Calculation does not alter original inputs",
+    "Wrong path and malformed profiles rejected",
+    "Mismatched references and palette size limits rejected",
+    "Eight PNG/JPEG/WebP/GIF originals and three embedded ICC profiles preserved byte-for-byte; multiple sources and deterministic reopen; absent/wrong original blocked",
+    "Four rendering intents and two BPC settings exercised; return transform fixed and reported"
+  ],
+  "profile_sha256": "8472fa1493a024b800b67dee9424835ec0c41ab79490200ae8ec4a689fd1b9a9",
+  "physical_measurement": "NOT_PERFORMED"
+}

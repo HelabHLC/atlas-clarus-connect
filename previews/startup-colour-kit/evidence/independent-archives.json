@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "files": [
+    {
+      "image": "untagged.jpg",
+      "original_bytes_identical": true,
+      "icc_sha256": null
+    },
+    {
+      "image": "declared-srgb.png",
+      "original_bytes_identical": true,
+      "icc_sha256": null
+    },
+    {
+      "image": "profiled.webp",
+      "original_bytes_identical": true,
+      "icc_sha256": "a6ec3f7b64f360408fbf3ce05d63d2a4d11ce666885494b59862ce010a0ae032"
+    },
+    {
+      "image": "untagged.webp",
+      "original_bytes_identical": true,
+      "icc_sha256": null
+    },
+    {
+      "image": "profiled.png",
+      "original_bytes_identical": true,
+      "icc_sha256": "a6ec3f7b64f360408fbf3ce05d63d2a4d11ce666885494b59862ce010a0ae032"
+    },
+    {
+      "image": "uninspected.gif",
+      "original_bytes_identical": true,
+      "icc_sha256": null
+    },
+    {
+      "image": "profiled.jpg",
+      "original_bytes_identical": true,
+      "icc_sha256": "a6ec3f7b64f360408fbf3ce05d63d2a4d11ce666885494b59862ce010a0ae032"
+    },
+    {
+      "image": "untagged.png",
+      "original_bytes_identical": true,
+      "icc_sha256": null
+    }
+  ]
+}
