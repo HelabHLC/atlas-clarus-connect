@@ -1,0 +1,258 @@
+{
+  "status": "PASS",
+  "oracle": "native liblcms2 via ctypes",
+  "comparisons": [
+    {
+      "basis": "source",
+      "input": [
+        234,
+        99,
+        37
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        2192,
+        51205,
+        65535,
+        187
+      ],
+      "native_preview_rgb": [
+        233,
+        101,
+        56
+      ]
+    },
+    {
+      "basis": "source",
+      "input": [
+        24,
+        74,
+        61
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        63863,
+        29601,
+        53523,
+        37186
+      ],
+      "native_preview_rgb": [
+        28,
+        74,
+        61
+      ]
+    },
+    {
+      "basis": "source",
+      "input": [
+        245,
+        241,
+        222
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        1888,
+        2086,
+        8802,
+        0
+      ],
+      "native_preview_rgb": [
+        246,
+        240,
+        222
+      ]
+    },
+    {
+      "basis": "source",
+      "input": [
+        0,
+        255,
+        0
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        42955,
+        0,
+        65535,
+        0
+      ],
+      "native_preview_rgb": [
+        103,
+        189,
+        81
+      ]
+    },
+    {
+      "basis": "source",
+      "input": [
+        0,
+        0,
+        0
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        48893,
+        44557,
+        42822,
+        59013
+      ],
+      "native_preview_rgb": [
+        41,
+        41,
+        41
+      ]
+    },
+    {
+      "basis": "source",
+      "input": [
+        255,
+        255,
+        255
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "native_preview_rgb": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "basis": "reference",
+      "input": [
+        236,
+        101,
+        33
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        1532,
+        50396,
+        65535,
+        109
+      ],
+      "native_preview_rgb": [
+        235,
+        104,
+        55
+      ]
+    },
+    {
+      "basis": "reference",
+      "input": [
+        21,
+        80,
+        60
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        64421,
+        27358,
+        59421,
+        33522
+      ],
+      "native_preview_rgb": [
+        24,
+        80,
+        60
+      ]
+    },
+    {
+      "basis": "reference",
+      "input": [
+        244,
+        240,
+        221
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        2125,
+        2219,
+        9156,
+        0
+      ],
+      "native_preview_rgb": [
+        245,
+        240,
+        221
+      ]
+    },
+    {
+      "basis": "reference",
+      "input": [
+        0,
+        200,
+        0
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        50654,
+        0,
+        65535,
+        0
+      ],
+      "native_preview_rgb": [
+        60,
+        181,
+        85
+      ]
+    },
+    {
+      "basis": "reference",
+      "input": [
+        0,
+        21,
+        11
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        50244,
+        40606,
+        45481,
+        56976
+      ],
+      "native_preview_rgb": [
+        41,
+        45,
+        43
+      ]
+    },
+    {
+      "basis": "reference",
+      "input": [
+        246,
+        238,
+        248
+      ],
+      "device_equal": true,
+      "preview_equal": true,
+      "native_device16": [
+        1172,
+        4351,
+        0,
+        0
+      ],
+      "native_preview_rgb": [
+        247,
+        237,
+        245
+      ]
+    }
+  ]
+}
