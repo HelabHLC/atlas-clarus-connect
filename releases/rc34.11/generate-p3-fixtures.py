@@ -166,10 +166,15 @@ def main(out):
         h = open_profile(buf, len(embedded)) if embedded else s
         actual = [v / (2**bits-1) for v in read_codes]
         expected = conversion(h, s, actual, byte=True)
+        highbyte = [v >> 8 for v in codes] if bits == 16 else codes
+        rounded8 = [math.floor(v * 255 + .5) for v in actual]
         fixtures[name] = dict(purpose=purpose, bits=bits, encoded_rgb=codes, profile=profile,
             file_sha256=sha(data), icc_sha256=sha(embedded) if embedded else None,
             icc_bytes=len(embedded) if embedded else None,
             expected_srgb8=expected, expected_srgb_float=conversion(h, s, actual),
+            diagnostic_pretransform_highbyte_rgb8=highbyte,
+            diagnostic_highbyte_then_icc=conversion(h, s, [v/255 for v in highbyte], byte=True),
+            diagnostic_round8_then_icc=conversion(h, s, [v/255 for v in rounded8], byte=True),
             lab_d50=conversion(h, lab, actual, lab=True),
             untagged_oracle_assumption='sRGB for control only' if not profile else None)
         if embedded:

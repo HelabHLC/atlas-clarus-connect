@@ -23,7 +23,7 @@ const result={status:'RUNNING',engine,playwright:require('playwright/package.jso
   bundle_index_sha256:hash(fs.readFileSync(path.join(bundle,'index.html'))),
   master_sha256:master.master_sha256,master_data_file_sha256:hash(dataBytes),master_rows:master.colors.length,
   oracle_sha256:hash(fs.readFileSync(path.join(fixtures,'oracle-p3.json'))),lcms_version:oracle.lcms_version,
-  tolerance:oracle.rgb8_tolerance_per_channel,rows:[]};
+  tolerance:oracle.rgb8_tolerance_per_channel,rows:[],accuracy_failures:[]};
 (async()=>{
   const browser=await ({chromium,firefox,webkit}[engine]).launch({headless:true,
     ...(engine==='chromium'?{args:['--no-sandbox'],ignoreDefaultArgs:['--force-color-profile=srgb']}:{}),
@@ -67,11 +67,14 @@ const result={status:'RUNNING',engine,playwright:require('playwright/package.jso
       const winner=nearest(r.source_rgb),expectedWinner=nearest(expected.expected_srgb8);
       const row={file:name,encoded_rgb:expected.encoded_rgb,bits:expected.bits,
         expected_srgb8:expected.expected_srgb8,browser_srgb8:r.source_rgb,delta,
+        within_lcms_tolerance:delta.every(v=>Math.abs(v)<=oracle.rgb8_tolerance_per_channel),
+        diagnostic_highbyte_then_icc:expected.diagnostic_highbyte_then_icc,
+        diagnostic_round8_then_icc:expected.diagnostic_round8_then_icc,
         expected_reference:expectedWinner.reference,actual_reference:r.reference,
         actual_atlas_row_id:r.atlas_row_id,actual_distance_squared:r.distance_squared,
         metadata:r.image.colour_origin};
       result.rows.push(row);
-      assert.ok(delta.every(v=>Math.abs(v)<=oracle.rgb8_tolerance_per_channel),name+' vs independent LittleCMS');
+      if(!row.within_lcms_tolerance)result.accuracy_failures.push(name+' exceeds +/-1 RGB8 vs LittleCMS');
       assert.equal(r.reference,winner.reference);assert.equal(r.atlas_row_id,winner.id);
       assert.equal(r.distance_squared,winner.distance_squared);
       const meta=r.image.colour_origin;
@@ -86,10 +89,12 @@ const result={status:'RUNNING',engine,playwright:require('playwright/package.jso
       records.push(r);
     }
     const row=n=>result.rows.find(r=>r.file===n);
-    assert.deepEqual(row('in-srgb16.png').browser_srgb8,row('in-p3-16.png').browser_srgb8);
-    assert.equal(row('in-srgb16.png').actual_reference,row('in-p3-16.png').actual_reference);
+    result.in_gamut_pair_rgb_equal=JSON.stringify(row('in-srgb16.png').browser_srgb8)===JSON.stringify(row('in-p3-16.png').browser_srgb8);
+    result.in_gamut_pair_reference_equal=row('in-srgb16.png').actual_reference===row('in-p3-16.png').actual_reference;
+    if(!result.in_gamut_pair_rgb_equal)result.accuracy_failures.push('16-bit same-target pair captures different RGB8');
     const changed=row('in-p3-16.png').browser_srgb8.map((v,i)=>v-row('control-p3-codes-srgb16.png').browser_srgb8[i]);
-    assert.ok(Math.max(...changed.map(Math.abs))>=10,'P3 profile must change pixels, not just metadata');
+    result.profile_changes_pixels=Math.max(...changed.map(Math.abs))>=10;
+    if(!result.profile_changes_pixels)result.accuracy_failures.push('P3 profile does not measurably change pixels');
     assert.deepEqual(row('control-p3-codes-srgb16.png').browser_srgb8,row('control-p3-codes-untagged16.png').browser_srgb8);
     result.profile_transform_control_delta=changed;
     await page.locator('#palette-toggle').click();
@@ -128,12 +133,14 @@ const result={status:'RUNNING',engine,playwright:require('playwright/package.jso
     assert.ok(entries.every(e=>!(/\.(png|icc|jpe?g|webp)$/i.test(e.name))));
     assert.equal(hash(fs.readFileSync(path.join(bundle,'assets/atlas-data.js'))),result.master_data_file_sha256);
     assert.deepEqual(errors,[]);
-    Object.assign(result,{status:'PASS',source_records:records.length,json_and_zip_roundtrip_byte_identical:true,
+    Object.assign(result,{status:result.accuracy_failures.length?'COLOUR_ACCURACY_FAIL':'PASS',
+      metadata_matching_and_roundtrip_status:'PASS',source_records:records.length,json_and_zip_roundtrip_byte_identical:true,
       reload_preserves_source_records:true,original_input_files_unchanged:true,
       original_image_and_icc_bytes_in_palette_exports:false,
       original_files_recoverable_from_palette_exports:false,master_unchanged:true,
       browser_internal_transform:'NOT_OBSERVABLE',physical_print_proof:false,page_errors:errors});
     console.log(JSON.stringify(result,null,2));
+    if(result.accuracy_failures.length)process.exitCode=1; // report every sample/export, retain strict acceptance
   }catch(e){result.status='FAIL';result.failure=e.stack;throw e;}
   finally{fs.writeFileSync(path.join(out,'p3-browser-results.json'),JSON.stringify(result,null,2)+'\n');await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});
