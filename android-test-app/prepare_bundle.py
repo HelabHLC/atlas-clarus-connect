@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package the reviewed RC34.4 reference-library payload for Android beta.14.
+"""Package the reviewed RC34.4 reference-library payload for Android beta.15.
 
 The exact public pilot is rebuilt offline and pinned before adding the
 Android export and live-camera overlays. Existing releases, storage contracts and master remain frozen.
@@ -125,7 +125,7 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     # AAPT excludes source-control metadata. Omit this non-runtime file explicitly.
     (source / 'docs/process-libraries/.gitignore').unlink()
     (source / 'ANDROID_CANDIDATE.json').write_text(json.dumps({
-        'version_name': '0.4.0-beta.14', 'version_code': 14,
+        'version_name': '0.4.0-beta.15', 'version_code': 15,
         'application_id': 'com.atlasclarus.connect',
         'bundle_version': EXPECTED_BUNDLE_VERSION, 'bundle_zip_sha256': digest,
         'source_binding_commit': SOURCE_BINDING_COMMIT,
@@ -150,4 +150,4 @@ with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     if TARGET.exists():
         shutil.rmtree(TARGET)
     shutil.copytree(source, TARGET)
-    print(f'Android beta.14 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')
+    print(f'Android beta.15 assets: {EXPECTED_BUNDLE_VERSION} {digest}; source binding {SOURCE_BINDING_COMMIT}; Colour ID v5.3.3 DE/EN; 13,283 shared identities')

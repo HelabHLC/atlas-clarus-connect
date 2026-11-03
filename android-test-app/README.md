@@ -1,4 +1,52 @@
+# Device compatibility correction — beta.15
+
+Version 0.4.0-beta.15 / versionCode 15 preserves beta.14 camera behaviour and
+reference data. Google Play reported 437 previously supported device models
+excluded after the beta.14 upload. CAMERA permission can imply required rear
+camera and autofocus features; camera.any alone does not opt out of those filters.
+The manifest now explicitly marks camera, camera.any, camera.autofocus and
+camera.flash optional. Normal image/project workflows remain available without
+camera hardware. The source manifest regression guards these declarations.
+
+**Verified status, 3 November 2026:** beta.15 was reserved-key signed in
+[Actions run 39762489747](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/39762489747)
+at commit `e6417fd9a822789fce8347419de908e149ec8f16`. The identical AAB is already
+active in Google Play internal testing, available to internal testers since
+22 October 2026, 12:35 CEST. The Play upload certificate matches the reserved
+certificate. No new beta.15 signing run or upload is needed; code 15 is used and
+must not be assigned to another payload. Beta.14 is inactive.
+
+Play's version comparison shows 17,759 supported models for beta.14 and 18,199
+for beta.15 (net +440). A current supported-device export minus the same catalog
+filtered by `android.hardware.camera` identifies 440 model keys. This filtered
+set is not a direct beta.14 export. Exact restoration of the historical 437
+models and every affected variant remains unverified without their original
+list. The catalog shows zero manually/rule-excluded models.
+
+See [beta.15 verification and focused test plan](BETA15_VERIFICATION.md) for
+package hashes, Actions links, reproducible checks and the evidence limits.
+Internal availability is not public production approval or physical-device
+acceptance. The audit did not build, sign, upload, roll out or install an app.
+
+The user subsequently confirmed focused checks on a **moto g06** running the
+Play-installed **0.4.0-beta.15**: image import, live preview with changing values,
+fixed-image takeover, lamp/fix invalidation and camera reopening after returning
+to the app. See the [dated device log](DEVICE_TEST_LOG.md) for exact steps and
+limits. These user reports cover a subset of the full acceptance plan; camera-less
+use, permission denial/revocation and update/data retention remain untested.
+
+Before distribution, test camera-less/unsupported camera behaviour, permission
+denial/revocation, rear/front cameras, rotation, background/restore, torch and
+fixed PNG/selection handoff. Export projects before updating; never uninstall to
+bypass a certificate mismatch. Existing beta.14 notes below describe behaviour
+and historical preparation status, not the beta.15 release status.
+
+---
+
 # Live camera development candidate — beta.14
+
+Historical development notes below predate the signed beta.14/beta.15 builds;
+the verified beta.15 status above takes precedence for build and Play status.
 
 Beta.14 adds an app-owned live camera view to the existing beta.13 photo input.
 This candidate is local source, not a signed APK or a device-accepted release.
@@ -122,7 +170,7 @@ candidate and its outstanding acceptance checks above take precedence.
 
 # Android test app
 
-## Current preparation: 0.4.0-beta.11 / versionCode 11
+## Historical preparation: 0.4.0-beta.11 / versionCode 11
 
 Uses the exact RC34.4 payload deployed in the Browser Edition, SHA256
 0163cfd86adf51219bdc1eaf051ba0f656fca03a1fb8ae5ae8478ebcefbe976e.
@@ -140,7 +188,7 @@ VTracer/SVG experiments and standalone Mixing Atlas recipe search are not embedd
 
 ## Historical preparation notes
 
-## Current preparation: 0.4.0-beta.7 / versionCode 7
+## Historical preparation: 0.4.0-beta.7 / versionCode 7
 
 This candidate brings the reviewed **RC32.1 Colour Reference Card** into the
 existing Android app. Colour Handoff exports a ZIP containing a printable,
