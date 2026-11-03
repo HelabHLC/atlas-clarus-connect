@@ -13,6 +13,7 @@
     $('kit-export').disabled=busy||!state.doc.colours.length;$('kit-card').disabled=$('kit-json').disabled=busy||!state.doc.colours.length;
     $('kit-calculate').disabled=busy||!ready();$('kit-clear-profile').disabled=busy||!state.profile;
     $('kit-pixel').disabled=busy||!image;
+    window.ATLAS_PROFILE_LIBRARY?.refreshAll();
     $('kit-channels-label').hidden=state.doc.print.path!=='ECG';
     $('kit-path-note').textContent=state.doc.print.path==='TEXTILE_RGB'?'FOGRA58 ist ein textiler RGB-Austauschfarbraum. Lade die offizielle finale TextileRGB_FOGRA58.icc. Ein konkretes Drucker-/Tinten-/Materialprofil wird dadurch nicht ersetzt.':'Das Profil muss zum Druckverfahren, Druckerzustand und Material passen. Der Profilname allein bestätigt das nicht.';
     status('kit-save-status',state.doc.colours.length?`${state.doc.colours.length} Farbe(n) · ${state.result?'B/A-Vergleich berechnet':'Druckvorschau noch nicht berechnet'}${dirty?' · Änderungen noch nicht als ZIP gesichert.':''}`:'Noch keine Farbe ausgewählt.');
@@ -75,10 +76,26 @@
   function profileStatus(){status('kit-profile-status',state.profile?`${state.profile.name} · ${state.profile.info.device_space.trim()} · SHA-256 ${state.profile.info.sha256}`:'Noch kein Ausgabeprofil geladen.');}
   $('kit-path').onchange=e=>{state.doc.print.path=e.target.value;state.profile=null;profileStatus();change();};
   $('kit-clear-profile').onclick=()=>{state.profile=null;profileStatus();change();};
-  $('kit-profile').onchange=e=>{const file=e.target.files[0];e.target.value='';if(!file)return;state.profile=null;change();profileStatus();task(async()=>{
-    if(file.size>P.MAX_PROFILE_BYTES)throw Error('ICC-Profil zu groß; höchstens 16 MiB.');const bytes=new Uint8Array(await file.arrayBuffer());
-    const info=await P.readProfile(bytes,file.name,state.doc.print.path);state.profile={name:file.name,bytes,info};profileStatus();change();
-  },'kit-profile-status');};
+  async function attachProfile(bytes,name,path,condition){
+    if(busy)throw Error('Die Anwendung arbeitet. Bitte kurz warten.');
+    busy=true;state.profile=null;change();profileStatus();refresh();
+    try{
+      const info=await P.readProfile(bytes,name,path);
+      state.doc.print.path=path;$('kit-path').value=path;
+      if(condition){state.doc.print.printing_condition=condition;$('kit-condition').value=condition;}
+      if(path==='ECG'&&/FOGRA55/.test(name)){state.doc.print.channel_order=['C','M','Y','K','O','G','V'];$('kit-channels').value='C, M, Y, K, O, G, V';}
+      state.profile={name,bytes,info};profileStatus();change();
+    }finally{busy=false;refresh();}
+  }
+  $('kit-profile').onchange=async e=>{
+    const file=e.target.files[0];e.target.value='';if(!file||busy)return;
+    state.profile=null;profileStatus();change();
+    try{if(file.size>P.MAX_PROFILE_BYTES)throw Error('ICC-Profil zu groß; höchstens 16 MiB.');await attachProfile(new Uint8Array(await file.arrayBuffer()),file.name,state.doc.print.path);}
+    catch(error){status('kit-profile-status',error.message,true);}
+  };
+  if(window.ATLAS_PROFILE_LIBRARY){
+    window.ATLAS_PROFILE_LIBRARY.mount({container:$('kit-profile-library'),isBusy:()=>busy,attach:async({profile,bytes})=>attachProfile(bytes,profile.file_name,profile.output_path,profile.printing_condition||profile.description)});
+  }
   function run(job){return new Promise((resolve,reject)=>{
     if(!workerURL)workerURL=URL.createObjectURL(new Blob([JSON.parse($('atlas-print-worker-source').textContent)],{type:'text/javascript'}));
     const worker=new Worker(workerURL);let settled=false;const done=(error,value)=>{if(settled)return;settled=true;clearTimeout(timer);worker.terminate();error?reject(error):resolve(value);};const timer=setTimeout(()=>done(Error('Die Berechnung dauerte zu lange. Prüfe das Profil.')),45000);

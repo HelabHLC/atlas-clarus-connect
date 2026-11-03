@@ -111,6 +111,26 @@
         location.hash = 'print';
       } catch (error) { message(error.message, true); location.hash = 'print'; }
     }
+    async function attachProfile(id, bytes, fileName, conditionName) {
+      if (busy) throw Error('Druckvorbereitung läuft. Bitte kurz warten.');
+      if (!P.ALL_PATHS.includes(id)) throw Error('Unsupported output path.');
+      settings[id].profile = null; invalidatePreview(id); renderPath(id); lock(true);
+      message(`Checking ${id} output profile…`);
+      try {
+        const profile = await P.readProfile(bytes, fileName, id);
+        settings[id].profile = profile;
+        const card = $(`[data-print-path="${id}"]`);
+        if (conditionName) {
+          settings[id].printing_condition = conditionName;
+          card.querySelector('[data-setting="printing_condition"]').value = conditionName;
+        } else if (id === 'ECG' && profile.device_space === '7CLR' && /FOGRA55/i.test(fileName) && !settings[id].printing_condition.trim()) {
+          settings[id].printing_condition = 'FOGRA55 CMYKOGV exchange colour space (TAC 300)';
+          card.querySelector('[data-setting="printing_condition"]').value = settings[id].printing_condition;
+        }
+        invalidatePreview(id);
+        message(`${id} profile attached. Material and settings must be checked. No device values have been calculated.`);
+      } finally { lock(false); renderPath(id); }
+    }
     for (const id of P.ALL_PATHS) {
       const card = $(`[data-print-path="${id}"]`);
       const intent = card.querySelector('[data-setting="rendering_intent"]');
@@ -124,22 +144,11 @@
       card.querySelector('[data-profile-file]').addEventListener('change', async event => {
         const file = event.target.files[0]; event.target.value = '';
         if (!file || busy) return;
-        settings[id].profile = null; invalidatePreview(id); renderPath(id); lock(true);
-        message(`Checking ${id} output profile…`);
+        settings[id].profile = null; invalidatePreview(id); renderPath(id);
         try {
           if (file.size > P.MAX_PROFILE_BYTES) throw Error('ICC files must be no larger than 16 MiB.');
-          const profile = await P.readProfile(new Uint8Array(await file.arrayBuffer()), file.name, id);
-          settings[id].profile = profile; invalidatePreview(id);
-          if (id === 'ECG' && profile.device_space === '7CLR' && /FOGRA55/i.test(file.name)) {
-            const condition = card.querySelector('[data-setting="printing_condition"]');
-            if (!settings[id].printing_condition.trim() || /^-+ECG-CMYKOGV_FOGRA55_TAC300$/i.test(settings[id].printing_condition.trim())) {
-              settings[id].printing_condition = 'FOGRA55 CMYKOGV exchange colour space (TAC 300)';
-              condition.value = settings[id].printing_condition;
-            }
-          }
-          message(`${id} profile attached. The other paths are unchanged. No device values have been calculated.`);
+          await attachProfile(id, new Uint8Array(await file.arrayBuffer()), file.name);
         } catch (error) { message(`${id} profile rejected: ${error.message}`, true); }
-        finally { lock(false); renderPath(id); }
       });
       card.querySelector('[data-profile-clear]').onclick = () => {
         settings[id].profile = null; invalidatePreview(id); renderPath(id); message(`${id} profile removed. The other paths are unchanged.`);
@@ -197,7 +206,8 @@
     preview = root.ATLAS_CLARUS_PREVIEW_UI?.init({ ...context, getSettings: () => settings });
     renderReferences();
     if (location.hash === '#print') use('selected');
-    return { open: use };
+    root.ATLAS_PRINT_PROFILE_LOADER = { attachProfile, isBusy: () => busy };
+    return { open: use, attachProfile };
   }
   root.ATLAS_CLARUS_PRINT_UI = { init };
 })(window);
