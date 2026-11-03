@@ -108,11 +108,30 @@ const result={status:'RUNNING',engine,playwright:require('playwright/package.jso
     const exported=await download(page,'clarus','p3.clarus.json');
     const zip=await download(page,'quark-package','p3.quarkxpress.zip');
     const doc=JSON.parse(exported);assert.deepEqual(doc.source_assignments,records);
-    // Exercise both JSON and whole ZIP imports in separate browser contexts.
-    for(const [format,bytes] of [['json',exported],['zip',zip]]){
+    // Inspect the actual ZIP independently of ATLAS. RC34.11 imports its JSON,
+    // not the ZIP container: test the rejection as well as the supported route.
+    const entries=[],entryBytes=new Map();let pos=0;
+    while(zip.readUInt32LE(pos)===0x04034b50){
+      assert.equal(zip.readUInt16LE(pos+8),0,'stored ZIP expected');
+      const size=zip.readUInt32LE(pos+18),nl=zip.readUInt16LE(pos+26),el=zip.readUInt16LE(pos+28);
+      const name=zip.subarray(pos+30,pos+30+nl).toString();
+      const start=pos+30+nl+el,bytes=zip.subarray(start,start+size);
+      entries.push({name,size,sha256:hash(bytes)});entryBytes.set(name,bytes);pos=start+size;
+    }
+    assert.ok(entries.length>=3);result.zip_inspection={entries};
+    const jsonEntry=entries.find(e=>e.name.endsWith('.clarus.json'));assert.ok(jsonEntry);
+    const zipJson=entryBytes.get(jsonEntry.name);assert.deepEqual(zipJson,exported);
+    const rejected=await fresh();
+    const beforeRejected=await rejected.evaluate(k=>localStorage.getItem(k),key);
+    await rejected.locator('#palette-import-file').setInputFiles({name:'p3.quarkxpress.zip',mimeType:'application/zip',buffer:zip});
+    await rejected.waitForFunction(()=>document.querySelector('#export-status').textContent.includes('Import blocked'));
+    assert.equal(await rejected.evaluate(k=>localStorage.getItem(k),key),beforeRejected);
+    result.direct_zip_import_supported=false;
+    result.direct_zip_import_rejected_without_mutation=true;
+    for(const [format,bytes] of [['json',exported],['zip-extracted-json',zipJson]]){
       const imported=await fresh();
-      await imported.locator('#palette-import-file').setInputFiles({name:'p3.'+format,
-        mimeType:format==='json'?'application/json':'application/zip',buffer:bytes});
+      await imported.locator('#palette-import-file').setInputFiles({name:'p3-'+format+'.clarus.json',
+        mimeType:'application/json',buffer:bytes});
       await imported.waitForFunction(()=>document.querySelector('#export-status').textContent.includes('8 source records'));
       await imported.locator('#palette-toggle').click();
       assert.deepEqual(await download(imported,'clarus',format+'-reimport.clarus.json'),exported);
@@ -120,18 +139,6 @@ const result={status:'RUNNING',engine,playwright:require('playwright/package.jso
       await imported.reload();await imported.locator('#palette-toggle').click();
       assert.deepEqual(await download(imported,'clarus',format+'-reload.clarus.json'),exported);
     }
-    // Read actual archive entries via the already shipped ZIP reader.
-    // The deterministic ZIP is stored (method 0); inspect the standard directory,
-    // independently of ATLAS' importer, including the exact bytes of every entry.
-    const entries=[];let pos=0;
-    while(zip.readUInt32LE(pos)===0x04034b50){
-      assert.equal(zip.readUInt16LE(pos+8),0,'stored ZIP expected');
-      const size=zip.readUInt32LE(pos+18),nl=zip.readUInt16LE(pos+26),el=zip.readUInt16LE(pos+28);
-      const name=zip.subarray(pos+30,pos+30+nl).toString();
-      const start=pos+30+nl+el,bytes=zip.subarray(start,start+size);
-      entries.push({name,size,sha256:hash(bytes)});pos=start+size;
-    }
-    assert.ok(entries.length>=3);result.zip_inspection={entries};
     for(const [name,e] of Object.entries(oracle.fixtures)){
       assert.ok(!entries.some(entry=>entry.sha256===e.file_sha256),name+' is absent from palette ZIP');
       assert.ok(!zip.includes(fs.readFileSync(path.join(fixtures,name))),name+' raw image bytes absent');
@@ -141,7 +148,8 @@ const result={status:'RUNNING',engine,playwright:require('playwright/package.jso
     assert.equal(hash(fs.readFileSync(path.join(bundle,'assets/atlas-data.js'))),result.master_data_file_sha256);
     assert.deepEqual(errors,[]);
     Object.assign(result,{status:result.accuracy_failures.length?'COLOUR_ACCURACY_FAIL':'PASS',
-      metadata_matching_and_roundtrip_status:'PASS',source_records:records.length,json_and_zip_roundtrip_byte_identical:true,
+      metadata_matching_and_roundtrip_status:'PASS',source_records:records.length,
+      json_and_zip_embedded_json_roundtrip_byte_identical:true,
       reload_preserves_source_records:true,original_input_files_unchanged:true,
       original_image_and_icc_bytes_in_palette_exports:false,
       original_files_recoverable_from_palette_exports:false,master_unchanged:true,
