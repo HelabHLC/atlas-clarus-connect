@@ -1,0 +1,369 @@
+{
+  "date": "2026-11-03",
+  "status": "PASS",
+  "profile_checks": {
+    "status": "PASS",
+    "profile_count": 59,
+    "output_transform_count": 55,
+    "all_existing_views_mapped": true,
+    "corruption_rejected": true,
+    "working_rgb_and_beta_output_rejected": true,
+    "profiles": [
+      {
+        "file": "AdobeRGB1998.icc",
+        "path": null,
+        "status": "PASS"
+      },
+      {
+        "file": "CGATS21_CRPC1.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "CGATS21_CRPC2.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "CGATS21_CRPC3.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "CGATS21_CRPC4.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "CGATS21_CRPC5.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "CGATS21_CRPC6.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "CGATS21_CRPC7.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "CoatedFOGRA27.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "CoatedFOGRA39.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "GRACoL2013UNC_CRPC3.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "GRACoL2013_CRPC6.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "ISOcoated.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "ISOcoated_v2_300_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "ISOcoated_v2_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "ISOnewspaper26v4.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "ISOuncoated.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "ISOuncoatedyellowish.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "ISOwebcoated.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "JapanColor2001Coated.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "JapanColor2001Uncoated.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "JapanColor2002Newspaper.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "JapanColor2003WebCoated.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "JapanWebCoated.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PAL_SECAM.icc",
+        "path": null,
+        "status": "PASS"
+      },
+      {
+        "file": "PSO_Coated_300_NPscreen_ISO12647_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSO_Coated_NPscreen_ISO12647_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSO_Coated_v2_300_Glossy_laminate_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSO_Coated_v2_300_Matte_laminate_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSO_INP_Paper_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSO_LWC_Improved_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSO_LWC_Standard_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSO_MFC_Paper_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSO_SNP_Paper_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSO_Uncoated_ISO12647_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSO_Uncoated_NPscreen_ISO12647_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSOcoated_v3.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSOsc-b_paper_v3_FOGRA54.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSOuncoated_v3_FOGRA52.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSR_LWC_PLUS_V2_M1.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSR_LWC_PLUS_V2_PT.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSR_LWC_STD_V2_M1.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSR_LWC_STD_V2_PT.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSR_MF_V2_M1.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSR_SC_PLUS_V2_M1.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSR_SC_PLUS_V2_PT.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSR_SC_STD_V2_M1.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSR_SC_STD_V2_PT.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "PSRgravureMF.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "Ref-ECG-CMYKOGV_FOGRA55_TAC300.icc",
+        "path": "ECG",
+        "status": "PASS"
+      },
+      {
+        "file": "SC_paper_eci.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "SWOP2013C3_CRPC5.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "TextileRGB_FOGRA58.icc",
+        "path": "TEXTILE_RGB",
+        "status": "PASS"
+      },
+      {
+        "file": "TextileRGB_FOGRA58_beta1_.icc",
+        "path": null,
+        "status": "PASS"
+      },
+      {
+        "file": "WAN-IFRAnewspaper26v5.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "WebCoatedSWOP2006Grade3.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "eciCMYK.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "eciCMYK_v2.icc",
+        "path": "4C",
+        "status": "PASS"
+      },
+      {
+        "file": "eciRGB_v2.icc",
+        "path": null,
+        "status": "PASS"
+      }
+    ]
+  },
+  "core_regression": {
+    "status": "PASS",
+    "checks": [
+      "Frozen full-master count",
+      "Manual sRGB matching and source/reference separation",
+      "source: real ICC roundtrip, exact output16, deterministic ZIP, profile bytes, ASE and import invalidation",
+      "reference: real ICC roundtrip, exact output16, deterministic ZIP, profile bytes, ASE and import invalidation",
+      "Calculation does not alter original inputs",
+      "Wrong path and malformed profiles rejected",
+      "Mismatched references and palette size limits rejected",
+      "Eight PNG/JPEG/WebP/GIF originals and three embedded ICC profiles preserved byte-for-byte; multiple sources and deterministic reopen; absent/wrong original blocked",
+      "Four rendering intents and two BPC settings exercised; return transform fixed and reported"
+    ],
+    "profile_sha256": "c30ad2c01e8f93135ec7682c535e0a81bc2d177c301e196376c5f5838b5c8e86",
+    "physical_measurement": "NOT_PERFORMED"
+  },
+  "native_lcms_comparisons": 12,
+  "native_lcms_device16_and_preview_rgb8_exact": true,
+  "browser": "Chromium headless 1181; local file:// entry points",
+  "browser_checks": [
+    "Startup named-profile attachment and real B/A for three colours",
+    "Profile change invalidates previous result",
+    "FOGRA51/52 common exposes two profiles",
+    "Beta and working RGB have no output attachment",
+    "Final FOGRA58 path accepted",
+    "Unavailable Adobe disabled until import",
+    "SWOP C5 mismatch explicit",
+    "Browser library selector synchronizes profile lookup",
+    "Browser selected profile attached to correct output path",
+    "No uncaught browser errors"
+  ],
+  "build": {
+    "version": "0.1.1-icc-preview.1",
+    "status": "PERSONAL_TEST_PACKAGE",
+    "public_deployment": false,
+    "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+    "baseline_archive_sha256": "6158babb2a0271b71658c989c79f08ad690c5b782b2c0565e33c849a6c0d6bfb",
+    "profile_catalog_sha256": "61418d8287f59ada00458a887df41c038423ad2391bc9e8fbc16067682bbc6d0",
+    "profiles_catalogued": 59,
+    "profiles_installed": 49,
+    "adobe_profiles": "SEPARATE_ORIGINAL_ARCHIVE_IMPORT",
+    "original_gamutmap_profile_bytes_verified": false,
+    "changed_baseline_files": [
+      "index.html",
+      "assets/print-ui.js"
+    ],
+    "ICC_ENGINE": "UNCHANGED",
+    "physical_proof": "NOT_PERFORMED",
+    "public_redistribution_clearance": false,
+    "sha256": "a947420b125a9ecfeefbb09e03592561062db5cd784b1ee0222d92801aed0ca1",
+    "bytes": 136410070,
+    "unchanged_runtime_files": 282
+  },
+  "not_evaluated": [
+    "18 unresolved library/profile variants",
+    "Original GamutMap profile-byte equality",
+    "Physical print/proof measurements",
+    "Mobile device browser coverage",
+    "Public redistribution permission"
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "source_snapshot_date": "2026-10-18",
+  "profile_download_date": "2026-11-03",
+  "sources": [
+    {
+      "url": "https://eci.org/lib/exe/pso-coated_v3.zip",
+      "archive_sha256": "5c8ed32d40949c2e8b84a03642ca7aadc4e3f153237cf439d3cdddffffd4ed95",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/pso-uncoated_v3_fogra52.zip",
+      "archive_sha256": "644cabd621faa6f92c81f5596cd60f8360a7cb520b0061454c8d17e6b94cf08a",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/pso_sc-b_paper_v3.zip",
+      "archive_sha256": "8e60e0b8c47d2a1ad0896fdc92fedfd27d19dc86ec5e3d1052cd36d8cc958193",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/eci_gravure_psr_v2_m1_2020.zip",
+      "archive_sha256": "0dabad7b76a8248cd81e7d7c7a4f7c0ff22ef39463013aff1ba51d02602d7dcb",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/ecirgbv20.zip",
+      "archive_sha256": "77298350c344420c0a289c9ac5ce3a675f0fe1fa55ee5b2d26ad8207621d6dd7",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/eci_cmyk_v2.zip",
+      "archive_sha256": "33ac8adf41c120b3a1d0576ee8248b87296b1d8f7ecc47ccd739a5e1487aa08c",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/eci_offset_2009.zip",
+      "archive_sha256": "e4537702b825ef14c3eb930f68df0a73550220b832bdda4bd812dcf3fe966306",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/eci_offset_profiles_inp.zip",
+      "archive_sha256": "07781553c4e8f85b1a124af3ae3583ee5922bf59ea437aee32cec599a1279342",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/eci_offset_profiles_surface_finished.zip",
+      "archive_sha256": "2c49a3bbb5554b991b13c60a289cd7bd5f9e1eaa56b1ce626e55d3f71c94cebb",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/eci_offset_2004.zip",
+      "archive_sha256": "5632a36c72f2f4a04a0dd8f94cec23d3a7984d5eb657247fe0b5e24a25f26905",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/eci_gravure_psr_lwc_plus_v2_m1_2018.zip",
+      "archive_sha256": "228b8b8da2a87a231e1aeb450deb95bea0fa4e4cee97ae0e899e2e81aa768d53",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/eci_gravure_psr_v2_2009.zip",
+      "archive_sha256": "8f8cec2b5efb74f9320cb15c08b240cf1deb41d6d6c1271de50456d36e3a622c",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/psrgravuremf.zip",
+      "archive_sha256": "1a17477c5310a4e137f334efbae920e3839c77d66c9d161498da86ee65b0752a",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://eci.org/lib/exe/ecicmyk.zip",
+      "archive_sha256": "6bc971f9e8aab42708879f2c1b3053a5f8a0c0faf22ae849b2251d1e25ed02bc",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://fogra.org/fileadmin/files/1_forschen/Digitaldruck/13.006_Textile-RGB/TextileRGB_FOGRA58.icc",
+      "archive_sha256": "fad691cc0f25e3d6a91942599755b7f9cf906b91f9e4f4834c3364e6c50a972d",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://fogra.org/fileadmin/files/1_forschen/Digitaldruck/13.006_Textile-RGB/TextileRGB_FOGRA58_beta1_.icc",
+      "archive_sha256": "3188c6453059e3b1776dc9f9cca530be4f5e1bf1176490a19813626f0cd349ae",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://download.adobe.com/pub/adobe/iccprofiles/win/AdobeICCProfilesCS4Win_end-user.zip",
+      "archive_sha256": "92043b7c3ca5a25a0f6975d0cdc57db60a67dcb9ebdfb15b16267311beb58f94",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://www.idealliancetaiwan.org/_files/archives/257560_7ff8acc968fc4236b9707a8bc680d174.zip?dn=CRPC%20Profiles.zip",
+      "archive_sha256": "63531a78d84554d57053a0f072f7d1ab83881db025863c1a792437be8b73600e",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://fogra.org/fileadmin/files/1_forschen/vorstufe/13.003_multicolor/Daten/Ref_FOGRA55.zip",
+      "archive_sha256": "921ae8a3d934a3a55f2e71d8158a54a500c133b9a6dcd87321ae64b3fff8971c",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://registry.color.org/rgb-registry/profiles/DisplayP3.zip",
+      "archive_sha256": null,
+      "status": "FAILED",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "url": "https://registry.color.org/rgb-registry/profiles/DCI-P3-D65.icc",
+      "archive_sha256": null,
+      "status": "FAILED",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "url": "https://registry.color.org/rgb-registry/profiles/DCI-P3-DCI.icc",
+      "archive_sha256": null,
+      "status": "FAILED",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "url": "https://registry.color.org/rgb-registry/profiles/sRGB2014.icc",
+      "archive_sha256": null,
+      "status": "FAILED",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "url": "https://registry.color.org/profile-registry/profiles/GRACoL2013_CRPC6.icc",
+      "archive_sha256": null,
+      "status": "FAILED",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "url": "https://duon.blob.core.windows.net/farbprofile/WAN-IFRAnewspaper26v5.zip",
+      "archive_sha256": "933fa10d340ba58b2bd77ca2241e584fbda56fb015ea441aee45db16645274b1",
+      "status": "OK",
+      "error": null
+    },
+    {
+      "url": "https://www.druckerei-konstanz.de/wp-content/uploads/2024/04/isonewspaper26v4_icc.zip",
+      "archive_sha256": "a37613d10093361b412ea86c4fbd2cf13b4352793394451392b1901ca0d80009",
+      "status": "OK",
+      "error": null
+    }
+  ],
+  "blocked_auto_mapping": [
+    "SWOP2013C5 source tooltip links SWOP2013C3_CRPC5.icc",
+    "PSR LWC PLUS V2 M1 original is not the later M1_v2 profile",
+    "FOGRA58 beta is not the final FOGRA58 profile"
+  ],
+  "gamutmap_current_tooltip_sha256": "27a4d815ea370d567a287d761389dfbfdaa19e6d4b30f0e7438a8daeda951c2f"
+}
