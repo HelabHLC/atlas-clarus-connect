@@ -1,0 +1,37 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const {JSDOM}=require('../../browser-bundle/tests/node_modules/jsdom');
+const root=path.resolve(__dirname,'..');
+// A generated fixture keeps source CI independent of the user's motif package.
+const fixture={materials:JSON.parse(fs.readFileSync(path.join(root,'data/materials.json'),'utf8')),original:'data:image/png;base64,c291cmNl',reference:'data:image/png;base64,cmVmZXJlbmNl',referenceEvidence:{original_pkl_rehashed:false},referenceProvenance:{assignment_recomputed:false}};
+for(const key of ['original','reference'])fixture[key+'Sha256']=crypto.createHash('sha256').update(Buffer.from(fixture[key].split(',')[1],'base64')).digest('hex');
+const html=fs.readFileSync(path.join(root,'src/index.template.html'),'utf8').replace('__ATLAS_DATA__',JSON.stringify(fixture));
+const tick=()=>new Promise(r=>setTimeout(r,30));
+(async()=>{
+ const dom=new JSDOM(html,{runScripts:'outside-only',url:'http://localhost/'}),w=dom.window,blobs=[];
+ w.Blob=Blob;w.URL.createObjectURL=blob=>{blobs.push(blob);return 'blob:qa-'+blobs.length;};w.URL.revokeObjectURL=()=>{};w.HTMLAnchorElement.prototype.click=()=>{};
+ w.requestAnimationFrame=()=>1;w.Image=class {set src(value){this.value=value;queueMicrotask(()=>this.onload());}get naturalWidth(){return 1145;}get naturalHeight(){return 1374;}};
+ w.FileReader=class {readAsDataURL(file){this.result=file.dataUrl;queueMicrotask(()=>this.onload());}};
+ for(const name of ['sha256.js','solver.js'])w.eval(fs.readFileSync(path.join(root,'src',name),'utf8'));
+ w.AtlasClothRenderer=class {setImage(){}render(){}};
+ w.eval(fs.readFileSync(path.join(root,'src/app.js'),'utf8'));await tick();
+ const $=id=>w.document.getElementById(id),change=(id,value)=>{$(id).value=value;$(id).dispatchEvent(new w.Event('input'));};
+ assert.equal($('error').textContent,'');assert.equal($('gsm').textContent,'78,2');
+ $('downloadProject').click();await tick();let original=JSON.parse(await blobs.at(-1).text());
+ const hash=u=>crypto.createHash('sha256').update(Buffer.from(u.split(',')[1],'base64')).digest('hex');
+ assert.equal(hash(original.original.data_url),original.original.sha256);assert.equal(hash(original.reference.data_url),original.reference.sha256);
+ const importProject=async p=>{const f={size:JSON.stringify(p).length,text:async()=>JSON.stringify(p)};Object.defineProperty($('projectFile'),'files',{configurable:true,value:[f]});$('projectFile').dispatchEvent(new w.Event('change'));await tick();};
+ change('material','cotton');change('width','50');assert.equal($('gsm').textContent,'119,4');
+ await importProject(original);assert.equal($('error').textContent,'');assert.equal($('material').value,'silk');assert.equal($('width').value,'100');
+ const bad=structuredClone(original);bad.original.sha256='bad';change('material','denim');await importProject(bad);
+ assert.match($('error').textContent,/Prüfsumme/);assert.equal($('material').value,'denim');
+ const badSettings=structuredClone(original);badSettings.settings.width=51;await importProject(badSettings);assert.match($('error').textContent,/Parameter/);
+ const dataUrl='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLttAAAAABJRU5ErkJggg==';
+ Object.defineProperty($('imageFile'),'files',{configurable:true,value:[{size:100,dataUrl}]});$('imageFile').dispatchEvent(new w.Event('change'));await tick();
+ assert.equal($('texture').value,'original');assert.equal($('downloadReference').disabled,true);assert.match($('sourceStatus').textContent,/keine ATLAS-Zuordnung/);
+ $('downloadProject').click();await tick();const own=JSON.parse(await blobs.at(-1).text());assert.equal(own.reference,null);assert.equal(own.original.sha256,hash(dataUrl));
+ await importProject(own);assert.equal($('error').textContent,'');assert.equal($('downloadReference').disabled,true);
+ const light=$('lighting').checked;$('pause').click();assert.equal($('pause').textContent,'Weiter');$('lighting').checked=!light;$('lighting').dispatchEvent(new w.Event('change'));$('downloadProject').click();await tick();
+ assert.equal(JSON.parse(await blobs.at(-1).text()).original.sha256,own.original.sha256);
+ dom.window.close();console.log('PASS: project export/import, original/ref hash identity, settings roundtrip, atomic failure, slider bounds, own image clears references, pause and lighting preserve original');
+})().catch(e=>{console.error(e);process.exitCode=1;});

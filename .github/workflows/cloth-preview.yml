@@ -1,0 +1,20 @@
+name: Experimental cloth preview
+on:
+  pull_request:
+    paths: ['cloth-preview/**', '.github/workflows/cloth-preview.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --prefix browser-bundle/tests --ignore-scripts --no-audit --no-fund
+      - run: node --check cloth-preview/src/solver.js && node --check cloth-preview/src/renderer.js && node --check cloth-preview/src/app.js
+      - run: node cloth-preview/tests/solver.test.cjs
+      - run: node cloth-preview/tests/sha256.test.cjs
+      - run: node cloth-preview/tests/project.test.cjs
