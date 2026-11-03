@@ -28,6 +28,13 @@ package hashes, Actions links, reproducible checks and the evidence limits.
 Internal availability is not public production approval or physical-device
 acceptance. The audit did not build, sign, upload, roll out or install an app.
 
+The user subsequently confirmed focused checks on a **moto g06** running the
+Play-installed **0.4.0-beta.15**: image import, live preview with changing values,
+fixed-image takeover, lamp/fix invalidation and camera reopening after returning
+to the app. See the [dated device log](DEVICE_TEST_LOG.md) for exact steps and
+limits. These user reports cover a subset of the full acceptance plan; camera-less
+use, permission denial/revocation and update/data retention remain untested.
+
 Before distribution, test camera-less/unsupported camera behaviour, permission
 denial/revocation, rear/front cameras, rotation, background/restore, torch and
 fixed PNG/selection handoff. Export projects before updating; never uninstall to

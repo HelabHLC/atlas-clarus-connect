@@ -5,10 +5,36 @@
 The [beta.15 verification](BETA15_VERIFICATION.md) records the successful
 reserved-key build, the byte-identical Play AAB already active in internal
 testing, matching upload certificate, current +440 model count and the limits
-of the camera-filter comparison. These are package, CI and Play-console
-observations, not new physical-device results. No beta.15 installation,
-in-place update, camera or stored-work retention test on a real device is
-claimed. The focused device test plan remains pending separate device approval.
+of the camera-filter comparison. Those package, CI and Play-console observations
+are separate from the user-reported physical-device checks recorded below.
+
+## beta.15 on moto g06 — user-reported checks, 3 November 2026
+
+The user identified the device as **moto g06**, the installation source as
+**Google Play**, and the installed version as **0.4.0-beta.15**. These were
+guided checks of the existing installation. Android/WebView versions and the
+exact device variant were not supplied. No device was connected to the audit
+environment, and no screenshots, exported files, device logs or measurements
+were collected. Results below are user confirmations, not independently
+instrumented acceptance tests.
+
+| Check and steps | User-reported result | Evidence limit |
+| --- | --- | --- |
+| Import a test photo in Colour ID and select a colour | Image, colour value and ATLAS reference displayed; confirmed "ja" | Display and interaction only; numerical or physical colour accuracy not measured |
+| Open Live Camera and aim at differently coloured objects | Moving preview and changing colour/reference values; confirmed "jja" | Permission-prompt behaviour, denied/revoked access and front/rear switching not separately tested |
+| Fix the first scene, move to another object, then use image + selection | Fixed values stayed fixed and the first fixed image was taken over; confirmed "ja" | Saved PNG/companion JSON and hashes were not inspected |
+| Fix a scene, switch the lamp, and fix again before takeover | Lamp/fix-invalidation flow confirmed with "Funktioniert" | No illumination measurement or unsupported-torch test |
+| Return to the app and check the test image | User reported "das Testbild war sofort verffügbar" (the test image was immediately available) | Does not separately confirm rotation or persistence through an app/process restart or update |
+| Reopen Live Camera after returning and aim at another object | Moving preview and changing values confirmed "ja" | Native track release and background resource use were not instrumented |
+
+This completes a focused usability subset on this user's Play-installed
+moto g06. It does not complete all D1–D5 cases in the
+[verification plan](BETA15_VERIFICATION.md). Camera-less behaviour, denied or
+revoked camera permission, front/rear switching, separately confirmed rotation,
+saved PNG/JSON consistency, export round-trip and Play-update/stored-work
+retention remain untested on this device. No installation, update, uninstall or
+data clearing was performed as part of these checks. These observations do not
+prove restoration of the original 437 models or acceptance of other variants.
 
 The following dated entries are preserved as historical evidence. Their
 "current" and "latest" labels describe the date of those entries, not today's

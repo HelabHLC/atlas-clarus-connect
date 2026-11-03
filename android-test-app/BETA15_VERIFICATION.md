@@ -95,7 +95,8 @@ The original list of 437 models reported lost on 22 October is unavailable.
 The three-model difference is not explained by the evidence. Neither count
 equality nor today's 440-model cohort proves that every original model/variant
 was restored. Exact historical recovery requires that original keyed list and
-the affected variants. Practical camera and update/data-retention tests remain
+the affected variants. The user-reported moto g06 checks below cover a practical
+camera subset; broader device acceptance and update/data-retention tests remain
 open. This historical evidence gap alone does not require a replacement build.
 
 ## Reproduce the existing evidence without creating an app
@@ -165,24 +166,38 @@ PR job, which would assemble debug and disposable-key release APK/AAB files.
 This does not waive required CI for a later application change or merge. The
 reserved-key workflow remains manual and was not dispatched.
 
-## Focused physical-device plan — not executed
+## Focused physical-device checks — user-reported subset
 
-First record the actual test device, Android/WebView versions, installed app
-version and installation source (Play or direct APK). No real device is connected
-to this audit environment. Do not infer those facts from old beta.3 observations.
-Installation, update, permission changes or changes to existing local work require
-separate explicit approval for the named device and steps. Preserve existing
-installations; never uninstall or clear data to bypass a signing mismatch.
+On 3 November 2026 the user identified a **moto g06**, an existing **Google Play**
+installation and app version **0.4.0-beta.15**, then confirmed the guided checks
+recorded in [DEVICE_TEST_LOG.md](DEVICE_TEST_LOG.md). Android/WebView versions
+and the exact device variant are unknown. The checks used the existing
+installation; no installation or update was performed. No real device is
+connected to this audit environment. There are no screenshots, exported files
+or instrumented device logs for these observations.
 
-| Case | Concrete procedure after device approval | Pass criterion | Status |
+The table retains the full test cases and distinguishes the confirmed subset
+from the remaining work. It does not turn a partial case into a full pass.
+
+| Case | Full procedure | Pass criterion | Status on moto g06 |
 | --- | --- | --- | --- |
-| D1: ordinary image use without camera | On an approved camera-less test device or device with no usable camera, import a supplied test PNG, select a pixel and export/reopen a test project | Image/reference work remains usable; unavailable camera is handled without losing the image | NOT TESTED |
-| D2: camera and denial | On an approved camera-capable device, try denied access and then allowed access; test rear/front switching and cancel | Clear denial, ordinary image import still works, no microphone access, cancel preserves prior work | NOT TESTED |
-| D3: fixed frame and torch | Fix one scene, move to a visibly different scene, accept; compare saved PNG and companion record. Toggle torch if available | Accepted image and RGB belong to the fixed scene; torch changes invalidate the fix; unsupported torch stays disabled | NOT TESTED |
-| D4: lifecycle | During camera use rotate, background/return and cancel; repeat an import | Camera is released when appropriate; no stale stream or substituted image; retry works | NOT TESTED |
+| D1: ordinary image use without camera | On an approved camera-less test device or device with no usable camera, import a supplied test PNG, select a pixel and export/reopen a test project | Image/reference work remains usable; unavailable camera is handled without losing the image | Image import and colour/reference display confirmed on a camera-capable device. Camera-less behaviour and export/reopen NOT TESTED |
+| D2: camera and denial | On an approved camera-capable device, try denied access and then allowed access; test rear/front switching and cancel | Clear denial, ordinary image import still works, no microphone access, cancel preserves prior work | Live preview and changing values confirmed. Denial/revocation, front/rear switching, microphone access and cancellation behaviour NOT TESTED on the device |
+| D3: fixed frame and torch | Fix one scene, move to a visibly different scene, accept; compare saved PNG and companion record. Toggle torch if available | Accepted image and RGB belong to the fixed scene; torch changes invalidate the fix; unsupported torch stays disabled | Fixed values, first-image takeover and lamp-triggered fix invalidation confirmed. Saved PNG/JSON consistency and unsupported torch NOT TESTED |
+| D4: lifecycle | During camera use rotate, background/return and cancel; repeat an import | Camera is released when appropriate; no stale stream or substituted image; retry works | Test image immediately available on return; camera reopened with moving preview and changing values. Rotation not separately confirmed; native track release not instrumented; remaining steps NOT TESTED |
 | D5: Play update and stored work | Only on a separately approved test installation with matching signing lineage: export and record test palette/project, apply the offered Play update and compare retained values/exports | Version 15 confirmed; original RGB, reference IDs, palette/project contents and export round-trip remain intact | NOT TESTED |
 
-For each case record date, device/variant, Android/WebView version, app version,
+These are user-reported functional observations, not measured colour accuracy
+or full physical-device acceptance. They do not establish support for every
+historically excluded model or variant. The original 437-model comparison
+remains a separate evidence gap.
+
+Before further device work, agree the named device and steps. Installation,
+update, permission changes or changes to existing local work require separate
+explicit approval. Preserve existing installations; never uninstall or clear
+data to bypass a signing mismatch.
+
+For further cases record date, device/variant, Android/WebView version, app version,
 installation source, actual steps, result and evidence filenames/hashes. Missing
 hardware capability is `NOT APPLICABLE` for that case, not a successful test of
 that capability. A failure stops wider rollout consideration; it does not
