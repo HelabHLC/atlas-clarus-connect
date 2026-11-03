@@ -18,6 +18,10 @@ const nearest=rgb=>master.colors.reduce((a,c)=>{
 },null);
 const key='atlasClarusPalettesV3',engine=process.env.BROWSER_ENGINE||'chromium';
 const executable=process.env.BROWSER_EXECUTABLE||process.env.CHROMIUM_EXECUTABLE;
+// Playwright's patched Firefox disables colour management by default. Explicitly
+// restore tagged-image management; otherwise this is a test-harness artefact.
+const firefoxPrefs={'gfx.color_management.mode':2,'gfx.color_management.enablev4':true,
+  'gfx.color_management.rendering_intent':1};
 const result={status:'RUNNING',engine,playwright:require('playwright/package.json').version,
   bundle_version:JSON.parse(fs.readFileSync(path.join(bundle,'BUNDLE_MANIFEST.json'))).version,
   bundle_index_sha256:hash(fs.readFileSync(path.join(bundle,'index.html'))),
@@ -27,8 +31,11 @@ const result={status:'RUNNING',engine,playwright:require('playwright/package.jso
 (async()=>{
   const browser=await ({chromium,firefox,webkit}[engine]).launch({headless:true,
     ...(engine==='chromium'?{args:['--no-sandbox'],ignoreDefaultArgs:['--force-color-profile=srgb']}:{}),
+    ...(engine==='firefox'?{firefoxUserPrefs:firefoxPrefs}:{}),
     ...(executable?{executablePath:executable}:{})});
   result.browser=browser.version();
+  result.launch_colour_settings=engine==='firefox'?firefoxPrefs:
+    engine==='chromium'?{removed_playwright_force_srgb_flag:true}:{engine_defaults:true};
   const errors=[];
   async function fresh(){
     const ctx=await browser.newContext({viewport:{width:1440,height:1100},acceptDownloads:true});
