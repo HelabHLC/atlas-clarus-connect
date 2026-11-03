@@ -1,0 +1,560 @@
+{
+  "status": "COLOUR_ACCURACY_FAIL",
+  "engine": "chromium",
+  "playwright": "1.54.1",
+  "bundle_version": "0.2.0-rc34.11-colour-origin-preview",
+  "bundle_index_sha256": "cb958bd45685b5a4804178e2f08acf2ffc2df0308dedcb2fec76408dc56ea2cf",
+  "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "master_data_file_sha256": "35ab43e432259aa2607814e0393e068f2e14f0be8e1fac47af9a2576dcbe079e",
+  "master_rows": 13283,
+  "oracle_sha256": "c4d387bd01fa320c4b78ff08552dbec2f6c0e01509c7dccdabd97f981adafa9e",
+  "lcms_version": 2140,
+  "tolerance": 1,
+  "rows": [
+    {
+      "file": "in-srgb16.png",
+      "encoded_rgb": [
+        15677,
+        31611,
+        6425
+      ],
+      "bits": 16,
+      "expected_srgb8": [
+        61,
+        123,
+        25
+      ],
+      "browser_srgb8": [
+        61,
+        123,
+        25
+      ],
+      "delta": [
+        0,
+        0,
+        0
+      ],
+      "within_lcms_tolerance": true,
+      "diagnostic_highbyte_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "diagnostic_round8_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "expected_reference": "H130_L045_C055",
+      "actual_reference": "H130_L045_C055",
+      "actual_atlas_row_id": 4966,
+      "actual_distance_squared": 41,
+      "metadata": {
+        "schema": "atlas-colour-origin/1.0",
+        "file_format": "PNG",
+        "file_sha256": "7655401460b15531136f717b4a89aabab17dbe2e5ecb8ec2bd335edb9cf6dbf9",
+        "icc": {
+          "status": "EMBEDDED_ICC",
+          "name": "ATLAS test sRGB",
+          "sha256": "df9f8e80e9c1d081f41df3751536d4097a80c7558b3e5b0874710464a153ac9e",
+          "bytes": 592,
+          "colour_space": "RGB"
+        },
+        "declaration": "ICC",
+        "notes": [],
+        "processing": {
+          "representation": "BROWSER_DECODED_SRGB",
+          "target_space": "sRGB",
+          "bits_per_channel": 8,
+          "browser_transform": "NOT_OBSERVABLE",
+          "source_profile_assumption": "NONE_BY_ATLAS"
+        }
+      }
+    },
+    {
+      "file": "in-p3-16.png",
+      "encoded_rgb": [
+        19701,
+        31236,
+        11007
+      ],
+      "bits": 16,
+      "expected_srgb8": [
+        61,
+        123,
+        25
+      ],
+      "browser_srgb8": [
+        60,
+        123,
+        23
+      ],
+      "delta": [
+        -1,
+        0,
+        -2
+      ],
+      "within_lcms_tolerance": false,
+      "diagnostic_highbyte_then_icc": [
+        60,
+        123,
+        23
+      ],
+      "diagnostic_round8_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "expected_reference": "H130_L045_C055",
+      "actual_reference": "H130_L045_C055",
+      "actual_atlas_row_id": 4966,
+      "actual_distance_squared": 38,
+      "metadata": {
+        "schema": "atlas-colour-origin/1.0",
+        "file_format": "PNG",
+        "file_sha256": "8781e1398fbc31cf2734d4df5f18d6346dee28fd3d8f6ef6f9c1f6193f6c3886",
+        "icc": {
+          "status": "EMBEDDED_ICC",
+          "name": "ATLAS test Display P3",
+          "sha256": "3cd9ee950d4cdf3da2d09b9d69bdeb46f6f71e570173beeb4efd043e7f8fcd51",
+          "bytes": 604,
+          "colour_space": "RGB"
+        },
+        "declaration": "ICC",
+        "notes": [],
+        "processing": {
+          "representation": "BROWSER_DECODED_SRGB",
+          "target_space": "sRGB",
+          "bits_per_channel": 8,
+          "browser_transform": "NOT_OBSERVABLE",
+          "source_profile_assumption": "NONE_BY_ATLAS"
+        }
+      }
+    },
+    {
+      "file": "in-srgb8.png",
+      "encoded_rgb": [
+        61,
+        123,
+        25
+      ],
+      "bits": 8,
+      "expected_srgb8": [
+        61,
+        123,
+        25
+      ],
+      "browser_srgb8": [
+        61,
+        123,
+        25
+      ],
+      "delta": [
+        0,
+        0,
+        0
+      ],
+      "within_lcms_tolerance": true,
+      "diagnostic_highbyte_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "diagnostic_round8_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "expected_reference": "H130_L045_C055",
+      "actual_reference": "H130_L045_C055",
+      "actual_atlas_row_id": 4966,
+      "actual_distance_squared": 41,
+      "metadata": {
+        "schema": "atlas-colour-origin/1.0",
+        "file_format": "PNG",
+        "file_sha256": "e45408b53f1677853af988ace46d85e58424b64a07c215b3890badf128daa4d5",
+        "icc": {
+          "status": "EMBEDDED_ICC",
+          "name": "ATLAS test sRGB",
+          "sha256": "df9f8e80e9c1d081f41df3751536d4097a80c7558b3e5b0874710464a153ac9e",
+          "bytes": 592,
+          "colour_space": "RGB"
+        },
+        "declaration": "ICC",
+        "notes": [],
+        "processing": {
+          "representation": "BROWSER_DECODED_SRGB",
+          "target_space": "sRGB",
+          "bits_per_channel": 8,
+          "browser_transform": "NOT_OBSERVABLE",
+          "source_profile_assumption": "NONE_BY_ATLAS"
+        }
+      }
+    },
+    {
+      "file": "in-p3-8.png",
+      "encoded_rgb": [
+        77,
+        122,
+        43
+      ],
+      "bits": 8,
+      "expected_srgb8": [
+        61,
+        123,
+        25
+      ],
+      "browser_srgb8": [
+        61,
+        123,
+        25
+      ],
+      "delta": [
+        0,
+        0,
+        0
+      ],
+      "within_lcms_tolerance": true,
+      "diagnostic_highbyte_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "diagnostic_round8_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "expected_reference": "H130_L045_C055",
+      "actual_reference": "H130_L045_C055",
+      "actual_atlas_row_id": 4966,
+      "actual_distance_squared": 41,
+      "metadata": {
+        "schema": "atlas-colour-origin/1.0",
+        "file_format": "PNG",
+        "file_sha256": "1f8eb0acb6ef1cde285b0f6d8aff93755efcb1960911c5acdc550f64055d55a6",
+        "icc": {
+          "status": "EMBEDDED_ICC",
+          "name": "ATLAS test Display P3",
+          "sha256": "3cd9ee950d4cdf3da2d09b9d69bdeb46f6f71e570173beeb4efd043e7f8fcd51",
+          "bytes": 604,
+          "colour_space": "RGB"
+        },
+        "declaration": "ICC",
+        "notes": [],
+        "processing": {
+          "representation": "BROWSER_DECODED_SRGB",
+          "target_space": "sRGB",
+          "bits_per_channel": 8,
+          "browser_transform": "NOT_OBSERVABLE",
+          "source_profile_assumption": "NONE_BY_ATLAS"
+        }
+      }
+    },
+    {
+      "file": "out-p3-16.png",
+      "encoded_rgb": [
+        65535,
+        32768,
+        0
+      ],
+      "bits": 16,
+      "expected_srgb8": [
+        255,
+        118,
+        0
+      ],
+      "browser_srgb8": [
+        255,
+        119,
+        0
+      ],
+      "delta": [
+        0,
+        1,
+        0
+      ],
+      "within_lcms_tolerance": true,
+      "diagnostic_highbyte_then_icc": [
+        255,
+        119,
+        0
+      ],
+      "diagnostic_round8_then_icc": [
+        255,
+        119,
+        0
+      ],
+      "expected_reference": "H060_L065_C100",
+      "actual_reference": "H060_L065_C100",
+      "actual_atlas_row_id": 2136,
+      "actual_distance_squared": 20,
+      "metadata": {
+        "schema": "atlas-colour-origin/1.0",
+        "file_format": "PNG",
+        "file_sha256": "d94af9d5e6382789da67a9b67f1f8047ef8058a01085224cff7b1c6670ea8b62",
+        "icc": {
+          "status": "EMBEDDED_ICC",
+          "name": "ATLAS test Display P3",
+          "sha256": "3cd9ee950d4cdf3da2d09b9d69bdeb46f6f71e570173beeb4efd043e7f8fcd51",
+          "bytes": 604,
+          "colour_space": "RGB"
+        },
+        "declaration": "ICC",
+        "notes": [],
+        "processing": {
+          "representation": "BROWSER_DECODED_SRGB",
+          "target_space": "sRGB",
+          "bits_per_channel": 8,
+          "browser_transform": "NOT_OBSERVABLE",
+          "source_profile_assumption": "NONE_BY_ATLAS"
+        }
+      }
+    },
+    {
+      "file": "out-clipped-srgb16.png",
+      "encoded_rgb": [
+        65535,
+        30312,
+        0
+      ],
+      "bits": 16,
+      "expected_srgb8": [
+        255,
+        118,
+        0
+      ],
+      "browser_srgb8": [
+        255,
+        118,
+        0
+      ],
+      "delta": [
+        0,
+        0,
+        0
+      ],
+      "within_lcms_tolerance": true,
+      "diagnostic_highbyte_then_icc": [
+        255,
+        118,
+        0
+      ],
+      "diagnostic_round8_then_icc": [
+        255,
+        118,
+        0
+      ],
+      "expected_reference": "H060_L065_C100",
+      "actual_reference": "H060_L065_C100",
+      "actual_atlas_row_id": 2136,
+      "actual_distance_squared": 13,
+      "metadata": {
+        "schema": "atlas-colour-origin/1.0",
+        "file_format": "PNG",
+        "file_sha256": "241dc8498eb2e912ff07071b1b40fe54c079a0e080231fa2763d01b40e61f0b5",
+        "icc": {
+          "status": "EMBEDDED_ICC",
+          "name": "ATLAS test sRGB",
+          "sha256": "df9f8e80e9c1d081f41df3751536d4097a80c7558b3e5b0874710464a153ac9e",
+          "bytes": 592,
+          "colour_space": "RGB"
+        },
+        "declaration": "ICC",
+        "notes": [],
+        "processing": {
+          "representation": "BROWSER_DECODED_SRGB",
+          "target_space": "sRGB",
+          "bits_per_channel": 8,
+          "browser_transform": "NOT_OBSERVABLE",
+          "source_profile_assumption": "NONE_BY_ATLAS"
+        }
+      }
+    },
+    {
+      "file": "control-p3-codes-srgb16.png",
+      "encoded_rgb": [
+        19701,
+        31236,
+        11007
+      ],
+      "bits": 16,
+      "expected_srgb8": [
+        77,
+        122,
+        43
+      ],
+      "browser_srgb8": [
+        76,
+        122,
+        42
+      ],
+      "delta": [
+        -1,
+        0,
+        -1
+      ],
+      "within_lcms_tolerance": true,
+      "diagnostic_highbyte_then_icc": [
+        76,
+        122,
+        42
+      ],
+      "diagnostic_round8_then_icc": [
+        77,
+        122,
+        43
+      ],
+      "expected_reference": "H125_L045_C045",
+      "actual_reference": "H125_L045_C045",
+      "actual_atlas_row_id": 4764,
+      "actual_distance_squared": 26,
+      "metadata": {
+        "schema": "atlas-colour-origin/1.0",
+        "file_format": "PNG",
+        "file_sha256": "f16c1d46a7f58eb3dc7735a0e0c6d4377a6098e00f3de97c03e3e466f960e3c9",
+        "icc": {
+          "status": "EMBEDDED_ICC",
+          "name": "ATLAS test sRGB",
+          "sha256": "df9f8e80e9c1d081f41df3751536d4097a80c7558b3e5b0874710464a153ac9e",
+          "bytes": 592,
+          "colour_space": "RGB"
+        },
+        "declaration": "ICC",
+        "notes": [],
+        "processing": {
+          "representation": "BROWSER_DECODED_SRGB",
+          "target_space": "sRGB",
+          "bits_per_channel": 8,
+          "browser_transform": "NOT_OBSERVABLE",
+          "source_profile_assumption": "NONE_BY_ATLAS"
+        }
+      }
+    },
+    {
+      "file": "control-p3-codes-untagged16.png",
+      "encoded_rgb": [
+        19701,
+        31236,
+        11007
+      ],
+      "bits": 16,
+      "expected_srgb8": [
+        77,
+        122,
+        43
+      ],
+      "browser_srgb8": [
+        76,
+        122,
+        42
+      ],
+      "delta": [
+        -1,
+        0,
+        -1
+      ],
+      "within_lcms_tolerance": true,
+      "diagnostic_highbyte_then_icc": [
+        76,
+        122,
+        42
+      ],
+      "diagnostic_round8_then_icc": [
+        77,
+        122,
+        43
+      ],
+      "expected_reference": "H125_L045_C045",
+      "actual_reference": "H125_L045_C045",
+      "actual_atlas_row_id": 4764,
+      "actual_distance_squared": 26,
+      "metadata": {
+        "schema": "atlas-colour-origin/1.0",
+        "file_format": "PNG",
+        "file_sha256": "5438357445a46e9443eedb7962694b079e4ab37b2329f243c02ade9024738f36",
+        "icc": {
+          "status": "NO_EMBEDDED_ICC",
+          "name": null,
+          "sha256": null,
+          "bytes": null,
+          "colour_space": null
+        },
+        "declaration": "UNKNOWN",
+        "notes": [],
+        "processing": {
+          "representation": "BROWSER_DECODED_SRGB",
+          "target_space": "sRGB",
+          "bits_per_channel": 8,
+          "browser_transform": "NOT_OBSERVABLE",
+          "source_profile_assumption": "NONE_BY_ATLAS"
+        }
+      }
+    }
+  ],
+  "accuracy_failures": [
+    "in-p3-16.png exceeds +/-1 RGB8 vs LittleCMS",
+    "16-bit same-target pair captures different RGB8"
+  ],
+  "browser": "139.0.7258.5",
+  "launch_colour_settings": {
+    "removed_playwright_force_srgb_flag": true
+  },
+  "environment": {
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+    "device_pixel_ratio": 1,
+    "screen_gamut_p3": false,
+    "default_canvas_attributes": {
+      "alpha": true,
+      "colorSpace": "srgb",
+      "colorType": "unorm8",
+      "desynchronized": false,
+      "willReadFrequently": false
+    }
+  },
+  "in_gamut_pair_rgb_equal": false,
+  "in_gamut_pair_reference_equal": true,
+  "profile_changes_pixels": true,
+  "profile_transform_control_delta": [
+    -16,
+    1,
+    -19
+  ],
+  "zip_inspection": {
+    "entries": [
+      {
+        "name": "palette.xtg",
+        "size": 748,
+        "sha256": "e345a94956e6643c46497a6b46d9c28e0868639fef4914ebea0720f9d290acdb"
+      },
+      {
+        "name": "palette.clarus.json",
+        "size": 17992,
+        "sha256": "cdfc8d7516a9e96422165ec838f58ea84267ca6ab18ccb84f684a01e8acb4565"
+      },
+      {
+        "name": "README.txt",
+        "size": 1659,
+        "sha256": "d4b2e76d5a2ff64c9cc01f35d0564b9217fac8814ce5caab52400dc1cf270b88"
+      },
+      {
+        "name": "package-manifest.json",
+        "size": 652,
+        "sha256": "fa1314bd9246d65ae74aeadf2f470f4de1453ab38f106096cc8b1dc795b3a453"
+      }
+    ]
+  },
+  "direct_zip_import_supported": false,
+  "direct_zip_import_rejected_without_mutation": true,
+  "metadata_matching_and_roundtrip_status": "PASS",
+  "source_records": 8,
+  "json_and_zip_embedded_json_roundtrip_byte_identical": true,
+  "reload_preserves_source_records": true,
+  "original_input_files_unchanged": true,
+  "original_image_and_icc_bytes_in_palette_exports": false,
+  "original_files_recoverable_from_palette_exports": false,
+  "master_unchanged": true,
+  "browser_internal_transform": "NOT_OBSERVABLE",
+  "physical_print_proof": false,
+  "page_errors": []
+}

@@ -1,0 +1,369 @@
+{
+  "schema": "atlas-p3-regression/1",
+  "lcms_version": 2140,
+  "python": "3.12.15",
+  "intent": "RELATIVE_COLORIMETRIC",
+  "black_point_compensation": false,
+  "flags": [
+    "NOOPTIMIZE"
+  ],
+  "profile_source": "Synthetic LittleCMS ICC v4 matrix/TRC profiles",
+  "profile_spec": "https://registry.color.org/rgb-registry/displayp3",
+  "in_gamut_pair_delta_e76": 0.0016775901193017094,
+  "out_of_gamut_clipping_delta_e76": 30.423607546977983,
+  "rgb8_tolerance_per_channel": 1,
+  "fixtures": {
+    "in-srgb16.png": {
+      "purpose": "same-target",
+      "bits": 16,
+      "encoded_rgb": [
+        15677,
+        31611,
+        6425
+      ],
+      "profile": "srgb",
+      "file_sha256": "7655401460b15531136f717b4a89aabab17dbe2e5ecb8ec2bd335edb9cf6dbf9",
+      "icc_sha256": "df9f8e80e9c1d081f41df3751536d4097a80c7558b3e5b0874710464a153ac9e",
+      "icc_bytes": 592,
+      "expected_srgb8": [
+        61,
+        123,
+        25
+      ],
+      "expected_srgb_float": [
+        0.239215686917305,
+        0.48235294222831726,
+        0.09803921729326248
+      ],
+      "diagnostic_pretransform_highbyte_rgb8": [
+        61,
+        123,
+        25
+      ],
+      "diagnostic_highbyte_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "diagnostic_round8_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "lab_d50": [
+        46.03855609893799,
+        -34.05085447430611,
+        43.13301306962967
+      ],
+      "untagged_oracle_assumption": null
+    },
+    "in-p3-16.png": {
+      "purpose": "same-target",
+      "bits": 16,
+      "encoded_rgb": [
+        19701,
+        31236,
+        11007
+      ],
+      "profile": "display-p3",
+      "file_sha256": "8781e1398fbc31cf2734d4df5f18d6346dee28fd3d8f6ef6f9c1f6193f6c3886",
+      "icc_sha256": "3cd9ee950d4cdf3da2d09b9d69bdeb46f6f71e570173beeb4efd043e7f8fcd51",
+      "icc_bytes": 604,
+      "expected_srgb8": [
+        61,
+        123,
+        25
+      ],
+      "expected_srgb_float": [
+        0.23920507729053497,
+        0.4823574423789978,
+        0.09803133457899094
+      ],
+      "diagnostic_pretransform_highbyte_rgb8": [
+        76,
+        122,
+        42
+      ],
+      "diagnostic_highbyte_then_icc": [
+        60,
+        123,
+        23
+      ],
+      "diagnostic_round8_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "lab_d50": [
+        46.03881239891052,
+        -34.052267998456955,
+        43.13387942314148
+      ],
+      "untagged_oracle_assumption": null
+    },
+    "in-srgb8.png": {
+      "purpose": "quantization",
+      "bits": 8,
+      "encoded_rgb": [
+        61,
+        123,
+        25
+      ],
+      "profile": "srgb",
+      "file_sha256": "e45408b53f1677853af988ace46d85e58424b64a07c215b3890badf128daa4d5",
+      "icc_sha256": "df9f8e80e9c1d081f41df3751536d4097a80c7558b3e5b0874710464a153ac9e",
+      "icc_bytes": 592,
+      "expected_srgb8": [
+        61,
+        123,
+        25
+      ],
+      "expected_srgb_float": [
+        0.239215686917305,
+        0.48235294222831726,
+        0.09803921729326248
+      ],
+      "diagnostic_pretransform_highbyte_rgb8": [
+        61,
+        123,
+        25
+      ],
+      "diagnostic_highbyte_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "diagnostic_round8_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "lab_d50": [
+        46.03855609893799,
+        -34.05085447430611,
+        43.13301306962967
+      ],
+      "untagged_oracle_assumption": null
+    },
+    "in-p3-8.png": {
+      "purpose": "quantization",
+      "bits": 8,
+      "encoded_rgb": [
+        77,
+        122,
+        43
+      ],
+      "profile": "display-p3",
+      "file_sha256": "1f8eb0acb6ef1cde285b0f6d8aff93755efcb1960911c5acdc550f64055d55a6",
+      "icc_sha256": "3cd9ee950d4cdf3da2d09b9d69bdeb46f6f71e570173beeb4efd043e7f8fcd51",
+      "icc_bytes": 604,
+      "expected_srgb8": [
+        61,
+        123,
+        25
+      ],
+      "expected_srgb_float": [
+        0.24042248725891113,
+        0.48417413234710693,
+        0.09838496148586273
+      ],
+      "diagnostic_pretransform_highbyte_rgb8": [
+        77,
+        122,
+        43
+      ],
+      "diagnostic_highbyte_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "diagnostic_round8_then_icc": [
+        61,
+        123,
+        25
+      ],
+      "lab_d50": [
+        46.20888829231262,
+        -34.127944737672806,
+        43.26772344112396
+      ],
+      "untagged_oracle_assumption": null
+    },
+    "out-p3-16.png": {
+      "purpose": "outside-srgb",
+      "bits": 16,
+      "encoded_rgb": [
+        65535,
+        32768,
+        0
+      ],
+      "profile": "display-p3",
+      "file_sha256": "d94af9d5e6382789da67a9b67f1f8047ef8058a01085224cff7b1c6670ea8b62",
+      "icc_sha256": "3cd9ee950d4cdf3da2d09b9d69bdeb46f6f71e570173beeb4efd043e7f8fcd51",
+      "icc_bytes": 604,
+      "expected_srgb8": [
+        255,
+        118,
+        0
+      ],
+      "expected_srgb_float": [
+        1.0740529298782349,
+        0.4625369906425476,
+        -0.47113943099975586
+      ],
+      "diagnostic_pretransform_highbyte_rgb8": [
+        255,
+        128,
+        0
+      ],
+      "diagnostic_highbyte_then_icc": [
+        255,
+        119,
+        0
+      ],
+      "diagnostic_round8_then_icc": [
+        255,
+        119,
+        0
+      ],
+      "lab_d50": [
+        68.70577931404114,
+        56.38636749982834,
+        103.5492695569992
+      ],
+      "untagged_oracle_assumption": null
+    },
+    "out-clipped-srgb16.png": {
+      "purpose": "clipped-comparator-not-same-target",
+      "bits": 16,
+      "encoded_rgb": [
+        65535,
+        30312,
+        0
+      ],
+      "profile": "srgb",
+      "file_sha256": "241dc8498eb2e912ff07071b1b40fe54c079a0e080231fa2763d01b40e61f0b5",
+      "icc_sha256": "df9f8e80e9c1d081f41df3751536d4097a80c7558b3e5b0874710464a153ac9e",
+      "icc_bytes": 592,
+      "expected_srgb8": [
+        255,
+        118,
+        0
+      ],
+      "expected_srgb_float": [
+        1.0,
+        0.4625314772129059,
+        0.0
+      ],
+      "diagnostic_pretransform_highbyte_rgb8": [
+        255,
+        118,
+        0
+      ],
+      "diagnostic_highbyte_then_icc": [
+        255,
+        118,
+        0
+      ],
+      "diagnostic_round8_then_icc": [
+        255,
+        118,
+        0
+      ],
+      "lab_d50": [
+        65.92268943786621,
+        50.117783069610596,
+        73.90883845090866
+      ],
+      "untagged_oracle_assumption": null
+    },
+    "control-p3-codes-srgb16.png": {
+      "purpose": "profile-control",
+      "bits": 16,
+      "encoded_rgb": [
+        19701,
+        31236,
+        11007
+      ],
+      "profile": "srgb",
+      "file_sha256": "f16c1d46a7f58eb3dc7735a0e0c6d4377a6098e00f3de97c03e3e466f960e3c9",
+      "icc_sha256": "df9f8e80e9c1d081f41df3751536d4097a80c7558b3e5b0874710464a153ac9e",
+      "icc_bytes": 592,
+      "expected_srgb8": [
+        77,
+        122,
+        43
+      ],
+      "expected_srgb_float": [
+        0.3006179928779602,
+        0.4766308069229126,
+        0.16795605421066284
+      ],
+      "diagnostic_pretransform_highbyte_rgb8": [
+        76,
+        122,
+        42
+      ],
+      "diagnostic_highbyte_then_icc": [
+        76,
+        122,
+        42
+      ],
+      "diagnostic_round8_then_icc": [
+        77,
+        122,
+        43
+      ],
+      "lab_d50": [
+        46.47391736507416,
+        -26.896453976631165,
+        36.72672402858734
+      ],
+      "untagged_oracle_assumption": null
+    },
+    "control-p3-codes-untagged16.png": {
+      "purpose": "untagged-control",
+      "bits": 16,
+      "encoded_rgb": [
+        19701,
+        31236,
+        11007
+      ],
+      "profile": null,
+      "file_sha256": "5438357445a46e9443eedb7962694b079e4ab37b2329f243c02ade9024738f36",
+      "icc_sha256": null,
+      "icc_bytes": null,
+      "expected_srgb8": [
+        77,
+        122,
+        43
+      ],
+      "expected_srgb_float": [
+        0.3006179928779602,
+        0.4766308069229126,
+        0.16795605421066284
+      ],
+      "diagnostic_pretransform_highbyte_rgb8": [
+        76,
+        122,
+        42
+      ],
+      "diagnostic_highbyte_then_icc": [
+        76,
+        122,
+        42
+      ],
+      "diagnostic_round8_then_icc": [
+        77,
+        122,
+        43
+      ],
+      "lab_d50": [
+        46.47391736507416,
+        -26.896453976631165,
+        36.72672402858734
+      ],
+      "untagged_oracle_assumption": "sRGB for control only"
+    }
+  }
+}

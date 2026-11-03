@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-03",
+  "source_pr": "https://github.com/HelabHLC/atlas-clarus-connect/pull/108",
+  "tested_runtime_commit": "21281d9bb53e32e7cdf04d85161b8263523b7412",
+  "test_code_commit": "b72cbb687c764febb8d18a5fc5a51ff5d4d4c54d",
+  "actions_run": "https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/41687023622",
+  "candidate_archive_sha256": "402426727adeeb989933727703080eb798abc5b43ef7ded355d6dfed08ccf327",
+  "engines": {
+    "chromium": {
+      "version": "139.0.7258.5",
+      "status": "COLOUR_ACCURACY_FAIL",
+      "metadata_matching_roundtrip": "PASS",
+      "artifact_sha256": "421d5bcc37cc4cb1bfd47b70be7a2f7132b51d8eaba139bd1ff7a01c711f64e8",
+      "artifact_id": 13254824958
+    },
+    "firefox": {
+      "version": "140.0.2",
+      "status": "PASS",
+      "metadata_matching_roundtrip": "PASS",
+      "artifact_sha256": "9315460e0ec2316c7dc8538f74ee0e733cf8c187cb1956150636eefaf26d1b47",
+      "artifact_id": 13255630588
+    },
+    "webkit": {
+      "version": "26.0",
+      "status": "COLOUR_ACCURACY_FAIL",
+      "metadata_matching_roundtrip": "PASS",
+      "artifact_sha256": "12e70d47531ca4be97af17c16e32ccc55149b1a363c19c1064d84fec5ca2c6a8",
+      "artifact_id": 13255069389
+    }
+  },
+  "generated_png_and_icc_files_identical_across_all_runners": true,
+  "production_modified": false,
+  "physical_print_proof": false,
+  "files": {
+    "chromium.json": "26925d5204eae54bd3fc497f37f40476b58af008e60b32c055f528ea423384c5",
+    "chromium.zip": "421d5bcc37cc4cb1bfd47b70be7a2f7132b51d8eaba139bd1ff7a01c711f64e8",
+    "firefox.json": "9d74cbfef155e23882541426b28bdd5135b480296a2bcb3aa7b2d5576d46babc",
+    "firefox.zip": "9315460e0ec2316c7dc8538f74ee0e733cf8c187cb1956150636eefaf26d1b47",
+    "oracle-p3.json": "c4d387bd01fa320c4b78ff08552dbec2f6c0e01509c7dccdabd97f981adafa9e",
+    "webkit.json": "ce69b39bf8af8cd524310eda9d550553d58e6ad6b4b0bd1dc59a064fc4139ae5",
+    "webkit.zip": "12e70d47531ca4be97af17c16e32ccc55149b1a363c19c1064d84fec5ca2c6a8"
+  }
+}

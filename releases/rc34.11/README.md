@@ -77,3 +77,9 @@ performed by its workflow. See `guide.html` for German/English instructions.
 
 Browser screenshots are internal QA only. No physical phone, Safari, native
 QuarkXPress or measured print acceptance is claimed.
+
+## Display P3 regression (3 November 2026)
+
+See [DISPLAY_P3_REGRESSION.md](DISPLAY_P3_REGRESSION.md) for independently
+generated sRGB/P3 pairs, browser measurements, export preservation and known
+colour-accuracy limits. Profile recognition alone is not a transformation test.
