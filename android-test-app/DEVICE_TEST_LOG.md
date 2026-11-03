@@ -1,5 +1,21 @@
 # ATLAS Clarus Connect — Android device test baseline
 
+## Status update — 3 November 2026
+
+The [beta.15 verification](BETA15_VERIFICATION.md) records the successful
+reserved-key build, the byte-identical Play AAB already active in internal
+testing, matching upload certificate, current +440 model count and the limits
+of the camera-filter comparison. These are package, CI and Play-console
+observations, not new physical-device results. No beta.15 installation,
+in-place update, camera or stored-work retention test on a real device is
+claimed. The focused device test plan remains pending separate device approval.
+
+The following dated entries are preserved as historical evidence. Their
+"current" and "latest" labels describe the date of those entries, not today's
+build or release status.
+
+## Historical baseline
+
 Date: 2026-09-29. This log separates the user's phone observations from
 automated checks and website checks. It is the baseline for the next Android
 stabilization phase; no Play Store release or production signing is implied.

@@ -1,11 +1,16 @@
 # Connect beta identity and signing
 
-The first signed beta used application ID `com.atlasclarus.connect`,
-`versionCode 1`, and `versionName 0.4.0-beta.1`. The current RC28 source candidate
-keeps the application ID and signing key configuration, and increases the
-version to `versionCode 5` / `versionName 0.4.0-beta.5`. Version code 4 is
-already used by the recorded signed beta.4 APK/AAB and must not be reused for
-this changed payload. The debug variant uses
+**Verified 3 November 2026:** the current Android version is
+`0.4.0-beta.15` / `versionCode 15`, application ID `com.atlasclarus.connect`,
+with the pinned RC34.4 browser payload. Its reserved-key APK/AAB build succeeded
+in [run 39762489747](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/39762489747)
+on commit `e6417fd9a822789fce8347419de908e149ec8f16`. The identical AAB is already
+active in Play internal testing. The current Play upload certificate matches
+the reserved certificate below. A new build/upload is not required for this
+candidate, and version code 15 must not be reused for changed contents.
+See [BETA15_VERIFICATION.md](BETA15_VERIFICATION.md) for hashes and limitations.
+
+The first signed beta used version code 1. The debug variant uses
 `com.atlasclarus.connect.dev` and its runner-generated debug certificate; it is
 never a substitute for a signed beta. The installed 0.3.3 Navigationstest has
 a different application ID, so this beta installs separately and does not
@@ -19,7 +24,9 @@ not commit a keystore or passwords, include them in issue text, or upload them
 as CI artifacts. The repository ignores `*.jks`, `*.keystore` and
 `keystore.properties` under `android-test-app`.
 
-For local key creation with JDK 17 or newer, choose and preserve a strong
+The following key-creation command is only a first-time setup reference.
+Do not generate a replacement key for the existing application. For initial
+local key creation with JDK 17 or newer, choose and preserve a strong
 password. The private key needs a protected, independently accessible backup:
 
 ```sh
@@ -49,21 +56,23 @@ alias is fixed to `atlas-connect-beta`; this PKCS12 key uses the same key and
 store password. Base64 is transport encoding, not encryption. Restrict the
 environment to trusted maintainers/branches and run the workflow only for a
 reviewed commit. The workflow builds a signed APK for direct device testing
-and a signed AAB for the Google Play draft. It verifies the APK identity and
+and a signed AAB for Google Play. It verifies the APK identity and
 certificate, and verifies that the AAB carries the reserved certificate.
 Before reading signing secrets it runs the version/bundle contract regression
-checks. Both packaged asset trees must match the prepared RC28/Colour ID
-payload. Artifact names carry beta.5. This PR does not run that manual workflow
-or upload an AAB to Play; beta.5 reserved-key signing remains pending.
+checks. Both packaged asset trees must match the prepared RC34.4/Colour ID
+payload. Artifact names carry beta.15. The workflow itself never uploads to
+Play or starts a rollout. The successful historical run and existing internal
+release are recorded separately; this documentation update does not rerun it.
 
-Before the first Google Play release, choose the Play App Signing key
-strategy explicitly. If Google signs Play-delivered APKs with a newly generated
-key, they will not be an in-place update for devices holding the directly
-installed beta signed with the reserved key. To preserve that update path,
-follow Play Console's official existing-key transfer flow for the app signing
-key; the AAB's upload certificate alone does not select the Play signing key.
-Do not upload the private keystore into this repository or an issue. The Play
-Console draft and signed AAB do not publish an app.
+Play App Signing is already in use. The visible app-signing fingerprint in the
+audited Play Digital Asset Links snippet is
+`46:C7:55:46:D4:79:22:92:16:C9:3C:64:93:C4:AF:60:41:6C:75:BE:74:F7:3A:59:FE:91:00:85:B0:D1:3A:87`,
+which differs from the reserved upload/direct-APK certificate. AAB acceptance
+therefore does not prove that a Play-delivered APK can update a directly
+installed APK. Check the installed signing identity and any applicable signing
+lineage before choosing that update path. Do not uninstall, clear app data or
+change signing keys to force an update. No such device/signing-lineage test was
+performed in this audit. Do not put private keys or passwords in this repository.
 
 For each later beta, increase `versionCode`, update `versionName`, adjust the
 workflow's identity assertion and artifact name, and sign with the *same*

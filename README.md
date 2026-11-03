@@ -4,6 +4,10 @@
 **Status:** public source repository with separately versioned components  
 **Workflow:** ATLAS Clarus Workflow v3.4.0
 
+The Android row was updated on 3 November 2026 from the
+[beta.15 verification](android-test-app/BETA15_VERIFICATION.md). Other component
+rows retain this overview's dated scope.
+
 ATLAS Clarus connects colour selection, fixed reference identity, palettes,
 analysis and experimental production preparation:
 
@@ -27,7 +31,7 @@ historical records, not a release number or acceptance report for every componen
 | [Colour Identity Wheel](colour-identity-wheel/SOURCE_PROVENANCE.md) | Sites v22 provenance baseline plus repository changes; embed **1.0.0** | Recorded baseline and receiver tests; current public Site/repository parity is not established by historical provenance. |
 | [Identity Handoff](identity-handoff/SPECIFICATION.md) | **0.1.0** | Protocol and executable valid/rejected transfer vectors. |
 | [Naming and tone layers](designer-layer/) | Names **0.3.0**, Tone System **0.1**, search index **v1** | Included in RC27; descriptive metadata, not a replacement for reference identity. |
-| [Android test app](android-test-app/DEVICE_TEST_LOG.md) | **0.4.0-beta.4**, version code 4 | Signed APK/AAB build evidence; recorded device observations through beta.3; no production-store release established by the log. |
+| [Android test app](android-test-app/README.md) | **0.4.0-beta.15**, version code 15; pinned RC34.4 payload | Reserved-key APK/AAB verified; identical AAB active in Play internal testing since 22 October. Current coverage: 18,199 models versus beta.14's 17,759. Historical 437-model recovery and physical beta.15 acceptance remain open; no public production release. [Evidence and test plan](android-test-app/BETA15_VERIFICATION.md). |
 | [Appearance Pixel Simulator](appearance-pixel-simulator/README.md) / [APF](apf-material-bridge/) / [MaterialX](materialx-render-service/) | **0.4.1** / **0.1** / **0.4.0** | Simulation, binding and optional self-hosted renderer sources; explicit runtime limits; no hosted renderer is provided. |
 | [TryColors Bridge](trycolors-bridge/README.md) | **0.2.2**, Golden HB 59 pilot | Controlled external-service integration; simulated recipes, no measured mixture approval. |
 | [Open Label](open-label/) / [Connect prototype](connect-v0.1-prototype/) / [CHSOS research](research/chsos-rebuild-v0.1/) | **0.1.1** / **0.1** / **0.1** | Draft documents, interoperability prototype and research; not certification or general runtime acceptance. |
