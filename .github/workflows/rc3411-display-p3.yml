@@ -1,0 +1,63 @@
+name: RC34.11 Display P3 regression (no deployment)
+on:
+  push:
+    branches: [test/rc3411-display-p3-20261103]
+    paths:
+      - 'releases/rc34.11/generate-p3-fixtures.py'
+      - 'releases/rc34.11/p3-browser-regression.cjs'
+      - '.github/workflows/rc3411-display-p3.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install pinned QA dependencies and retrieve verified baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir inputs
+          gh release download v0.2.0-rc34.10-quarkxpress-source-zip --pattern 'ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.10-quarkxpress-source-zip.zip' --dir inputs
+          sudo apt-get update
+          sudo apt-get install -y liblcms2-2
+          python -m pip install Pillow==12.0.0
+          npm install --prefix qa-runtime --ignore-scripts --no-audit --no-fund playwright@1.54.1
+          qa-runtime/node_modules/.bin/playwright install --with-deps ${{ matrix.browser }}
+      - name: Build exact RC34.11 and check deterministic fixtures
+        run: |
+          python releases/rc34.11/package.py --base inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.10-quarkxpress-source-zip.zip --output-dir candidate
+          python releases/rc34.11/generate-p3-fixtures.py p3-fixtures
+          python releases/rc34.11/generate-p3-fixtures.py p3-repeat
+          diff -r p3-fixtures p3-repeat
+          python releases/rc34.11/generate-fixtures.py fixtures
+          node releases/rc34.11/test-metadata.cjs fixtures candidate/atlas-clarus-browser-bundle
+          node releases/rc34.9/verify.cjs candidate/atlas-clarus-browser-bundle
+      - name: Actual browser samples, metadata, JSON and ZIP round trips
+        env:
+          NODE_PATH: ${{ github.workspace }}/qa-runtime/node_modules
+          BROWSER_ENGINE: ${{ matrix.browser }}
+        run: node releases/rc34.11/p3-browser-regression.cjs candidate/atlas-clarus-browser-bundle p3-fixtures evidence/p3
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RC34.11-P3-${{ matrix.browser }}
+          path: |
+            p3-fixtures/
+            evidence/p3/
+            candidate/release-info.json
+            candidate/verification.json
+            fixtures/metadata-results.json
+          retention-days: 30
