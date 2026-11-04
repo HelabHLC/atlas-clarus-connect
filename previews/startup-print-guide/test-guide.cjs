@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict'),fs=require('node:fs');
+require('../startup-colour-kit/print-guide.js');
+const G=globalThis.ATLAS_PRINT_GUIDE,C=JSON.parse(fs.readFileSync(require('node:path').join(__dirname,'../library-icc-profiles/catalog.json')));
+const base={...G.defaults(),product:'flyer',material:'coated',process:'offset'};
+assert.equal(G.evaluate(base,C).candidate,'psocoated_v3_icc');
+assert.equal(G.evaluate({...base,material:'uncoated'},C).candidate,'psouncoated_v3_fogra52_icc');
+for(const process of ['unknown','digital','other'])assert.equal(G.evaluate({...base,process},C).candidate,null);
+for(const material of ['recycled','board','film','textile','other',''])assert.equal(G.evaluate({...base,material},C).candidate,null);
+for(const product of ['packaging','textile','other',''])assert.equal(G.evaluate({...base,product},C).candidate,null);
+for(const name of ['FOGRA39','FOGRA51','FOGRA52','ISOcoated_v2_eci.icc.fake','sRGB','Adobe RGB (1998)','TextileRGB_FOGRA58_beta1_.icc'])assert.equal(G.evaluate({...base,instruction:'name',profile_name:name},C).candidate,null,name);
+for(const [name,id] of [['PSO Coated v3','psocoated_v3_icc'],['PSOcoated_v3.icc','psocoated_v3_icc'],['ISOcoated_v2_300_eci.icc','isocoated_v2_300_eci_icc'],['ISOcoated_v2_eci.icc','isocoated_v2_eci_icc']])assert.equal(G.evaluate({...base,instruction:'name',profile_name:name},C).candidate,id);
+assert.match(G.evaluate({...base,instruction:'name',profile_name:'TextileRGB_FOGRA58.icc'},C).pending.join(' '),/Austauschfarbraum/);
+assert.match(G.summary({...base,applied:{kind:'suggestion',sha256:'a'.repeat(64)}},C),/Bestätigung.*steht aus/);
+assert.throws(()=>G.validate({...base,product:'forged'}));
+assert.throws(()=>G.validate({...base,applied:{kind:'confirmed',sha256:'a'.repeat(64)}}));
+assert.match(G.inquiry({...base,material_detail:'Premium-Papier 170 g/m²'}),/Premium-Papier 170 g\/m²/);
+console.log('PASS: conditional suggestions, exact names, ambiguous/unsupported input, persisted status, printer inquiry');
