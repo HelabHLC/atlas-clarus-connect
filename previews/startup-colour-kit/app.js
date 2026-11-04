@@ -1,12 +1,14 @@
 (function(){
   'use strict';
-  const $=id=>document.getElementById(id),K=window.ATLAS_STARTUP_CORE,E=window.ATLAS_CLARUS_EXPORTS,P=window.ATLAS_CLARUS_PRINT,A=window.ATLAS_LIBRARY_ACCEPTANCE;
+  const $=id=>document.getElementById(id),K=window.ATLAS_STARTUP_CORE,E=window.ATLAS_CLARUS_EXPORTS,P=window.ATLAS_CLARUS_PRINT,A=window.ATLAS_LIBRARY_ACCEPTANCE,D=window.ATLAS_COLOUR_ADVICE;
   const data=window.ATLAS_CLARUS_DATA,ctx={colors:data.colors,master:data.master_sha256,views:data.views};
   if(ctx.master!==P.MASTER||ctx.colors.length!==13283)throw Error('ATLAS-Master nicht verfügbar.');
-  let state={doc:K.defaults(ctx.master),original:null,profile:null,result:null},image=null,imageMeta=null,busy=false,dirty=false,workerURL=null,guide=null,catalogUI=null;
+  let state={doc:K.defaults(ctx.master),original:null,profile:null,result:null},image=null,imageMeta=null,busy=false,dirty=false,workerURL=null,guide=null,catalogUI=null,advice=null;
   const canvas=$('kit-canvas'),dc=canvas.getContext('2d',{colorSpace:'srgb',willReadFrequently:true});
   function status(id,msg,error=false){$(id).textContent=msg;$(id).classList.toggle('error',error);}
-  function change(){state.result=null;dirty=true;renderResults();refresh();}
+  let adviceContext='';
+  const currentAdviceContext=()=>JSON.stringify([state.doc.print.library_id,state.doc.advice?.tolerance??null]);
+  function change(){const next=currentAdviceContext();if(next!==adviceContext){state.doc.colours.forEach(c=>{if(c.replacement)c.replacement.withdrawn=true;});adviceContext=next;}state.result=null;dirty=true;renderResults();refresh();}
   const acceptance=()=>A.check(state.doc,ctx,state.profile?.info);
   function ready(){const s=state.doc.print;return acceptance().status==='ACCEPTED_FOR_LIBRARY'&&state.doc.colours.length>0&&state.profile&&s.printing_condition.trim()&&s.substrate.trim()&&(s.path!=='ECG'||s.channel_order.length===7&&new Set(s.channel_order.map(v=>v.toUpperCase())).size===7);}
   function refresh(){
@@ -17,9 +19,11 @@
     window.ATLAS_PROFILE_LIBRARY?.refreshAll();
     guide?.refresh();
     renderAcceptance();
+    advice?.refresh();
     $('kit-channels-label').hidden=state.doc.print.path!=='ECG';
     $('kit-path-note').textContent=state.doc.print.path==='TEXTILE_RGB'?'FOGRA58 ist ein textiler RGB-Austauschfarbraum. Lade die offizielle finale TextileRGB_FOGRA58.icc. Ein konkretes Drucker-/Tinten-/Materialprofil wird dadurch nicht ersetzt.':'Das Profil muss zum Druckverfahren, Druckerzustand und Material passen. Der Profilname allein bestätigt das nicht.';
-    $('kit-export').textContent=acceptance().status==='ACCEPTED_FOR_LIBRARY'?'Farbmappe mit akzeptierten Paletten · ZIP':'Entwurf sichern · ZIP';
+    $('kit-json').textContent=state.doc.colours.some(c=>c.replacement)?'Ursprüngliche Zuordnung · Clarus JSON':'Clarus JSON für alle Werkzeuge';
+    $('kit-export').textContent=acceptance().status==='ACCEPTED_FOR_LIBRARY'?(state.doc.advice?'Farbmappe · bestätigte Auswahl + Originalfarben':'Farbmappe mit akzeptierten Paletten · ZIP'):'Entwurf sichern · ZIP';
     status('kit-save-status',state.doc.colours.length?`${acceptance().status==='ACCEPTED_FOR_LIBRARY'?'Bibliotheksprüfung bestanden':'Nicht akzeptiert · Entwurf'} · ${state.doc.colours.length} Farbe(n) · ${state.result?'B/A-Vergleich berechnet':'Druckvorschau noch nicht berechnet'}${dirty?' · Änderungen noch nicht als ZIP gesichert.':''}`:'Noch keine Farbe ausgewählt.');
   }
   function renderAcceptance(){
@@ -28,7 +32,7 @@
     select.value=state.doc.print.library_id||'';
     const accepted=check.status==='ACCEPTED_FOR_LIBRARY';
     $('kit-acceptance-title').textContent=accepted?'Für diese Bibliothek akzeptiert':'Kundenfarben noch nicht akzeptiert';
-    $('kit-acceptance-summary').textContent=(check.library_name?check.library_name+' · ':'')+(accepted?`${check.rows.length} von ${check.rows.length} Referenzadressen enthalten.`:check.reason)+(state.profile&&!items.length?' Für dieses Profil fehlt eine zugeordnete Bibliotheksliste.':'');
+    $('kit-acceptance-summary').textContent=(check.library_name?check.library_name+' · ':'')+(accepted?`${check.rows.length} von ${check.rows.length} Farben akzeptiert${check.rows.some(r=>r.status==='REPLACEMENT_FOUND')?' · einschließlich bestätigter Ersatzfarben': ' · ursprüngliche Referenzadressen enthalten'}.`:check.reason)+(state.profile&&!items.length?' Für dieses Profil fehlt eine zugeordnete Bibliotheksliste.':'');
     $('kit-acceptance').dataset.status=accepted?'accepted':'pending';
     document.querySelectorAll('[data-library-row]').forEach(el=>{const row=check.rows[Number(el.dataset.libraryRow)];el.textContent=A.rowLabel(row);el.dataset.status=row?.status||'UNVERIFIED';});
     const list=$('kit-acceptance-rows');list.replaceChildren(...state.doc.colours.map((c,i)=>{const li=document.createElement('li'),ref=ctx.colors.find(r=>r.id===c.reference_id);li.textContent=c.label+' · '+ref.ref+' · '+A.rowLabel(check.rows[i]);return li;}));
@@ -42,7 +46,7 @@
     if(!state.doc.colours.length){const p=document.createElement('p');p.className='empty';p.textContent='Deine ausgewählten Farben erscheinen hier.';box.append(p);}
     state.doc.colours.forEach((c,i)=>{
       const ref=ctx.colors.find(r=>r.id===c.reference_id),card=document.createElement('article');card.className='colour';
-      card.innerHTML=`<div class="colour-top"><input aria-label="Farbname ${i+1}" maxlength="64"><button class="quiet" aria-label="Farbe ${i+1} entfernen">×</button></div><div class="pair"><div><div class="swatch" style="background:${K.hex(c.source_rgb)}"></div><p><b>Source Colour</b><br><code>${K.hex(c.source_rgb)}</code><br>RGB ${c.source_rgb.join(' / ')}<br>${c.kind==='image'?'Bildauswahl':'Manuell · sRGB'}</p></div><div><div class="swatch" style="background:${ref.hex}"></div><p><b>ATLAS-Referenz</b><br><code>${ref.hex}</code><br>RGB ${ref.rgb.join(' / ')}<br>${ref.ref}</p></div></div>`;
+      card.innerHTML=`<div class="colour-top"><input aria-label="Farbname ${i+1}" maxlength="64"><button class="quiet" aria-label="Farbe ${i+1} entfernen">×</button></div><div class="pair"><div><div class="swatch" style="background:${K.hex(c.source_rgb)}"></div><p><b>Source Colour</b><br><code>${K.hex(c.source_rgb)}</code><br>RGB ${c.source_rgb.join(' / ')}<br>${c.kind==='image'?'Bildauswahl':c.kind==='recorded_srgb'?'Aufgezeichnete Bildfarbe':c.kind==='atlas_reference'?'Referenz als Ausgangsfarbe':'Manuell · sRGB'}</p></div><div><div class="swatch" style="background:${ref.hex}"></div><p><b>ATLAS-Referenz</b><br><code>${ref.hex}</code><br>RGB ${ref.rgb.join(' / ')}<br>${ref.ref}</p></div></div>`;
       const check=document.createElement('p');check.className='membership-status';check.dataset.libraryRow=String(i);card.append(check);
       card.querySelector('input').value=c.label;card.querySelector('input').oninput=e=>{c.label=e.target.value;change();};
       card.querySelector('button').onclick=()=>{if(busy)return;state.doc.colours.splice(i,1);change();renderColours();};box.append(card);
@@ -53,7 +57,7 @@
     if(!result){status('kit-print-status',ready()?'Bibliotheksprüfung bestanden. Berechne jetzt den B/A-Vergleich.':acceptance().status!=='ACCEPTED_FOR_LIBRARY'?'B/A gesperrt: '+acceptance().reason:'Wähle Farben, lade ein passendes Ausgabeprofil und ergänze Druckbedingung und Material. Nach Änderungen bitte neu berechnen.');return;}
     const grid=document.createElement('div');grid.className='ba-grid';
     result.colours.forEach((r,i)=>{const card=document.createElement('article');card.className='ba-card';const s=state.doc.print;
-      card.innerHTML=`<h3>${K.escape(state.doc.colours[i].label)}</h3><div class="pair"><div><div class="swatch" style="background:${K.hex(r.input_rgb)}"></div><p><b>B · ${s.basis==='source'?'Source':'Referenz'}</b><br><code>${K.hex(r.input_rgb)}</code><br>RGB ${r.input_rgb.join(' / ')}</p></div><div><div class="swatch" style="background:${K.hex(r.preview_rgb)}"></div><p><b>A · Profilrückrechnung</b><br><code>${K.hex(r.preview_rgb)}</code><br>RGB ${r.preview_rgb.join(' / ')}</p></div></div><p><b>${K.escape(r.channel_order.join(' / '))}</b><br>${r.device_values_16bit.join(' / ')} · 16 Bit<br>${s.path==='TEXTILE_RGB'?'':r.device_values_16bit.map(v=>(100*v/65535).toFixed(2)+' %').join(' / ')}</p>`;
+      card.innerHTML=`<h3>${K.escape(state.doc.colours[i].label)}</h3><div class="pair"><div><div class="swatch" style="background:${K.hex(r.input_rgb)}"></div><p><b>B · ${s.basis==='source'?'Source':s.basis==='accepted'?'Bestätigte Auswahl':'Referenz'}</b><br><code>${K.hex(r.input_rgb)}</code><br>RGB ${r.input_rgb.join(' / ')}</p></div><div><div class="swatch" style="background:${K.hex(r.preview_rgb)}"></div><p><b>A · Profilrückrechnung</b><br><code>${K.hex(r.preview_rgb)}</code><br>RGB ${r.preview_rgb.join(' / ')}</p></div></div><p><b>${K.escape(r.channel_order.join(' / '))}</b><br>${r.device_values_16bit.join(' / ')} · 16 Bit<br>${s.path==='TEXTILE_RGB'?'':r.device_values_16bit.map(v=>(100*v/65535).toFixed(2)+' %').join(' / ')}</p>`;
       grid.append(card);});box.append(grid);
     status('kit-print-status',`Berechnet: ${state.profile.name} · ${state.doc.print.intent} · Schwarzpunktkompensation ${state.doc.print.bpc?'an':'aus'}. Source und Referenz unverändert.`);
   }
@@ -135,6 +139,18 @@
         await attachProfile(bytes,p.file_name,p.output_path,p.printing_condition||p.description,kind);
       },onFile:file=>loadProfileFile(file,true)});
   }
+  if(window.ATLAS_COLOUR_ADVICE_UI){
+    advice=window.ATLAS_COLOUR_ADVICE_UI.mount({container:$('kit-advice'),ctx,getDoc:()=>state.doc,isBusy:()=>busy,
+      onChange:()=>{$('kit-basis').value=state.doc.print.basis;change();},
+      onLibrary:async id=>{
+        if(busy)return;
+        if(!A.choices(ctx).some(([key])=>key===id))throw Error('Bibliothek nicht verfügbar.');
+        if(state.profile&&!A.choices(ctx,state.profile.info).some(([key])=>key===id)){state.profile=null;clearGuideProfile();state.doc.print.printing_condition='';$('kit-condition').value='';}
+        state.doc.print.library_id=id;profileStatus();change();
+        $('kit-advanced').open=true;
+        if(catalogUI){catalogUI.select.value=id;catalogUI.select.dispatchEvent(new Event('change'));}
+      }});
+  }
   function run(job){return new Promise((resolve,reject)=>{
     if(!workerURL)workerURL=URL.createObjectURL(new Blob([JSON.parse($('atlas-print-worker-source').textContent)],{type:'text/javascript'}));
     const worker=new Worker(workerURL);let settled=false;const done=(error,value)=>{if(settled)return;settled=true;clearTimeout(timer);worker.terminate();error?reject(error):resolve(value);};const timer=setTimeout(()=>done(Error('Die Berechnung dauerte zu lange. Prüfe das Profil.')),45000);
@@ -143,7 +159,7 @@
   $('kit-calculate').onclick=()=>task(async()=>{
     const doc=K.validate(state.doc,ctx),s=doc.print;A.requireAccepted(doc,ctx,state.profile?.info);if(!ready())throw Error('Farben, passendes Profil, Druckbedingung und Material fehlen.');
     state.result=null;renderResults();status('kit-print-status','Die Ausgabe wird mit dem geladenen Profil berechnet …');
-    const input=doc.colours.map(c=>s.basis==='source'?c.source_rgb:ctx.colors.find(r=>r.id===c.reference_id).rgb),pixels=new Uint8Array(input.flatMap(v=>[...v,255]));
+    const input=doc.colours.map(c=>s.basis==='source'?c.source_rgb:s.basis==='accepted'?D.effective(c,doc,ctx).rgb:ctx.colors.find(r=>r.id===c.reference_id).rgb),pixels=new Uint8Array(input.flatMap(v=>[...v,255]));
     const preview=await run({path:s.path,width:input.length,height:1,pixels,profile:state.profile.bytes,intent:s.intent,bpc:s.bpc});
     const colours=[];for(let i=0;i<input.length;i++){
       const separation=await run({operation:'reference-separation',path:s.path,rgb:input[i],profile:state.profile.bytes,intent:s.intent,bpc:s.bpc,channelOrder:s.channel_order});
@@ -158,6 +174,7 @@
   $('kit-card').onclick=()=>{try{K.validate(state.doc,ctx);download(stem()+'_Farbkarte.html',K.report(state.doc,ctx,state.result,state.profile?.name,state.profile?.info),'text/html');}catch(err){status('kit-status',err.message,true);}};
   $('kit-json').onclick=()=>{try{K.validate(state.doc,ctx);A.requireAccepted(state.doc,ctx,state.profile?.info);download(stem()+'.clarus.json',JSON.stringify(K.clarus(state.doc,ctx),null,2),'application/json');status('kit-status','Clarus JSON enthält ATLAS-Referenzen und aufgezeichnete Bildquellen. Manuelle Source-Eingaben vollständig über die Farbmappe sichern.');}catch(err){status('kit-status',err.message,true);}};
   function loadForm(){
+    adviceContext=currentAdviceContext();
     $('kit-name').value=state.doc.name;$('kit-path').value=state.doc.print.path;
     for(const [id,key]of Object.entries(fields))$(id).value=key==='channel_order'?state.doc.print[key].join(', '):String(state.doc.print[key]);profileStatus();renderColours();renderResults();refresh();
   }
@@ -170,6 +187,27 @@
     status('kit-image-status',imageMeta?`${imageMeta.name} · Originaldatei geprüft. Gespeicherte Farben wurden nicht neu ausgelesen.`:'Kein Bild in dieser Farbmappe.');status('kit-status','Farbmappe geöffnet. Original, Profile und Farbzuordnungen geprüft. Bitte den B/A-Vergleich neu berechnen.');
   });};
   $('kit-demo').onclick=()=>{if(busy)return;try{for(const [name,values]of [['Markenorange',[234,99,37]],['Dunkelgrün',[24,74,61]],['Warmweiß',[245,241,222]]]){if(state.doc.colours.length>=12)break;addColour({label:name,kind:'manual_srgb',source_rgb:values,reference_id:K.nearest(values,ctx).id,assignment:null});}status('kit-status','Drei ausdrücklich als sRGB definierte Beispielfarben hinzugefügt. Für die Druckvorschau dein Ausgabeprofil laden.');}catch(err){status('kit-status',err.message,true);}};
+  if(window.parent!==window){
+    document.body.classList.add('embedded-advice');
+    let seeded=false;
+    addEventListener('message',e=>{
+      if(e.source!==parent)return;
+      if(e.data?.type==='ATLAS_ADVICE_CLOSE_REQUEST_V1'){if(!dirty||confirm('Deine Farbberatung ist noch nicht als ZIP gesichert. Trotzdem schließen?'))parent.postMessage({type:'ATLAS_ADVICE_CLOSE_ALLOWED_V1'},'*');return;}
+      if(e.data?.type!=='ATLAS_ADVICE_SEED_V1'||seeded)return;
+      task(async()=>{
+        const incoming=e.data.snapshot;
+        if(!incoming||incoming.profile||incoming.result)throw Error('Ungültige Beratungsübergabe.');
+        K.validate(incoming.doc,ctx);
+        // Serialize and reopen through the same validation used for file imports.
+        const restored=await K.unpack(await K.pack(incoming,ctx),ctx);
+        state=restored;seeded=true;dirty=true;
+        if(state.original){const img=await decodeImage(state.original.bytes,'');const origin=await window.ATLAS_COLOUR_ORIGIN.inspect(state.original.bytes);imageMeta={name:state.original.name,width:img.naturalWidth,height:img.naturalHeight,sha256:origin.file_sha256,colour_origin:origin};drawImage(img);showOrigin();}
+        loadForm();status('kit-status','Aus der Browser Edition übernommen. Source-Aufzeichnungen und ursprüngliche Referenzen bleiben erhalten. Sichere deine Entscheidungen als Farbmappe.');
+        $('kit-acceptance').scrollIntoView();parent.postMessage({type:'ATLAS_ADVICE_SEEDED_V1'},'*');
+      });
+    });
+    parent.postMessage({type:'ATLAS_ADVICE_READY_V1'},'*');
+  }
   addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
   loadForm();
   if(!window.crypto?.subtle)status('kit-status','Diese HTTP-Vorschau unterstützt keine Prüfsummen. Für Dateien, Profile und ZIP bitte START_HERE.html lokal öffnen oder HTTPS verwenden.',true);

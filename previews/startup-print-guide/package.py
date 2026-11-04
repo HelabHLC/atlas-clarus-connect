@@ -30,11 +30,15 @@ def build(base, output):
     scripts = old_html[old_html.index('<script'):old_html.rindex('</body>')]
     assert scripts.count('<script src="core.js">') == 1
     scripts = scripts.replace('<script src="core.js">', '<script src="print-guide.js"></script>\n<script src="library-acceptance.js"></script>\n<script src="core.js">')
+    if 'colour-advice.js' not in scripts:
+        scripts = scripts.replace('<script src="core.js">', '<script src="colour-advice.js"></script>\n<script src="core.js">').replace('<script src="app.js">', '<script src="colour-advice-ui.js"></script>\n<script src="app.js">')
     html = (SOURCE / 'index.html').read_text().replace('<!-- SCRIPTS -->', scripts)
     html = html.replace('Startup Colour Kit · Vorschau 0.1', 'Startup Colour Kit · Vorschau 0.1.2')
     (root / 'startup/index.html').write_text(html)
-    for name in ['core.js', 'app.js', 'kit.css', 'print-guide.js', 'library-acceptance.js']:
+    for name in ['core.js', 'app.js', 'kit.css', 'print-guide.js', 'library-acceptance.js','colour-advice.js','colour-advice-ui.js']:
         (root / 'startup' / name).write_bytes((SOURCE / name).read_bytes())
+    reader = root / 'startup/zip-reader.js'
+    reader.write_text(reader.read_text().replace('count<=16','count<=32'))
     manifest = {'version':'0.1.2-preview','base_archive_sha256':BASE_SHA,
         'entry':'START_HERE.html','guided_selection':'startup/index.html',
         'profile_loading':'EXPLICIT_USER_ACTION','unconfirmed_suggestions':'LABELED_AND_EXPORTED',
@@ -42,7 +46,7 @@ def build(base, output):
         'physical_proof':'NOT_PERFORMED','public_deployment':False}
     (root / 'PRINT_GUIDE_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n')
     (root / 'DRUCKVORBEREITUNG.txt').write_text((HERE / 'USER_README.txt').read_text())
-    mutable = {'startup/index.html','startup/core.js','startup/app.js','startup/kit.css','SHA256SUMS.txt'}
+    mutable = {'startup/zip-reader.js','startup/index.html','startup/core.js','startup/app.js','startup/kit.css','SHA256SUMS.txt'}
     assert all(sha((root/n).read_bytes())==h for n,h in before.items() if n not in mutable)
     names = sorted(p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file())
     (root / 'SHA256SUMS.txt').write_text(''.join(sha((root/n).read_bytes())+'  '+n+'\n' for n in names if n!='SHA256SUMS.txt'))

@@ -32,10 +32,10 @@
       if(id&&match&&c?.master_sha256===ctx.master&&c.libraries[id]?.profile_ids.includes(match[0]))profileMatch='NAMED_ASSOCIATION';
       else if(!reason)reason='Das geladene Profil ist dieser Bibliothek nicht nachweisbar zugeordnet.';
     }
-    const rows=doc.colours.map(colour=>({reference_id:colour.reference_id,status:members?(members.has(colour.reference_id)?'FOUND':'NOT_FOUND'):'UNVERIFIED'}));
+    const rows=doc.colours.map(colour=>{const replacement=root.ATLAS_COLOUR_ADVICE?.active(colour,doc,ctx);return {reference_id:colour.reference_id,status:members?(members.has(colour.reference_id)?'FOUND':replacement&&members.has(replacement.reference_id)?'REPLACEMENT_FOUND':'NOT_FOUND'):'UNVERIFIED',...(colour.replacement?{replacement_reference_id:colour.replacement.reference_id,replacement_active:Boolean(replacement)}:{})};});
     const missing=rows.filter(r=>r.status==='NOT_FOUND').length;
     if(!reason&&missing)reason=`${missing} zugeordnete Referenz${missing===1?' fehlt':'en fehlen'} in der Zielbibliothek.`;
-    const accepted=rows.length>0&&rows.every(r=>r.status==='FOUND')&&!reason;
+    const accepted=rows.length>0&&rows.every(r=>['FOUND','REPLACEMENT_FOUND'].includes(r.status))&&!reason;
     return {rule:RULE,library_id:id||null,library_name:view?.name||null,master_sha256:ctx.master,
       source_response_sha256:view?.source_response_sha256||null,source_note:view?.note||null,
       profile_sha256:profile?.sha256||null,profile_association:profileMatch,
@@ -43,6 +43,6 @@
       boundary:'Address membership only; not source/reference equality, ICC gamut proof or physical print approval.'};
   }
   function requireAccepted(doc,ctx,profile=null){const result=check(doc,ctx,profile);if(result.status!=='ACCEPTED_FOR_LIBRARY')throw Error('Farben nicht akzeptiert: '+result.reason);return result;}
-  const rowLabel=row=>row?.status==='FOUND'?'Referenz in Bibliothek enthalten':row?.status==='NOT_FOUND'?'Nicht akzeptiert · Referenz fehlt':'Noch nicht geprüft';
+  const rowLabel=row=>row?.status==='REPLACEMENT_FOUND'?'Bestätigte Ersatzfarbe in Bibliothek enthalten':row?.status==='FOUND'?'Referenz in Bibliothek enthalten':row?.status==='NOT_FOUND'?'Nicht akzeptiert · Referenz fehlt':'Noch nicht geprüft';
   root.ATLAS_LIBRARY_ACCEPTANCE={RULE,choices,suggestedLibrary,check,requireAccepted,rowLabel};
 })(typeof window==='undefined'?globalThis:window);
