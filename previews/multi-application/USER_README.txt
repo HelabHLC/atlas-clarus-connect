@@ -1,0 +1,26 @@
+ATLAS Clarus 0.1.6 — Markenfarben für mehrere Anwendungen / Brand colours across applications
+
+DEUTSCH
+ZIP vollständig entpacken und START_HERE.html öffnen. Deutsch oder English wählen.
+Im Startup Colour Kit führt „Markenfarben für mehrere Anwendungen“ die aktuelle Farbmappe in einem neuen Tab weiter. Auch aus der Farbberatung der Browser Edition verfügbar. Alternativ multi/index.html öffnen und eine Farbmappe laden.
+
+1. Ausgangsfarben aus einer bestehenden Farbmappe übernehmen. Die Originaldatei mit eingebettetem ICC, sofern vorhanden, bleibt darin enthalten. Die ursprünglichen Source-/Referenz-Zuordnungen und bestehenden Entscheidungen werden nicht geändert.
+2. Zwei bis acht Anwendungen mit Material, Veredelung, Verfahren und tatsächlichem Ausgabeprofil erfassen. Die Profilvorgabe muss für diesen Auftrag vom Produktionspartner bestätigt sein.
+3. Für bekannte Profile kann die zugeordnete dokumentierte Bibliotheksliste zusätzlich zur ICC-Rechnung geprüft werden. Alternativ ausdrücklich „Prüfliste aus diesem ICC-Profil berechnen“ wählen. Diese Liste beruht auf dem Profil, den gespeicherten ATLAS-sRGB-Farben und der gewählten Ausgabetoleranz; sie ist keine nachträglich verifizierte GamutMap-Liste.
+4. Drei ΔE00-Grenzen festlegen: Kundenfarbe zur gemeinsamen Referenz, Referenz zu jeder Ausgabe und größter paarweiser Unterschied zwischen Ausgaben.
+5. Profile prüfen. Je Farbe einen Vorschlag wählen und ausdrücklich bestätigen. Andere gemeinsame Adressen können über das HLC-Adressfeld gewählt werden, sofern sie alle Grenzen einhalten.
+6. Mehrfachprojekt als ZIP speichern. Erst nach Bestätigung aller Farben werden common.ase und common.clarus.json beigefügt. Source-Aufzeichnungen bleiben ausschließlich bei ihren ursprünglichen Referenzen. Die gemeinsame Referenz wird getrennt dokumentiert.
+7. Mehrfachprojekte über denselben Arbeitsbereich wieder öffnen. Gespeicherte Berechnungen werden nicht als neue Prüfung übernommen. Neu berechnen und gemeinsame Farben erneut bestätigen.
+
+Farbziel ist die gespeicherte ATLAS-sRGB-Farbe, nicht der HLC-Lab-Sollwert. LittleCMS 2.16 berechnet sRGB8 → Lab D50 → Gerät16 → Lab D50. Hin- und Rückweg durch das Geräteprofil sind absolut farbmetrisch, ohne Schwarzpunktkompensation. ΔE00 mit kL=kC=kH=1 wird vor der sRGB-Bildschirmrückrechnung berechnet. Die Profilweißpunkte werden berücksichtigt; Glanz, Struktur und wechselndes Licht nicht. Bildschirmfelder sind Darstellungen, keine physische Freigabe.
+Unterstützt werden ICC-v2/v4-Druckerprofile in RGB, CMYK oder sieben Kanälen mit A2B1- und B2A1-Tabellen. Sieben Kanalnamen müssen vom Anbieter angegeben werden. Bekannte Austauschprofile (einschließlich FOGRA58 und FOGRA55) und Beta-Profile sind keine tatsächlichen Material-/Geräteprofile und werden hier nicht als solche angenommen. Durchgefärbte Folien, Lacke und Wandfarben benötigen ein anderes Verfahren mit Materialmustern/Messdaten.
+Grenzen: acht Anwendungen, zwölf Ausgangsfarben, je ICC höchstens 16 MiB, Mehrfachprojekt höchstens 192 MiB. Bei großen Paketen auf ausreichenden Browserspeicher achten. Reale Muster, vereinbarte Beleuchtung und Produktionsfreigabe mit den Anbietern klären.
+
+ENGLISH
+Extract the entire ZIP and open START_HERE.html. Choose Deutsch or English.
+In Startup Colour Kit, “Brand colours across applications” opens the current dossier in a new tab; it is also reachable through Browser Edition's colour advice. Alternatively open multi/index.html and load a dossier.
+Add two to eight applications and their material, finishing, process and confirmed actual output profiles. Choose documented library membership plus ICC checking, or explicitly use a separately identified profile-derived address check list. Set three ΔE00 limits: source to common reference, reference to each output, and the largest pairwise output difference. Run the calculation, choose each common colour and explicitly confirm it. Save the multi-application ZIP. Reopening requires recalculation and renewed confirmation.
+The unchanged source dossier, including the original image and embedded ICC when present, remains in source-dossier.zip. Common references and device values are separate. common.ase and common.clarus.json are exported only after all colours are confirmed within the limits; source assignments are never rebound to a common replacement.
+Colour targets are stored ATLAS sRGB values, not HLC target Lab. LittleCMS evaluates Lab D50/2, absolute colorimetry and no black point compensation. CIEDE2000 kL=kC=kH=1 is computed before display conversion. Screen swatches are illustrative. ICC calculations account for profile white, not arbitrary lighting, texture or gloss. Real samples and production approval remain required.
+ICC v2/v4 printer profiles in RGB, CMYK and seven channels require colorimetric A2B1 and B2A1 tables. Seven-channel order must come from the provider. Known exchange/beta profiles, including FOGRA58/FOGRA55, cannot substitute for the actual device/material profile. Solid-colour film, paint and coatings need material samples/measurement data.
+Limits: eight applications, twelve source colours, 16 MiB per ICC, 192 MiB per project. Local test preview only; no public deployment or physical print validation.
