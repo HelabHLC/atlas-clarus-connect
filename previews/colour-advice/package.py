@@ -30,10 +30,12 @@ def build(base, output):
     assert scripts.count('<script src="core.js">') == 1
     scripts = scripts.replace('<script src="core.js">', '<script src="colour-advice.js"></script>\n<script src="core.js">')
     scripts = scripts.replace('<script src="app.js">', '<script src="colour-advice-ui.js"></script>\n<script src="app.js">')
+    if '<script src="language.js">' not in scripts:
+        scripts = scripts.replace('<script src="core.js">', '<script src="language-en.js"></script>\n<script src="language.js"></script>\n<script src="core.js">')
     html = (SOURCE/'index.html').read_text().replace('<!-- SCRIPTS -->', scripts)
     html = html.replace('Startup Colour Kit · Vorschau 0.1', 'Startup Colour Kit · Vorschau 0.1.4')
     (root/'startup/index.html').write_text(html)
-    for name in ['core.js','app.js','kit.css','print-guide.js','library-acceptance.js','colour-advice.js','colour-advice-ui.js']:
+    for name in ['core.js','app.js','kit.css','print-guide.js','library-acceptance.js','colour-advice.js','colour-advice-ui.js','language.js','language-en.js']:
         (root/'startup'/name).write_bytes((SOURCE/name).read_bytes())
     reader = (root/'startup/zip-reader.js').read_text()
     assert reader.count('count<=16') == 1
@@ -50,7 +52,7 @@ def build(base, output):
     (root/'assets/app.js').write_text(new_app)
     for name in ['browser-advice.js','browser-advice.css']:
         (root/'assets'/name).write_bytes((HERE/name).read_bytes())
-    tags = '<link rel="stylesheet" href="assets/browser-advice.css">\n<script src="assets/browser-advice.js"></script>\n'
+    tags = '<script src="startup/language-en.js"></script>\n<script src="startup/language.js"></script>\n<link rel="stylesheet" href="assets/browser-advice.css">\n<script src="assets/browser-advice.js"></script>\n'
     pos = browser.rfind('</body>');assert pos > 0
     (root/'index.html').write_text(browser[:pos]+tags+browser[pos:])
     assert 'assets/browser-advice.js' in (root/'index.html').read_text()

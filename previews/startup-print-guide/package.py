@@ -32,10 +32,12 @@ def build(base, output):
     scripts = scripts.replace('<script src="core.js">', '<script src="print-guide.js"></script>\n<script src="library-acceptance.js"></script>\n<script src="core.js">')
     if 'colour-advice.js' not in scripts:
         scripts = scripts.replace('<script src="core.js">', '<script src="colour-advice.js"></script>\n<script src="core.js">').replace('<script src="app.js">', '<script src="colour-advice-ui.js"></script>\n<script src="app.js">')
+    if '<script src="language.js">' not in scripts:
+        scripts = scripts.replace('<script src="core.js">', '<script src="language-en.js"></script>\n<script src="language.js"></script>\n<script src="core.js">')
     html = (SOURCE / 'index.html').read_text().replace('<!-- SCRIPTS -->', scripts)
     html = html.replace('Startup Colour Kit · Vorschau 0.1', 'Startup Colour Kit · Vorschau 0.1.2')
     (root / 'startup/index.html').write_text(html)
-    for name in ['core.js', 'app.js', 'kit.css', 'print-guide.js', 'library-acceptance.js','colour-advice.js','colour-advice-ui.js']:
+    for name in ['core.js', 'app.js', 'kit.css', 'print-guide.js', 'library-acceptance.js','colour-advice.js','colour-advice-ui.js','language.js','language-en.js']:
         (root / 'startup' / name).write_bytes((SOURCE / name).read_bytes())
     reader = root / 'startup/zip-reader.js'
     reader.write_text(reader.read_text().replace('count<=16','count<=32'))

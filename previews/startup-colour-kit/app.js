@@ -1,6 +1,7 @@
 (function(){
   'use strict';
-  const $=id=>document.getElementById(id),K=window.ATLAS_STARTUP_CORE,E=window.ATLAS_CLARUS_EXPORTS,P=window.ATLAS_CLARUS_PRINT,A=window.ATLAS_LIBRARY_ACCEPTANCE,D=window.ATLAS_COLOUR_ADVICE;
+  const $=id=>document.getElementById(id),K=window.ATLAS_STARTUP_CORE,E=window.ATLAS_CLARUS_EXPORTS,P=window.ATLAS_CLARUS_PRINT,A=window.ATLAS_LIBRARY_ACCEPTANCE,D=window.ATLAS_COLOUR_ADVICE,I=window.ATLAS_LANGUAGE;
+  const ui=s=>I?I.text(s):s;
   const data=window.ATLAS_CLARUS_DATA,ctx={colors:data.colors,master:data.master_sha256,views:data.views};
   if(ctx.master!==P.MASTER||ctx.colors.length!==13283)throw Error('ATLAS-Master nicht verfügbar.');
   let state={doc:K.defaults(ctx.master),original:null,profile:null,result:null},image=null,imageMeta=null,busy=false,dirty=false,workerURL=null,guide=null,catalogUI=null,advice=null;
@@ -28,14 +29,14 @@
   }
   function renderAcceptance(){
     const check=acceptance(),select=$('kit-library'),items=A.choices(ctx,state.profile?.info),signature=items.map(([id])=>id).join('|');
-    if(select.dataset.options!==signature){select.replaceChildren(new Option('Zielbibliothek noch offen',''));for(const [id,v]of items)select.add(new Option(v.name,id));select.dataset.options=signature;}
+    if(select.dataset.options!==signature){select.replaceChildren(new Option('Zielbibliothek noch offen',''));for(const [id,v]of items){const option=new Option(v.name,id);option.dataset.userContent='';select.add(option);}select.dataset.options=signature;}
     select.value=state.doc.print.library_id||'';
     const accepted=check.status==='ACCEPTED_FOR_LIBRARY';
     $('kit-acceptance-title').textContent=accepted?'Für diese Bibliothek akzeptiert':'Kundenfarben noch nicht akzeptiert';
     $('kit-acceptance-summary').textContent=(check.library_name?check.library_name+' · ':'')+(accepted?`${check.rows.length} von ${check.rows.length} Farben akzeptiert${check.rows.some(r=>r.status==='REPLACEMENT_FOUND')?' · einschließlich bestätigter Ersatzfarben': ' · ursprüngliche Referenzadressen enthalten'}.`:check.reason)+(state.profile&&!items.length?' Für dieses Profil fehlt eine zugeordnete Bibliotheksliste.':'');
     $('kit-acceptance').dataset.status=accepted?'accepted':'pending';
     document.querySelectorAll('[data-library-row]').forEach(el=>{const row=check.rows[Number(el.dataset.libraryRow)];el.textContent=A.rowLabel(row);el.dataset.status=row?.status||'UNVERIFIED';});
-    const list=$('kit-acceptance-rows');list.replaceChildren(...state.doc.colours.map((c,i)=>{const li=document.createElement('li'),ref=ctx.colors.find(r=>r.id===c.reference_id);li.textContent=c.label+' · '+ref.ref+' · '+A.rowLabel(check.rows[i]);return li;}));
+    const list=$('kit-acceptance-rows');list.replaceChildren(...state.doc.colours.map((c,i)=>{const li=document.createElement('li'),ref=ctx.colors.find(r=>r.id===c.reference_id);li.innerHTML=`<span data-user-content>${K.escape(c.label)}</span> · <code>${K.escape(ref.ref)}</code> · <span>${K.escape(A.rowLabel(check.rows[i]))}</span>`;return li;}));
   }
   $('kit-library').onchange=e=>{if(busy)return;state.doc.print.library_id=e.target.value;change();};
   async function task(action,errorId='kit-status'){
@@ -46,7 +47,7 @@
     if(!state.doc.colours.length){const p=document.createElement('p');p.className='empty';p.textContent='Deine ausgewählten Farben erscheinen hier.';box.append(p);}
     state.doc.colours.forEach((c,i)=>{
       const ref=ctx.colors.find(r=>r.id===c.reference_id),card=document.createElement('article');card.className='colour';
-      card.innerHTML=`<div class="colour-top"><input aria-label="Farbname ${i+1}" maxlength="64"><button class="quiet" aria-label="Farbe ${i+1} entfernen">×</button></div><div class="pair"><div><div class="swatch" style="background:${K.hex(c.source_rgb)}"></div><p><b>Source Colour</b><br><code>${K.hex(c.source_rgb)}</code><br>RGB ${c.source_rgb.join(' / ')}<br>${c.kind==='image'?'Bildauswahl':c.kind==='recorded_srgb'?'Aufgezeichnete Bildfarbe':c.kind==='atlas_reference'?'Referenz als Ausgangsfarbe':'Manuell · sRGB'}</p></div><div><div class="swatch" style="background:${ref.hex}"></div><p><b>ATLAS-Referenz</b><br><code>${ref.hex}</code><br>RGB ${ref.rgb.join(' / ')}<br>${ref.ref}</p></div></div>`;
+      card.innerHTML=`<div class="colour-top"><input aria-label="Farbname ${i+1}" maxlength="64"><button class="quiet" aria-label="Farbe ${i+1} entfernen">×</button></div><div class="pair"><div><div class="swatch" style="background:${K.hex(c.source_rgb)}"></div><p><b>${c.kind==='atlas_reference'?'Referenz als Ausgangsfarbe':'Source Colour'}</b><br><code>${K.hex(c.source_rgb)}</code><br>RGB ${c.source_rgb.join(' / ')}<br>${c.kind==='image'?'Bildauswahl':c.kind==='recorded_srgb'?'Aufgezeichnete Bildfarbe':c.kind==='atlas_reference'?'Referenz als Ausgangsfarbe':'Manuell · sRGB'}</p></div><div><div class="swatch" style="background:${ref.hex}"></div><p><b>ATLAS-Referenz</b><br><code>${ref.hex}</code><br>RGB ${ref.rgb.join(' / ')}<br>${ref.ref}</p></div></div>`;
       const check=document.createElement('p');check.className='membership-status';check.dataset.libraryRow=String(i);card.append(check);
       card.querySelector('input').value=c.label;card.querySelector('input').oninput=e=>{c.label=e.target.value;change();};
       card.querySelector('button').onclick=()=>{if(busy)return;state.doc.colours.splice(i,1);change();renderColours();};box.append(card);
@@ -57,12 +58,12 @@
     if(!result){status('kit-print-status',ready()?'Bibliotheksprüfung bestanden. Berechne jetzt den B/A-Vergleich.':acceptance().status!=='ACCEPTED_FOR_LIBRARY'?'B/A gesperrt: '+acceptance().reason:'Wähle Farben, lade ein passendes Ausgabeprofil und ergänze Druckbedingung und Material. Nach Änderungen bitte neu berechnen.');return;}
     const grid=document.createElement('div');grid.className='ba-grid';
     result.colours.forEach((r,i)=>{const card=document.createElement('article');card.className='ba-card';const s=state.doc.print;
-      card.innerHTML=`<h3>${K.escape(state.doc.colours[i].label)}</h3><div class="pair"><div><div class="swatch" style="background:${K.hex(r.input_rgb)}"></div><p><b>B · ${s.basis==='source'?'Source':s.basis==='accepted'?'Bestätigte Auswahl':'Referenz'}</b><br><code>${K.hex(r.input_rgb)}</code><br>RGB ${r.input_rgb.join(' / ')}</p></div><div><div class="swatch" style="background:${K.hex(r.preview_rgb)}"></div><p><b>A · Profilrückrechnung</b><br><code>${K.hex(r.preview_rgb)}</code><br>RGB ${r.preview_rgb.join(' / ')}</p></div></div><p><b>${K.escape(r.channel_order.join(' / '))}</b><br>${r.device_values_16bit.join(' / ')} · 16 Bit<br>${s.path==='TEXTILE_RGB'?'':r.device_values_16bit.map(v=>(100*v/65535).toFixed(2)+' %').join(' / ')}</p>`;
+      card.innerHTML=`<h3 data-user-content>${K.escape(state.doc.colours[i].label)}</h3><div class="pair"><div><div class="swatch" style="background:${K.hex(r.input_rgb)}"></div><p><b>B · ${s.basis==='source'?'Source':s.basis==='accepted'?'Bestätigte Auswahl':'Referenz'}</b><br><code>${K.hex(r.input_rgb)}</code><br>RGB ${r.input_rgb.join(' / ')}</p></div><div><div class="swatch" style="background:${K.hex(r.preview_rgb)}"></div><p><b>A · Profilrückrechnung</b><br><code>${K.hex(r.preview_rgb)}</code><br>RGB ${r.preview_rgb.join(' / ')}</p></div></div><p><b>${K.escape(r.channel_order.join(' / '))}</b><br>${r.device_values_16bit.join(' / ')} · 16 Bit<br>${s.path==='TEXTILE_RGB'?'':r.device_values_16bit.map(v=>(100*v/65535).toFixed(2)+' %').join(' / ')}</p>`;
       grid.append(card);});box.append(grid);
     status('kit-print-status',`Berechnet: ${state.profile.name} · ${state.doc.print.intent} · Schwarzpunktkompensation ${state.doc.print.bpc?'an':'aus'}. Source und Referenz unverändert.`);
   }
   function addColour(c){if(state.doc.colours.length>=12)throw Error('Diese erste Version unterstützt zwölf Farben. Entferne zuerst eine Farbe.');state.doc.colours.push(c);change();renderColours();status('kit-status','Farbe zur Prüfung aufgenommen. Source Colour und ATLAS-Referenz bleiben getrennt.');}
-  function label(){return $('kit-label').value.trim()||`Farbe ${state.doc.colours.length+1}`;}
+  function label(){return $('kit-label').value.trim()||ui(`Farbe ${state.doc.colours.length+1}`);}
   $('kit-add').onclick=()=>{if(busy)return;try{const h=$('kit-hex').value.trim();if(!/^#[0-9a-f]{6}$/i.test(h))throw Error('Bitte einen sRGB-HEX-Wert mit sechs Stellen eingeben, z. B. #EA6325.');const values=h.slice(1).match(/../g).map(x=>parseInt(x,16));addColour({label:label(),kind:'manual_srgb',source_rgb:values,reference_id:K.nearest(values,ctx).id,assignment:null});}catch(err){status('kit-status',err.message,true);}};
   async function decodeImage(bytes,mime){const url=URL.createObjectURL(new Blob([bytes],{type:mime}));try{return await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error('Das Bild konnte nicht geöffnet werden.'));img.src=url;});}finally{URL.revokeObjectURL(url);}}
   function drawImage(img){
@@ -186,13 +187,14 @@
     state=restored;image=nextImage;imageMeta=nextMeta;dirty=false;if(image)drawImage(image);else{$('kit-stage').hidden=true;$('kit-placeholder').hidden=false;dc.clearRect(0,0,canvas.width,canvas.height);}showOrigin();loadForm();
     status('kit-image-status',imageMeta?`${imageMeta.name} · Originaldatei geprüft. Gespeicherte Farben wurden nicht neu ausgelesen.`:'Kein Bild in dieser Farbmappe.');status('kit-status','Farbmappe geöffnet. Original, Profile und Farbzuordnungen geprüft. Bitte den B/A-Vergleich neu berechnen.');
   });};
-  $('kit-demo').onclick=()=>{if(busy)return;try{for(const [name,values]of [['Markenorange',[234,99,37]],['Dunkelgrün',[24,74,61]],['Warmweiß',[245,241,222]]]){if(state.doc.colours.length>=12)break;addColour({label:name,kind:'manual_srgb',source_rgb:values,reference_id:K.nearest(values,ctx).id,assignment:null});}status('kit-status','Drei ausdrücklich als sRGB definierte Beispielfarben hinzugefügt. Für die Druckvorschau dein Ausgabeprofil laden.');}catch(err){status('kit-status',err.message,true);}};
+  $('kit-demo').onclick=()=>{if(busy)return;try{for(const [name,values]of [['Markenorange',[234,99,37]],['Dunkelgrün',[24,74,61]],['Warmweiß',[245,241,222]]]){if(state.doc.colours.length>=12)break;addColour({label:ui(name),kind:'manual_srgb',source_rgb:values,reference_id:K.nearest(values,ctx).id,assignment:null});}status('kit-status','Drei ausdrücklich als sRGB definierte Beispielfarben hinzugefügt. Für die Druckvorschau dein Ausgabeprofil laden.');}catch(err){status('kit-status',err.message,true);}};
   if(window.parent!==window){
     document.body.classList.add('embedded-advice');
     let seeded=false;
     addEventListener('message',e=>{
       if(e.source!==parent)return;
-      if(e.data?.type==='ATLAS_ADVICE_CLOSE_REQUEST_V1'){if(!dirty||confirm('Deine Farbberatung ist noch nicht als ZIP gesichert. Trotzdem schließen?'))parent.postMessage({type:'ATLAS_ADVICE_CLOSE_ALLOWED_V1'},'*');return;}
+      if(e.data?.type==='ATLAS_ADVICE_LANGUAGE_V1'&&['de','en'].includes(e.data.language)){I?.setLanguage(e.data.language);return;}
+      if(e.data?.type==='ATLAS_ADVICE_CLOSE_REQUEST_V1'){if(!dirty||confirm(ui('Deine Farbberatung ist noch nicht als ZIP gesichert. Trotzdem schließen?')))parent.postMessage({type:'ATLAS_ADVICE_CLOSE_ALLOWED_V1'},'*');return;}
       if(e.data?.type!=='ATLAS_ADVICE_SEED_V1'||seeded)return;
       task(async()=>{
         const incoming=e.data.snapshot;
@@ -209,6 +211,14 @@
     parent.postMessage({type:'ATLAS_ADVICE_READY_V1'},'*');
   }
   addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
+  if(I){
+    I.control($('kit-language-bar'));I.observe(document.body);
+    document.documentElement.lang=I.language;state.doc.name=ui(state.doc.name);$('kit-label').value=ui($('kit-label').value);
+    addEventListener('atlas-language-change',()=>{
+      document.documentElement.lang=I.language;guide?.refresh();I.refresh();
+      if(parent!==window)parent.postMessage({type:'ATLAS_ADVICE_LANGUAGE_V1',language:I.language},'*');
+    });
+  }
   loadForm();
   if(!window.crypto?.subtle)status('kit-status','Diese HTTP-Vorschau unterstützt keine Prüfsummen. Für Dateien, Profile und ZIP bitte START_HERE.html lokal öffnen oder HTTPS verwenden.',true);
 })();
