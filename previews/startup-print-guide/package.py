@@ -29,11 +29,11 @@ def build(base, output):
     old_html = (root / 'startup/index.html').read_text()
     scripts = old_html[old_html.index('<script'):old_html.rindex('</body>')]
     assert scripts.count('<script src="core.js">') == 1
-    scripts = scripts.replace('<script src="core.js">', '<script src="print-guide.js"></script>\n<script src="core.js">')
+    scripts = scripts.replace('<script src="core.js">', '<script src="print-guide.js"></script>\n<script src="library-acceptance.js"></script>\n<script src="core.js">')
     html = (SOURCE / 'index.html').read_text().replace('<!-- SCRIPTS -->', scripts)
     html = html.replace('Startup Colour Kit · Vorschau 0.1', 'Startup Colour Kit · Vorschau 0.1.2')
     (root / 'startup/index.html').write_text(html)
-    for name in ['core.js', 'app.js', 'kit.css', 'print-guide.js']:
+    for name in ['core.js', 'app.js', 'kit.css', 'print-guide.js', 'library-acceptance.js']:
         (root / 'startup' / name).write_bytes((SOURCE / name).read_bytes())
     manifest = {'version':'0.1.2-preview','base_archive_sha256':BASE_SHA,
         'entry':'START_HERE.html','guided_selection':'startup/index.html',

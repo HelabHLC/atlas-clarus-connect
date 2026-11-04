@@ -80,7 +80,7 @@
       if(isBusy()||working)return;
       const g={...(getGuide()||defaults()),[key]:$('guide-'+key).value,applied:null};if(key==='material')g.material_detail='';$('guide-feedback').textContent='';onChange(g);refresh();
     });
-    async function action(fn){if(isBusy()||working)return;working=true;refresh();$('guide-feedback').textContent='Profil wird geprüft …';try{await fn();$('guide-feedback').textContent='Profil geladen. Du kannst jetzt den B/A-Vergleich berechnen, sobald Farben und Material feststehen.';}catch(err){$('guide-feedback').textContent=err.message;}finally{working=false;refresh();}}
+    async function action(fn){if(isBusy()||working)return;working=true;refresh();$('guide-feedback').textContent='Profil wird geprüft …';try{await fn();$('guide-feedback').textContent='Profil geladen. Prüfe jetzt die Bibliothekszugehörigkeit deiner Farben.';}catch(err){$('guide-feedback').textContent=err.message;}finally{working=false;refresh();}}
     $('guide-apply').onclick=()=>action(async()=>{const g=getGuide(),e=evaluate(g,catalog);if(!e.candidate)throw Error('Keine eindeutige Profilvorgabe.');await onApply(e.candidate,e.kind);});
     $('guide-file').onchange=e=>{const file=e.target.files[0];e.target.value='';if(file)action(()=>onFile(file));};
     $('guide-copy').onclick=async()=>{try{await navigator.clipboard.writeText($('guide-inquiry').value);$('guide-feedback').textContent='Anfrage kopiert. Du kannst sie an deine Druckerei weitergeben.';}catch{ $('guide-inquiry').focus();$('guide-inquiry').select();$('guide-feedback').textContent='Text markiert. Mit Strg+C bzw. ⌘C kopieren.';}};

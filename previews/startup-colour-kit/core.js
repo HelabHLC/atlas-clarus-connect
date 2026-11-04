@@ -1,6 +1,7 @@
 (function(root){
   'use strict';
   const SCHEMA='atlas-clarus-startup-colour-kit/1.0', MAX_ORIGINAL=32*1024*1024, MAX_ZIP=56*1024*1024;
+  const A=root.ATLAS_LIBRARY_ACCEPTANCE;
   const E=root.ATLAS_CLARUS_EXPORTS,P=root.ATLAS_CLARUS_PRINT,H=root.ClarusHandoff,C=root.ATLAS_STARTUP_CODECS;
   const need=(ok,msg)=>{if(!ok)throw Error(msg);},clone=x=>JSON.parse(JSON.stringify(x));
   const utf8=s=>new TextEncoder().encode(s),decode=b=>new TextDecoder('utf-8',{fatal:true}).decode(b);
@@ -11,7 +12,7 @@
   async function sha(bytes){return [...new Uint8Array(await root.crypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');}
   function text(v,n,label){need(typeof v==='string'&&v.length<=n&&!/[\x00-\x1f]/.test(v),label+' ist ungültig.');}
   function nearest(values,ctx){let best=null,d=Infinity;for(const c of ctx.colors){const n=c.rgb.reduce((s,v,i)=>s+(v-values[i])**2,0);if(n<d||(n===d&&c.id<best.id)){d=n;best=c;}}return best;}
-  function defaults(master){return {schema:SCHEMA,master_sha256:master,name:'Meine Marke',colours:[],print:{path:'4C',basis:'source',printing_condition:'',substrate:'',intent:'Relative colorimetric',bpc:false,channel_order:[]}};}
+  function defaults(master){return {schema:SCHEMA,acceptance_rule:A.RULE,master_sha256:master,name:'Meine Marke',colours:[],print:{library_id:'',path:'4C',basis:'source',printing_condition:'',substrate:'',intent:'Relative colorimetric',bpc:false,channel_order:[]}};}
   function validate(doc,ctx){
     need(doc?.schema===SCHEMA&&doc.master_sha256===ctx.master,'Unbekannte Farbmappe oder anderer ATLAS-Master.');
     text(doc.name,100,'Markenname');need(doc.name.trim(),'Bitte einen Markennamen eingeben.');
@@ -30,6 +31,7 @@
     text(s.printing_condition,160,'Druckbedingung');text(s.substrate,160,'Material');
     need(Array.isArray(s.channel_order)&&s.channel_order.length<=7&&s.channel_order.every(v=>typeof v==='string'&&/^[A-Za-z0-9 _-]{1,24}$/.test(v)),'Ungültige Kanalnamen.');
     if(doc.print_guide!==undefined){need(root.ATLAS_PRINT_GUIDE,'Druckführung nicht verfügbar.');root.ATLAS_PRINT_GUIDE.validate(doc.print_guide);}
+    if(doc.acceptance_rule!==undefined){need(doc.acceptance_rule===A?.RULE,'Unbekannte Annahmeregel.');text(s.library_id,100,'Zielbibliothek');}
     return clone(doc);
   }
   function references(doc,ctx){return [...new Set(doc.colours.map(c=>c.reference_id))].map(id=>ctx.colors.find(c=>c.id===id));}
@@ -46,13 +48,15 @@
     need(sources.every(c=>same(c.assignment.image.colour_origin,metadata)),'Die gespeicherte Profilherkunft passt nicht zur Originaldatei.');
     return {path:'original/image.'+extension,name:original.name,sha256:hash};
   }
-  function outputRows(doc,ctx,result){return doc.colours.map((c,i)=>{const r=ctx.colors.find(x=>x.id===c.reference_id),p=result?.colours[i];return `<tr><th>${escape(c.label)}</th><td><i style="background:${hex(c.source_rgb)}"></i>${hex(c.source_rgb)}<br>${c.source_rgb.join(' / ')}<br>${c.kind==='image'?'Bildauswahl':'Manuell · sRGB'}</td><td><i style="background:${r.hex}"></i>${escape(r.ref)}<br>${r.hex} · ${r.rgb.join(' / ')}</td><td>${p?`<i style="background:${hex(p.preview_rgb)}"></i>B: ${hex(p.input_rgb)}<br>A: ${hex(p.preview_rgb)}<br>${escape(p.channel_order.join(' / '))}: ${p.device_values_16bit.join(' / ')} (16 Bit)`:'Noch nicht berechnet'}</td></tr>`;}).join('');}
-  function report(doc,ctx,result,profileName){
+  function outputRows(doc,ctx,result,acceptance){return doc.colours.map((c,i)=>{const r=ctx.colors.find(x=>x.id===c.reference_id),p=result?.colours[i];return `<tr><th>${escape(c.label)}${acceptance?`<br><small>${escape(A.rowLabel(acceptance.rows[i]))}</small>`:''}</th><td><i style="background:${hex(c.source_rgb)}"></i>${hex(c.source_rgb)}<br>${c.source_rgb.join(' / ')}<br>${c.kind==='image'?'Bildauswahl':'Manuell · sRGB'}</td><td><i style="background:${r.hex}"></i>${escape(r.ref)}<br>${r.hex} · ${r.rgb.join(' / ')}</td><td>${p?`<i style="background:${hex(p.preview_rgb)}"></i>B: ${hex(p.input_rgb)}<br>A: ${hex(p.preview_rgb)}<br>${escape(p.channel_order.join(' / '))}: ${p.device_values_16bit.join(' / ')} (16 Bit)`:'Noch nicht berechnet'}</td></tr>`;}).join('');}
+  function report(doc,ctx,result,profileName,profileInfo=null){
+    const acceptance=doc.acceptance_rule?A.check(doc,ctx,profileInfo):null;
     const s=doc.print,guideNote=doc.print_guide?root.ATLAS_PRINT_GUIDE.summary(doc.print_guide,root.ATLAS_ICC_CATALOG):'';
-    return `<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(doc.name)} · ATLAS Clarus Farbkarte</title><style>body{font:16px/1.5 system-ui;color:#182c31;max-width:1120px;margin:40px auto;padding:24px}h1{font-size:38px}table{width:100%;border-collapse:collapse}th,td{padding:14px;border-bottom:1px solid #cdd6d6;text-align:left;vertical-align:top}td i{display:block;width:100%;height:62px;border:1px solid #777;margin-bottom:8px}code{overflow-wrap:anywhere;font-size:11px}.note{background:#eef3f1;padding:16px}@media print{button{display:none}body{margin:0;font-size:10pt}tr{break-inside:avoid}td i{print-color-adjust:exact;-webkit-print-color-adjust:exact}}</style><p>ATLAS CLARUS · STARTUP COLOUR KIT · VORSCHAU</p><h1>${escape(doc.name)}</h1><p>Originalfarbe und ATLAS-Referenz sind getrennt dokumentiert.</p><table><thead><tr><th>Farbe</th><th>Source Colour · sRGB</th><th>ATLAS-Referenz</th><th>B/A · Ausgabeprofil</th></tr></thead><tbody>${outputRows(doc,ctx,result)}</tbody></table><h2>Druck vorbereiten</h2>${guideNote?`<p class="note">${escape(guideNote)}</p>`:''}<p>Berechnungsbasis: ${s.basis==='source'?'Source Colour':'ATLAS-Referenz'}<br>Profil: ${escape(profileName||'Nicht geladen')}<br>Druckbedingung: ${escape(s.printing_condition||'Nicht angegeben')}<br>Material: ${escape(s.substrate||'Nicht angegeben')}<br>Rendering Intent: ${escape(s.intent)} · Schwarzpunktkompensation: ${s.bpc?'an':'aus'}</p><p class="note">${result?'B = Eingang in sRGB. A = Rückrechnung über das Ausgabeprofil nach sRGB. Berechnete Vorschau ohne Papierweißsimulation; kein gemessener Drucknachweis.':'Die Druckvorschau wurde nicht berechnet.'} ${s.path==='TEXTILE_RGB'?'FOGRA58 ist ein textiler RGB-Austauschfarbraum; das konkrete Drucker-/Tinten-/Materialprofil wird dadurch nicht ersetzt.':''}</p><p>Bei Bildfarben werden die vom Browser ausgelesenen sRGB-Werte aufgezeichnet. Ein eingebettetes ICC-Profil bleibt in der Originaldatei erhalten; die tatsächliche Browsertransformation ist nicht verifiziert. Die Originaldatei im ZIP kann weitere Metadaten enthalten.</p><p>Master SHA-256: <code>${ctx.master}</code></p><p>Bitte der Druckerei mitteilen: gewünschte Farbgrundlage, Material, Druckverfahren und vereinbarte Toleranz. Einen messbaren Freigabe-Proof beim Dienstleister anfragen.</p><button onclick="print()">Farbkarte drucken / als PDF speichern</button></html>`;
+    return `<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(doc.name)} · ATLAS Clarus Farbkarte</title><style>body{font:16px/1.5 system-ui;color:#182c31;max-width:1120px;margin:40px auto;padding:24px}h1{font-size:38px}table{width:100%;border-collapse:collapse}th,td{padding:14px;border-bottom:1px solid #cdd6d6;text-align:left;vertical-align:top}td i{display:block;width:100%;height:62px;border:1px solid #777;margin-bottom:8px}code{overflow-wrap:anywhere;font-size:11px}.note{background:#eef3f1;padding:16px}@media print{button{display:none}body{margin:0;font-size:10pt}tr{break-inside:avoid}td i{print-color-adjust:exact;-webkit-print-color-adjust:exact}}</style><p>ATLAS CLARUS · STARTUP COLOUR KIT · VORSCHAU</p><h1>${escape(doc.name)}</h1><p>Originalfarbe und ATLAS-Referenz sind getrennt dokumentiert.</p>${acceptance?`<p class="note"><b>${acceptance.status==='ACCEPTED_FOR_LIBRARY'?'Für die Zielbibliothek akzeptiert':'Entwurf · Farben nicht akzeptiert'}</b><br>Bibliothek: ${escape(acceptance.library_name||'Noch offen')}<br>${escape(acceptance.reason)}<br>Geprüft wird die zugeordnete Referenzadresse. Originalfarbe und Referenz können voneinander abweichen. Eine Druckfreigabe ist damit nicht verbunden.</p>`:''}<table><thead><tr><th>Farbe</th><th>Source Colour · sRGB</th><th>ATLAS-Referenz</th><th>B/A · Ausgabeprofil</th></tr></thead><tbody>${outputRows(doc,ctx,result,acceptance)}</tbody></table><h2>Druck vorbereiten</h2>${guideNote?`<p class="note">${escape(guideNote)}</p>`:''}<p>Berechnungsbasis: ${s.basis==='source'?'Source Colour':'ATLAS-Referenz'}<br>Profil: ${escape(profileName||'Nicht geladen')}<br>Druckbedingung: ${escape(s.printing_condition||'Nicht angegeben')}<br>Material: ${escape(s.substrate||'Nicht angegeben')}<br>Rendering Intent: ${escape(s.intent)} · Schwarzpunktkompensation: ${s.bpc?'an':'aus'}</p><p class="note">${result?'B = Eingang in sRGB. A = Rückrechnung über das Ausgabeprofil nach sRGB. Berechnete Vorschau ohne Papierweißsimulation; kein gemessener Drucknachweis.':'Die Druckvorschau wurde nicht berechnet.'} ${s.path==='TEXTILE_RGB'?'FOGRA58 ist ein textiler RGB-Austauschfarbraum; das konkrete Drucker-/Tinten-/Materialprofil wird dadurch nicht ersetzt.':''}</p><p>Bei Bildfarben werden die vom Browser ausgelesenen sRGB-Werte aufgezeichnet. Ein eingebettetes ICC-Profil bleibt in der Originaldatei erhalten; die tatsächliche Browsertransformation ist nicht verifiziert. Die Originaldatei im ZIP kann weitere Metadaten enthalten.</p><p>Master SHA-256: <code>${ctx.master}</code></p><p>Bitte der Druckerei mitteilen: gewünschte Farbgrundlage, Material, Druckverfahren und vereinbarte Toleranz. Einen messbaren Freigabe-Proof beim Dienstleister anfragen.</p><button onclick="print()">Farbkarte drucken / als PDF speichern</button></html>`;
   }
   function validateResult(doc,ctx,result,profile){
     if(result===null)return;
+    if(doc.acceptance_rule)A.requireAccepted(doc,ctx,profile);
     need(result?.status==='COMPUTATIONAL_PREVIEW_NOT_MEASURED'&&profile&&result.profile_sha256===profile.sha256&&same(result.settings,doc.print)&&same(result.inputs,doc.colours),'Druckergebnis gehört nicht zur aktuellen Farbmappe.');
     need(Array.isArray(result.colours)&&result.colours.length===doc.colours.length,'Unvollständiges Druckergebnis.');
     const channels=doc.print.path==='4C'?4:doc.print.path==='TEXTILE_RGB'?3:7;
@@ -69,18 +73,23 @@
     const profile=snapshot.profile?{name:snapshot.profile.name,bytes:snapshot.profile.bytes.slice()}:null,result=clone(snapshot.result||null);
     const originalInfo=await checkOriginal(doc,original),profileInfo=profile?await P.readProfile(profile.bytes,profile.name,doc.print.path):null;
     if(doc.print_guide?.applied)need(doc.print_guide.applied.sha256===profileInfo?.sha256,'Druckführung gehört zu einem anderen Profil.');
+    if(!doc.acceptance_rule){doc.acceptance_rule=A.RULE;doc.print.library_id=profileInfo?A.suggestedLibrary(ctx,profileInfo):'';}
     validateResult(doc,ctx,result,profileInfo);
-    const files={'project.json':utf8(JSON.stringify(doc,null,2)),'colours.clarus.json':utf8(JSON.stringify(clarus(doc,ctx),null,2)),'farbkarte.html':utf8(report(doc,ctx,result,profile?.name))};
+    const acceptance=doc.acceptance_rule?A.check(doc,ctx,profileInfo):null,approved=!acceptance||acceptance.status==='ACCEPTED_FOR_LIBRARY';
+    const files={'project.json':utf8(JSON.stringify(doc,null,2)),'farbkarte.html':utf8(report(doc,ctx,result,profile?.name,profileInfo))};
+    if(acceptance)files['library-check.json']=utf8(JSON.stringify(acceptance,null,2));
+    if(approved)files['colours.clarus.json']=utf8(JSON.stringify(clarus(doc,ctx),null,2));
     if(original)files[originalInfo.path]=original.bytes;
     if(profile)files['print/output.icc']=profile.bytes;
     if(result)files['print/calculation.json']=utf8(JSON.stringify(result,null,2));
-    for(const basis of ['source','reference']){
+    if(approved)for(const basis of ['source','reference']){
       const p=palette(doc,ctx,basis),ase=E.ase(p),back=E.readAse(ase);need(back.every((c,i)=>same(c.rgb,p[i].rgb)&&c.ref===p[i].ref),'ASE-Rückprüfung fehlgeschlagen.');
       files[`palettes/${basis}.ase`]=ase;
       files[`palettes/${basis}.gpl`]=utf8(`GIMP Palette\nName: ${basis} - ${doc.name}\nColumns: 4\n# sRGB / ${basis}\n${p.map(c=>c.rgb.join(' ')+'\t'+c.ref).join('\n')}\n`);
       files[`palettes/${basis}.css`]=utf8(`/* ${basis} palette; sRGB */\n:root {\n${p.map((c,i)=>`  --brand-${basis}-${i+1}: ${c.hex};`).join('\n')}\n}\n`);
     }
     files['read-me.txt']=utf8('ATLAS Clarus Startup Colour Kit — Vorschau\nSTART_HERE.html im entpackten Softwarepaket öffnen. In der App dieses ZIP über „Farbmappe öffnen“ laden.\nproject.json enthält Source und Referenzen; colours.clarus.json ist für die Browser Edition. Manuelle Eingaben stehen mit ihrem Ursprung in project.json.\npalettes/source.* enthält die Source-Farben, palettes/reference.* die ATLAS-Referenzen.\nfarbkarte.html ist druckbar; eine daraus gespeicherte PDF ist kein profilgebundener Produktionsproof.\noriginal/ enthält die unveränderte Originaldatei samt eingebettetem ICC und sonstigen Metadaten, sofern ein Bild verwendet wurde.\nprint/output.icc enthält das gewählte Ausgabeprofil; vor Weitergabe dessen Nutzungsbedingungen beachten.\nNach Import wird die Druckberechnung verworfen und muss neu gestartet werden. Die alten Rechendaten können separat geprüft werden. Prüfsummen belegen Dateikonsistenz, keine Urheberschaft.\n');
+    if(!approved)files['read-me.txt']=utf8('ENTWURF — FARBEN NICHT FÜR DIE ZIELBIBLIOTHEK AKZEPTIERT.\n'+acceptance.reason+'\nOriginalbild, Profil, Source-Farben und Referenzadressen bleiben in diesem Projekt erhalten. Paletten- und Clarus-Exporte werden erst nach bestandener Bibliotheksprüfung beigefügt.\nlibrary-check.json dokumentiert die Prüfung. Dieses Projekt lässt sich im Startup Colour Kit wieder öffnen.\n');
     const checks={};for(const [n,b]of Object.entries(files))checks[n]={bytes:b.length,sha256:await sha(b)};
     files['manifest.json']=utf8(JSON.stringify({schema:SCHEMA,master_sha256:ctx.master,original:originalInfo,profile:profile?{name:profile.name,path:'print/output.icc',sha256:profileInfo.sha256}:null,files:checks},null,2));
     const bytes=H.zipStored(files);need(bytes.length<=MAX_ZIP,'Die Farbmappe ist größer als 56 MiB.');return bytes;
@@ -92,14 +101,17 @@
     const names=Object.keys(files).filter(n=>n!=='manifest.json');need(same(names.slice().sort(),Object.keys(m.files||{}).sort())&&names.length<=16,'Dateiliste passt nicht.');
     for(const n of names)need(m.files[n].bytes===files[n].length&&m.files[n].sha256===await sha(files[n]),'Prüfsumme stimmt nicht: '+n);
     const doc=validate(JSON.parse(decode(files['project.json'])),ctx);
-    const allowed=['project.json','colours.clarus.json','farbkarte.html','read-me.txt',...['source','reference'].flatMap(b=>['ase','gpl','css'].map(ext=>`palettes/${b}.${ext}`))];
+    const allowed=['project.json','farbkarte.html','read-me.txt'];
     let original=null,profile=null;
     if(m.original){need(/^original\/image\.(png|jpg|webp|gif)$/.test(m.original.path)&&files[m.original.path],'Original fehlt.');original={name:m.original.name,bytes:files[m.original.path]};need(same(await checkOriginal(doc,original),m.original),'Original stimmt nicht.');allowed.push(m.original.path);}else await checkOriginal(doc,null);
     if(m.profile){need(m.profile.path==='print/output.icc'&&files[m.profile.path],'Profil fehlt.');profile={name:m.profile.name,bytes:files[m.profile.path]};profile.info=await P.readProfile(profile.bytes,profile.name,doc.print.path);need(profile.info.sha256===m.profile.sha256,'Profil stimmt nicht.');allowed.push(m.profile.path);}
     if(doc.print_guide?.applied)need(doc.print_guide.applied.sha256===profile?.info.sha256,'Druckführung gehört zu einem anderen Profil.');
     if(files['print/calculation.json']){need(files['print/calculation.json'].length<=1024*1024,'Druckdaten zu groß.');validateResult(doc,ctx,JSON.parse(decode(files['print/calculation.json'])),profile?.info);allowed.push('print/calculation.json');}
+    const acceptance=doc.acceptance_rule?A.check(doc,ctx,profile?.info):null,approved=!acceptance||acceptance.status==='ACCEPTED_FOR_LIBRARY';
+    if(acceptance){need(files['library-check.json']&&same(JSON.parse(decode(files['library-check.json'])),acceptance),'Bibliotheksprüfung stimmt nicht.');allowed.push('library-check.json');}
+    if(approved){allowed.push('colours.clarus.json',...['source','reference'].flatMap(b=>['ase','gpl','css'].map(ext=>`palettes/${b}.${ext}`)));need(files['colours.clarus.json']&&same(JSON.parse(decode(files['colours.clarus.json'])),clarus(doc,ctx)),'Clarus-Farbdaten stimmen nicht.');}
     need(same(names.slice().sort(),allowed.sort()),'Unbekannte oder fehlende Dateien.');
-    need(same(JSON.parse(decode(files['colours.clarus.json'])),clarus(doc,ctx)),'Clarus-Farbdaten stimmen nicht.');
+    if(!doc.acceptance_rule){doc.acceptance_rule=A.RULE;doc.print.library_id=profile?A.suggestedLibrary(ctx,profile.info):'';}
     // Reports and old calculation values are never executed or promoted to a fresh calculation.
     return {doc,original,profile,result:null};
   }
