@@ -210,6 +210,7 @@
     });
     parent.postMessage({type:'ATLAS_ADVICE_READY_V1'},'*');
   }
+  window.ATLAS_MULTI_LAUNCHER?.mount({container:$('kit-multi-launch'),getSnapshot:()=>state,isBusy:()=>busy,ctx});
   addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
   if(I){
     I.control($('kit-language-bar'));I.observe(document.body);
