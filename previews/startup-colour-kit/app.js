@@ -3,17 +3,18 @@
   const $=id=>document.getElementById(id),K=window.ATLAS_STARTUP_CORE,E=window.ATLAS_CLARUS_EXPORTS,P=window.ATLAS_CLARUS_PRINT;
   const data=window.ATLAS_CLARUS_DATA,ctx={colors:data.colors,master:data.master_sha256};
   if(ctx.master!==P.MASTER||ctx.colors.length!==13283)throw Error('ATLAS-Master nicht verfügbar.');
-  let state={doc:K.defaults(ctx.master),original:null,profile:null,result:null},image=null,imageMeta=null,busy=false,dirty=false,workerURL=null;
+  let state={doc:K.defaults(ctx.master),original:null,profile:null,result:null},image=null,imageMeta=null,busy=false,dirty=false,workerURL=null,guide=null;
   const canvas=$('kit-canvas'),dc=canvas.getContext('2d',{colorSpace:'srgb',willReadFrequently:true});
   function status(id,msg,error=false){$(id).textContent=msg;$(id).classList.toggle('error',error);}
   function change(){state.result=null;dirty=true;renderResults();refresh();}
   function ready(){const s=state.doc.print;return state.doc.colours.length>0&&state.profile&&s.printing_condition.trim()&&s.substrate.trim()&&(s.path!=='ECG'||s.channel_order.length===7&&new Set(s.channel_order.map(v=>v.toUpperCase())).size===7);}
   function refresh(){
-    document.querySelectorAll('button,input,select').forEach(el=>el.disabled=busy);
+    document.querySelectorAll('button,input,select,textarea').forEach(el=>el.disabled=busy);
     $('kit-export').disabled=busy||!state.doc.colours.length;$('kit-card').disabled=$('kit-json').disabled=busy||!state.doc.colours.length;
     $('kit-calculate').disabled=busy||!ready();$('kit-clear-profile').disabled=busy||!state.profile;
     $('kit-pixel').disabled=busy||!image;
     window.ATLAS_PROFILE_LIBRARY?.refreshAll();
+    guide?.refresh();
     $('kit-channels-label').hidden=state.doc.print.path!=='ECG';
     $('kit-path-note').textContent=state.doc.print.path==='TEXTILE_RGB'?'FOGRA58 ist ein textiler RGB-Austauschfarbraum. Lade die offizielle finale TextileRGB_FOGRA58.icc. Ein konkretes Drucker-/Tinten-/Materialprofil wird dadurch nicht ersetzt.':'Das Profil muss zum Druckverfahren, Druckerzustand und Material passen. Der Profilname allein bestätigt das nicht.';
     status('kit-save-status',state.doc.colours.length?`${state.doc.colours.length} Farbe(n) · ${state.result?'B/A-Vergleich berechnet':'Druckvorschau noch nicht berechnet'}${dirty?' · Änderungen noch nicht als ZIP gesichert.':''}`:'Noch keine Farbe ausgewählt.');
@@ -33,7 +34,7 @@
   }
   function renderResults(){
     const result=state.result,box=$('kit-ba');box.replaceChildren();box.hidden=!result;
-    if(!result){status('kit-print-status','Wähle Farben, lade ein passendes Ausgabeprofil und ergänze Druckbedingung und Material. Nach Änderungen bitte neu berechnen.');return;}
+    if(!result){status('kit-print-status',ready()?'Profil geladen. Berechne jetzt den B/A-Vergleich. Offene Punkte mit der Druckerei bleiben oben sichtbar.':'Wähle Farben, lade ein passendes Ausgabeprofil und ergänze Druckbedingung und Material. Nach Änderungen bitte neu berechnen.');return;}
     const grid=document.createElement('div');grid.className='ba-grid';
     result.colours.forEach((r,i)=>{const card=document.createElement('article');card.className='ba-card';const s=state.doc.print;
       card.innerHTML=`<h3>${K.escape(state.doc.colours[i].label)}</h3><div class="pair"><div><div class="swatch" style="background:${K.hex(r.input_rgb)}"></div><p><b>B · ${s.basis==='source'?'Source':'Referenz'}</b><br><code>${K.hex(r.input_rgb)}</code><br>RGB ${r.input_rgb.join(' / ')}</p></div><div><div class="swatch" style="background:${K.hex(r.preview_rgb)}"></div><p><b>A · Profilrückrechnung</b><br><code>${K.hex(r.preview_rgb)}</code><br>RGB ${r.preview_rgb.join(' / ')}</p></div></div><p><b>${K.escape(r.channel_order.join(' / '))}</b><br>${r.device_values_16bit.join(' / ')} · 16 Bit<br>${s.path==='TEXTILE_RGB'?'':r.device_values_16bit.map(v=>(100*v/65535).toFixed(2)+' %').join(' / ')}</p>`;
@@ -72,29 +73,51 @@
   canvas.onkeydown=e=>{const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(delta){e.preventDefault();$('kit-x').value=Math.max(0,Math.min(canvas.width-1,Number($('kit-x').value)+delta[0]));$('kit-y').value=Math.max(0,Math.min(canvas.height-1,Number($('kit-y').value)+delta[1]));}else if(e.key==='Enter'||e.key===' '){e.preventDefault();$('kit-pixel').click();}};
   $('kit-name').oninput=e=>{state.doc.name=e.target.value;dirty=true;refresh();};
   const fields={'kit-basis':'basis','kit-condition':'printing_condition','kit-material':'substrate','kit-intent':'intent','kit-bpc':'bpc','kit-channels':'channel_order'};
-  Object.entries(fields).forEach(([id,key])=>{$(id).oninput=e=>{state.doc.print[key]=key==='bpc'?e.target.value==='true':key==='channel_order'?e.target.value.split(',').map(v=>v.trim()).filter(Boolean):e.target.value;change();};});
-  function profileStatus(){status('kit-profile-status',state.profile?`${state.profile.name} · ${state.profile.info.device_space.trim()} · SHA-256 ${state.profile.info.sha256}`:'Noch kein Ausgabeprofil geladen.');}
-  $('kit-path').onchange=e=>{state.doc.print.path=e.target.value;state.profile=null;profileStatus();change();};
-  $('kit-clear-profile').onclick=()=>{state.profile=null;profileStatus();change();};
-  async function attachProfile(bytes,name,path,condition){
+  Object.entries(fields).forEach(([id,key])=>{$(id).oninput=e=>{if(['printing_condition','substrate'].includes(key)&&state.doc.print_guide)state.doc.print_guide.applied=null;state.doc.print[key]=key==='bpc'?e.target.value==='true':key==='channel_order'?e.target.value.split(',').map(v=>v.trim()).filter(Boolean):e.target.value;change();};});
+  function clearGuideProfile(){if(state.doc.print_guide)state.doc.print_guide.applied=null;}
+  function profileStatus(){status('kit-profile-status',state.profile?`Geladen: ${state.profile.name}`:'Noch kein Ausgabeprofil geladen.');$('kit-profile-status').title=state.profile?'SHA-256 '+state.profile.info.sha256:'';}
+  $('kit-path').onchange=e=>{state.doc.print.path=e.target.value;state.profile=null;clearGuideProfile();profileStatus();change();};
+  $('kit-clear-profile').onclick=()=>{state.profile=null;clearGuideProfile();profileStatus();change();};
+  async function attachProfile(bytes,name,path,condition,guideKind=null){
     if(busy)throw Error('Die Anwendung arbeitet. Bitte kurz warten.');
-    busy=true;state.profile=null;change();profileStatus();refresh();
+    busy=true;state.profile=null;clearGuideProfile();change();profileStatus();refresh();
     try{
       const info=await P.readProfile(bytes,name,path);
       state.doc.print.path=path;$('kit-path').value=path;
       if(condition){state.doc.print.printing_condition=condition;$('kit-condition').value=condition;}
-      if(path==='ECG'&&/FOGRA55/.test(name)){state.doc.print.channel_order=['C','M','Y','K','O','G','V'];$('kit-channels').value='C, M, Y, K, O, G, V';}
-      state.profile={name,bytes,info};profileStatus();change();
+      state.doc.print.channel_order=[];$('kit-channels').value='';
+      if(path==='ECG'&&info.sha256==='dfea0cc4f4d1fa51b80bee490751c7b559ed7c21adf15de230d6705c56c76042'){state.doc.print.channel_order=['C','M','Y','K','O','G','V'];$('kit-channels').value='C, M, Y, K, O, G, V';}
+      state.profile={name,bytes,info};if(guideKind){state.doc.print_guide.applied={kind:guideKind,sha256:info.sha256};state.doc.print.substrate=window.ATLAS_PRINT_GUIDE.material(state.doc.print_guide);$('kit-material').value=state.doc.print.substrate;}profileStatus();change();
     }finally{busy=false;refresh();}
+  }
+  async function loadProfileFile(file,guided=false){
+    if(busy)return;
+    busy=true;state.profile=null;clearGuideProfile();profileStatus();change();
+    let bytes;
+    try{if(file.size>P.MAX_PROFILE_BYTES)throw Error('ICC-Profil zu groß; höchstens 16 MiB.');bytes=new Uint8Array(await file.arrayBuffer());}
+    finally{busy=false;refresh();}
+    const space=String.fromCharCode(...bytes.slice(16,20));
+    const path=guided?({'CMYK':'4C','7CLR':'ECG','RGB ':'TEXTILE_RGB'}[space]||'UNSUPPORTED'):state.doc.print.path;
+    if(path==='UNSUPPORTED')throw Error('Dieses Profil hat keinen unterstützten Ausgabeweg. Bitte ein CMYK-Ausgabeprofil, ein Siebenkanalprofil oder das finale FOGRA58-Austauschprofil verwenden.');
+    await attachProfile(bytes,file.name,path,guided?'Druckereivorgabe: '+file.name.slice(0,140):null,guided?'printer_file':null);
   }
   $('kit-profile').onchange=async e=>{
     const file=e.target.files[0];e.target.value='';if(!file||busy)return;
-    state.profile=null;profileStatus();change();
-    try{if(file.size>P.MAX_PROFILE_BYTES)throw Error('ICC-Profil zu groß; höchstens 16 MiB.');await attachProfile(new Uint8Array(await file.arrayBuffer()),file.name,state.doc.print.path);}
-    catch(error){status('kit-profile-status',error.message,true);}
+    try{await loadProfileFile(file);}catch(error){status('kit-profile-status',error.message,true);}
   };
   if(window.ATLAS_PROFILE_LIBRARY){
     window.ATLAS_PROFILE_LIBRARY.mount({container:$('kit-profile-library'),isBusy:()=>busy,attach:async({profile,bytes})=>attachProfile(bytes,profile.file_name,profile.output_path,profile.printing_condition||profile.description)});
+  }
+  if(window.ATLAS_PRINT_GUIDE&&window.ATLAS_PROFILE_LIBRARY){
+    guide=window.ATLAS_PRINT_GUIDE.mount({container:$('kit-print-guide'),catalog:window.ATLAS_ICC_CATALOG,library:window.ATLAS_PROFILE_LIBRARY,
+      getGuide:()=>state.doc.print_guide,getProfile:()=>state.profile,getSettings:()=>state.doc.print,isBusy:()=>busy,
+      onChange:g=>{state.doc.print_guide=g;state.profile=null;state.doc.print.printing_condition='';state.doc.print.substrate=window.ATLAS_PRINT_GUIDE.material(g);$('kit-condition').value='';$('kit-material').value=state.doc.print.substrate;profileStatus();change();},
+      onApply:async(id,kind)=>{
+        busy=true;refresh();let bytes;
+        try{bytes=await window.ATLAS_PROFILE_LIBRARY.bytes(id);}finally{busy=false;refresh();}
+        const p=window.ATLAS_ICC_CATALOG.profiles[id];
+        await attachProfile(bytes,p.file_name,p.output_path,p.printing_condition||p.description,kind);
+      },onFile:file=>loadProfileFile(file,true)});
   }
   function run(job){return new Promise((resolve,reject)=>{
     if(!workerURL)workerURL=URL.createObjectURL(new Blob([JSON.parse($('atlas-print-worker-source').textContent)],{type:'text/javascript'}));
