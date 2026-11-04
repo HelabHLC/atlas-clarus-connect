@@ -54,19 +54,24 @@
   const proposals=source.doc.colours.map((c,j)=>{
    const lab=asLab(rows[0].input_lab,n+j),rank=common.map(id=>({id,delta:D.deltaE00(lab,asLab(rows[0].input_lab,stats.get(id).index))})).sort((a,b)=>a.delta-b.delta||a.id-b.id);
    const original=rank.find(r=>r.id===c.reference_id),nearest=rank[0]||null,valid=rank.filter(r=>r.delta<=doc.tolerances.source);
-   return {original,nearest,allowed_ids:valid.map(r=>r.id),suggestions:[...(original&&original.delta<=doc.tolerances.source?[original]:[]),...valid.filter(r=>r.id!==original?.id)].slice(0,4)};
+   return {original,nearest,allowed_ids:valid.map(r=>r.id),suggestions:valid.slice(0,4)};
   });
   const result={key:settingsKey(doc,source),method:METHOD,lists,common,stats,proposals,rows};contexts.set(result,result.key);return result;
  }
  function current(result,doc,source){return Boolean(result&&contexts.get(result)===settingsKey(doc,source));}
  function approved(result,doc,source){return current(result,doc,source)&&doc.choices.length===source.doc.colours.length&&source.doc.colours.every((c,i)=>Number.isInteger(doc.choices[i])&&result.proposals[i].allowed_ids.includes(doc.choices[i]));}
  function select(result,doc,source,index,id){need(current(result,doc,source)&&result.proposals[index]?.allowed_ids.includes(id),'Common colour is outside the agreed limits.');doc.choices=Array.from({length:source.doc.colours.length},(_,i)=>doc.choices[i]??null);doc.choices[index]=id;}
+ function collisions(ids,ctx){
+  const groups=new Map();ids.forEach((id,i)=>{const r=Number.isInteger(id)&&ctx.colors.find(c=>c.id===id);if(!r)return;const key=r.rgb.join(',');if(!groups.has(key))groups.set(key,{display_srgb:r.rgb.slice(),reference_ids:[],source_indices:[]});const g=groups.get(key);if(!g.reference_ids.includes(id))g.reference_ids.push(id);g.source_indices.push(i);});
+  return [...groups.values()].filter(g=>g.source_indices.length>1).map(g=>({...g,kind:g.reference_ids.length===1?'SAME_REFERENCE':'SAME_STORED_SRGB'}));
+ }
+ function checkSource(source){if(source.doc.logo_selection){need(root.ATLAS_LOGO_CORE,'Logo validation unavailable.');root.ATLAS_LOGO_CORE.validateAudit(source.doc);}return source;}
  function records(result,doc,source,ctx){need(current(result,doc,source),'Recalculate the profile comparison.');return {schema:SCHEMA,method:METHOD,comparison:'CIELAB_D50_2_DEGREE_CIEDE2000_K111',boundary:'Stored ATLAS sRGB targets; not HLC target Lab. Profile prediction, not a physical print approval.',tolerances:doc.tolerances,common_count:result.common.length,
-  applications:doc.targets.map((t,i)=>({...t,checked_address_count:result.lists[i].length,library_basis:t.library_mode==='catalog'?'DOCUMENTED_MEMBERSHIP_PLUS_ICC_CHECK':'ICC_DERIVED_ADDRESS_LIST',checked_addresses:result.lists[i]})),
-  colours:source.doc.colours.map((c,i)=>{const id=doc.choices[i],s=result.stats.get(id),active=result.proposals[i].allowed_ids.includes(id);return {source:clone(c),confirmed_reference_id:active?id:null,source_delta:active?D.deltaE00(asLab(result.rows[0].input_lab,ctx.colors.length+i),asLab(result.rows[0].input_lab,s.index)):null,
+  proposal_rule:'MINIMUM_SOURCE_DELTA_E00_THEN_LOWER_ROW_ID',confirmed_collisions:collisions(doc.choices,ctx),applications:doc.targets.map((t,i)=>({...t,checked_address_count:result.lists[i].length,library_basis:t.library_mode==='catalog'?'DOCUMENTED_MEMBERSHIP_PLUS_ICC_CHECK':'ICC_DERIVED_ADDRESS_LIST',checked_addresses:result.lists[i]})),
+  colours:source.doc.colours.map((c,i)=>{const id=doc.choices[i],s=result.stats.get(id),active=result.proposals[i].allowed_ids.includes(id);return {source:clone(c),suggested_reference_id:result.proposals[i].suggestions[0]?.id??null,confirmed_reference_id:active?id:null,chosen_is_first_suggestion:active?id===result.proposals[i].suggestions[0]?.id:null,chosen_is_minimum:active?D.deltaE00(asLab(result.rows[0].input_lab,ctx.colors.length+i),asLab(result.rows[0].input_lab,s.index))===result.proposals[i].nearest.delta:null,source_delta:active?D.deltaE00(asLab(result.rows[0].input_lab,ctx.colors.length+i),asLab(result.rows[0].input_lab,s.index)):null,
     max_output_delta:active?s.max_output_delta:null,max_pair_delta:active?s.max_pair_delta:null,outputs:active?result.rows.map((r,j)=>({application_id:doc.targets[j].id,lab_d50:asLab(r.output_lab,s.index),display_srgb:Array.from(r.preview_rgb.slice(s.index*3,s.index*3+3)),device_values_16bit:Array.from(r.device16.slice(s.index*r.channels,(s.index+1)*r.channels)),channel_order:r.channels===4?['C','M','Y','K']:r.channels===3?['R','G','B']:doc.targets[j].channel_order,delta_to_target:s.output_delta[j]})):[]};})};}
  async function pack({doc,sourceBytes,bank,result,html},ctx){
-  validate(doc,ctx);const source=await K.unpack(sourceBytes,ctx),isApproved=approved(result,doc,source),files={'source-dossier.zip':sourceBytes,'project.json':utf(JSON.stringify(doc,null,2)),'report.html':utf(html)};
+  validate(doc,ctx);const source=checkSource(await K.unpack(sourceBytes,ctx)),isApproved=approved(result,doc,source),files={'source-dossier.zip':sourceBytes,'project.json':utf(JSON.stringify(doc,null,2)),'report.html':utf(html)};
   for(const t of doc.targets)if(t.profile_sha256){const p=bank.get(t.profile_sha256);need(p&&await K.sha(p.bytes)===t.profile_sha256,'ICC data missing or changed.');files['profiles/'+t.profile_sha256+'.icc']=p.bytes;}
   if(current(result,doc,source))files['comparison.json']=utf(JSON.stringify(records(result,doc,source,ctx),null,2));
   if(isApproved){const palette=doc.choices.map((id,i)=>({...ctx.colors.find(c=>c.id===id),ref:ctx.colors.find(c=>c.id===id).ref+' '+(i+1)+' '+source.doc.colours[i].label}));files['common.ase']=root.ATLAS_CLARUS_EXPORTS.ase(palette);files['common.clarus.json']=utf(JSON.stringify(root.ATLAS_CLARUS_EXPORTS.clarus([...new Set(doc.choices)].map(id=>ctx.colors.find(c=>c.id===id)),ctx.master,source.doc.name+' · common',[]),null,2));}
@@ -77,10 +82,10 @@
   need(bytes instanceof Uint8Array&&bytes.length<=MAX_ZIP,'Project is too large.');const files=root.ATLAS_STARTUP_CODECS.unzip(bytes,MAX_ZIP);
   need(files['manifest.json']?.length<=65536&&files['project.json']?.length<=1024*1024,'Invalid project package.');const m=JSON.parse(decode(files['manifest.json']));need(m.schema===SCHEMA&&m.master_sha256===ctx.master,'Unknown project package.');
   const names=Object.keys(files).filter(n=>n!=='manifest.json');need(same(names.sort(),Object.keys(m.files||{}).sort()),'File inventory mismatch.');for(const n of names)need(m.files[n].bytes===files[n].length&&m.files[n].sha256===await K.sha(files[n]),'Checksum mismatch: '+n);
-  const doc=validate(JSON.parse(decode(files['project.json'])),ctx),sourceBytes=files['source-dossier.zip'];need(sourceBytes,'Source dossier missing.');const source=await K.unpack(sourceBytes,ctx),bank=new Map();
+  const doc=validate(JSON.parse(decode(files['project.json'])),ctx),sourceBytes=files['source-dossier.zip'];need(sourceBytes,'Source dossier missing.');const source=checkSource(await K.unpack(sourceBytes,ctx)),bank=new Map();
   const allowed=new Set(['project.json','source-dossier.zip','report.html','readme.txt','comparison.json','common.ase','common.clarus.json']);
   for(const t of doc.targets)if(t.profile_sha256){const name='profiles/'+t.profile_sha256+'.icc';allowed.add(name);need(files[name],'ICC file missing.');const p=await profile(files[name],t.profile_name,ctx.catalog);need(p.info.sha256===t.profile_sha256,'ICC identity mismatch.');bank.set(t.profile_sha256,p);}
   need(names.every(n=>allowed.has(n)),'Unknown project files.');const previous_choices=doc.choices.slice();doc.choices=[];return {doc,source,sourceBytes,bank,result:null,previous_choices};
  }
- root.ATLAS_MULTI={SCHEMA,METHOD,MAX_ZIP,defaults,target,validate,profile,settingsKey,pending,inputs,analyze,current,approved,select,records,pack,unpack};
+ root.ATLAS_MULTI={SCHEMA,METHOD,MAX_ZIP,defaults,target,validate,profile,settingsKey,pending,inputs,analyze,current,approved,select,records,pack,unpack,collisions,checkSource};
 })(typeof window==='undefined'?globalThis:window);
