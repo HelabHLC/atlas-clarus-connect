@@ -38,9 +38,9 @@ def build(base, output):
     assert reader.count('count<=8')==1 and reader.count('root.ATLAS_IMAGE_CODECS=')==1
     (kit/'zip-reader.js').write_text(reader.replace('count<=8','count<=16').replace('root.ATLAS_IMAGE_CODECS=','root.ATLAS_STARTUP_CODECS='))
     scripts = '\n'.join('<script src="../assets/'+n+'"></script>' for n in DEPS)
-    scripts += '\n<script id="atlas-print-worker-source" type="application/json">'+match.group(1)+'</script>\n<script src="zip-reader.js"></script>\n<script src="print-guide.js"></script>\n<script src="core.js"></script>\n<script src="app.js"></script>'
+    scripts += '\n<script id="atlas-print-worker-source" type="application/json">'+match.group(1)+'</script>\n<script src="zip-reader.js"></script>\n<script src="print-guide.js"></script>\n<script src="library-acceptance.js"></script>\n<script src="core.js"></script>\n<script src="app.js"></script>'
     (kit/'index.html').write_text((HERE/'index.html').read_text().replace('<!-- SCRIPTS -->', scripts))
-    for name in ['core.js','app.js','kit.css','print-guide.js']:
+    for name in ['core.js','app.js','kit.css','print-guide.js','library-acceptance.js']:
         (kit/name).write_bytes((HERE/name).read_bytes())
     (root/'START_HERE.html').write_text('<!doctype html><html lang="de"><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=startup/index.html"><title>ATLAS Clarus Startup Colour Kit</title><a href="startup/index.html">Startup Colour Kit öffnen</a></html>\n')
     (root/'STARTUP_KIT_MANIFEST.json').write_text(json.dumps({'version':VERSION,'status':'ISOLATED_PREVIEW','entry':'START_HERE.html','base_archive_sha256':BASE_SHA,'source_base_commit':'2f8f8f5e8e51ecde1e88a15e777353ce39e0a4f8','master_sha256':'8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4','public_deployment':False,'source_and_reference':'SEPARATE','print_inputs':['RECORDED_BROWSER_SRGB','MANUAL_SRGB','FIXED_MASTER_RGB'],'icc_engine':'UNCHANGED_RC34.11','physical_measurement':'NOT_PERFORMED','output_profiles_bundled':False},indent=2)+'\n')

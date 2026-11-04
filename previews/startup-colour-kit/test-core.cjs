@@ -7,6 +7,8 @@ const context={console,crypto:globalThis.crypto,TextEncoder,TextDecoder,Uint8Arr
 vm.createContext(context);
 for(const n of ['atlas-data.js','colour-origin.js','palette-export.js','clarus-handoff.js','image-project-codecs.js','print-handoff.js'])vm.runInContext(fs.readFileSync(path.join(root,'assets',n),'utf8'),context);
 vm.runInContext(fs.readFileSync(path.join(root,'startup/zip-reader.js'),'utf8'),context);
+vm.runInContext(fs.readFileSync(path.join(root,'startup/library-acceptance.js'),'utf8'),context);
+vm.runInContext(fs.readFileSync(path.join(root,'icc/profile-catalog.js'),'utf8'),context);
 vm.runInContext(fs.readFileSync(path.join(root,'startup/core.js'),'utf8'),context);
 const K=context.ATLAS_STARTUP_CORE,P=context.ATLAS_CLARUS_PRINT,ctx={master:context.ATLAS_CLARUS_DATA.master_sha256,colors:context.ATLAS_CLARUS_DATA.colors};
 const source=fs.readFileSync(path.join(root,'startup/worker-source.js'),'utf8');
@@ -16,10 +18,14 @@ const normal=x=>JSON.parse(JSON.stringify(x)),checks=[];const pass=(n)=>checks.p
 (async()=>{
   assert.equal(ctx.colors.length,13283);pass('Frozen full-master count');
   const doc=K.defaults(ctx.master);doc.name='Test & <Brand>';doc.print.printing_condition='Generic CMYK test profile — not production';doc.print.substrate='Software test only';
-  const values=[[234,99,37],[24,74,61],[245,241,222],[0,255,0],[0,0,0],[255,255,255]];
+  const profile={name:path.basename(profilePath),bytes:new Uint8Array(fs.readFileSync(profilePath))};profile.info=await P.readProfile(profile.bytes,profile.name,'4C');
+  doc.print.library_id=context.ATLAS_LIBRARY_ACCEPTANCE.suggestedLibrary(ctx,profile.info);
+  assert.ok(doc.print.library_id,'Provide a catalog profile with a documented target library');
+  const members=new Set(context.ATLAS_CLARUS_DATA.views[doc.print.library_id].ids);
+  const values=[[24,74,61],[245,241,222],[120,120,120],[200,200,200],[80,80,80],[235,235,235]].filter(rgb=>members.has(K.nearest(rgb,ctx).id));
+  assert.ok(values.length>=4);
   doc.colours=values.map((v,i)=>({label:'Farbe '+(i+1),kind:'manual_srgb',source_rgb:v,reference_id:K.nearest(v,ctx).id,assignment:null}));
   K.validate(doc,ctx);const originalInputs=JSON.stringify(doc);pass('Manual sRGB matching and source/reference separation');
-  const profile={name:path.basename(profilePath),bytes:new Uint8Array(fs.readFileSync(profilePath))};profile.info=await P.readProfile(profile.bytes,profile.name,'4C');
   const jobs=[];
   for(const basis of ['source','reference']){
     const d=normal(doc);d.print.basis=basis;const input=d.colours.map(c=>basis==='source'?c.source_rgb:ctx.colors.find(x=>x.id===c.reference_id).rgb);

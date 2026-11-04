@@ -8,14 +8,14 @@ const root=path.resolve(process.argv[2]),out=path.resolve(process.argv[3]),profi
   await page.goto('file://'+root+'/startup/index.html');await page.waitForSelector('#guide-product');
   assert.equal(await page.locator('#kit-advanced').getAttribute('open'),null);
   const master=await page.evaluate(()=>JSON.stringify(ATLAS_CLARUS_DATA));
-  await page.locator('#kit-demo').click();await page.locator('#guide-product').selectOption('flyer');await page.locator('#guide-material').selectOption('coated');
+  await page.locator('#kit-demo').click();await page.getByRole('button',{name:'Farbe 1 entfernen',exact:true}).click();await page.locator('#guide-product').selectOption('flyer');await page.locator('#guide-material').selectOption('coated');
   assert.equal(await page.locator('#guide-apply').isVisible(),false);
   await page.locator('#guide-process').selectOption('offset');
   assert.match(await page.locator('#guide-title').innerText(),/Vorschlag/);
   assert.equal(await page.locator('#kit-calculate').isDisabled(),true);
   await page.locator('#guide-apply').click();await page.waitForFunction(()=>document.querySelector('#kit-profile-status').textContent.includes('PSOcoated_v3.icc'));
   assert.match(await page.locator('#guide-title').innerText(),/Bestätigung offen/);
-  await page.locator('#kit-calculate').click();await page.waitForSelector('#kit-ba .ba-card',{timeout:45000});assert.equal(await page.locator('#kit-ba .ba-card').count(),3);
+  await page.locator('#kit-calculate').click();await page.waitForSelector('#kit-ba .ba-card',{timeout:45000});assert.equal(await page.locator('#kit-ba .ba-card').count(),2);
   await page.locator('#prepare').screenshot({path:path.join(out,'druckfuehrung-desktop.png')});
   const dl=page.waitForEvent('download');await page.locator('#kit-export').click();const saved=await dl;const dossier=path.join(out,'guided-Farbmappe.zip');await saved.saveAs(dossier);
   const content=JSON.parse(execFileSync('python3',['-c',"import json,zipfile,sys\nwith zipfile.ZipFile(sys.argv[1]) as z:print(json.dumps({'project':json.loads(z.read('project.json')),'report':z.read('farbkarte.html').decode()}))",dossier],{encoding:'utf8'}));
@@ -45,7 +45,7 @@ const root=path.resolve(process.argv[2]),out=path.resolve(process.argv[3]),profi
   // Old dossiers do not have print_guide and must still restore successfully.
   if(fs.existsSync(path.join(out,'../core/source-Farbmappe.zip'))){await page.locator('#kit-import').setInputFiles(path.join(out,'../core/source-Farbmappe.zip'));await page.waitForFunction(()=>document.querySelector('#guide-product').value===''&&!document.querySelector('#kit-import').disabled);assert.equal(await page.locator('#guide-product').inputValue(),'');}
   assert.deepEqual(errors,[]);
-  const result={status:'PASS',checks:['Default guided UI and collapsed advanced controls','Provisional suggestion requires explicit action','Actual ICC B/A for three colours','Changed material clears profile and result','Uncoated profile loads','Export preserves provisional status and guide answers','Import restores guide; calculation invalidated','Digital and ambiguous FOGRA require printer input','Exact printer name and direct ICC file accepted','Malformed ICC rejected','Mismatched guide/profile dossier rejected','Advanced catalog remains usable','All master data unchanged','390px mobile layout has no horizontal overflow','Legacy dossier restored'],page_errors:errors};
+  const result={status:'PASS',checks:['Default guided UI and collapsed advanced controls','Provisional suggestion requires explicit action','Actual ICC B/A for two accepted colours','Changed material clears profile and result','Uncoated profile loads','Export preserves provisional status and guide answers','Import restores guide; calculation invalidated','Digital and ambiguous FOGRA require printer input','Exact printer name and direct ICC file accepted','Malformed ICC rejected','Mismatched guide/profile dossier rejected','Advanced catalog remains usable','All master data unchanged','390px mobile layout has no horizontal overflow','Legacy dossier restored'],page_errors:errors};
   fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1)});
