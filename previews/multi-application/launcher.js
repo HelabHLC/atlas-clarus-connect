@@ -2,6 +2,8 @@
  root.ATLAS_MULTI_LAUNCHER={mount({container,getSnapshot,isBusy,ctx}){
   const I=root.ATLAS_LANGUAGE,pending=new Map(),button=document.createElement('button'),note=document.createElement('p');
   button.type='button';button.className='secondary';button.id='kit-multi';note.className='small';note.setAttribute('role','status');container.append(button,note);
+  const logo=document.createElement('a');logo.id='kit-logo-palette';logo.className='secondary';logo.target='_blank';logo.rel='noopener';container.append(logo);
+  const logoLabel=()=>{const en=I?.language==='en';logo.textContent=en?'Load logo and find brand colours ↗':'Logo laden und Markenpalette finden ↗';logo.href='../multi/index.html?lang='+(en?'en':'de');};logoLabel();root.addEventListener('atlas-language-change',logoLabel);
   const label=()=>button.textContent=I?.language==='en'?'Brand colours across applications ↗':'Markenfarben für mehrere Anwendungen ↗';label();root.addEventListener('atlas-language-change',label);
   button.onclick=()=>{
    if(isBusy())return;

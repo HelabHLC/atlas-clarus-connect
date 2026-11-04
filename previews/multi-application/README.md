@@ -1,5 +1,9 @@
 # Multi-application brand colours — 0.1.6 preview
 
+Current source is extended by [the 0.1.7 logo workflow](../logo-brand-palette/README.md).
+The release information below records the 0.1.6 foundation; reproduce that
+package from commit `54a56c427a98d7eda2456f10bf9ebb84f937cc2b`.
+
 Adds a separate German/English workspace for a shared logo palette across
 two to eight profiled print applications. Startup Colour Kit transfers its
 current dossier to a new tab; the same action works inside Browser Edition's
@@ -29,8 +33,8 @@ Each comparison uses CIEDE2000 with kL=kC=kH=1 and Lab D50/2° operands.
 Acceptance uses unrounded values. A candidate must pass every applicable
 membership list, every individual output limit and every pairwise limit.
 Eligible common references are ranked by distance to the original customer
-colour, with deterministic row-ID ties; the original reference is offered
-first if eligible. Up to four suggestions and a common-address input are
+colour, with deterministic row-ID ties. Since 0.1.7, the smallest difference
+is offered first even if the original reference is still eligible. Up to four suggestions and a common-address input are
 available. Each source colour needs an explicit confirmation. Confirming the
 last colour first cannot approve an incomplete palette.
 
