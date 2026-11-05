@@ -1,0 +1,32 @@
+name: Browser Edition public test 0.1.7
+on:
+  push:
+    branches: [release/brand-palette-017-public]
+permissions:
+  contents: write
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build from the pinned public Browser Edition
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v0.2.0-rc34.11-colour-origin --pattern 'ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.11-colour-origin.zip' --pattern 'ATLAS_Clarus_RC34.11_Small_Installer.zip' --dir inputs
+          python3 releases/brand-palette-017/build_public.py --base inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.11-colour-origin.zip --installer inputs/ATLAS_Clarus_RC34.11_Small_Installer.zip --out build
+      - name: Verify package, PHP installer and shared-reference selection
+        run: |
+          cd build
+          sha256sum -c *.sha256
+          unzip -q ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip -d runtime
+          unzip -q ATLAS_Clarus_Browser_Test_0.1.7_IONOS_Installer.zip -d plugin
+          php -l plugin/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          (cd runtime/atlas-clarus-browser-bundle && sha256sum -c SHA256SUMS.txt --quiet)
+          node ../previews/logo-brand-palette/test-core.cjs runtime/atlas-clarus-browser-bundle evidence
+      - name: Publish the checked test release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v0.2.0-brand-palette-0.1.7 --target "$GITHUB_SHA" --prerelease --title 'ATLAS Clarus Browser Edition · Testversion 0.1.7 · DE / EN' --notes-file releases/brand-palette-017/RELEASE.md build/*.zip build/*.sha256
