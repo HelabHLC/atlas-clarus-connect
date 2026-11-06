@@ -1,0 +1,43 @@
+name: Validate colour handoff candidate
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/**'
+      - 'hover-library/data/colors.json'
+      - '.github/workflows/colour-handoff.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  handoff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm ci --prefix browser-bundle/tests --ignore-scripts
+      - name: Validate decision identity and return protocol
+        run: node browser-bundle/tests/validate_colour_handoff.js
+      - name: Reproduce and verify candidate ZIP
+        run: python3 browser-bundle/tests/validate_colour_handoff_build.py
+      - name: Build browser test candidate
+        run: python3 browser-bundle/build_bundle.py --colour-handoff --output-dir browser-bundle/build-handoff
+      - name: Install browser
+        run: browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+      - name: Exercise self-contained colour handoff in Chromium
+        env:
+          HANDOFF_TEST_OUTPUT: /tmp/atlas-colour-handoff-browser
+        run: node browser-bundle/tests/validate_colour_handoff_browser.cjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: colour-handoff-candidate-evidence
+          path: /tmp/atlas-colour-handoff-browser/
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ATLAS-Clarus-Browser-Bundle-RC29-candidate
+          path: browser-bundle/build-handoff/*.zip

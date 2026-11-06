@@ -1,5 +1,12 @@
 # ATLAS Clarus Browser Bundle
 
+## Colour handoff candidate (8 October 2026)
+The opt-in RC29 candidate adds direct provenance-linked Adobe handoff and
+Colour Kit 0.3.0 JSON interchange in the Bundle layout. Build it with
+`python3 browser-bundle/build_bundle.py --colour-handoff`. See
+[usage and boundaries](COLOUR_HANDOFF.md) and [validation](COLOUR_HANDOFF_VALIDATION.md).
+Default builds still reproduce RC28 for its pinned WordPress/Android wrappers.
+
 This directory builds a standalone offline HTML edition of ATLAS Clarus Connect.
 
 Current source build: **v0.2.0-rc28-source-provenance**. RC28 adds original RGB source records to palette storage and Clarus JSON 1.2. It is a new candidate; the published RC27 IONOS runtime is not changed by this source update. See [source provenance](SOURCE_PROVENANCE.md) for the schema, migration and validation boundaries. The Names v0.3.0 data, UI4 mixer and ACMS C/U A/B candidates are source inputs. Physical mixing is not measured.

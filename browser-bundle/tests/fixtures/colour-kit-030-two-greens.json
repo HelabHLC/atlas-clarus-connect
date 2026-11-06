@@ -1,0 +1,167 @@
+{
+  "schema": "atlas-clarus-startup/0.3",
+  "kit_version": "0.3.0",
+  "status": "DEMONSTRATION_PILOT",
+  "created_utc": "2026-10-08T16:54:38.364Z",
+  "run_id": "3ebde223-5de0-467a-9240-a551b763e9fb",
+  "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "reference_csv_sha256": "a25f4dbd94d819ed3c9b899d0e0db7d4d9449cf8028201d0776fad93b5a7fab9",
+  "reference_rows": 13283,
+  "source_values_sha256": "df8172cf3e6a373b73035e873999b1688deaae20f037dae3ed91efb22ad9bd5b",
+  "input_file_sha256": "17f0401a8669ba0123b5ac409d23aab5252150ba26bf47a95d7537c31df8a4b0",
+  "method": {
+    "workflow": "3.4.0",
+    "scope": "RGB-only source assignment",
+    "selection": "argmin (integer squared sRGB distance, atlas_row_id)",
+    "candidate_set": "all 13283 reference rows",
+    "deltaE_in_selection": false,
+    "delta_lambda_stage": "NOT_PERFORMED",
+    "physical_qc": "NOT_MEASURED"
+  },
+  "records": [
+    {
+      "original": {
+        "id": "sample-1",
+        "name": "Bundle sample 1",
+        "hex": "#3D7B19",
+        "source": "Bundle source assignment 1; image and sampling metadata retained in JSON",
+        "color_space": "sRGB"
+      },
+      "source_rgb": [
+        61,
+        123,
+        25
+      ],
+      "atlas_row_id": 4966,
+      "atlas_reference": "H130_L045_C055",
+      "reference_hex": "#37791A",
+      "reference_rgb": [
+        55,
+        121,
+        26
+      ],
+      "distance_squared": 41,
+      "nearest_tie_count": 1,
+      "decision_id": "12f00a45-831a-4784-8456-09e5716ddffe",
+      "revision_id": "18609cc574ac0903062f6ce7d212c6c48b764f9917c41df70b332bc7d525ca56"
+    },
+    {
+      "original": {
+        "id": "sample-2",
+        "name": "Bundle sample 2",
+        "hex": "#3C7B19",
+        "source": "Bundle source assignment 2; image and sampling metadata retained in JSON",
+        "color_space": "sRGB"
+      },
+      "source_rgb": [
+        60,
+        123,
+        25
+      ],
+      "atlas_row_id": 4966,
+      "atlas_reference": "H130_L045_C055",
+      "reference_hex": "#37791A",
+      "reference_rgb": [
+        55,
+        121,
+        26
+      ],
+      "distance_squared": 30,
+      "nearest_tie_count": 1,
+      "decision_id": "0aa198aa-e755-4e6f-a525-891258b88200",
+      "revision_id": "feb39ce4d76f7485baa0438d34892d26916194029362f86d5ef136a09d31031a"
+    }
+  ],
+  "bundle_origin": {
+    "schema": "atlas-clarus-bundle-origin/1.0",
+    "basis": "RECORDED_ORIGINALS",
+    "start": 0,
+    "count": 2,
+    "filename": "bundle.clarus.json",
+    "document_text": "{\n  \"format\": \"ATLAS_CLARUS_PALETTE\",\n  \"version\": \"1.2\",\n  \"palette_name\": \"Synthetic handoff: two originals, one address\",\n  \"workflow\": \"ATLAS Clarus v3.4.0\",\n  \"master_sha256\": \"8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4\",\n  \"row_id_base\": 0,\n  \"freeze_status\": \"FROZEN\",\n  \"measured_qc_status\": \"NOT_MEASURED\",\n  \"references\": [\n    {\n      \"palette_index\": 0,\n      \"atlas_row_id\": 4966,\n      \"reference\": \"H130_L045_C055\",\n      \"master_rgb\": [\n        55,\n        121,\n        26\n      ],\n      \"master_hex\": \"#37791A\",\n      \"master_lab\": [\n        45,\n        -35.3533,\n        42.1324\n      ]\n    }\n  ],\n  \"source_assignments\": [\n    {\n      \"schema_version\": \"1.0\",\n      \"source_rgb\": [\n        61,\n        123,\n        25\n      ],\n      \"source_hex\": \"#3D7B19\",\n      \"color_space\": \"sRGB\",\n      \"bits_per_channel\": 8,\n      \"source_representation\": \"BROWSER_DECODED_SRGB\",\n      \"atlas_row_id\": 4966,\n      \"reference\": \"H130_L045_C055\",\n      \"reference_rgb\": [\n        55,\n        121,\n        26\n      ],\n      \"reference_hex\": \"#37791A\",\n      \"master_sha256\": \"8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4\",\n      \"workflow\": \"ATLAS Clarus v3.4.0\",\n      \"metric\": \"RGB_SQUARED_DISTANCE\",\n      \"distance_squared\": 41,\n      \"tie_break\": \"LOWER_ATLAS_ROW_ID\",\n      \"sampling\": {\n        \"mode\": \"PIXEL_RGB\",\n        \"requested_size\": 1,\n        \"centre\": [\n          2,\n          3\n        ],\n        \"bounds\": [\n          2,\n          3,\n          2,\n          3\n        ],\n        \"valid_pixel_count\": 1,\n        \"channel_std\": [\n          0,\n          0,\n          0\n        ],\n        \"alpha_threshold\": 128,\n        \"rounding\": \"MATH_ROUND_PER_CHANNEL\"\n      },\n      \"image\": {\n        \"name\": \"synthetic-demo.png\",\n        \"width\": 20,\n        \"height\": 20,\n        \"sha256\": null\n      },\n      \"signature_status\": \"NOT_SIGNED\"\n    },\n    {\n      \"schema_version\": \"1.0\",\n      \"source_rgb\": [\n        60,\n        123,\n        25\n      ],\n      \"source_hex\": \"#3C7B19\",\n      \"color_space\": \"sRGB\",\n      \"bits_per_channel\": 8,\n      \"source_representation\": \"BROWSER_DECODED_SRGB\",\n      \"atlas_row_id\": 4966,\n      \"reference\": \"H130_L045_C055\",\n      \"reference_rgb\": [\n        55,\n        121,\n        26\n      ],\n      \"reference_hex\": \"#37791A\",\n      \"master_sha256\": \"8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4\",\n      \"workflow\": \"ATLAS Clarus v3.4.0\",\n      \"metric\": \"RGB_SQUARED_DISTANCE\",\n      \"distance_squared\": 30,\n      \"tie_break\": \"LOWER_ATLAS_ROW_ID\",\n      \"sampling\": {\n        \"mode\": \"PIXEL_RGB\",\n        \"requested_size\": 1,\n        \"centre\": [\n          3,\n          3\n        ],\n        \"bounds\": [\n          3,\n          3,\n          3,\n          3\n        ],\n        \"valid_pixel_count\": 1,\n        \"channel_std\": [\n          0,\n          0,\n          0\n        ],\n        \"alpha_threshold\": 128,\n        \"rounding\": \"MATH_ROUND_PER_CHANNEL\"\n      },\n      \"image\": {\n        \"name\": \"synthetic-demo.png\",\n        \"width\": 20,\n        \"height\": 20,\n        \"sha256\": null\n      },\n      \"signature_status\": \"NOT_SIGNED\"\n    }\n  ],\n  \"example_notice\": \"Synthetic integration demonstration; no image bytes or physical measurement are supplied.\"\n}\n",
+    "document_sha256": "17f0401a8669ba0123b5ac409d23aab5252150ba26bf47a95d7537c31df8a4b0",
+    "github_commit": "60bf765e771c3e6493c88a02a046237c9ba69db9",
+    "initial_source_values_sha256": "df8172cf3e6a373b73035e873999b1688deaae20f037dae3ed91efb22ad9bd5b"
+  },
+  "decisions": {
+    "schema": "atlas-clarus-decisions/1.0",
+    "nodes": [
+      {
+        "decision_id": "12f00a45-831a-4784-8456-09e5716ddffe",
+        "parent_revision_id": null,
+        "event": {
+          "kind": "CREATED"
+        },
+        "origin": {
+          "kind": "BUNDLE_DERIVATION",
+          "document_sha256": "17f0401a8669ba0123b5ac409d23aab5252150ba26bf47a95d7537c31df8a4b0",
+          "basis": "RECORDED_ORIGINALS",
+          "index": 0
+        },
+        "record": {
+          "original": {
+            "id": "sample-1",
+            "name": "Bundle sample 1",
+            "hex": "#3D7B19",
+            "source": "Bundle source assignment 1; image and sampling metadata retained in JSON",
+            "color_space": "sRGB"
+          },
+          "source_rgb": [
+            61,
+            123,
+            25
+          ],
+          "atlas_row_id": 4966,
+          "atlas_reference": "H130_L045_C055",
+          "reference_hex": "#37791A",
+          "reference_rgb": [
+            55,
+            121,
+            26
+          ],
+          "distance_squared": 41,
+          "nearest_tie_count": 1
+        },
+        "revision_id": "18609cc574ac0903062f6ce7d212c6c48b764f9917c41df70b332bc7d525ca56"
+      },
+      {
+        "decision_id": "0aa198aa-e755-4e6f-a525-891258b88200",
+        "parent_revision_id": null,
+        "event": {
+          "kind": "CREATED"
+        },
+        "origin": {
+          "kind": "BUNDLE_DERIVATION",
+          "document_sha256": "17f0401a8669ba0123b5ac409d23aab5252150ba26bf47a95d7537c31df8a4b0",
+          "basis": "RECORDED_ORIGINALS",
+          "index": 1
+        },
+        "record": {
+          "original": {
+            "id": "sample-2",
+            "name": "Bundle sample 2",
+            "hex": "#3C7B19",
+            "source": "Bundle source assignment 2; image and sampling metadata retained in JSON",
+            "color_space": "sRGB"
+          },
+          "source_rgb": [
+            60,
+            123,
+            25
+          ],
+          "atlas_row_id": 4966,
+          "atlas_reference": "H130_L045_C055",
+          "reference_hex": "#37791A",
+          "reference_rgb": [
+            55,
+            121,
+            26
+          ],
+          "distance_squared": 30,
+          "nearest_tie_count": 1
+        },
+        "revision_id": "feb39ce4d76f7485baa0438d34892d26916194029362f86d5ef136a09d31031a"
+      }
+    ]
+  }
+}

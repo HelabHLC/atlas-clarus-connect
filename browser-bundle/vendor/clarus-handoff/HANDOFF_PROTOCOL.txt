@@ -1,0 +1,124 @@
+ATLAS CLARUS COLOUR DECISIONS AND ADOBE HANDOFF 1.0
+Implementation: Start-up Colour Kit 0.3.0, 8 October 2026
+
+PURPOSE
+Keep the documented origin of a colour decision and its development inspectable
+across tool boundaries. The Atlas reference is not the decision identity.
+Neither a UUID nor a checksum authenticates a declared source or its author.
+
+STATUS / ADOPTION
+Implemented: Colour Kit (browser and Python), legacy Bundle → Kit adapter,
+ASE export with companion JSON/manifest, and ASE return with checked IDs.
+Native Adobe application testing is NOT_TESTED. Other Clarus tools have not
+been silently upgraded by this release. They can implement this contract using
+the supplied modules. Legacy Bundle 1.0–1.2 itself has no decision-ID contract;
+the kit creates IDs at conversion. Reimporting that legacy file starts new IDs.
+
+DECISION VS REVISION
+decision_id is a lowercase UUID v4. It is minted once for an input decision,
+not derived from HEX, image hash, Atlas address, palette position or source ID.
+Repeated/equal colours and shared reference addresses therefore stay distinct.
+revision_id is a lowercase SHA-256 of the canonical revision payload below.
+Editing current HEX/name/source with the same input ID preserves decision_id
+and adds a revision. Changing the input ID starts a separate decision. JSON
+reimport and unchanged recalculation preserve both IDs. CSV/CSS lack this
+identity chain and must not be treated as a history-preserving transport.
+
+REVISION PAYLOAD / CANONICAL HASH
+Payload keys: decision_id, parent_revision_id, event, origin, record.
+revision_id is excluded from its own hash. Canonical JSON recursively sorts
+object keys, preserves array order and string content, uses no insignificant
+spaces or trailing newline, does not ASCII-escape Unicode and uses UTF-8.
+Payload numbers are safe integers. Unpaired Unicode surrogates are rejected.
+Returned ASE floats are stored as hexadecimal bytes, not JSON float numbers.
+Hash = SHA256(UTF8(canonical_json(payload))). UUIDs and the SHA-256 claims are
+not signatures. A completely replaced/rehashed history cannot be detected
+without an independently trusted earlier file/hash.
+
+record has exactly the eight normal assignment fields documented in FORMAT.txt.
+Its original object has exactly id/name/hex/source/color_space. The master and
+reference-CSV binding are the enclosing palette's fixed reference version.
+All historical snapshots are independently checked against that reference set.
+Changing reference masters requires a future explicit migration protocol.
+
+PARENTS / ORIGINS / EVENTS
+Root parent_revision_id is null. Other parents must already exist, with the
+same decision_id and input id. A root UUID cannot be reused for another root.
+Origin remains identical along a chain. Supported origin objects:
+  {kind: KIT_INPUT}
+  {kind: FILE_IMPORT, document_sha256}
+  {kind: BUNDLE_DERIVATION, document_sha256, basis, index}
+Bundle origin binds the unchanged retained document, chosen basis, zero-based
+array position and initial input values. References adopted as new inputs are
+explicitly marked by basis REFERENCE_VALUES_AS_NEW_INPUTS. FILE_IMPORT is a
+declared input-file checksum; the input-file bytes may be external. The complete
+retained Bundle (when present) remains in bundle_origin.document_text.
+Supported events:
+  {kind: CREATED}
+  {kind: KIT_EDIT}
+  {kind: ASE_RETURN, file_sha256, swatch_name, channel_bits,
+   interpretation: USER_CONFIRMED_SRGB,
+   quantization: MATH_ROUND_CHANNEL_X_255}
+ASE_RETURN preserves the parent name/id/source/colour-space fields and changes
+HEX only when its rounded RGB changes. Original spelling is preserved otherwise.
+channel_bits is 24 lowercase hexadecimal digits: three big-endian IEEE float32
+channels from the returned ASE. Quantization is floor(channel*255 + 0.5).
+An unchanged return also records a linked receipt revision. Repeating the same
+return with the same original package yields the same receipt hash, not another
+distinct historical event. The returned file hash does not identify its author.
+
+ADOBE PACKAGE
+palette.ase: RGB input colours (not substituted Atlas reference RGB), ASE 1.0,
+ordinary colour type 2. Each swatch name begins with:
+  AC_<32 UUID hex digits>_<first 16 revision SHA256 digits> | <label>
+Full UUID and revision hash remain in the JSON and manifest. Names use UTF-16BE
+as defined by the ASE blocks. The descriptive suffix is not an identity key.
+Within a package, UUIDs make these identifiers unambiguous; no match is ever
+inferred from colour equality, order, approximate distance or reference name.
+This pilot's ASE contains no embedded ICC profile. sRGB is a declared workflow
+condition and must be confirmed on return; no implicit profile conversion.
+
+palette.clarus.json: complete kit 0.3 JSON with all snapshots and available
+Bundle ancestry. This companion is not automatically embedded in Adobe files.
+
+handoff.json: schema atlas-clarus-adobe-handoff/1.0, export_id (UUID v4),
+master_sha256, colour_interpretation=sRGB_8BIT_ORIGINAL_INPUT,
+native_adobe_validation=NOT_TESTED, files (byte SHA256 for the two files above),
+swatches (ordered decision_id, full revision_id and original ase_name).
+
+RETURN CHECKS
+Require one ASE and both original JSON companions. Check the exact companion
+JSON byte hash, every history hash/snapshot/origin, current head links, master,
+manifest entries, and the deterministically regenerated ORIGINAL ASE hash.
+The RETURNED ASE hash may differ legitimately; retain it in each receipt event.
+Match swatches by exact identifier prefix, irrespective of order and groups.
+Reject missing/extra/duplicate/foreign IDs or revisions, unknown block types,
+invalid groups, unsupported ASE versions, trailing/truncated bytes, nonfinite
+or out-of-range channels, and non-RGB models. Do not guess a lost identifier.
+Each matched decision gets a new revision with recomputed Atlas assignment.
+The original package remains the prior version; the new full JSON continues it.
+
+LIMITS
+1–250 active colours; up to 5,000 retained revision nodes. Complete JSON up to
+16 MiB; manifest and ASE each up to 1 MiB. Up to 2,048 ASE blocks and 32 nested
+groups. Unknown semantic protocol versions are rejected, never flattened.
+
+REUSABLE IMPLEMENTATIONS
+clarus_handoff.js works as a browser global ClarusHandoff or a CommonJS module.
+Its context supplies sha(bytes), uuid(), assign(original), sourceDigest(rows),
+verifyRecord(record), verifyPalette(data), verifyOrigin(origin,record,data).
+The host must validate its reference binding, method and Bundle origin before
+accepting data. verifyOrigin is required for hosts that support Bundle origins.
+Core entry points: updateHistory, verifyHistory, exportHandoff, returnHandoff,
+writeASE, readASE, zipStored. Do not call a raw ASE writer as a provenance check.
+adobe_handoff.py implements the contract independently with the Python standard
+library and the kit reference validator. The included CLI exposes both paths.
+
+SOURCE BASIS
+GitHub main checked 8 October 2026:
+https://github.com/HelabHLC/atlas-clarus-connect/tree/60bf765e771c3e6493c88a02a046237c9ba69db9
+All 13,283 reference rows match hover-library/data/colors.json. The pinned
+Browser Bundle ASE reader was used as an independent test oracle, not embedded
+in the distributed product. The assignment rule and reference bytes are unchanged.
+Adobe's documented palette exchange route:
+https://helpx.adobe.com/illustrator/desktop/manage-colors/use-swatches/share-swatches-between-applications.html
