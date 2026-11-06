@@ -3,7 +3,7 @@ Contributors: atlas-clarus
 Tags: color, colour, hlc, atlas, swatches
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.2.6-beta1
+Stable tag: 0.2.6-beta2
 License: GPLv2 or later
 
 Interactive ATLAS Clarus HLC reference library with exact active-PKL RGB swatches and hover details.
@@ -37,6 +37,12 @@ Spectral source data: Cultural Heritage Science Open Source (CHSOS), published b
 4. Add `[atlas_clarus_library]` to a page or post.
 
 == Changelog ==
+
+= 0.2.6-beta2 =
+* Accepts optional RC28 source-assignment 1.0 records on Image Picker handoffs; checks master, row, HLC, RGB, distance, full-master winner and sampling consistency.
+* Stores multiple unsigned sources per reference in local palette V2; reads V1 without modifying it or inventing missing source RGB.
+* Adds source inspection and Clarus JSON 1.2 download, explicit storage errors and non-destructive palette limits.
+* Existing identity-only handoffs remain supported. No signature or authenticity claim. See SOURCE_PROVENANCE.md in the repository for the sender contract and verification limits.
 
 = 0.2.6-beta1 =
 * Adds paired ATLAS target and model mix screen previews to ACMS recipe candidates; both remain unmeasured.

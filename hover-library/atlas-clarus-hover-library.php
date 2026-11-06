@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ATLAS Clarus Hover Library
  * Description: Interactive ATLAS Clarus HLC reference library with hover details, search, pagination, and documented observed-coverage views.
- * Version: 0.2.6-beta1
+ * Version: 0.2.6-beta2
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: ATLAS Clarus
@@ -12,7 +12,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('ATLAS_CLARUS_HOVER_VERSION', '0.2.6-beta1');
+define('ATLAS_CLARUS_HOVER_VERSION', '0.2.6-beta2');
 define('ATLAS_CLARUS_HOVER_FILE', __FILE__);
 define('ATLAS_CLARUS_HOVER_DIR', plugin_dir_path(__FILE__));
 define('ATLAS_CLARUS_HOVER_URL', plugin_dir_url(__FILE__));
@@ -108,7 +108,8 @@ function atlas_clarus_hover_asset_version($relative_path) {
 
 function atlas_clarus_hover_register_assets() {
     wp_register_style('atlas-clarus-hover-library', ATLAS_CLARUS_HOVER_URL.'assets/css/atlas-clarus.css', array(), atlas_clarus_hover_asset_version('assets/css/atlas-clarus.css'));
-    wp_register_script('atlas-clarus-hover-library', ATLAS_CLARUS_HOVER_URL.'assets/js/atlas-clarus.js', array(), atlas_clarus_hover_asset_version('assets/js/atlas-clarus.js'), true);
+    wp_register_script('atlas-clarus-hover-provenance', ATLAS_CLARUS_HOVER_URL.'assets/js/source-provenance.js', array(), atlas_clarus_hover_asset_version('assets/js/source-provenance.js'), true);
+    wp_register_script('atlas-clarus-hover-library', ATLAS_CLARUS_HOVER_URL.'assets/js/atlas-clarus.js', array('atlas-clarus-hover-provenance'), atlas_clarus_hover_asset_version('assets/js/atlas-clarus.js'), true);
 }
 add_action('wp_enqueue_scripts', 'atlas_clarus_hover_register_assets');
 

@@ -71,6 +71,17 @@ jobs:
         run: php -l hover-library/atlas-clarus-hover-library.php
       - name: Validate Hover Library data
         run: php hover-library/tests/validate-data.php
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Install shared DOM test dependencies
+        run: npm ci --prefix browser-bundle/tests --ignore-scripts
+      - name: Validate Hover source handoff and local palette
+        run: |
+          node --check hover-library/assets/js/atlas-clarus.js
+          node --check hover-library/assets/js/source-provenance.js
+          node hover-library/tests/validate-source-provenance.js
+          node hover-library/external-picker/test-picker-provenance.js
 
   browser-bundle:
     runs-on: ubuntu-latest

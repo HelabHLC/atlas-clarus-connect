@@ -111,6 +111,8 @@
 
   async function init(root) {
     try {
+      const provenance = window.ATLAS_CLARUS_HOVER_PROVENANCE;
+      if (!provenance || provenance.MASTER !== MASTER_SHA256) throw new Error('Source provenance module unavailable');
       const [colorDoc, viewDoc, nameDoc] = await Promise.all([
         getJson(root.dataset.colorsUrl),
         getJson(root.dataset.viewsUrl),
@@ -126,6 +128,11 @@
       }
       const byId = new Map(colors.map(c => [Number(c.id), c]));
       if (byId.size !== colors.length) throw new Error('Duplicate atlas_row_id detected');
+      if (colors.some((c,i)=>c.id!==i || !/^H\d{3}_L\d{3}_C\d{3}$/.test(c.ref) ||
+          !Array.isArray(c.rgb) || c.rgb.length!==3 || c.rgb.some(v=>!Number.isInteger(v)||v<0||v>255) ||
+          c.hex!=='#'+c.rgb.map(v=>v.toString(16).padStart(2,'0')).join('').toUpperCase())) {
+        throw new Error('Invalid master row or RGB representation');
+      }
       if (nameDoc.schema !== 'ATLAS_CLARUS_NAME_SEARCH_INDEX' || nameDoc.master_sha256 !== MASTER_SHA256 ||
           Number(nameDoc.entry_count) !== 13283 || !Array.isArray(nameDoc.records) || nameDoc.records.length !== 13283) {
         throw new Error('Name Search Index validation failed');
@@ -139,20 +146,8 @@
       });
       let pickerHandoff = null;
       let pickerHandoffError = '';
-      const incoming = new URLSearchParams(location.search);
-      if (incoming.get('source') === 'pkl-image-picker') {
-        try {
-          const rawId=incoming.get('atlas_row_id') || '',ref=incoming.get('hlc') || '',sha=incoming.get('master_sha256') || '';
-          if (!/^\d+$/.test(rawId)) throw new Error('atlas_row_id is not a strict integer');
-          const color=byId.get(Number(rawId));
-          if (!color || color.ref !== ref || sha !== MASTER_SHA256) throw new Error('PKL identity or master mismatch');
-          const rawReturn=incoming.get('return_url') || '';
-          if (!rawReturn) throw new Error('return URL is missing');
-          const returnUrl=new URL(rawReturn, location.href);
-          if (returnUrl.origin !== location.origin || !/^https?:$/.test(returnUrl.protocol)) throw new Error('return URL is not same-origin');
-          pickerHandoff={color,returnUrl};
-        } catch (e) { pickerHandoffError=e.message; }
-      }
+      try { pickerHandoff=provenance.readHandoff(new URL(location.href),colors); }
+      catch (_) { pickerHandoffError='invalid identity, return URL or source assignment'; }
       let activeView = views[root.dataset.defaultView] ? root.dataset.defaultView : 'core';
       const perPage = Math.max(24, Math.min(480, parseInt(root.dataset.perPage || '120', 10) || 120));
       let page = 0;
@@ -190,7 +185,7 @@
       if (pickerHandoff || pickerHandoffError) {
         const notice=document.createElement('div');
         notice.className='atlas-clarus-handoff-notice'+(pickerHandoffError?' is-error':'');
-        notice.textContent=pickerHandoffError ? `Image Picker handoff blocked: ${pickerHandoffError}.` : `Image Picker identity verified: ${pickerHandoff.color.ref} · atlas_row_id ${pickerHandoff.color.id}`;
+        notice.textContent=pickerHandoffError ? `Image Picker handoff blocked: ${pickerHandoffError}.` : `Image Picker reference matched: ${pickerHandoff.color.ref} · atlas_row_id ${pickerHandoff.color.id}${pickerHandoff.sourceAssignment ? ' · source record checked · NOT_SIGNED' : ' · source RGB not recorded'}`;
         root.appendChild(notice);
       }
       const toolbar = document.createElement('div');
@@ -271,20 +266,64 @@
       tip.setAttribute('role','tooltip');
       document.body.appendChild(tip);
 
-      const paletteKey = 'atlasClarusLocalPaletteV1';
-      let palette = [];
-      try { palette = JSON.parse(localStorage.getItem(paletteKey) || '[]').filter(id=>byId.has(Number(id))).slice(0,24); } catch (_) { palette=[]; }
-
-      const savePalette = () => { try { localStorage.setItem(paletteKey, JSON.stringify(palette)); } catch (_) {} };
+      let palette=provenance.empty(),paletteWritable=true,storageSnapshot=null;
+      const paletteStatus=document.createElement('p');
+      paletteStatus.className='atlas-clarus-boundary acl-palette-status';
+      paletteStatus.setAttribute('role','status');
+      const exportPalette=document.createElement('button');
+      exportPalette.type='button';exportPalette.className='atlas-clarus-button acl-export-palette';
+      exportPalette.textContent='Download palette JSON (with sources)';
+      sidebar.querySelector('.acl-clear-palette').after(exportPalette,paletteStatus);
+      try {
+        palette=provenance.loadPalette(localStorage,colors);
+        storageSnapshot=localStorage.getItem(provenance.KEY);
+      } catch (_) {
+        paletteWritable=false;
+        paletteStatus.textContent='Stored palette could not be read or validated. It has not been overwritten; restore it before editing.';
+      }
+      const savePalette = () => {
+        try {
+          if (localStorage.getItem(provenance.KEY)!==storageSnapshot) {
+            paletteWritable=false;
+            paletteStatus.textContent='Stored palette changed in another view. Download this in-memory palette, then reload before editing.';
+            return;
+          }
+          const raw=JSON.stringify(palette);
+          localStorage.setItem(provenance.KEY,raw);storageSnapshot=raw;
+          paletteStatus.textContent='Saved locally. Source records are NOT_SIGNED.';
+        } catch (_) {
+          paletteStatus.textContent='NOT SAVED: browser storage unavailable or full. Download palette JSON to keep the in-memory records.';
+        }
+      };
+      const sourceSummary=r=>`Source ${r.source_hex} · RGB ${r.source_rgb.join(', ')} → reference ${r.reference_hex} · RGB distance² ${r.distance_squared} · ${r.sampling.mode} at ${r.sampling.centre.join(', ')} · ${r.image.name} (${r.image.width} × ${r.image.height}) · image SHA-256 ${r.image.sha256===null?'not recorded':r.image.sha256} · NOT_SIGNED`;
       const renderPalette = () => {
         const box=sidebar.querySelector('.atlas-clarus-palette');
-        if (!palette.length) { box.className='atlas-clarus-palette atlas-clarus-side-empty'; box.textContent='No colours added.'; return; }
+        exportPalette.disabled=!palette.colorIds.length;
+        sidebar.querySelector('.acl-clear-palette').disabled=!paletteWritable;
+        const addButton=sidebar.querySelector('.acl-add-palette');
+        if(addButton)addButton.disabled=!paletteWritable;
+        if (!palette.colorIds.length) { box.className='atlas-clarus-palette atlas-clarus-side-empty'; box.textContent='No colours added.'; return; }
         box.className='atlas-clarus-palette'; box.replaceChildren();
-        palette.forEach(id=>{ const c=byId.get(Number(id)); if(!c)return; const row=document.createElement('button'); row.type='button'; row.className='atlas-clarus-mini-row'; row.innerHTML=`<span class="atlas-clarus-mini-chip" style="background:${esc(c.hex)}"></span><span><strong>${esc(c.ref)}</strong><small>${esc(c.hex)} · ID ${c.id}</small></span><span aria-hidden="true">×</span>`; row.setAttribute('aria-label',`Remove ${c.ref} from palette`); row.addEventListener('click',()=>{palette=palette.filter(x=>Number(x)!==Number(c.id));savePalette();renderPalette();}); box.appendChild(row); });
+        palette.colorIds.forEach(id=>{
+          const c=byId.get(id),records=palette.sourceAssignments.filter(r=>r.atlas_row_id===id);
+          const row=document.createElement('button');row.type='button';row.className='atlas-clarus-mini-row';row.disabled=!paletteWritable;
+          row.innerHTML=`<span class="atlas-clarus-mini-chip" style="background:${esc(c.hex)}"></span><span><strong>${esc(c.ref)}</strong><small>${esc(c.hex)} · ID ${c.id} · ${records.length} source records</small></span><span aria-hidden="true">×</span>`;
+          row.setAttribute('aria-label',`Remove ${c.ref} from palette`);
+          row.addEventListener('click',()=>{if(!paletteWritable)return;palette=provenance.remove(palette,id);savePalette();renderPalette();});box.appendChild(row);
+          if(records.length){
+            const details=document.createElement('details'),summary=document.createElement('summary');
+            summary.textContent=`${records.length} source records · NOT_SIGNED`;details.appendChild(summary);
+            records.forEach(r=>{const line=document.createElement('p');line.className='atlas-clarus-boundary';line.textContent=sourceSummary(r);details.appendChild(line);});box.appendChild(details);
+          }
+        });
       };
+      exportPalette.addEventListener('click',()=>{
+        const url=URL.createObjectURL(new Blob([JSON.stringify(provenance.clarus(palette,colors),null,2)],{type:'application/json'}));
+        const a=document.createElement('a');a.href=url;a.download='ATLAS_Clarus_Hover_Palette.clarus.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+      });
 
       const nearest = (c, count=6) => colors.filter(x=>x.id!==c.id).map(x=>({c:x,d:(x.lab[0]-c.lab[0])**2+(x.lab[1]-c.lab[1])**2+(x.lab[2]-c.lab[2])**2})).sort((a,b)=>a.d-b.d||a.c.id-b.c.id).slice(0,count).map(x=>x.c);
-      const showSelection = (c, view) => {
+      const showSelection = (c, view, sourceAssignment=null) => {
         const wheelUrl = new URL(root.dataset.wheelUrl);
         wheelUrl.searchParams.set('atlas_row_id', String(c.id));
         wheelUrl.searchParams.set('hlc', c.ref);
@@ -293,11 +332,7 @@
         wheelUrl.searchParams.set('return_url', location.href);
         let pickerReturnHtml='';
         if (pickerHandoff) {
-          const back=new URL(pickerHandoff.returnUrl.href);
-          back.searchParams.set('source','hover-library-return');
-          back.searchParams.set('atlas_row_id',String(pickerHandoff.color.id));
-          back.searchParams.set('hlc',pickerHandoff.color.ref);
-          back.searchParams.set('master_sha256',MASTER_SHA256);
+          const back=provenance.returnLink(pickerHandoff);
           pickerReturnHtml=`<a class="atlas-clarus-button acl-return-picker" href="${esc(back.href)}">← Zurück zum Image Picker</a>`;
         }
         const body=sidebar.querySelector('.atlas-clarus-selection-body');
@@ -305,17 +340,26 @@
         const solidView = view === views.solid_c ? 'solid_c' : view === views.solid_u ? 'solid_u' : null;
         body.innerHTML=`<div class="atlas-clarus-selected-swatch" style="background:${esc(c.hex)}"></div>${detailHtml(c,view)}<div class="atlas-clarus-actions">${pickerReturnHtml}<button type="button" class="atlas-clarus-button acl-copy-ref">Copy reference</button><button type="button" class="atlas-clarus-button acl-copy-hex">Copy HEX</button><button type="button" class="atlas-clarus-button acl-add-palette">Add to palette</button><a class="atlas-clarus-button acl-open-wheel" href="${esc(wheelUrl.href)}" target="_blank" rel="noopener noreferrer">Open in Colour Identity Wheel ↗</a></div><div class="atlas-clarus-copy-status" role="status" aria-live="polite"></div><section class="atlas-clarus-recipe" aria-live="polite"><p class="atlas-clarus-recipe-loading">Loading ${solidView ? 'ACMS spot colour candidates' : 'Basis-23 recipe'}…</p></section>`;
         const recipeBox=body.querySelector('.atlas-clarus-recipe');
+        if(sourceAssignment){
+          const sourceInfo=document.createElement('p');sourceInfo.className='atlas-clarus-boundary acl-source-assignment';
+          sourceInfo.textContent=sourceSummary(sourceAssignment);recipeBox.before(sourceInfo);
+        }
         const request=++selectionRequest;
         (solidView ? getAcmsRecipe(c) : getRecipe(c)).then(recipe=>{if(request===selectionRequest){recipeBox.innerHTML=solidView ? acmsSpotHtml(recipe,solidView,c.hex) : recipeHtml(recipe);if(!solidView)recipeBox.querySelector('.acl-download-recipe-pdf').addEventListener('click',()=>downloadRecipePdf(c,recipe));}}).catch(err=>{if(request===selectionRequest)recipeBox.innerHTML='<p class="atlas-clarus-boundary">Recipe unavailable or failed its identity check.</p>';console.error('ATLAS Clarus recipe:',err);});
         const report=m=>{body.querySelector('.atlas-clarus-copy-status').textContent=m;};
         body.querySelector('.acl-copy-ref').addEventListener('click',()=>copyText(c.ref).then(()=>report('Reference copied.')).catch(()=>report('Copy failed.')));
         body.querySelector('.acl-copy-hex').addEventListener('click',()=>copyText(c.hex).then(()=>report('HEX copied.')).catch(()=>report('Copy failed.')));
-        body.querySelector('.acl-add-palette').addEventListener('click',()=>{if(!palette.some(id=>Number(id)===Number(c.id)))palette.push(c.id);palette=palette.slice(-24);savePalette();renderPalette();report('Added to local palette.');});
+        body.querySelector('.acl-add-palette').disabled=!paletteWritable;
+        body.querySelector('.acl-add-palette').addEventListener('click',()=>{
+          if(!paletteWritable)return;
+          try {palette=provenance.add(palette,c,sourceAssignment);savePalette();renderPalette();report('Added to palette; see storage status below.');}
+          catch(err){report(err.message);}
+        });
         const nbox=sidebar.querySelector('.atlas-clarus-neighbours'); nbox.className='atlas-clarus-neighbours'; nbox.replaceChildren();
         nearest(c).forEach(n=>{const b=document.createElement('button');b.type='button';b.className='atlas-clarus-mini-row';b.innerHTML=`<span class="atlas-clarus-mini-chip" style="background:${esc(n.hex)}"></span><span><strong>${esc(n.ref)}</strong><small>${esc(n.hex)} · ID ${n.id}</small></span>`;b.addEventListener('click',()=>showSelection(n,views.core));nbox.appendChild(b);});
       };
       renderPalette();
-      sidebar.querySelector('.acl-clear-palette').addEventListener('click',()=>{palette=[];savePalette();renderPalette();});
+      sidebar.querySelector('.acl-clear-palette').addEventListener('click',()=>{if(!paletteWritable)return;palette=provenance.empty();savePalette();renderPalette();});
       const cardsButton=displayField.querySelector('.acl-view-cards'); const bookButton=displayField.querySelector('.acl-view-book');
       const setDisplay=compact=>{root.classList.toggle('atlas-clarus-compact',compact);cardsButton.setAttribute('aria-pressed',String(!compact));bookButton.setAttribute('aria-pressed',String(compact));};
       cardsButton.addEventListener('click',()=>setDisplay(false)); bookButton.addEventListener('click',()=>setDisplay(true));
@@ -454,7 +498,7 @@
       prev.addEventListener('click',()=>{if(page>0){page--;render();}});
       next.addEventListener('click',()=>{const n=Math.ceil(filteredIds().length/perPage);if(page<n-1){page++;render();}});
       render();
-      if (pickerHandoff) showSelection(pickerHandoff.color,views.core);
+      if (pickerHandoff) showSelection(pickerHandoff.color,views.core,pickerHandoff.sourceAssignment);
     } catch (err) {
       root.innerHTML = '<div class="atlas-clarus-error" role="alert">ATLAS Clarus library could not be loaded or did not pass its integrity checks.</div>';
       console.error('ATLAS Clarus Hover Library:', err);
