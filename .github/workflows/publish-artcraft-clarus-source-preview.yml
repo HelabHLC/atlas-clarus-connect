@@ -1,0 +1,64 @@
+name: Publish ArtCraft Clarus source preview
+
+on:
+  push:
+    branches:
+      - feat/artcraft-windows-pilot-20261013
+    paths:
+      - integrations/artcraft-windows-pilot/PUBLIC-TESTING.md
+      - .github/workflows/publish-artcraft-clarus-source-preview.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: artcraft-clarus-source-preview-v0.2.2
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Build source integration kit
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="integrations/artcraft-windows-pilot"
+          out="ATLAS-Clarus-ArtCraft-Integration-Pilot-0.2.2-source"
+          mkdir -p "$out"
+          cp "$root/README.md" "$out/"
+          cp "$root/USER-README.txt" "$out/"
+          cp "$root/PUBLIC-TESTING.md" "$out/"
+          cp "$root/build-manifest.json" "$out/"
+          cp "$root/prepare.py" "$out/"
+          cp "$root/build-windows.ps1" "$out/"
+          cp "$root/smoke-windows.ps1" "$out/"
+          cp "$root/artcraft-integration.patch" "$out/"
+          cp "$root/windows-isolation.patch" "$out/"
+          cp "$root/.gitattributes" "$out/"
+          printf '%s\n'             'This package intentionally contains no compiled ArtCraft executable.'             'Review the upstream ArtCraft 0.41.0 license before building or redistributing anything.'             > "$out/NO-BINARY-REDISTRIBUTION.txt"
+          zip -r "$out.zip" "$out"
+          sha256sum "$out.zip" > "$out.zip.sha256"
+
+      - name: Publish or update pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="artcraft-clarus-pilot-v0.2.2-source-preview"
+          title="ArtCraft × ATLAS Clarus Interoperability Pilot 0.2.2 — Source Preview"
+          zip="ATLAS-Clarus-ArtCraft-Integration-Pilot-0.2.2-source.zip"
+          sum="$zip.sha256"
+          notes="integrations/artcraft-windows-pilot/PUBLIC-TESTING.md"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$zip" "$sum" --clobber
+            gh release edit "$tag" --prerelease --title "$title" --notes-file "$notes" --target "$GITHUB_SHA"
+          else
+            gh release create "$tag" "$zip" "$sum" --prerelease --title "$title" --notes-file "$notes" --target "$GITHUB_SHA"
+          fi

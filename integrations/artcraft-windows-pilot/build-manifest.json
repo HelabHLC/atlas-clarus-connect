@@ -1,0 +1,19 @@
+{
+  "schema": "atlas-clarus-artcraft-windows-build/0.1",
+  "pilot_version": "0.2.2",
+  "upstream_repository": "storytold/artcraft",
+  "upstream_commit": "c3844acdadf630db0c17ec1d1512bcf6bbc1b4f9",
+  "upstream_tag": "artcraft-v0.41.0",
+  "user_target": "Windows 10 build 19045",
+  "target": "x86_64-pc-windows-msvc",
+  "tauri_cli_version": "2.12.2",
+  "product_name": "ArtCraft ATLAS Pilot",
+  "identifier": "org.atlasclarus.artcraft.pilot",
+  "data_directory_name": "Artcraft-ATLAS-Pilot",
+  "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "reference_csv_sha256": "a25f4dbd94d819ed3c9b899d0e0db7d4d9449cf8028201d0776fad93b5a7fab9",
+  "patches": {
+    "artcraft-integration.patch": "13d12449503ed48e9194e2f8063ff23b531b2212cbd761538696db72aebaede8",
+    "windows-isolation.patch": "84c5e444a1b15eb670570034f553b224fddf1a573d91b1752258bf487a1e5319"
+  }
+}
