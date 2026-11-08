@@ -1,0 +1,157 @@
+{
+  "date": "2026-11-08",
+  "version": "0.1.8-preview",
+  "base_commit": "7252718d4569a358a512bb414465e7cdbb88eaa0",
+  "package": {
+    "sha256": "5caa4df106f3a6c2b7cfac1dae9ba3f1aa6d237bf7db1da606974b0fe5213f9b",
+    "bytes": 141442293,
+    "standalone_sha256": "1ac6306fb65cd8a729e1c545500c553c8830a7400d75f457bf42ddf348803750",
+    "checksums": 455,
+    "inherited_unchanged": 441
+  },
+  "library_counts": {
+    "display-p3": {
+      "source_total": 15430,
+      "master": 12132,
+      "additional_digital": 3298,
+      "computed_inside": 14865,
+      "computed_outside": 565
+    },
+    "prophoto-rgb": {
+      "source_total": 22248,
+      "master": 13283,
+      "additional_digital": 8965,
+      "computed_inside": 21918,
+      "computed_outside": 330
+    }
+  },
+  "checks": {
+    "core": {
+      "status": "PASS",
+      "checks": [
+        "Requested H295_L040_C100 retained as a separate digital address; known exact sRGB conversion and master comparison",
+        "Existing identities/lists unchanged; all 94 library coverage totals valid",
+        "Full source libraries: P3 15,430 / ProPhoto 22,248; all old identities preserved, additions separate; screenshot colour outside sRGB but inside P3; source-selected versus computed gamut disagreement retained",
+        "Tagged P3/ProPhoto sources remain distinct; unclipped values retained; invalid inputs and unknown conditions rejected",
+        "163 native sRGB comparisons including 30 real duplicate-RGB ties match an independent exhaustive search",
+        "Round-trip JSON and CSS; forged identity, colour, membership and spectral records rejected; master untouched"
+      ],
+      "master_rows": 13283,
+      "library_views": 94,
+      "core_coverage": {
+        "srgb": {
+          "inside": 10636,
+          "outside": 2647
+        },
+        "display-p3": {
+          "inside": 12009,
+          "outside": 1274
+        },
+        "rec2020": {
+          "inside": 13108,
+          "outside": 175
+        },
+        "prophoto-rgb": {
+          "inside": 13283,
+          "outside": 0
+        }
+      }
+    },
+    "oracle": {
+      "status": "PASS",
+      "vectors": 22251,
+      "additional_digital_addresses": 8965,
+      "method": "Matrices independently derived from primary chromaticities; Bradford from cone matrix and whites",
+      "max_linear_rgb_error": {
+        "srgb": 1.887379141862766e-15,
+        "display-p3": 1.3322676295501878e-15,
+        "rec2020": 1.1102230246251565e-15,
+        "prophoto-rgb": 2.220446049250313e-16
+      },
+      "max_encoded_rgb_error": {
+        "srgb": 1.3364309658925322e-14,
+        "display-p3": 6.866902879654191e-15,
+        "rec2020": 2.385591724163305e-14,
+        "prophoto-rgb": 1.0503750647039567e-15
+      },
+      "master_gamut_counts": {
+        "srgb": 10636,
+        "display-p3": 12009,
+        "rec2020": 13108,
+        "prophoto-rgb": 13283
+      }
+    },
+    "dom": {
+      "status": "PASS",
+      "surface": "JSDOM; no rendered browser/physical display validation",
+      "jsdom_version": "31.0.0",
+      "checks": [
+        "P3/ProPhoto library browsing and complete JSON downloads",
+        "Both requested blue examples retain digital identity",
+        "Exact assigned CSS sRGB swatch values",
+        "Native HLC and tagged P3 input; dirty-state and invalid-input guard",
+        "JSON reopen; forged row ID rejected without losing palette",
+        "DE/EN changes no exported bytes; CSS export",
+        "User labels rendered as text",
+        "All-library versus source-library membership separated",
+        "P3 capability branch mocked",
+        "Launchers present in real Browser/Startup markup and track language"
+      ],
+      "launches": [
+        "index.html",
+        "startup/index.html"
+      ],
+      "errors": []
+    },
+    "logo_regression": {
+      "status": "PASS",
+      "checks": [
+        "Six exact opaque colours recovered deterministically; transparent and partial-alpha pixels excluded; every suggestion is an actual source pixel",
+        "Uniform image produces one colour; no invented colours; empty opacity, count and unsupported vector input rejected",
+        "Nearest eligible candidate beats a still-valid original; exact ties use lower row ID; chosen alternative is recorded separately without rebinding source",
+        "Duplicate reference and different-address/same-sRGB collisions detected; unchosen rows do not collide",
+        "Logo-selection audit binds accepted colours and coordinates to the original image identity"
+      ]
+    },
+    "multi_regression": {
+      "status": "PASS",
+      "checks": [
+        "WASM Lab D50 absolute roundtrip agrees with independent native LittleCMS oracle (Lab <0.003; device16 <=4)",
+        "Exchange and non-printer profiles rejected",
+        "Pairwise difference blocks a colour even when both individual output tolerances pass; equality at exact threshold passes; metadata changes invalidate selection",
+        "No rounded tolerance acceptance",
+        "Real ICC evaluates all 13,283 frozen references; deterministic package; source dossier and ICC preserved byte-for-byte; no source reassignment; import discards calculation and active confirmations; corrupt ZIP rejected"
+      ],
+      "common": 9015,
+      "choice": 1736,
+      "magenta": {
+        "target": [
+          50.18473267555237,
+          75.03131341934204,
+          6.906060993671417
+        ],
+        "output": [
+          48.45108091831207,
+          72.5399239063263,
+          6.686326384544373
+        ],
+        "device": [
+          0,
+          64798,
+          15893,
+          0
+        ]
+      }
+    }
+  },
+  "rendered_browser_test": "BLOCKED_ENVIRONMENT: local Chromium could not start; provided browser forbids file URLs. No workaround used.",
+  "visual_acceptance": "OPEN",
+  "physical_measurement": "NOT_MEASURED",
+  "deployed": false,
+  "public_offline_download": {
+    "path": "previews/digital-hlc/download/ATLAS_Clarus_P3_ProPhoto_0.1.8_Offline.zip",
+    "bytes": 1843796,
+    "sha256": "f48efee06caf2ddb1099f34ea410d1acea05d232117383861b23f983fa9dc13f",
+    "icc_files": 0
+  }
+}
