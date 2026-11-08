@@ -1,0 +1,133 @@
+{
+  "chapter": {
+    "id": "guide-22",
+    "title": {
+      "de": "P3 & ProPhoto · Digitale Farben 0.1.8",
+      "en": "P3 & ProPhoto · Digital colours 0.1.8"
+    },
+    "steps": {
+      "de": [
+        "Öffne „P3 / ProPhoto · Testversion 0.1.8“ in der Browser Edition. Wähle Display-P3 oder ProPhoto RGB und danach H und L. Klicke auf ein Farbfeld oder gib eine HLC-Adresse ein, zum Beispiel H295_L040_C100.",
+        "Für eigene RGB-Werte wähle „RGB mit bekanntem Farbraum“, den tatsächlichen Farbraum und die Skala 0–255 oder 0–1. Werte und Farbraum gehören zusammen. Klicke auf „Farbe berechnen“.",
+        "Prüfe die Identität: Eine vorhandene Masteradresse bleibt Masterreferenz. Eine zusätzliche Adresse wird als digitale Farbe ausgewiesen. H295_L040_C100 bleibt als eigene digitale Adresse erhalten; H290_L040_C075 ist nur der bisherige RGB-only-Vergleich.",
+        "Vergleiche die berechneten Farbraumgrenzen und die Vorschau. Ein Stern am Bibliotheksfeld bedeutet: in der Quellliste enthalten, aber außerhalb unserer berechneten Grenze. Die Rohwerte bleiben erhalten. ProPhoto erweitert nicht den Farbumfang deines Bildschirms.",
+        "Füge die Farbe zur digitalen Palette hinzu. „Palette mit Herkunft · JSON“ sichert die Quelle mit Farbraum und Vergleich. Öffne diese Datei hier über „Palette öffnen“. „Webfarben · CSS“ liefert sRGB-Ersatzwerte und geeignete P3-Werte. „Vollständige RGB-Bibliothek · JSON“ exportiert die gewählte Quellliste.",
+        "Für die Offline-Nutzung lade das separate 0.1.8-ZIP herunter, entpacke es und öffne ATLAS_Clarus_Digitale_Farberweiterung_0.1.8.html. Die digitale Palette hat ein eigenes Format. Für Bildimport, ICC-Druckvorbereitung und herkömmliche Clarus-Paletten verwende weiterhin die Browser Edition."
+      ],
+      "en": [
+        "Open “P3 / ProPhoto · Preview 0.1.8” in Browser Edition. Choose Display-P3 or ProPhoto RGB, then H and L. Select a swatch or enter an HLC address such as H295_L040_C100.",
+        "For your own RGB values choose “RGB in a known colour space”, the actual space and the 0–255 or 0–1 scale. Keep values and colour space together. Select “Calculate colour”.",
+        "Check the identity: an existing master address remains a master reference. An additional address is labelled as a digital colour. H295_L040_C100 keeps its own digital address; H290_L040_C075 is the existing RGB-only comparison only.",
+        "Review computed gamut and preview. A star on a library swatch means the address is in the source list but outside our calculated boundary. Raw values are preserved. ProPhoto does not expand your display’s gamut.",
+        "Add the colour to the digital palette. “Palette with provenance · JSON” preserves the source, colour space and comparison; reopen it here with “Open palette”. “Web colours · CSS” provides sRGB fallbacks and suitable P3 values. “Complete RGB library · JSON” exports the selected source list.",
+        "For offline use download the separate 0.1.8 ZIP, extract it and open ATLAS_Clarus_Digitale_Farberweiterung_0.1.8.html. The digital palette uses a separate format. Continue using Browser Edition for image import, ICC print preparation and conventional Clarus palettes."
+      ]
+    },
+    "note": {
+      "de": "Separate öffentliche Testversion. 13.283 Masterreferenzen bleiben erhalten. Zusätzliche digitale Farben sind keine gemessenen Druckreferenzen.",
+      "en": "Separate public preview. All 13,283 master references are retained. Additional digital colours are not measured print references."
+    }
+  },
+  "faqs": [
+    {
+      "id": "faq-digital-018-1",
+      "chapter": "guide-22",
+      "q": {
+        "de": "Bleibt „Jede Farbe findet eine Adresse“ bestehen?",
+        "en": "Yes: does every colour still find an address?"
+      },
+      "a": {
+        "de": "Ja, innerhalb der unterstützten Eingaben. Die Browser Edition ordnet sRGB-Quellen einer der 13.283 Masterreferenzen zu. Die neue Vorschau kann zusätzlich eine eigene digitale HLC-Adresse erhalten. Adresse, Masterzugehörigkeit, Bildschirmdarstellung und Druckfreigabe sind getrennte Angaben.",
+        "en": "Yes, within the supported input ranges. Browser Edition assigns sRGB sources to one of 13,283 master references. The new preview can additionally preserve an independent digital HLC address. Address, master membership, display reproduction and print approval are separate facts."
+      }
+    },
+    {
+      "id": "faq-digital-018-2",
+      "chapter": "guide-22",
+      "q": {
+        "de": "Ist eine Farbe außerhalb des Masters automatisch außerhalb von sRGB?",
+        "en": "Is a colour outside the master automatically outside sRGB?"
+      },
+      "a": {
+        "de": "Nein. Der Master ist eine endliche Referenzsammlung. H295_L040_C100 fehlt darin, liegt nach unserer Berechnung aber innerhalb von sRGB, P3 und ProPhoto. Die neue Vorschau bewahrt diese Adresse, statt sie durch den RGB-only-Vergleich H290_L040_C075 zu ersetzen.",
+        "en": "No. The master is a finite reference collection. H295_L040_C100 is absent from it but falls within sRGB, P3 and ProPhoto under our calculation. The preview preserves this address instead of replacing it with the RGB-only comparison H290_L040_C075."
+      }
+    },
+    {
+      "id": "faq-digital-018-3",
+      "chapter": "guide-22",
+      "q": {
+        "de": "Wie viele Farben enthalten P3 und ProPhoto hier?",
+        "en": "How many addresses are in these P3 and ProPhoto libraries?"
+      },
+      "a": {
+        "de": "Die vollständigen GamutMap-Quelllisten vom 18.10.2026 enthalten 15.430 Display-P3-Adressen (3.298 zusätzlich zum Master) und 22.248 ProPhoto-Adressen (8.965 zusätzlich). Das sind endliche HLC-Auswahlen, nicht sämtliche möglichen RGB-Farben. Die Zahlen beider Listen dürfen nicht addiert werden: Sie überschneiden sich.",
+        "en": "The complete GamutMap source lists dated 18 October 2026 contain 15,430 Display-P3 addresses (3,298 beyond the master) and 22,248 ProPhoto addresses (8,965 beyond it). These are finite HLC selections, not every possible RGB colour. The two lists overlap and their counts must not be added."
+      }
+    },
+    {
+      "id": "faq-digital-018-4",
+      "chapter": "guide-22",
+      "q": {
+        "de": "Was bedeutet der Stern an einem Farbfeld?",
+        "en": "What does the star on a library swatch mean?"
+      },
+      "a": {
+        "de": "Quellliste und berechnete Farbraumgrenze stimmen dort nicht überein. Von der P3-Quellliste liegen 565, von ProPhoto 330 Einträge außerhalb unserer strengen berechneten Grenze. Sie bleiben mit Kennzeichnung und unveränderten Rohwerten dokumentiert. Die genaue Umrechnungskette der Quelle ist nicht vollständig belegt.",
+        "en": "The source selection and computed gamut boundary disagree for that entry. 565 P3 entries and 330 ProPhoto entries are outside our strict calculated boundary. They remain documented with flags and raw values. The source’s exact conversion chain is not fully established."
+      }
+    },
+    {
+      "id": "faq-digital-018-5",
+      "chapter": "guide-22",
+      "q": {
+        "de": "Kann ich zusätzliche digitale Adressen sofort drucken?",
+        "en": "Can I immediately print additional digital addresses?"
+      },
+      "a": {
+        "de": "Eine digitale Adresse bestätigt keine Druckbarkeit. Zusätzliche Adressen erhalten weder gemessene Spektraldaten noch ARBE-Werte oder automatische Zugehörigkeit zu einer Druckbibliothek. Die bestehende ICC-Druckvorbereitung arbeitet weiter mit den Masterreferenzen. Für eine Freigabe sind die konkrete Druckbedingung, vereinbarte Toleranz und gegebenenfalls ein Produktionsmuster entscheidend.",
+        "en": "A digital address does not establish printability. Additional addresses receive no measured spectra, ARBE values or automatic production-library membership. Existing ICC print preparation continues to use master references. Approval depends on the actual printing condition, agreed tolerance and, where needed, a production sample."
+      }
+    },
+    {
+      "id": "faq-digital-018-6",
+      "chapter": "guide-22",
+      "q": {
+        "de": "Sehe ich Display-P3 oder ProPhoto auf jedem Monitor?",
+        "en": "Can every monitor display P3 or ProPhoto?"
+      },
+      "a": {
+        "de": "Nein. Die P3-Vorschau benötigt passende Browser- und Bildschirmunterstützung. Andernfalls zeigt die App eine gekennzeichnete sRGB-Vorschau, bei Bedarf begrenzt. ProPhoto ist ein Arbeitsfarbraum. Berechnete Werte und eine gemeldete Browserfähigkeit ersetzen keine Messung des Bildschirms.",
+        "en": "No. A P3 preview requires suitable browser and display support. Otherwise the app shows a labelled sRGB preview, clipped where necessary. ProPhoto is a working space. Calculated values and a browser capability report do not replace a display measurement."
+      }
+    },
+    {
+      "id": "faq-digital-018-7",
+      "chapter": "guide-22",
+      "q": {
+        "de": "Wie sichere ich eine digitale Palette und arbeite offline weiter?",
+        "en": "How do I save a digital palette and continue offline?"
+      },
+      "a": {
+        "de": "Sichere „Palette mit Herkunft · JSON“ und öffne sie wieder in der digitalen 0.1.8-Arbeitsfläche. Das Offline-ZIP vollständig entpacken und die enthaltene HTML-Datei öffnen. Danach ist für diese Arbeit kein Internet nötig. Herkömmliches Clarus JSON sowie ASE, GPL und XTG sind keine Austauschformate für diese zusätzlichen digitalen Adressen.",
+        "en": "Save “Palette with provenance · JSON” and reopen it in the digital 0.1.8 workspace. Extract the offline ZIP and open its HTML file. This work then needs no internet connection. Conventional Clarus JSON, ASE, GPL and XTG do not carry these additional digital addresses."
+      }
+    },
+    {
+      "id": "faq-digital-018-8",
+      "chapter": "guide-22",
+      "q": {
+        "de": "Werden P3-Bilder jetzt im gesamten Bild-Workflow nativ verarbeitet?",
+        "en": "Does the whole image workflow now process P3 images natively?"
+      },
+      "a": {
+        "de": "Nein. Version 0.1.8 ergänzt eine separate Arbeitsfläche für HLC-Eingaben, RGB-Werte mit angegebenem Farbraum und digitale Bibliotheken. Der bestehende Bildimport und sein RGB-only-Matching bleiben unverändert.",
+        "en": "No. Version 0.1.8 adds a separate workspace for HLC input, tagged RGB values and digital libraries. Existing image import and RGB-only matching remain unchanged."
+      }
+    }
+  ],
+  "intro": "<section id=\"digital-hlc-018\" style=\"max-width:1150px;margin:24px auto;padding:24px;border-left:4px solid #146c64;background:#f6f8f4;color:#143b40\"><h2>P3 &amp; ProPhoto · Testversion / Preview 0.1.8</h2><p><a href=\"https://arbe-lambda-star.com/atlas-clarus-browser-bundle/digital/index.html?lang=de\">P3 &amp; ProPhoto öffnen · DE</a> · <a href=\"https://arbe-lambda-star.com/atlas-clarus-browser-bundle/digital/index.html?lang=en\" lang=\"en\">Open P3 &amp; ProPhoto · EN</a> · <a href=\"https://arbe-lambda-star.com/atlas-clarus-downloads/#digital-hlc-018\">Offline-Download · 0.1.8</a></p><p lang=\"de\">Eigene digitale HLC-Adressen, erweiterte RGB-Bibliotheken und Paletten mit dokumentierter Herkunft. Die 13.283 Masterreferenzen bleiben erhalten. Zusätzliche digitale Farben haben keine gemessenen Spektraldaten oder automatische Druckfreigabe.</p><p lang=\"en\">Independent digital HLC addresses, expanded RGB libraries and palettes with provenance. The 13,283 master references remain intact. Additional digital colours have no measured spectra or automatic print approval.</p><p><a href=\"https://arbe-lambda-star.com/atlas-clarus-interactive-user-guide/?lang=de#digital-hlc-018\">Hilfe &amp; FAQ · DE</a> · <a href=\"https://arbe-lambda-star.com/atlas-clarus-interactive-user-guide/?lang=en#digital-hlc-018\">Help &amp; FAQ · EN</a> · <a href=\"https://arbe-lambda-star.com/atlas-clarus-browser-edition-user-manual/#digital-hlc-018\">Anleitung / User guide</a></p></section>",
+  "help": "<section id=\"digital-hlc-018\" style=\"max-width:1150px;margin:24px auto;padding:24px;border-left:4px solid #146c64;background:#f6f8f4;color:#143b40\"><h2>P3 &amp; ProPhoto · Hilfe / Help &amp; FAQ · 0.1.8</h2><p><a href=\"https://arbe-lambda-star.com/atlas-clarus-browser-bundle/digital/index.html?lang=de\">P3 &amp; ProPhoto öffnen · DE</a> · <a href=\"https://arbe-lambda-star.com/atlas-clarus-browser-bundle/digital/index.html?lang=en\" lang=\"en\">Open P3 &amp; ProPhoto · EN</a> · <a href=\"https://arbe-lambda-star.com/atlas-clarus-downloads/#digital-hlc-018\">Offline-Download · 0.1.8</a></p><p>8. November 2026 · Separate öffentliche Testversion / Separate public preview</p><div lang=\"de\"><h3>Häufige Fragen</h3><details><summary>Bleibt „Jede Farbe findet eine Adresse“ bestehen?</summary><p>Ja, innerhalb der unterstützten Eingaben. Die Browser Edition ordnet sRGB-Quellen einer der 13.283 Masterreferenzen zu. Die neue Vorschau kann zusätzlich eine eigene digitale HLC-Adresse erhalten. Adresse, Masterzugehörigkeit, Bildschirmdarstellung und Druckfreigabe sind getrennte Angaben.</p></details><details><summary>Ist eine Farbe außerhalb des Masters automatisch außerhalb von sRGB?</summary><p>Nein. Der Master ist eine endliche Referenzsammlung. H295_L040_C100 fehlt darin, liegt nach unserer Berechnung aber innerhalb von sRGB, P3 und ProPhoto. Die neue Vorschau bewahrt diese Adresse, statt sie durch den RGB-only-Vergleich H290_L040_C075 zu ersetzen.</p></details><details><summary>Wie viele Farben enthalten P3 und ProPhoto hier?</summary><p>Die vollständigen GamutMap-Quelllisten vom 18.10.2026 enthalten 15.430 Display-P3-Adressen (3.298 zusätzlich zum Master) und 22.248 ProPhoto-Adressen (8.965 zusätzlich). Das sind endliche HLC-Auswahlen, nicht sämtliche möglichen RGB-Farben. Die Zahlen beider Listen dürfen nicht addiert werden: Sie überschneiden sich.</p></details><details><summary>Was bedeutet der Stern an einem Farbfeld?</summary><p>Quellliste und berechnete Farbraumgrenze stimmen dort nicht überein. Von der P3-Quellliste liegen 565, von ProPhoto 330 Einträge außerhalb unserer strengen berechneten Grenze. Sie bleiben mit Kennzeichnung und unveränderten Rohwerten dokumentiert. Die genaue Umrechnungskette der Quelle ist nicht vollständig belegt.</p></details><details><summary>Kann ich zusätzliche digitale Adressen sofort drucken?</summary><p>Eine digitale Adresse bestätigt keine Druckbarkeit. Zusätzliche Adressen erhalten weder gemessene Spektraldaten noch ARBE-Werte oder automatische Zugehörigkeit zu einer Druckbibliothek. Die bestehende ICC-Druckvorbereitung arbeitet weiter mit den Masterreferenzen. Für eine Freigabe sind die konkrete Druckbedingung, vereinbarte Toleranz und gegebenenfalls ein Produktionsmuster entscheidend.</p></details><details><summary>Sehe ich Display-P3 oder ProPhoto auf jedem Monitor?</summary><p>Nein. Die P3-Vorschau benötigt passende Browser- und Bildschirmunterstützung. Andernfalls zeigt die App eine gekennzeichnete sRGB-Vorschau, bei Bedarf begrenzt. ProPhoto ist ein Arbeitsfarbraum. Berechnete Werte und eine gemeldete Browserfähigkeit ersetzen keine Messung des Bildschirms.</p></details><details><summary>Wie sichere ich eine digitale Palette und arbeite offline weiter?</summary><p>Sichere „Palette mit Herkunft · JSON“ und öffne sie wieder in der digitalen 0.1.8-Arbeitsfläche. Das Offline-ZIP vollständig entpacken und die enthaltene HTML-Datei öffnen. Danach ist für diese Arbeit kein Internet nötig. Herkömmliches Clarus JSON sowie ASE, GPL und XTG sind keine Austauschformate für diese zusätzlichen digitalen Adressen.</p></details><details><summary>Werden P3-Bilder jetzt im gesamten Bild-Workflow nativ verarbeitet?</summary><p>Nein. Version 0.1.8 ergänzt eine separate Arbeitsfläche für HLC-Eingaben, RGB-Werte mit angegebenem Farbraum und digitale Bibliotheken. Der bestehende Bildimport und sein RGB-only-Matching bleiben unverändert.</p></details></div><div lang=\"en\"><h3>Frequently asked questions</h3><details><summary>Yes: does every colour still find an address?</summary><p>Yes, within the supported input ranges. Browser Edition assigns sRGB sources to one of 13,283 master references. The new preview can additionally preserve an independent digital HLC address. Address, master membership, display reproduction and print approval are separate facts.</p></details><details><summary>Is a colour outside the master automatically outside sRGB?</summary><p>No. The master is a finite reference collection. H295_L040_C100 is absent from it but falls within sRGB, P3 and ProPhoto under our calculation. The preview preserves this address instead of replacing it with the RGB-only comparison H290_L040_C075.</p></details><details><summary>How many addresses are in these P3 and ProPhoto libraries?</summary><p>The complete GamutMap source lists dated 18 October 2026 contain 15,430 Display-P3 addresses (3,298 beyond the master) and 22,248 ProPhoto addresses (8,965 beyond it). These are finite HLC selections, not every possible RGB colour. The two lists overlap and their counts must not be added.</p></details><details><summary>What does the star on a library swatch mean?</summary><p>The source selection and computed gamut boundary disagree for that entry. 565 P3 entries and 330 ProPhoto entries are outside our strict calculated boundary. They remain documented with flags and raw values. The source’s exact conversion chain is not fully established.</p></details><details><summary>Can I immediately print additional digital addresses?</summary><p>A digital address does not establish printability. Additional addresses receive no measured spectra, ARBE values or automatic production-library membership. Existing ICC print preparation continues to use master references. Approval depends on the actual printing condition, agreed tolerance and, where needed, a production sample.</p></details><details><summary>Can every monitor display P3 or ProPhoto?</summary><p>No. A P3 preview requires suitable browser and display support. Otherwise the app shows a labelled sRGB preview, clipped where necessary. ProPhoto is a working space. Calculated values and a browser capability report do not replace a display measurement.</p></details><details><summary>How do I save a digital palette and continue offline?</summary><p>Save “Palette with provenance · JSON” and reopen it in the digital 0.1.8 workspace. Extract the offline ZIP and open its HTML file. This work then needs no internet connection. Conventional Clarus JSON, ASE, GPL and XTG do not carry these additional digital addresses.</p></details><details><summary>Does the whole image workflow now process P3 images natively?</summary><p>No. Version 0.1.8 adds a separate workspace for HLC input, tagged RGB values and digital libraries. Existing image import and RGB-only matching remain unchanged.</p></details></div></section>",
+  "manual": "<section id=\"digital-hlc-018\" style=\"max-width:1150px;margin:24px auto;padding:24px;border-left:4px solid #146c64;background:#f6f8f4;color:#143b40\"><h2>P3 &amp; ProPhoto · Anleitung / User guide · 0.1.8</h2><p><a href=\"https://arbe-lambda-star.com/atlas-clarus-browser-bundle/digital/index.html?lang=de\">P3 &amp; ProPhoto öffnen · DE</a> · <a href=\"https://arbe-lambda-star.com/atlas-clarus-browser-bundle/digital/index.html?lang=en\" lang=\"en\">Open P3 &amp; ProPhoto · EN</a> · <a href=\"https://arbe-lambda-star.com/atlas-clarus-downloads/#digital-hlc-018\">Offline-Download · 0.1.8</a></p><div lang=\"de\" id=\"digital-hlc-018-de\"><h3>P3 &amp; ProPhoto · Digitale Farben 0.1.8</h3><ol><li>Öffne „P3 / ProPhoto · Testversion 0.1.8“ in der Browser Edition. Wähle Display-P3 oder ProPhoto RGB und danach H und L. Klicke auf ein Farbfeld oder gib eine HLC-Adresse ein, zum Beispiel H295_L040_C100.</li><li>Für eigene RGB-Werte wähle „RGB mit bekanntem Farbraum“, den tatsächlichen Farbraum und die Skala 0–255 oder 0–1. Werte und Farbraum gehören zusammen. Klicke auf „Farbe berechnen“.</li><li>Prüfe die Identität: Eine vorhandene Masteradresse bleibt Masterreferenz. Eine zusätzliche Adresse wird als digitale Farbe ausgewiesen. H295_L040_C100 bleibt als eigene digitale Adresse erhalten; H290_L040_C075 ist nur der bisherige RGB-only-Vergleich.</li><li>Vergleiche die berechneten Farbraumgrenzen und die Vorschau. Ein Stern am Bibliotheksfeld bedeutet: in der Quellliste enthalten, aber außerhalb unserer berechneten Grenze. Die Rohwerte bleiben erhalten. ProPhoto erweitert nicht den Farbumfang deines Bildschirms.</li><li>Füge die Farbe zur digitalen Palette hinzu. „Palette mit Herkunft · JSON“ sichert die Quelle mit Farbraum und Vergleich. Öffne diese Datei hier über „Palette öffnen“. „Webfarben · CSS“ liefert sRGB-Ersatzwerte und geeignete P3-Werte. „Vollständige RGB-Bibliothek · JSON“ exportiert die gewählte Quellliste.</li><li>Für die Offline-Nutzung lade das separate 0.1.8-ZIP herunter, entpacke es und öffne ATLAS_Clarus_Digitale_Farberweiterung_0.1.8.html. Die digitale Palette hat ein eigenes Format. Für Bildimport, ICC-Druckvorbereitung und herkömmliche Clarus-Paletten verwende weiterhin die Browser Edition.</li></ol><p>Separate öffentliche Testversion. 13.283 Masterreferenzen bleiben erhalten. Zusätzliche digitale Farben sind keine gemessenen Druckreferenzen.</p></div><div lang=\"en\" id=\"digital-hlc-018-en\"><h3>P3 &amp; ProPhoto · Digital colours 0.1.8</h3><ol><li>Open “P3 / ProPhoto · Preview 0.1.8” in Browser Edition. Choose Display-P3 or ProPhoto RGB, then H and L. Select a swatch or enter an HLC address such as H295_L040_C100.</li><li>For your own RGB values choose “RGB in a known colour space”, the actual space and the 0–255 or 0–1 scale. Keep values and colour space together. Select “Calculate colour”.</li><li>Check the identity: an existing master address remains a master reference. An additional address is labelled as a digital colour. H295_L040_C100 keeps its own digital address; H290_L040_C075 is the existing RGB-only comparison only.</li><li>Review computed gamut and preview. A star on a library swatch means the address is in the source list but outside our calculated boundary. Raw values are preserved. ProPhoto does not expand your display’s gamut.</li><li>Add the colour to the digital palette. “Palette with provenance · JSON” preserves the source, colour space and comparison; reopen it here with “Open palette”. “Web colours · CSS” provides sRGB fallbacks and suitable P3 values. “Complete RGB library · JSON” exports the selected source list.</li><li>For offline use download the separate 0.1.8 ZIP, extract it and open ATLAS_Clarus_Digitale_Farberweiterung_0.1.8.html. The digital palette uses a separate format. Continue using Browser Edition for image import, ICC print preparation and conventional Clarus palettes.</li></ol><p>Separate public preview. All 13,283 master references are retained. Additional digital colours are not measured print references.</p></div><p><a href=\"https://arbe-lambda-star.com/atlas-clarus-interactive-user-guide/#digital-hlc-018\">Hilfe &amp; FAQ / Help &amp; FAQ</a> · <a href=\"https://github.com/HelabHLC/atlas-clarus-connect/pull/121\">Entwicklung und Prüfungen / Development and validation</a></p></section>",
+  "downloads": "<section id=\"digital-hlc-018\" class=\"ac-download-note\"><h2>P3 &amp; ProPhoto · Digitale Farberweiterung 0.1.8 · DE / EN</h2><p><a href=\"https://arbe-lambda-star.com/atlas-clarus-browser-bundle/digital/index.html?lang=de\">P3 &amp; ProPhoto öffnen · DE</a> · <a href=\"https://arbe-lambda-star.com/atlas-clarus-browser-bundle/digital/index.html?lang=en\" lang=\"en\">Open P3 &amp; ProPhoto · EN</a> · <a href=\"https://arbe-lambda-star.com/atlas-clarus-downloads/#digital-hlc-018\">Offline-Download · 0.1.8</a></p><p><a class=\"ac-download-button\" href=\"https://arbe-lambda-star.com/atlas-clarus-browser-bundle/digital/offline.zip\">Offline-Testversion 0.1.8 herunterladen · Download ZIP</a></p><p lang=\"de\">Separater Arbeitsplatz: 15.430 Display-P3- und 22.248 ProPhoto-Adressen aus den vollständigen Quelllisten. Quelllisten und berechnete Farbraumgrenzen werden getrennt ausgewiesen. Zusätzliche digitale Adressen sind keine neuen gemessenen Masterreferenzen.</p><p lang=\"en\">Separate workspace: 15,430 Display-P3 and 22,248 ProPhoto addresses from the complete source lists. Source membership and computed gamut are shown separately. Additional digital addresses are not new measured master references.</p><p>ZIP vollständig entpacken und <code>ATLAS_Clarus_Digitale_Farberweiterung_0.1.8.html</code> öffnen. / Extract the ZIP and open its HTML file. Danach offline nutzbar / Works offline after download.</p><p>Enthält keine ICC-Profildateien. / Contains no ICC profile files.</p><details><summary>SHA-256 · Offline ZIP</summary><code style=\"overflow-wrap:anywhere\">f48efee06caf2ddb1099f34ea410d1acea05d232117383861b23f983fa9dc13f</code></details><p><a href=\"https://arbe-lambda-star.com/atlas-clarus-interactive-user-guide/#digital-hlc-018\">Hilfe / Help &amp; FAQ</a> · <a href=\"https://arbe-lambda-star.com/atlas-clarus-browser-edition-user-manual/#digital-hlc-018\">Anleitung / User guide</a> · <a href=\"https://github.com/HelabHLC/atlas-clarus-connect/pull/121\">Quellcode und Prüfstand / Source and validation</a></p></section>"
+}

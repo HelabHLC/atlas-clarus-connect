@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "checks": [
+    "Requested H295_L040_C100 retained as a separate digital address; known exact sRGB conversion and master comparison",
+    "Existing identities/lists unchanged; all 94 library coverage totals valid",
+    "Full source libraries: P3 15,430 / ProPhoto 22,248; all old identities preserved, additions separate; screenshot colour outside sRGB but inside P3; source-selected versus computed gamut disagreement retained",
+    "Tagged P3/ProPhoto sources remain distinct; unclipped values retained; invalid inputs and unknown conditions rejected",
+    "163 native sRGB comparisons including 30 real duplicate-RGB ties match an independent exhaustive search",
+    "Round-trip JSON and CSS; forged identity, colour, membership and spectral records rejected; master untouched"
+  ],
+  "master_rows": 13283,
+  "library_views": 94,
+  "core_coverage": {
+    "srgb": {
+      "inside": 10636,
+      "outside": 2647
+    },
+    "display-p3": {
+      "inside": 12009,
+      "outside": 1274
+    },
+    "rec2020": {
+      "inside": 13108,
+      "outside": 175
+    },
+    "prophoto-rgb": {
+      "inside": 13283,
+      "outside": 0
+    }
+  }
+}

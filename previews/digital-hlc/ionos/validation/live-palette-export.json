@@ -1,0 +1,174 @@
+{
+  "schema": "ATLAS_CLARUS_DIGITAL_COLOURS_V1",
+  "version": "1.0.0",
+  "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+  "method": "LAB_D50_BRADFORD_RGB_V1",
+  "entries": [
+    {
+      "label": "Mein Blau",
+      "colour": {
+        "digital_id": "digital-hlc-d50-2deg:v1:H295_L040_C100",
+        "address": "H295_L040_C100",
+        "address_precision": "EXPLICIT_HLC",
+        "source": {
+          "kind": "HLC",
+          "address": "H295_L040_C100",
+          "illuminant": "D50",
+          "observer": "2deg"
+        },
+        "identity": {
+          "kind": "DIGITAL_COLOUR",
+          "atlas_row_id": null
+        },
+        "lab_d50_2deg": [
+          40,
+          42.26182617406996,
+          -90.63077870366499
+        ],
+        "representations": {
+          "srgb": {
+            "linear_rgb": [
+              0.03786468762501077,
+              0.06591285351717577,
+              0.9375323818472312
+            ],
+            "encoded_rgb": [
+              0.21468085553974903,
+              0.28474781600921173,
+              0.9720227762278929
+            ],
+            "in_gamut": true,
+            "preview_rgb": [
+              0.21468085553974903,
+              0.28474781600921173,
+              0.9720227762278929
+            ],
+            "preview_rgb8": [
+              55,
+              73,
+              248
+            ],
+            "preview_clipped": false,
+            "preview_hex": "#3749F8"
+          },
+          "display-p3": {
+            "linear_rgb": [
+              0.042844303778678705,
+              0.06498181712114648,
+              0.8590606677712844
+            ],
+            "encoded_rgb": [
+              0.22892779766363036,
+              0.28273992126113456,
+              0.9352899941710071
+            ],
+            "in_gamut": true,
+            "preview_rgb": [
+              0.22892779766363036,
+              0.28273992126113456,
+              0.9352899941710071
+            ],
+            "preview_rgb8": [
+              58,
+              72,
+              238
+            ],
+            "preview_clipped": false
+          },
+          "rec2020": {
+            "linear_rgb": [
+              0.08606783884760397,
+              0.07387841741720083,
+              0.8460714159307249
+            ],
+            "encoded_rgb": [
+              0.3599015420962105,
+              0.3377139443354368,
+              0.9327235155495838
+            ],
+            "in_gamut": true,
+            "preview_rgb": [
+              0.3599015420962105,
+              0.3377139443354368,
+              0.9327235155495838
+            ],
+            "preview_rgb8": [
+              92,
+              86,
+              238
+            ],
+            "preview_clipped": false
+          },
+          "prophoto-rgb": {
+            "linear_rgb": [
+              0.17358987249405217,
+              0.0877016650102052,
+              0.8197959396337626
+            ],
+            "encoded_rgb": [
+              0.378018928493593,
+              0.2586914841861812,
+              0.8954859107457369
+            ],
+            "in_gamut": true,
+            "preview_rgb": [
+              0.378018928493593,
+              0.2586914841861812,
+              0.8954859107457369
+            ],
+            "preview_rgb8": [
+              96,
+              66,
+              228
+            ],
+            "preview_clipped": false
+          }
+        },
+        "master_comparison": {
+          "atlas_row_id": 10646,
+          "reference": "H290_L040_C075",
+          "stored_srgb": [
+            61,
+            83,
+            211
+          ],
+          "stored_hex": "#3D53D3",
+          "d2_rgb": 1505,
+          "input_srgb8": [
+            55,
+            73,
+            248
+          ],
+          "route": "DERIVED_SRGB8_PROXY_RGB_ONLY",
+          "proxy_clipped": false,
+          "role": "COMPARISON_ONLY_DOES_NOT_REPLACE_DIGITAL_IDENTITY"
+        },
+        "library_membership": {
+          "status": "NOT_ESTABLISHED",
+          "libraries": []
+        },
+        "digital_library_membership": {
+          "status": "CHECKED_SOURCE_SNAPSHOT",
+          "snapshot_date": "2026-10-18",
+          "libraries": [
+            {
+              "id": "display-p3",
+              "name": "Display P3",
+              "source_response_sha256": "bf2d3f3de3c1440a3f1c30aaaba7dbd88566a2712f90e5e2c60daf21e3bc0b12"
+            },
+            {
+              "id": "prophoto-rgb",
+              "name": "ProPhoto RGB",
+              "source_response_sha256": "1b9bf9091f9c914d17c111bea06837cb22f2f04586ddabac215a00b0c3fbb194"
+            }
+          ],
+          "meaning": "SOURCE_DECLARED_RGB_LIBRARY_MEMBERSHIP; NOT_PRINT_APPROVAL; INDEPENDENT_COMPUTED_GAMUT_REPORTED_SEPARATELY"
+        },
+        "spectral_data": "NOT_AVAILABLE",
+        "arbe_values": "NOT_COMPUTED",
+        "physical_qc": "NOT_MEASURED"
+      }
+    }
+  ],
+  "print_approval": false
+}
