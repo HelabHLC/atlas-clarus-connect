@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "vectors": 22251,
+  "additional_digital_addresses": 8965,
+  "method": "Matrices independently derived from primary chromaticities; Bradford from cone matrix and whites",
+  "max_linear_rgb_error": {
+    "srgb": 1.887379141862766e-15,
+    "display-p3": 1.3322676295501878e-15,
+    "rec2020": 1.1102230246251565e-15,
+    "prophoto-rgb": 2.220446049250313e-16
+  },
+  "max_encoded_rgb_error": {
+    "srgb": 1.3364309658925322e-14,
+    "display-p3": 6.866902879654191e-15,
+    "rec2020": 2.385591724163305e-14,
+    "prophoto-rgb": 1.0503750647039567e-15
+  },
+  "master_gamut_counts": {
+    "srgb": 10636,
+    "display-p3": 12009,
+    "rec2020": 13108,
+    "prophoto-rgb": 13283
+  }
+}

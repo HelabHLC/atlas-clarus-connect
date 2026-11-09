@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-08",
+  "status": "PASS",
+  "public_pages": [
+    {
+      "page": "browser",
+      "status": 200,
+      "url": "https://arbe-lambda-star.com/atlas-clarus-browser-bundle/",
+      "bytes": 36748775
+    },
+    {
+      "page": "preview",
+      "status": 200,
+      "url": "https://arbe-lambda-star.com/atlas-clarus-browser-bundle/digital/index.html?lang=de",
+      "bytes": 5447778
+    },
+    {
+      "page": "downloads",
+      "status": 200,
+      "url": "https://arbe-lambda-star.com/atlas-clarus-downloads/",
+      "bytes": 90744
+    },
+    {
+      "page": "help",
+      "status": 200,
+      "url": "https://arbe-lambda-star.com/atlas-clarus-interactive-user-guide/",
+      "bytes": 358808
+    },
+    {
+      "page": "manual",
+      "status": 200,
+      "url": "https://arbe-lambda-star.com/atlas-clarus-browser-edition-user-manual/",
+      "bytes": 82594
+    },
+    {
+      "page": "directory",
+      "status": 200,
+      "url": "https://arbe-lambda-star.com/alle-seiten-tools/",
+      "bytes": 93301
+    },
+    {
+      "page": "home",
+      "status": 200,
+      "url": "https://arbe-lambda-star.com/",
+      "bytes": 104883
+    },
+    {
+      "page": "critical",
+      "status": 200,
+      "url": "https://arbe-lambda-star.com/arbe-%c2%b7-atlas-clarus-%c2%b7-critical-faq/",
+      "bytes": 106409
+    }
+  ],
+  "library_exports": [
+    {
+      "space": "display-p3",
+      "total": 15430,
+      "master": 12132,
+      "additional": 3298,
+      "inside": 14865,
+      "sha256": "e712bf7394a9a8c864efa11f37174047ea01f2c9db9db1430caf7f35794142fc"
+    },
+    {
+      "space": "prophoto-rgb",
+      "total": 22248,
+      "master": 13283,
+      "additional": 8965,
+      "inside": 21918,
+      "sha256": "f475fa3d17d87dfa4c0ca4505e90ba5f0674694fbea67dcd309b8c7261266213"
+    }
+  ],
+  "palette_export_identity": "H295_L040_C100 / DIGITAL_COLOUR",
+  "palette_reimport": "PASS: Mein Blau and original address restored after removing the test entry",
+  "live_entry_matches_build": true,
+  "interactive_help": "PASS: EN ProPhoto count question and DE P3 question return new FAQ; chapter 22 displayed first",
+  "main_navigation": "PASS: direct P3 / ProPhoto link visible in primary navigation",
+  "php_74_syntax": "PASS: php-parser 3.4.0",
+  "runtime_switch": false,
+  "plugin_version": "0.1.23-beta1",
+  "physical_display_or_print_validation": false
+}

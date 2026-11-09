@@ -1,0 +1,12 @@
+{
+  "plugin_version": "0.1.24-beta2",
+  "digital_version": "0.1.8-preview",
+  "base_installer_sha256": "be3ecd224bf431df1da654e6b54a4b0533f0d47602314c2deadc6a883c74b0d8",
+  "offline_sha256": "f48efee06caf2ddb1099f34ea410d1acea05d232117383861b23f983fa9dc13f",
+  "unchanged_standalone_sha256": "1ac6306fb65cd8a729e1c545500c553c8830a7400d75f457bf42ddf348803750",
+  "installer_sha256": "97831ab037ccadd0f429082e94482da64708837da98993a60684bef63ce1ede0",
+  "installer_bytes": 3358836,
+  "active_runtime_switch": false,
+  "entry": "atlas-clarus-browser-bundle/digital/index.html",
+  "icc_payloads": 0
+}
