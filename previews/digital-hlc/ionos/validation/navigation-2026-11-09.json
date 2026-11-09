@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-09",
+  "status": "PASS",
+  "adapter": "0.1.24-beta2",
+  "before": {
+    "viewport_width": 770,
+    "viewport_height": 535,
+    "nav_height": 802.857,
+    "nav_bottom": 874.857,
+    "last_link_bottom": 856.286,
+    "overflow_y": "visible"
+  },
+  "after": [
+    {
+      "zoom_percent": 175,
+      "viewport_width": 770,
+      "viewport_height": 535,
+      "nav_client_height": 462,
+      "scroll_height": 802,
+      "scroll_top": 340,
+      "last_link_bottom": 516.286,
+      "last_link_centre_hit_test": true
+    },
+    {
+      "zoom_percent": 250,
+      "viewport_width": 539,
+      "viewport_height": 374,
+      "nav_client_height": 302,
+      "scroll_height": 807,
+      "scroll_top": 505.2,
+      "last_link_bottom": 355.6,
+      "last_link_centre_hit_test": true
+    }
+  ],
+  "help_hidden_while_menu_open": true,
+  "select_about_closes_menu_and_restores_help": true,
+  "restored_desktop_100_percent": true,
+  "digital_offline_sha256": "f48efee06caf2ddb1099f34ea410d1acea05d232117383861b23f983fa9dc13f",
+  "runtime_switch": false,
+  "php_74_syntax": "PASS"
+}

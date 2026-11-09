@@ -86,3 +86,27 @@ html{scroll-padding-top:var(--topbar-height)}
 .drawer-source-records summary{cursor:pointer;padding:5px 0}
 .drawer-source-records ul{padding-left:18px;margin:6px 0}
 .drawer-source-records li{margin-bottom:10px;font-size:13px}
+
+/* Keep the last menu item reachable on small windows and at browser zoom. */
+@media (max-width: 900px) {
+  .topbar #primary-nav {
+    max-height: calc(100vh - var(--topbar-height, 72px));
+    max-height: calc(100dvh - var(--topbar-height, 72px));
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    scrollbar-gutter: stable;
+    padding-bottom: max(18px, env(safe-area-inset-bottom));
+  }
+
+  .topbar #primary-nav > a {
+    flex: 0 0 auto;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  /* The floating help must not cover the bottom of the open menu. */
+  body:has(.topbar #primary-nav.open) #atlas-exchange-help {
+    visibility: hidden;
+  }
+}

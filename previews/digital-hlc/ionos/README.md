@@ -1,6 +1,6 @@
 # IONOS deployment · digital HLC preview 0.1.8
 
-Deployed to https://arbe-lambda-star.com on 8 November 2026. This adds a separate digital-colour workspace to the existing Browser Edition and publishes its offline ZIP, navigation links and bilingual help. The WordPress adapter is **0.1.23-beta1**; the digital application is **0.1.8-preview**. The active RC34.11 / brand-palette 0.1.7 runtime remains selected.
+Deployed to https://arbe-lambda-star.com on 8 November 2026. This adds a separate digital-colour workspace to the existing Browser Edition and publishes its offline ZIP, navigation links and bilingual help. The WordPress adapter is **0.1.24-beta2**; the digital application is **0.1.8-preview**. The active RC34.11 / brand-palette 0.1.7 runtime remains selected.
 
 ## Live entry points
 
@@ -23,7 +23,7 @@ python previews/digital-hlc/ionos/build.py /path/to/ATLAS_Clarus_Browser_Test_0.
 
 The builder checks the baseline installer, offline ZIP and standalone HTML hashes, retains the existing installer and rollback code, and adds three fixed routes. It does not change the active runtime option. The served offline ZIP is byte-identical to `../download/ATLAS_Clarus_P3_ProPhoto_0.1.8_Offline.zip`. No ICC files are added.
 
-`build-info.json` records all hashes. The final installer is 3,358,172 bytes, SHA-256 `a6fc95fa4bf6a765146b423e64d070cf1b01de69a9ebb0a67c3ec6495e1e5db8`. Its archive is reproducible from the checked-in builder and inputs.
+`build-info.json` records all hashes. The current installer is 3,358,836 bytes, SHA-256 `97831ab037ccadd0f429082e94482da64708837da98993a60684bef63ce1ede0`. Its archive is reproducible from the checked-in builder and inputs.
 
 ## Verification
 
@@ -39,3 +39,12 @@ Source-list membership is kept separate from computed gamut. P3 contains 15,430 
 ## Content changes and recovery
 
 `wordpress-copy.json` contains the published bilingual additions; `wordpress-patches.json` records page IDs, menu entries and interactive-help changes. WordPress page revisions retain the earlier content. The extra menu items are 5770, 5771 and 5772 in menu 328. Restoring the original adapter removes the separate digital routes; remove or revise their navigation links at the same time. It does not require switching or replacing the stored 0.1.7 runtime.
+
+
+## Navigation correction · 9 November 2026
+
+The expanded navigation could extend below the viewport at browser zoom or in a narrow window. It had no height limit or scroll container, while the floating help covered its lower entries. Adapter 0.1.24-beta2 constrains the mobile menu to the remaining dynamic viewport height, enables vertical scrolling, keeps individual links from shrinking, and hides floating help while the menu is open. Selecting a section or closing the menu restores help. The same CSS is included in the Browser Bundle source for future builds.
+
+Verified in live Chromium at 175% (770 × 535 CSS pixels) and 250% (539 × 374): scrolling reaches the final P3 / ProPhoto link, which is fully within the viewport and passes a centre-point hit test. Selecting About closes the menu and restores help. Normal 100% desktop layout was restored and checked. See `validation/navigation-2026-11-09.json`.
+
+The stylesheet is inserted before the first document `</head>`; the self-contained bundle also contains print-template head tags inside scripts. The existing runtime option and digital offline ZIP remain unchanged.

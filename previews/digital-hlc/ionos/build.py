@@ -21,7 +21,7 @@ def build(base, output):
     key = 'atlas-clarus-browser-edition/atlas-clarus-browser-edition.php'
     php = files[key].decode()
     assert php.count('0.1.21-beta1') == 2
-    php = php.replace('0.1.21-beta1', '0.1.23-beta1')
+    php = php.replace('0.1.21-beta1', '0.1.24-beta2')
     marker = '    public static function serve_runtime_file() {'
     assert php.count(marker) == 1
     php = php.replace(marker, (HERE / 'digital-routes.php.inc').read_text() + '\n' + marker)
@@ -54,18 +54,19 @@ def build(base, output):
             if n.startswith('LICENSES/') or n == 'README.md': files[prefix + n] = z.read(n)
     files[prefix + 'offline.zip'] = offline.read_bytes()
     files[prefix + 'entry.js'] = (HERE / 'entry.js').read_bytes()
+    files[prefix + 'navigation.css'] = (HERE / 'navigation.css').read_bytes()
     output.mkdir(parents=True, exist_ok=True)
     outzip = output / 'ATLAS_Clarus_P3_ProPhoto_0.1.8_IONOS_Installer.zip'
     with zipfile.ZipFile(outzip, 'w') as z:
         for n, b in sorted(files.items()):
-            info = zipfile.ZipInfo(n, (2026, 11, 8, 0, 0, 0))
+            info = zipfile.ZipInfo(n, (2026, 11, 9, 0, 0, 0))
             info.create_system = 3
             info.external_attr = 0o100644 << 16
             z.writestr(info, b, compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
     with zipfile.ZipFile(outzip) as z:
         assert z.testzip() is None
         z.extractall(output / 'unpacked')
-    report = dict(plugin_version='0.1.23-beta1', digital_version='0.1.8-preview',
+    report = dict(plugin_version='0.1.24-beta2', digital_version='0.1.8-preview',
                   base_installer_sha256=BASE_SHA, offline_sha256=OFFLINE_SHA,
                   unchanged_standalone_sha256=HTML_SHA, installer_sha256=sha(outzip.read_bytes()),
                   installer_bytes=outzip.stat().st_size, active_runtime_switch=False,

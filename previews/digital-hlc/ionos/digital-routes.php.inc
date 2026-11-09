@@ -41,6 +41,13 @@
 
     private static function inject_digital_entry( $html ) {
         if ( false !== strpos( $html, 'id="atlas-digital-preview-entry-script"' ) ) { return $html; }
+        // The bundle also contains print templates with their own </head>.
+        $head = stripos( $html, '</head>' );
+        $css = __DIR__ . '/digital-preview/navigation.css';
+        if ( false !== $head && is_readable( $css ) ) {
+            $style = '<style id="atlas-navigation-overflow-fix">' . file_get_contents( $css ) . '</style>';
+            $html = substr_replace( $html, $style, $head, 0 );
+        }
         $pos = strripos( $html, '</body>' );
         if ( false === $pos ) { return $html; }
         $script = '<script id="atlas-digital-preview-entry-script" src="'
