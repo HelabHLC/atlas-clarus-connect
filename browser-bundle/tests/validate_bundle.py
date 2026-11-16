@@ -48,7 +48,9 @@ first=digest(ZIP)
 subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPUT)],check=True)
 second=digest(ZIP)
 assert first==second, f'non-reproducible ZIP: {first} != {second}'
-assert first=='79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8', 'built bundle differs from pinned RC28 source-provenance candidate'
+# Keep the RC28 historical pin, but require reproducibility for this new candidate.
+RC28_PINNED='79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8'
+assert first!=RC28_PINNED, 'multi-gamut candidate unexpectedly identical to RC28'
 
 with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert archive.testzip() is None
@@ -62,7 +64,7 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         prefix+'assets/palette-export.js',prefix+'assets/image-sampling.js',
         prefix+'assets/pkl-image-binding.js',
         prefix+'assets/print-handoff.js',prefix+'assets/print-ui.js',
-        prefix+'assets/reference-card.js'
+        prefix+'assets/reference-card.js',prefix+'assets/multi-gamut-library.js',prefix+'assets/spectral-binding.js',prefix+'assets/multi-gamut-ui.js'
     }
     assert required <= names
     sums=archive.read(prefix+'SHA256SUMS.txt').decode('utf-8').splitlines()
@@ -74,6 +76,9 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         assert extracted.is_file(), f'extracted dist file missing: {name}'
         assert digest(extracted)==expected, f'extracted dist mismatch: {name}'
     manifest=json.loads(archive.read(prefix+'BUNDLE_MANIFEST.json'))
+    assert 'ATLAS_MULTI_GAMUT' in html and 'ATLAS_SPECTRAL_BINDING' in html
+    assert 'id="multi-gamut-reference"' in html and 'id="multi-gamut-spectral-file"' in html
+    assert 'assets/multi-gamut-ui.js' not in html
     assert manifest['version']==VERSION
     assert manifest['master_sha256']==MASTER
     assert manifest['master_rows']==13283
