@@ -62,7 +62,11 @@
         <label>ΔE00 limit <input id="multi-gamut-threshold" type="number" value="1" min="0" max="100" step="0.1"></label>
         <label>ATLAS reference <input id="multi-gamut-reference" type="search" placeholder="H050_L060_C075"></label>
       </div>
-      <p id="multi-gamut-status" role="status"></p><div id="multi-gamut-results" class="status"></div>
+      <details><summary>Optional spectral reference layer (separate from ICC)</summary>
+        <p>Import a provenance-checked ATLAS_SPECTRAL_REFERENCE_V1 JSON dataset. No remission values are generated from RGB, Lab or ICC.</p>
+        <label>Spectral JSON <input id="multi-gamut-spectral-file" type="file" accept=".json,application/json"></label>
+        <p id="multi-gamut-spectral-status" role="status">No verified spectral dataset loaded.</p>
+      </details><p id="multi-gamut-status" role="status"></p><div id="multi-gamut-results" class="status"></div>
     </section>
     <section id="wheel" class="view">
       <div class="section-head"><div><p class="eyebrow">UNDERSTAND</p><h2>Colour Identity Wheel</h2></div><div class="logic-badge">A′ v0.4 LOGIC · FROZEN</div></div>
@@ -202,7 +206,7 @@
   <script src="assets/reference-card.js"></script>
   <script src="assets/profiled-reference-card.js"></script>
   <script src="assets/print-ui.js"></script>
-  <script src="assets/multi-gamut-library.js"></script><script src="assets/multi-gamut-ui.js"></script><script src="assets/app.js"></script>
+  <script src="assets/multi-gamut-library.js"></script><script src="assets/spectral-binding.js"></script><script src="assets/multi-gamut-ui.js"></script><script src="assets/app.js"></script>
 <script src="assets/atlas-offline-mixer.js"></script>
 </body>
 </html>
