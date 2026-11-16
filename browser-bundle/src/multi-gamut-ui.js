@@ -28,7 +28,7 @@ function render(){
     else{
       const m=store.memberships(c.id,t)[0];
       const spectrum=spectral.get(c.ref);
-      html+='<p>Spectral master reference: '+(spectrum?'Available · '+spectrum.reflectance.length+' measured/source samples · '+escape(spectrum.source.description):'Not imported / not verified')+'</p>';
+      html+='<p>Spectral master reference: '+(spectrum?'Available · '+spectrum.reflectance.length+' source samples · '+escape(spectrum.source.description):'Not imported / not verified')+'</p>'; if(spectrum){const w=spectrum.wavelength_nm,r=spectrum.reflectance;const pts=w.map((nm,i)=>((nm-380)/350*600).toFixed(2)+','+((1-r[i])*180).toFixed(2)).join(' ');html+='<svg role="img" aria-label="Reflectance curve 380 to 730 nanometers" viewBox="0 0 620 210" style="width:100%;max-width:720px;background:#111927"><path d="M0 0V180H600" fill="none" stroke="#b4becd"/><polyline points="'+pts+'" fill="none" stroke="#59dbd1" stroke-width="2.5"/><text x="4" y="202" fill="white">380 nm</text><text x="540" y="202" fill="white">730 nm</text><text x="8" y="14" fill="white">R(λ) 0–1</text></svg>';}
       html+='<p><b>'+escape(c.ref)+'</b> · '+(m.checked?'ΔE00 '+m.delta_e00.toFixed(5)+' · '+(m.within_tolerance?'Within selected tolerance':'Outside selected tolerance'):'Not checked')+'</p>';
       if(m.checked&&!m.within_tolerance){
         const alternatives=store.closest(c.id,['textilergb_fogra58_roundtrip_8bit'],t,5);
