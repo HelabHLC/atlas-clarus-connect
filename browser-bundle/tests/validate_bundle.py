@@ -76,9 +76,6 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         assert extracted.is_file(), f'extracted dist file missing: {name}'
         assert digest(extracted)==expected, f'extracted dist mismatch: {name}'
     manifest=json.loads(archive.read(prefix+'BUNDLE_MANIFEST.json'))
-    assert 'ATLAS_MULTI_GAMUT' in html and 'ATLAS_SPECTRAL_BINDING' in html
-    assert 'id="multi-gamut-reference"' in html and 'id="multi-gamut-spectral-file"' in html
-    assert 'assets/multi-gamut-ui.js' not in html
     assert manifest['version']==VERSION
     assert manifest['master_sha256']==MASTER
     assert manifest['master_rows']==13283
@@ -96,6 +93,9 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert manifest['max_palettes']==50 and manifest['max_palette_colours']==64
     assert manifest['reproducible_zip'] is True
     html=archive.read(prefix+'index.html').decode('utf-8')
+    assert 'ATLAS_MULTI_GAMUT' in html and 'ATLAS_SPECTRAL_BINDING' in html
+    assert 'id="multi-gamut-reference"' in html and 'id="multi-gamut-spectral-file"' in html
+    assert 'assets/multi-gamut-ui.js' not in html
     parser=InlineScriptParser()
     parser.feed(html)
     assert parser.scripts, 'no inline JavaScript found'
