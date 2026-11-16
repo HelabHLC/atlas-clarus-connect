@@ -98,6 +98,7 @@
     // Another tab must never silently replace this tab's unsaved project changes.
     function blockForOtherTab(){storageBlocked=true;$('cp-storage-warning').hidden=false;$('cp-storage-warning').textContent='Another tab changed the project workspace. Export the current project using the recovery button before reloading.';const p=current();if(p){const b=document.createElement('button');b.textContent='Export this tab’s project';b.onclick=()=>download('project-recovery.clarus.json',JSON.stringify(p,null,2)+'\n','application/json');$('cp-storage-warning').append(' ',b);}controls();}
     root.addEventListener('storage',e=>{if(e.key===KEY||e.key===null)blockForOtherTab();});
+    root.ATLAS_COLOUR_PROJECTS_UI.readCurrent=()=>current()&&clone(current());
     (async()=>{
       try{
         ctx=await A.createContext(colors,master);let raw=null;
