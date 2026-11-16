@@ -25,7 +25,7 @@ def sha(path:Path)->str:
 if DIST.exists(): shutil.rmtree(DIST)
 (DIST/'assets').mkdir(parents=True)
 (DIST/'docs').mkdir()
-for name in ('index.html','app.css','designer-layer.js','basis23-recipes.js','acms-recipes.js','atlas-offline-mixer.js','palette-export.js','image-sampling.js','pkl-image-binding.js','print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js','profiled-reference-card.js','multi-gamut-library.js','spectral-binding.js','multi-gamut-ui.js','app.js'):
+for name in ('index.html','app.css','designer-layer.js','basis23-recipes.js','acms-recipes.js','atlas-offline-mixer.js','palette-export.js','image-sampling.js','pkl-image-binding.js','print-handoff.js','print-preview-ui.js','print-ui.js','reference-card.js','profiled-reference-card.js','multi-gamut-library.js','spectral-binding.js','multi-gamut-ui.js','app.js','clarus-handoff.js','colour-handoff.js','colour-handoff-ui.js','image-project-codecs.js','image-projects.js','image-projects-ui.js','colour-projects.js','colour-projects-ui.js','colour-reduction.js','colour-reduction-library.js','colour-reduction-loupe.js','colour-reduction-original.js','colour-reduction-original-ui.js','colour-reduction-reference-ui.js','colour-reduction-region.js','colour-reduction-region-ui.js','colour-reduction-inspect.js','colour-reduction-inspect-ui.js','colour-reduction-corrections.js','colour-reduction-correction-ui.js','colour-reduction-scoped-cleanup.js','reduction-job.js','reduction-job-ui.js','reduction-job-compare.js','reduction-job-correction-ui.js','colour-reduction-ui.js','tool-exchange.js','tool-exchange-ui.js','recipe-exchange.js','colour-reduction.css'):
     target=DIST/('assets/'+name if name!='index.html' else name)
     shutil.copy2(HERE/'src'/name,target)
 
@@ -106,6 +106,7 @@ palette_export=(DIST/'assets/palette-export.js').read_text(encoding='utf-8')
 image_sampling=(DIST/'assets/image-sampling.js').read_text(encoding='utf-8')
 pkl_image_binding=(DIST/'assets/pkl-image-binding.js').read_text(encoding='utf-8')
 html=html.replace('<link rel="stylesheet" href="assets/app.css">','<style>'+css+'</style>')
+html=html.replace('<link rel="stylesheet" href="assets/colour-reduction.css">','<style>'+(DIST/'assets/colour-reduction.css').read_text(encoding='utf-8')+'</style>')
 html=html.replace('<script src="assets/atlas-data.js"></script>','<script>'+payload.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/designer-layer-data.js"></script>','<script>'+designer_payload.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/name-search-index.js"></script>','<script>'+name_search_payload.replace('</script','<\\/script')+'</script>')
@@ -125,6 +126,9 @@ for module in ('print-handoff.js','print-preview-ui.js','reference-card.js','pro
     script=(DIST/'assets'/module).read_text(encoding='utf-8')
     html=html.replace(f'<script src="assets/{module}"></script>','<script>'+script.replace('</script','<\\/script')+'</script>')
 for module in ('multi-gamut-library.js','spectral-binding.js','multi-gamut-ui.js'):
+    script=(DIST/'assets'/module).read_text(encoding='utf-8')
+    html=html.replace(f'<script src="assets/{module}"></script>','<script>'+script.replace('</script','<\\/script')+'</script>')
+for module in ('clarus-handoff.js','colour-handoff.js','colour-handoff-ui.js','image-project-codecs.js','image-projects.js','image-projects-ui.js','colour-projects.js','colour-projects-ui.js','colour-reduction.js','colour-reduction-library.js','colour-reduction-loupe.js','colour-reduction-original.js','colour-reduction-original-ui.js','colour-reduction-reference-ui.js','colour-reduction-region.js','colour-reduction-region-ui.js','colour-reduction-inspect.js','colour-reduction-inspect-ui.js','colour-reduction-corrections.js','colour-reduction-correction-ui.js','colour-reduction-scoped-cleanup.js','reduction-job.js','reduction-job-ui.js','reduction-job-compare.js','reduction-job-correction-ui.js','colour-reduction-ui.js','tool-exchange.js','tool-exchange-ui.js','recipe-exchange.js'):
     script=(DIST/'assets'/module).read_text(encoding='utf-8')
     html=html.replace(f'<script src="assets/{module}"></script>','<script>'+script.replace('</script','<\\/script')+'</script>')
 html=html.replace('<script src="assets/app.js"></script>','<script>'+app.replace('</script','<\\/script')+'</script>')
