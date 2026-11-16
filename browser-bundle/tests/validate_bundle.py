@@ -47,6 +47,8 @@ subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPU
 first=digest(ZIP)
 subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPUT)],check=True)
 second=digest(ZIP)
+print(f'RC35 BUILD 1 SHA-256: {first}', flush=True)
+print(f'RC35 BUILD 2 SHA-256: {second}', flush=True)
 assert first==second, f'non-reproducible ZIP: {first} != {second}'
 # Keep the RC28 historical pin, but require reproducibility for this new candidate.
 RC28_PINNED='79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8'
