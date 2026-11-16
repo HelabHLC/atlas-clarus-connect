@@ -1,0 +1,37 @@
+name: RC35 workflow integration gate
+on:
+  push:
+    branches:
+      - feature/multi-gamut-library-engine-20261116
+  workflow_dispatch:
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check restored JavaScript syntax
+        run: |
+          for f in browser-bundle/src/*.js; do node --check "$f"; done
+      - name: Build RC35 offline bundle
+        run: python browser-bundle/build_bundle.py --output-dir /tmp/atlas-rc35-check
+      - name: Verify embedded modules, navigation and interfaces
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('/tmp/atlas-rc35-check/atlas-clarus-browser-bundle/index.html').read_text()
+          for fragment in ('id="colour-handoff"','id="colour-projects"','ATLAS_COLOUR_HANDOFF_UI.readCurrent','ATLAS_COLOUR_PROJECTS_UI.readCurrent','ATLAS_COLOUR_HANDOFF_UI?.init','ATLAS_COLOUR_PROJECTS_UI?.init'):
+              assert fragment in html, f'Missing built-in integration: {fragment}'
+          assert 'src="assets/colour-handoff-ui.js"' not in html
+          assert 'src="assets/colour-projects-ui.js"' not in html
+          print('RC35 integrated entrypoint verified')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rc35-workflow-integration-candidate
+          path: /tmp/atlas-rc35-check/ATLAS_Clarus_Browser_Bundle_*.zip
