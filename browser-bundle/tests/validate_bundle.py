@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 BUNDLE=ROOT/'browser-bundle'
-VERSION='0.2.0-rc28-source-provenance'
+VERSION='0.2.0-rc35-multi-gamut-candidate'
 temp_output=tempfile.TemporaryDirectory(prefix='atlas-print-bundle-')
 OUTPUT=Path(temp_output.name)
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
