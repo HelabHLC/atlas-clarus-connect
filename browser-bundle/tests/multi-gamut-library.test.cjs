@@ -18,6 +18,8 @@ assert.deepEqual(e.query(['fogra58','pso'],1,'difference').ids,[1]);
 assert.equal(e.memberships(2,1).filter(x=>x.within_tolerance).length,2);
 assert.equal(e.memberships(3,1).find(x=>x.profile_id==='fogra58').checked,false);
 assert.equal(e.closest(1,['fogra58','pso'],1,3).candidates[0].atlas_row_id,2);
+assert.equal(e.closest(1,['fogra58','pso'],1,3).ranking_method,'CIEDE2000_FULL_CANDIDATE_RANKING');
+assert.ok(Math.abs(e.closest(1,['fogra58','pso'],1,3).candidates[0].delta_e00_to_target-1)<0.01);
 assert.throws(()=>e.importResults('fogra58',[{atlas_row_id:1,reference:'WRONG',delta_e00:0.2}]));
 assert.deepEqual(e.query(['fogra58'],1).ids,[1,2]);
 e.importResults('fogra58',[{atlas_row_id:3,delta_e00:0.1}]);
