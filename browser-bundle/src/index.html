@@ -13,7 +13,7 @@
   <header class="topbar">
     <a class="brand" href="#home"><span class="brand-mark"></span><span>ATLAS <b>CLARUS</b></span></a>
     <nav id="primary-nav" aria-label="Primary navigation">
-      <a href="#picker">Image Picker</a><a href="#library">Hover Library</a><a href="#wheel">Identity Wheel</a><a href="#print">Print handoff</a><a href="#appearance">Appearance</a><a href="#workflows">App connections</a><a href="#faq">FAQ</a><a href="#credits">Credits</a><a href="#about">About</a>
+      <a href="#picker">Image Picker</a><a href="#library">Hover Library</a><a href="#multi-gamut">Multi-Gamut</a><a href="#wheel">Identity Wheel</a><a href="#print">Print handoff</a><a href="#appearance">Appearance</a><a href="#workflows">App connections</a><a href="#faq">FAQ</a><a href="#credits">Credits</a><a href="#about">About</a>
     </nav>
     <button id="menu-toggle" class="menu-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Open navigation"><span></span><span></span><span></span></button><button id="palette-toggle" class="palette-toggle">PALETTE <b id="palette-count">0</b></button><span class="offline">OFFLINE · LOCAL</span>
   </header>
@@ -54,6 +54,16 @@
       <div class="library-layout"><div><div id="library-status" class="status"></div><div id="colour-grid" class="colour-grid"></div><div class="pager"><button id="prev-page">← Previous</button><span id="page-info"></span><button id="next-page">Next →</button></div></div><aside id="selection" class="selection"><p>Select a colour to inspect its frozen reference identity.</p></aside></div>
     </section>
 
+        <section id="multi-gamut" class="view">
+      <div class="section-head"><div><p class="eyebrow">MULTI-GAMUT DESIGNER · EXPERIMENTAL</p><h2>ICC Library Coverage</h2></div></div>
+      <p class="boundary">Import the verified TextileRGB/FOGRA58 roundtrip CSV locally. This is a colourimetric computation, not evidence of physical textile printability.</p>
+      <div class="toolbar library-toolbar">
+        <label>FOGRA58 CSV <input id="multi-gamut-file" type="file" accept=".csv,text/csv"></label>
+        <label>ΔE00 limit <input id="multi-gamut-threshold" type="number" value="1" min="0" max="100" step="0.1"></label>
+        <label>ATLAS reference <input id="multi-gamut-reference" type="search" placeholder="H050_L060_C075"></label>
+      </div>
+      <p id="multi-gamut-status" role="status"></p><div id="multi-gamut-results" class="status"></div>
+    </section>
     <section id="wheel" class="view">
       <div class="section-head"><div><p class="eyebrow">UNDERSTAND</p><h2>Colour Identity Wheel</h2></div><div class="logic-badge">A′ v0.4 LOGIC · FROZEN</div></div>
       <p class="boundary">The wheel locates the selected reference. v0.5 diagnostic fields are descriptive only and do not alter A′ selection or ranking.</p>
@@ -192,7 +202,7 @@
   <script src="assets/reference-card.js"></script>
   <script src="assets/profiled-reference-card.js"></script>
   <script src="assets/print-ui.js"></script>
-  <script src="assets/app.js"></script>
+  <script src="assets/multi-gamut-library.js"></script><script src="assets/multi-gamut-ui.js"></script><script src="assets/app.js"></script>
 <script src="assets/atlas-offline-mixer.js"></script>
 </body>
 </html>
