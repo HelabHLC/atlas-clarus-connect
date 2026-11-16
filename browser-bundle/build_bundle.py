@@ -34,6 +34,13 @@ assert source['master_sha256']==MASTER
 assert source['entry_count']==13283 and len(source['colors'])==13283
 view_source=json.loads((ROOT/'hover-library/data/views.json').read_text(encoding='utf-8'))
 assert view_source['master_sha256']==MASTER and len(view_source['views']['core']['ids'])==13283
+# Reference-library regression gate: preserve all 17 named library views and
+# ensure every member points to an existing, unique master row.
+assert len(view_source['views']) == 17, 'reference-library view count changed'
+for view_name, view in view_source['views'].items():
+    ids = view['ids']
+    assert len(ids) == len(set(ids)), f'duplicate master row in {view_name}'
+    assert all(type(i) is int and 0 <= i < 13283 for i in ids), f'invalid master row in {view_name}'
 source['views']=view_source['views']
 payload='window.ATLAS_CLARUS_DATA='+json.dumps(source,separators=(',',':'),ensure_ascii=False)+';\n'
 (DIST/'assets/atlas-data.js').write_text(payload,encoding='utf-8')
