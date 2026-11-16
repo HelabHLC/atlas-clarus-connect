@@ -31,6 +31,8 @@ jobs:
           assert 'src="assets/colour-projects-ui.js"' not in html
           print('RC35 integrated entrypoint verified')
           PY
+      - name: Handoff Projects JSON roundtrip and tampering regression
+        run: RC35_ASSETS=/tmp/atlas-rc35-check/atlas-clarus-browser-bundle/assets node browser-bundle/tests/rc35-json-roundtrip.cjs
       - uses: actions/upload-artifact@v4
         with:
           name: rc35-workflow-integration-candidate
