@@ -85,7 +85,7 @@
       else if(Math.abs(h1-h2)<=180)hbar=(h1+h2)/2;
       else hbar=(h1+h2<360)?(h1+h2+360)/2:(h1+h2-360)/2;
       const T=1-.17*Math.cos((hbar-30)*rad)+.24*Math.cos(2*hbar*rad)+.32*Math.cos((3*hbar+6)*rad)-.20*Math.cos((4*hbar-63)*rad);
-      const dTheta=30*Math.exp(-((hbar-275)/25)**2);
+      const dTheta=30*Math.exp(-(((hbar-275)/25)**2));
       const Rc=2*Math.sqrt(Cpbar**7/(Cpbar**7+25**7));
       const Sl=1+.015*(Lbar-50)**2/Math.sqrt(20+(Lbar-50)**2);
       const Sc=1+.045*Cpbar,Sh=1+.015*Cpbar*T;
