@@ -1,11 +1,9 @@
-"""Build the installable WordPress candidate from the pinned RC28 bundle."""
+"""Package the pinned RC28 WordPress candidate from an explicitly supplied archive."""
 from pathlib import Path
 import argparse
 import hashlib
 import json
 import shutil
-import subprocess
-import sys
 import tempfile
 import zipfile
 
@@ -51,10 +49,11 @@ if __name__ == "__main__":
     parser.add_argument("--bundle", type=Path)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "build")
     args = parser.parse_args()
-    if args.bundle:
-        build(args.bundle.resolve(), args.output_dir.resolve())
-    else:
-        with tempfile.TemporaryDirectory(prefix="atlas-rc28-") as tmp:
-            subprocess.run([sys.executable, str(REPO / "browser-bundle/build_bundle.py"),
-                            "--output-dir", tmp], check=True)
-            build(Path(tmp) / BUNDLE, args.output_dir.resolve())
+    if not args.bundle:
+        parser.error('Pinned RC28 archive required: --bundle PATH. Do not use the current RC35 builder for the historical WordPress candidate.')
+    bundle = args.bundle.resolve()
+    if bundle.name != BUNDLE:
+        parser.error(f'Expected historical RC28 archive named {BUNDLE}, got {bundle.name}')
+    if not bundle.is_file():
+        parser.error(f'Pinned RC28 archive does not exist: {bundle}')
+    build(bundle, args.output_dir.resolve())

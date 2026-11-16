@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict');
+const api=require('../src/spectral-binding.js');
+const colors=Array.from({length:13283},(_,id)=>({id,ref:'REF_'+id}));
+const store=api.create({master_sha256:api.MASTER,entry_count:13283,colors});
+const source={description:'CxF exact match test fixture',sha256:'a'.repeat(64)};
+const sample=(id,r=[.2,.3])=>({atlas_row_id:id,reference:'REF_'+id,wavelength_nm:[380,390],reflectance:r});
+assert.deepEqual(store.importSpectra({schema:'ATLAS_SPECTRAL_REFERENCE_V1',master_sha256:api.MASTER,source,records:[sample(2)]}),{imported:1,complete:false});
+assert.equal(store.get('REF_2').reflectance[0],.2);
+assert.equal(store.get('REF_3'),null);
+assert.throws(()=>store.importSpectra({schema:'ATLAS_SPECTRAL_REFERENCE_V1',master_sha256:api.MASTER,source,records:[sample(2),sample(2)]}));
+assert.equal(store.count(),1,'invalid import must be atomic');
+assert.throws(()=>store.importSpectra({schema:'ATLAS_SPECTRAL_REFERENCE_V1',master_sha256:api.MASTER,source,records:[sample(3,[.1,1.2])]}));
+assert.throws(()=>store.importSpectra({schema:'ATLAS_SPECTRAL_REFERENCE_V1',master_sha256:api.MASTER,source,records:[{...sample(3),atlas_row_id:4}]}));
+assert.equal(store.count(),1);
+console.log('Spectral binding tests passed');

@@ -1,0 +1,28 @@
+name: Multi-Gamut and spectral regression
+on:
+  pull_request:
+    paths:
+      - 'browser-bundle/src/multi-gamut-library.js'
+      - 'browser-bundle/src/multi-gamut-ui.js'
+      - 'browser-bundle/src/spectral-binding.js'
+      - 'browser-bundle/tests/multi-gamut-library.test.cjs'
+      - 'browser-bundle/tests/spectral-binding.test.cjs'
+      - '.github/workflows/multi-gamut-regression.yml'
+  workflow_dispatch:
+jobs:
+  node-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          node --check browser-bundle/src/multi-gamut-library.js
+          node --check browser-bundle/src/multi-gamut-ui.js
+          node --check browser-bundle/src/spectral-binding.js
+      - name: Multi-Gamut regression
+        run: node browser-bundle/tests/multi-gamut-library.test.cjs
+      - name: Spectral regression
+        run: node browser-bundle/tests/spectral-binding.test.cjs

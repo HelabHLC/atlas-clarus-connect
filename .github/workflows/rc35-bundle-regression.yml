@@ -1,0 +1,21 @@
+name: RC35 reproducible bundle and reference-library regression
+
+on:
+  push:
+    branches:
+      - feature/multi-gamut-library-engine-20261116
+  workflow_dispatch:
+
+jobs:
+  rc35-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build twice, verify identical ZIP SHA-256 and validate 17 library views
+        run: python3 browser-bundle/tests/validate_bundle.py
