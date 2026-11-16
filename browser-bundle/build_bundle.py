@@ -133,7 +133,7 @@ docs['VALIDATION.html']='<h1>ATLAS naming 0.3.0</h1><p>All 13,283 names follow t
 for name,body in docs.items():(DIST/'docs'/name).write_text('<!doctype html><meta charset="utf-8">'+style+body,encoding='utf-8')
 shutil.copyfile(HERE/'SOURCE_PROVENANCE.md',DIST/'docs/SOURCE_PROVENANCE.md')
 
-manifest=json.loads((HERE/'manifest-rc28.json').read_text(encoding='utf-8'))
+manifest=json.loads((HERE/'manifest-rc35.json').read_text(encoding='utf-8'))
 assert manifest['version']==VERSION and manifest['master_sha256']==MASTER
 assert manifest['name_search_index_sha256']==sha(name_index)
 assert manifest['descriptor_sha256']==sha(DIST/'assets/designer-layer-data.js')
