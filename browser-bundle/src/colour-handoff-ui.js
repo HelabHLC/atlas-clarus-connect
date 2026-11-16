@@ -76,6 +76,7 @@
     $('ch-prev').onclick=()=>{page--;render();};$('ch-next').onclick=()=>{page++;render();};
     document.querySelectorAll('[data-colour-handoff]').forEach(b=>b.onclick=()=>{$('palette-drawer').classList.remove('open');location.hash='colour-handoff';paletteInfo(true);});
     root.addEventListener('hashchange',()=>{if(location.hash==='#colour-handoff')paletteInfo(true);});
+    root.ATLAS_COLOUR_HANDOFF_UI.readCurrent=()=>current&&clone(current);
     paletteInfo(true);
     run('Checking the reference data …',async()=>{ctx=await A.createContext(colors,master);const raw=localStorage.getItem(KEY);if(raw){if(H.utf8(raw).length>A.LIMIT)throw Error('Saved working set exceeds the import limit.');return {data:await A.verify(JSON.parse(raw),ctx)};}},'Ready. Choose your starting colours or load a saved decision JSON.').then(()=>{render();});
   }
