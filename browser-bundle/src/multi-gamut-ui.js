@@ -11,7 +11,7 @@ const $=id=>document.getElementById(id);
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const engine=window.ATLAS_MULTI_GAMUT,master=window.ATLAS_CLARUS_DATA;
 if(!engine||!master||master.master_sha256!==MASTER){$('multi-gamut-status').textContent='Multi-Gamut unavailable: master or engine mismatch';return;}
-let store;try{store=engine.create(master);}catch(e){$('multi-gamut-status').textContent=e.message;return;}
+let store,spectral;try{store=engine.create(master);spectral=window.ATLAS_SPECTRAL_BINDING.create(master);}catch(e){$('multi-gamut-status').textContent=e.message;return;}
 store.registerLibrary('textile','TextileRGB');
 store.registerProfile({id:'textilergb_fogra58_roundtrip_8bit',library_id:'textile',icc_sha256:ICC_SHA,description:'TextileRGB FOGRA58 ICC 2.4 / Lab PCS',method:'Lab to RGB to Lab, Pillow ImageCms/LittleCMS, 8-bit channels; CIEDE2000',intent:'relative colorimetric'});
 const input=$('multi-gamut-file'),threshold=$('multi-gamut-threshold'),search=$('multi-gamut-reference');
@@ -27,6 +27,8 @@ function render(){
     if(!c)html+='<p>Unknown ATLAS reference.</p>';
     else{
       const m=store.memberships(c.id,t)[0];
+      const spectrum=spectral.get(c.ref);
+      html+='<p>Spectral master reference: '+(spectrum?'Available · '+spectrum.reflectance.length+' measured/source samples · '+escape(spectrum.source.description):'Not imported / not verified')+'</p>';
       html+='<p><b>'+escape(c.ref)+'</b> · '+(m.checked?'ΔE00 '+m.delta_e00.toFixed(5)+' · '+(m.within_tolerance?'Within selected tolerance':'Outside selected tolerance'):'Not checked')+'</p>';
       if(m.checked&&!m.within_tolerance){
         const alternatives=store.closest(c.id,['textilergb_fogra58_roundtrip_8bit'],t,5);
@@ -52,6 +54,15 @@ input.addEventListener('change',async()=>{
     status.textContent='Verified FOGRA58 CSV · 13,283 reference mappings · ICC-roundtrip only';
     render();
   }catch(e){status.textContent='Import failed: '+e.message;}
+});
+$('multi-gamut-spectral-file').addEventListener('change',async()=>{
+ const file=$('multi-gamut-spectral-file').files?.[0];if(!file)return;
+ try{
+  const payload=JSON.parse(await file.text());
+  const result=spectral.importSpectra(payload);
+  $('multi-gamut-spectral-status').textContent='Spectral references imported: '+result.imported+' / 13,283. Source: '+payload.source.description;
+  render();
+ }catch(e){$('multi-gamut-spectral-status').textContent='Spectral import rejected: '+e.message;}
 });
 threshold.addEventListener('input',render);search.addEventListener('input',render);
 status.textContent='Awaiting verified FOGRA58 CSV (SHA-256 '+CSV_SHA.slice(0,12)+'…)';
