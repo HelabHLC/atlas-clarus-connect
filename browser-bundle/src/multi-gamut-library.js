@@ -68,17 +68,42 @@
       const ids=[...byId.keys()].filter(id=>mode==='intersection'?sets.every(s=>s.has(id)):mode==='union'?sets.some(s=>s.has(id)):sets[0].has(id)&&sets.slice(1).every(s=>!s.has(id)));
       return {mode,profile_ids:[...profileIds],threshold,ids,complete:profileIds.every(p=>[...entries.values()].filter(r=>r.profile_id===p).length===COUNT)};
     }
+    function deltaE00(lab1,lab2){
+      const [L1,a1,b1]=lab1,[L2,a2,b2]=lab2;
+      const rad=Math.PI/180,deg=180/Math.PI;
+      const C1=Math.hypot(a1,b1),C2=Math.hypot(a2,b2),Cbar=(C1+C2)/2;
+      const G=.5*(1-Math.sqrt(Cbar**7/(Cbar**7+25**7)));
+      const ap1=(1+G)*a1,ap2=(1+G)*a2,cp1=Math.hypot(ap1,b1),cp2=Math.hypot(ap2,b2);
+      const hue=(a,b)=>{const v=Math.atan2(b,a)*deg;return v<0?v+360:v;};
+      const h1=cp1<1e-12?0:hue(ap1,b1),h2=cp2<1e-12?0:hue(ap2,b2);
+      const dL=L2-L1,dC=cp2-cp1;
+      let dh=0;if(cp1*cp2>1e-12){dh=h2-h1;if(dh>180)dh-=360;if(dh< -180)dh+=360;}
+      const dH=2*Math.sqrt(cp1*cp2)*Math.sin(dh*rad/2);
+      const Lbar=(L1+L2)/2,Cpbar=(cp1+cp2)/2;
+      let hbar=h1+h2;
+      if(cp1*cp2<1e-12)hbar=h1+h2;
+      else if(Math.abs(h1-h2)<=180)hbar=(h1+h2)/2;
+      else hbar=(h1+h2<360)?(h1+h2+360)/2:(h1+h2-360)/2;
+      const T=1-.17*Math.cos((hbar-30)*rad)+.24*Math.cos(2*hbar*rad)+.32*Math.cos((3*hbar+6)*rad)-.20*Math.cos((4*hbar-63)*rad);
+      const dTheta=30*Math.exp(-((hbar-275)/25)**2);
+      const Rc=2*Math.sqrt(Cpbar**7/(Cpbar**7+25**7));
+      const Sl=1+.015*(Lbar-50)**2/Math.sqrt(20+(Lbar-50)**2);
+      const Sc=1+.045*Cpbar,Sh=1+.015*Cpbar*T;
+      const Rt=-Math.sin(2*dTheta*rad)*Rc;
+      const x=dL/Sl,y=dC/Sc,z=dH/Sh;
+      return Math.sqrt(Math.max(0,x*x+y*y+z*z+Rt*y*z));
+    }
     function closest(targetId,profileIds,threshold=1,limit=5){
       if(!byId.has(targetId)||!Number.isInteger(limit)||limit<1)fail('invalid target');
       const base=byId.get(targetId);
       if(!Array.isArray(base.lab)||base.lab.length!==3||base.lab.some(x=>!Number.isFinite(x)))fail('target Lab unavailable');
       const matching=query(profileIds,threshold,'intersection');
-      // This is only a Lab Euclidean preselection, NOT a DeltaE00 ranking.
+      // Full CIEDE2000 ranking across all qualifying candidates; no RGB proxy.
       const ranked=matching.ids.map(id=>{
         const c=byId.get(id);if(!Array.isArray(c.lab)||c.lab.length!==3)return null;
-        return {atlas_row_id:id,reference:c.ref,lab_distance_squared:c.lab.reduce((s,v,i)=>s+(v-base.lab[i])**2,0)};
-      }).filter(Boolean).sort((a,b)=>a.lab_distance_squared-b.lab_distance_squared||a.atlas_row_id-b.atlas_row_id);
-      return {ranking_method:'CIELAB_EUCLIDEAN_PRESELECTION_NOT_DELTA_E00',candidates:ranked.slice(0,limit),complete:matching.complete};
+        return {atlas_row_id:id,reference:c.ref,delta_e00_to_target:deltaE00(base.lab,c.lab)};
+      }).filter(Boolean).sort((a,b)=>a.delta_e00_to_target-b.delta_e00_to_target||a.atlas_row_id-b.atlas_row_id);
+      return {ranking_method:'CIEDE2000_FULL_CANDIDATE_RANKING',candidates:ranked.slice(0,limit),complete:matching.complete};
     }
     return Object.freeze({registerLibrary,registerProfile,importResults,memberships,query,closest,
       summary:()=>({master_sha256:MASTER,reference_count:COUNT,libraries:[...libraries.values()],profiles:[...profiles.values()],result_count:entries.size})});
