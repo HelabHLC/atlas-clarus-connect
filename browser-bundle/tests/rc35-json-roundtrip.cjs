@@ -2,7 +2,7 @@
 'use strict';
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');
 const {webcrypto}=require('node:crypto');
-global.window=global;global.crypto=webcrypto;
+global.window=global;if(!global.crypto?.subtle)Object.defineProperty(global,'crypto',{value:webcrypto,configurable:true});
 const base=process.env.RC35_ASSETS||path.resolve(__dirname,'../build/atlas-clarus-browser-bundle/assets');
 const load=n=>vm.runInThisContext(fs.readFileSync(path.join(base,n),'utf8'),{filename:n});
 (async()=>{
