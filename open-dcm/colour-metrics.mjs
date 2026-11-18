@@ -31,7 +31,7 @@ export function deltaE00(a,b) {
  else if(Math.abs(h1-h2)<=180)hh=(h1+h2)/2;
  else hh=(h1+h2<360?(h1+h2+360)/2:(h1+h2-360)/2);
  const T=1-0.17*Math.cos(rad(hh-30))+0.24*Math.cos(rad(2*hh))+0.32*Math.cos(rad(3*hh+6))-0.20*Math.cos(rad(4*hh-63));
- const dTheta=30*Math.exp(-((hh-275)/25)**2);
+ const dTheta=30*Math.exp(-(((hh-275)/25)**2));
  const Rc=2*Math.sqrt(c**7/(c**7+25**7));
  const Sl=1+0.015*(l-50)**2/Math.sqrt(20+(l-50)**2);
  const Sc=1+0.045*c,Sh=1+0.015*c*T;
