@@ -21,7 +21,8 @@ export async function runIccBrowserIntegration({
   const verified = requireCataloguedOutputProfile(catalog, profileId, hash, profileBytes.length);
   if (verified.outputPath !== "4C") throw TypeError("Current integration supports CMYK output profiles only");
   const record = createColourRecord({hlcAddress,sourceRgb});
-  const worker = new Worker(workerUrl);
+  const resolvedWorkerUrl = workerUrl || createEmbeddedIccWorkerUrl();
+  const worker = new Worker(resolvedWorkerUrl);
   let result;
   try {
     result = await new Promise((resolve,reject)=>{
@@ -36,7 +37,7 @@ export async function runIccBrowserIntegration({
         profile:profileBytes,intent,bpc
       });
     });
-  } finally {worker.terminate();}
+  } finally {worker.terminate(); if (!workerUrl) URL.revokeObjectURL(resolvedWorkerUrl);}
   const output=captureLittleCmsRoundTrip(record,result,{
     profileId,profileSha256:hash,substrate,intent,bpc
   });
@@ -51,4 +52,13 @@ export async function runIccBrowserIntegration({
       expectedRgb8:[...independentExpectedRgb],channelAbsoluteErrors:errors,toleranceChannels};
   }
   return {record:output,comparison,independentCheck};
+}
+
+/** Matches the established offline Browser Edition embedded-worker packaging. */
+export function createEmbeddedIccWorkerUrl() {
+ const element=globalThis.document?.querySelector("#atlas-print-worker-source");
+ if(!element)throw Error("Embedded ICC worker not found in this Browser Edition bundle");
+ const source=JSON.parse(element.textContent);
+ if(typeof source!=="string" || !source.includes("ATLAS_LOAD_LCMS"))throw Error("Invalid embedded LittleCMS worker source");
+ return URL.createObjectURL(new Blob([source],{type:"text/javascript"}));
 }
