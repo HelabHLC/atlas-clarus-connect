@@ -29,5 +29,9 @@ jobs:
         run: node --check browser-bundle/src/beta15i6-display-capabilities.js
       - name: Run display capability contract tests
         run: node --test browser-bundle/tests/beta15i6-display-capabilities.test.cjs
+      - name: Validate colour advice handoff syntax
+        run: node --check browser-bundle/src/beta15i6-colour-advice-handoff.js
+      - name: Test colour advice handoff contract
+        run: node --test browser-bundle/tests/beta15i6-colour-advice-handoff.test.cjs
       - name: Run isolated bridge contract tests
         run: node --test browser-bundle/tests/beta15i6-integration-bridge.test.cjs
