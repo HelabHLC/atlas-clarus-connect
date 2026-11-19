@@ -34,11 +34,11 @@ jobs:
           test -s "$archive" || { echo "::error::Original preview ZIP missing"; exit 1; }
           mkdir -p "$RUNNER_TEMP/atlas-preview"
           echo "::group::Actual offline ZIP entries"
-          unzip -Z -1 "$archive" | head -80
+          unzip -Z -1 "$archive" | sed -n '1,80p'
           echo "::endgroup::"
           unzip -q "$archive" -d "$RUNNER_TEMP/atlas-preview"
           echo "::group::Extracted file paths"
-          find "$RUNNER_TEMP/atlas-preview" -type f | head -80
+          find "$RUNNER_TEMP/atlas-preview" -type f | sed -n '1,80p'
           echo "::endgroup::"
           master="$(find "$RUNNER_TEMP/atlas-preview" -type f -path '*/assets/atlas-data.js' -print -quit)"
           test -n "$master" || { echo "::error::No assets/atlas-data.js in extracted archive; inspect ZIP entries above and identify correct verified runtime source"; exit 1; }
