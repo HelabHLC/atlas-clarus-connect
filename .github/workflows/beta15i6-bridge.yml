@@ -25,5 +25,9 @@ jobs:
           node-version: '22'
       - name: Validate bridge syntax
         run: node --check browser-bundle/src/beta15i6-integration-bridge.js
+      - name: Validate display capability module syntax
+        run: node --check browser-bundle/src/beta15i6-display-capabilities.js
+      - name: Run display capability contract tests
+        run: node --test browser-bundle/tests/beta15i6-display-capabilities.test.cjs
       - name: Run isolated bridge contract tests
         run: node --test browser-bundle/tests/beta15i6-integration-bridge.test.cjs
