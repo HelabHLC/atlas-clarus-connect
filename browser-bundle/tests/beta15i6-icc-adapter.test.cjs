@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {request,result}=require('../src/beta15i6-icc-adapter.js');
+const handoff={schema:'ATLAS_BETA15I6_ADVICE_HANDOFF_V1',status:'READY_FOR_EXPLICIT_LEGACY_ADVICE',address:'H290_L040_C075',material_id:'paper',legacy_seed:{source_rgb:[10,20,30]}};
+const bytes=new Uint8Array(132);bytes[0]=7;
+const job=request({handoff,profileBytes:bytes});
+assert.equal(job.operation,'multi-compare');
+assert.deepEqual([...job.rgb],[10,20,30]);
+assert.notEqual(job.profile,bytes);
+assert.throws(()=>request({handoff:{...handoff,status:'DIGITAL_COLOUR_REQUIRES_SEPARATE_ADVICE_PATH'},profileBytes:bytes}));
+const r={method:'SRGB8_TO_LAB_D50_TO_DEVICE16_TO_LAB_D50_ABSOLUTE_V1',engine:'LittleCMS 2.16 / lcms-wasm 1.0.5',physical_approval:false,bpc:false,channels:4,input_lab:new Float64Array([30,2,3]),output_lab:new Float64Array([29,3,4]),device16:new Uint16Array([0,100,200,300]),preview_rgb:new Uint8Array([11,22,33])};
+const report=result({handoff,workerResult:r,profileSha256:'a'.repeat(64)});
+assert.equal(report.production_status,'NOT_MEASURED');
+assert.deepEqual(report.output_lab_d50,[29,3,4]);
+assert.throws(()=>result({handoff,workerResult:{...r,physical_approval:true},profileSha256:'a'.repeat(64)}));
+console.log('beta15i.6 ICC adapter contract PASS (mock result; not real ICC test)');
