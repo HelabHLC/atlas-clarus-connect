@@ -7,6 +7,7 @@ on:
       - 'browser-bundle/src/beta15i6-*'
       - 'browser-bundle/src/multi-gamut-library.js'
       - 'browser-bundle/tests/beta15i6-real-data.test.cjs'
+      - 'browser-bundle/tests/extract-beta15i6-inline-data.cjs'
       - '.github/workflows/beta15i6-real-data.yml'
 permissions:
   contents: read
@@ -40,10 +41,10 @@ jobs:
           echo "::group::Extracted file paths"
           find "$RUNNER_TEMP/atlas-preview" -type f | sed -n '1,80p'
           echo "::endgroup::"
-          master="$(find "$RUNNER_TEMP/atlas-preview" -type f -path '*/assets/atlas-data.js' -print -quit)"
-          test -n "$master" || { echo "::error::No assets/atlas-data.js in extracted archive; inspect ZIP entries above and identify correct verified runtime source"; exit 1; }
-          runtime="${master%/assets/atlas-data.js}"
-          test -s "$runtime/digital/libraries.js" || { echo "::error::No actual digital library lists in archive"; exit 1; }
+          html="$RUNNER_TEMP/atlas-preview/ATLAS_Clarus_Digitale_Farberweiterung_0.1.8.html"
+          test -s "$html" || { echo "::error::Original standalone HTML missing"; exit 1; }
+          runtime="$RUNNER_TEMP/atlas-inline-runtime"
+          node browser-bundle/tests/extract-beta15i6-inline-data.cjs "$html" "$runtime"
           echo "ATLAS_RUNTIME=$runtime" >> "$GITHUB_ENV"
       - name: Check module syntax
         run: |
