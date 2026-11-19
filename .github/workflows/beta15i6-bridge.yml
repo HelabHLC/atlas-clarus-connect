@@ -33,5 +33,9 @@ jobs:
         run: node --check browser-bundle/src/beta15i6-colour-advice-handoff.js
       - name: Test colour advice handoff contract
         run: node --test browser-bundle/tests/beta15i6-colour-advice-handoff.test.cjs
+      - name: Validate ICC adapter syntax
+        run: node --check browser-bundle/src/beta15i6-icc-adapter.js
+      - name: Test ICC adapter contract (mock only)
+        run: node --test browser-bundle/tests/beta15i6-icc-adapter.test.cjs
       - name: Run isolated bridge contract tests
         run: node --test browser-bundle/tests/beta15i6-integration-bridge.test.cjs
