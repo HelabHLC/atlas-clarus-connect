@@ -33,9 +33,15 @@ jobs:
           archive="upstream-digital/previews/digital-hlc/download/ATLAS_Clarus_P3_ProPhoto_0.1.8_Offline.zip"
           test -s "$archive" || { echo "::error::Original preview ZIP missing"; exit 1; }
           mkdir -p "$RUNNER_TEMP/atlas-preview"
+          echo "::group::Actual offline ZIP entries"
+          unzip -Z -1 "$archive" | head -80
+          echo "::endgroup::"
           unzip -q "$archive" -d "$RUNNER_TEMP/atlas-preview"
+          echo "::group::Extracted file paths"
+          find "$RUNNER_TEMP/atlas-preview" -type f | head -80
+          echo "::endgroup::"
           master="$(find "$RUNNER_TEMP/atlas-preview" -type f -path '*/assets/atlas-data.js' -print -quit)"
-          test -n "$master" || { echo "::error::No actual master data in archive"; exit 1; }
+          test -n "$master" || { echo "::error::No assets/atlas-data.js in extracted archive; inspect ZIP entries above and identify correct verified runtime source"; exit 1; }
           runtime="${master%/assets/atlas-data.js}"
           test -s "$runtime/digital/libraries.js" || { echo "::error::No actual digital library lists in archive"; exit 1; }
           echo "ATLAS_RUNTIME=$runtime" >> "$GITHUB_ENV"
