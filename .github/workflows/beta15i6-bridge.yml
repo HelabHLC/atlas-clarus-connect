@@ -1,0 +1,29 @@
+name: beta15i.6 integration bridge tests
+
+on:
+  push:
+    branches:
+      - integration/beta15i6-multi-gamut-colour-consultancy
+  pull_request:
+    paths:
+      - 'browser-bundle/src/beta15i6-integration-bridge.js'
+      - 'browser-bundle/tests/beta15i6-integration-bridge.test.cjs'
+      - '.github/workflows/beta15i6-bridge.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bridge-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate bridge syntax
+        run: node --check browser-bundle/src/beta15i6-integration-bridge.js
+      - name: Run isolated bridge contract tests
+        run: node --test browser-bundle/tests/beta15i6-integration-bridge.test.cjs
