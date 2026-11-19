@@ -1,0 +1,17 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {request,report}=require('../src/beta15i6-wide-gamut-icc-adapter.js');
+const colour={identity:{kind:'DIGITAL_COLOUR',atlas_row_id:null},source:{kind:'RGB',space:'display-p3',values:[1,0.3,0.1]},address:'H030_L050_C100',lab_d50_2deg:[50,70,30]};
+const bytes=new Uint8Array(132);
+const job=request({colour,profileBytes:bytes});
+assert.equal(job.operation,'wide-gamut-compare');
+assert.deepEqual([...job.lab_d50],[50,70,30]);
+assert.equal(Object.hasOwn(job,'rgb'),false);
+assert.notEqual(job.profile,bytes);
+assert.throws(()=>request({colour:{...colour,source:{kind:'RGB',space:'srgb',values:[1,0,0]}},profileBytes:bytes}));
+const r={method:'LAB_D50_TO_DEVICE16_TO_LAB_D50_ABSOLUTE_V1',engine:'LittleCMS 2.16 / lcms-wasm 1.0.5',physical_approval:false,bpc:false,channels:4,input_lab:new Float64Array([50,70,30]),output_lab:new Float64Array([49,68,29]),device16:new Uint16Array([1,2,3,4])};
+const output=report({colour,workerResult:r,profileSha256:'a'.repeat(64),materialId:'coated'});
+assert.equal(output.production_status,'NOT_MEASURED');
+assert.equal(output.source.space,'display-p3');
+assert.throws(()=>report({colour,workerResult:{...r,input_lab:new Float64Array([50,60,30])},profileSha256:'a'.repeat(64),materialId:'coated'}));
+console.log('Wide gamut contract PASS (mock worker result, not real ICC execution)');
