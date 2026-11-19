@@ -1,0 +1,48 @@
+name: beta15i.6 real data integration gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [integration/beta15i6-multi-gamut-colour-consultancy]
+    paths:
+      - 'browser-bundle/src/beta15i6-*'
+      - 'browser-bundle/src/multi-gamut-library.js'
+      - 'browser-bundle/tests/beta15i6-real-data.test.cjs'
+      - '.github/workflows/beta15i6-real-data.yml'
+permissions:
+  contents: read
+jobs:
+  real-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout integration
+        uses: actions/checkout@v4
+      - name: Checkout original digital preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/digital-hlc-wide-gamut-20261108
+          path: upstream-digital
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Extract original offline preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="upstream-digital/previews/digital-hlc/download/ATLAS_Clarus_P3_ProPhoto_0.1.8_Offline.zip"
+          test -s "$archive" || { echo "::error::Original preview ZIP missing"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/atlas-preview"
+          unzip -q "$archive" -d "$RUNNER_TEMP/atlas-preview"
+          master="$(find "$RUNNER_TEMP/atlas-preview" -type f -path '*/assets/atlas-data.js' -print -quit)"
+          test -n "$master" || { echo "::error::No actual master data in archive"; exit 1; }
+          runtime="${master%/assets/atlas-data.js}"
+          test -s "$runtime/digital/libraries.js" || { echo "::error::No actual digital library lists in archive"; exit 1; }
+          echo "ATLAS_RUNTIME=$runtime" >> "$GITHUB_ENV"
+      - name: Check module syntax
+        run: |
+          node --check browser-bundle/src/beta15i6-digital-hlc-core.js
+          node --check browser-bundle/src/multi-gamut-library.js
+          node --check browser-bundle/src/beta15i6-integration-bridge.js
+      - name: Run real data and exact union gate
+        run: node browser-bundle/tests/beta15i6-real-data.test.cjs "$ATLAS_RUNTIME"
