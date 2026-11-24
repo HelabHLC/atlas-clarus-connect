@@ -41,3 +41,21 @@ jobs:
               assert.equal(p.production_approval,"NOT_GRANTED");
             }
           '
+
+  real-icc-4c:
+    name: Real LittleCMS 4C against Pillow/ImageCms
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install system ICC test profile and real browser
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ghostscript
+          python -m pip install Pillow playwright
+          python -m playwright install --with-deps chromium
+      - name: Compare actual 16-bit ICC separation with Pillow LittleCMS
+        run: python open-dcm/tests/real_icc_4c.py
