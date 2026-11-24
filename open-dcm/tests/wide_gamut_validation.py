@@ -90,15 +90,32 @@ openmem=bind('cmsOpenProfileFromMem',ptr,[ptr,ui])
 src_profiles={}; src_buffers={}; direct_transforms={}; pcs_transforms={}
 rgbdbl=(1<<22)|(4<<16)|(3<<3)
 for space,url in [('P3','https://registry.color.org/rgb-registry/profiles/DisplayP3.zip'),('ProPhoto','https://registry.color.org/rgb-registry/profiles/ISO22028-2_ROMM-RGB.icc')]:
-    with urllib.request.urlopen(url,timeout=45) as response:
-        raw=response.read(4000001)
+    prefix='ATLAS_P3' if space=='P3' else 'ATLAS_ROMM'
+    local=os.environ.get(prefix+'_ICC')
+    expected=os.environ.get(prefix+'_SHA256')
+    if local:
+        if not expected: raise ValueError(prefix+' local ICC requires a trusted SHA-256')
+        raw=Path(local).read_bytes()
+        origin='local supplied file'
+    else:
+        request=urllib.request.Request(url,headers={'User-Agent':'ATLAS-Clarus-Open-DCM-CI/0.1 (ICC source verification)','Accept':'application/zip,application/vnd.iccprofile,application/octet-stream,*/*'})
+        try:
+            with urllib.request.urlopen(request,timeout=45) as response:
+                raw=response.read(4000001)
+        except Exception as exc:
+            raise RuntimeError(f'{space}: official source unavailable; supply {prefix}_ICC and independently verified {prefix}_SHA256; no substitute accepted') from exc
+        origin=url
     assert len(raw)<=4000000
-    if space=='P3':
+    if space=='P3' and not local:
         with zipfile.ZipFile(io.BytesIO(raw)) as z:
             names=[n for n in z.namelist() if Path(n).name.lower() in ('display p3.icc','displayp3.icc')]
             assert len(names)==1,names
             raw=z.read(names[0])
-    assert raw[16:20]==b'RGB ' and raw[36:40]==b'acsp'
+    assert len(raw)>=128 and raw[16:20]==b'RGB ' and raw[36:40]==b'acsp'
+    assert int.from_bytes(raw[:4],'big')==len(raw)
+    digest=hashlib.sha256(raw).hexdigest()
+    if expected and digest!=expected.lower(): raise ValueError(prefix+' ICC digest mismatch')
+    print('SOURCE_ICC_PROVENANCE',json.dumps(dict(space=space,origin=origin,sha256=digest,externally_pinned=bool(expected))),flush=True)
     print('SOURCE_ICC',json.dumps({'space':space,'url':url,'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw)}),flush=True)
     buf=C.create_string_buffer(raw);src_buffers[space]=buf
     src_profiles[space]=openmem(buf,len(raw))
