@@ -57,8 +57,12 @@ with tempfile.TemporaryDirectory(prefix='atlas-icc-eci-') as tmp:
         'ATLAS_EXPECT_PROFILE_SHA256':EXPECTED_SHA,
         'ATLAS_ICC_LABEL':'PSO Coated v3 / FOGRA51 / ISO 12647-2:2013 Premium coated'
     })
+    results_file=Path(tmp)/'actual-icc-worker-results.json'
+    env['ATLAS_WORKER_RESULTS_JSON']=str(results_file)
     script=Path(__file__).with_name('real_icc_4c.py')
     subprocess.run([sys.executable,str(script)],env=env,check=True)
+    independent=Path(__file__).with_name('argyll_independent_reference.py')
+    subprocess.run([sys.executable,str(independent)],env=env,check=True)
 
-print('PASS original ECI profile + 3 master-row checks + two LittleCMS bindings.',flush=True)
+print('PASS original ECI profile + 3 master rows + LittleCMS/Pillow + independent ArgyllCMS check.',flush=True)
 print('LIMIT: independent colour algorithm, RIP handoff and physical print proof NOT tested.',flush=True)
