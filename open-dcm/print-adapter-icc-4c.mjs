@@ -7,6 +7,7 @@
 import { requireCataloguedOutputProfile } from './icc-catalog-guard.mjs';
 import { createEmbeddedIccWorkerUrl } from './browser-icc-integration.mjs';
 import { PRINT_ADAPTER_FORMAT, PRINT_ADAPTER_VERSION } from './print-adapter-contract.mjs';
+import { crosscheckPrintIdentity } from './print-adapter-master-identity.mjs';
 
 const SHA=/^[a-f0-9]{64}$/;
 const INTENTS=['Perceptual','Relative colorimetric','Saturation','Absolute colorimetric'];
@@ -23,7 +24,7 @@ function freeze(x){if(x&&typeof x==='object'){Object.values(x).forEach(freeze);O
  *            binding:'Pillow ImageCms / system LittleCMS'}.
  */
 export async function runPrintAdapter4C({
-  preparation, catalog, profileId, profileBytes, workerUrl = null,
+  preparation, masterDocument, catalog, profileId, profileBytes, workerUrl = null,
   intent = 'Relative colorimetric', bpc = false,
   secondBinding = null, tolerance8 = 2
 }) {
@@ -55,6 +56,7 @@ export async function runPrintAdapter4C({
     x.output_profile_sha256===null &&
     x.measurement_status==='NOT_MEASURED' && x.production_approval==='NOT_GRANTED'),
     'Every path must start uncalculated, unmeasured and without approval');
+  const identityCrosscheck=crosscheckPrintIdentity(preparation,masterDocument);
   const current=preparation.production_paths.find(x=>x.path_id==='4C');
   check(current && current.source_atlas_row_id===preparation.source.atlas_row_id &&
     current.input_from_path===null && current.expected_device_space==='CMYK' &&
@@ -155,14 +157,14 @@ export async function runPrintAdapter4C({
         profile_sha256:sha,
         source_rgb8:[...preparation.source.rgb8],
         second_binding:comparison,
-        source_identity_verified:false,
+        source_identity_verified:true,source_identity_evidence:identityCrosscheck,
         physical_proof_measured:false
       }
     };
     return freeze({
       ...preparation,
       status:'ICC_4C_CALCULATED_NOT_PROOFED',
-      source:{...preparation.source},
+      source:{...preparation.source,identity_status:'MASTER_ROW_RGB_CROSSCHECK_PASS'},
       production_paths:preparation.production_paths.map(x=>x.path_id==='4C'?
         output:JSON.parse(JSON.stringify(x)))
     });
