@@ -92,7 +92,7 @@ rgbdbl=(1<<22)|(4<<16)|(3<<3)
 for space,url in [('P3','https://registry.color.org/rgb-registry/profiles/DisplayP3.zip'),('ProPhoto','https://registry.color.org/rgb-registry/profiles/ISO22028-2_ROMM-RGB.icc')]:
     prefix='ATLAS_P3' if space=='P3' else 'ATLAS_ROMM'
     local=os.environ.get(prefix+'_ICC')
-    expected=os.environ.get(prefix+'_SHA256')
+    expected=os.environ.get(prefix+'_SHA256',{'P3':'20789fdbea9835251a4f0796c8bf45cbd964896044886540da21ffc7457af0ab','ProPhoto':'96b2f2987f83e2a545e607799fbfdff43ef8158fb9b215b187c574db8f145aaf'}[space])
     if local:
         if not expected: raise ValueError(prefix+' local ICC requires a trusted SHA-256')
         raw=Path(local).read_bytes()
@@ -173,3 +173,47 @@ with tempfile.TemporaryDirectory() as tmp:
         print('WIDE_GAMUT_RIP',json.dumps(dict(patches=len(patches),max_channel_error=max(errors),channel_checks=len(patches)*6400*4)),flush=True)
         assert max(errors)<=1
 print('PASS wide gamut synthetic source comparison; no library membership, independent CMM, production proof or physical realizability claim',flush=True)
+
+# Exhaustive audit: same nominal D50 Lab target for each route, no use of historical RGB.
+# Invert the published matrices without adding dependencies.
+def inverse(m):
+    a=[list(row)+[float(i==j) for j in range(3)] for i,row in enumerate(m)]
+    for i in range(3):
+        k=max(range(i,3),key=lambda k:abs(a[k][i]))
+        a[i],a[k]=a[k],a[i]
+        q=a[i][i]; assert abs(q)>1e-12
+        a[i]=[v/q for v in a[i]]
+        for j in range(3):
+            if j!=i:
+                q=a[j][i];a[j]=[v-q*w for v,w in zip(a[j],a[i])]
+    return [row[3:] for row in a]
+def lab_xyz(v):
+    L,A,B=v;y=(L+16)/116
+    f=lambda t:t**3 if t>6/29 else (116*t-16)/(24389/27)
+    return [f(y+A/500)*.9642956764,f(y),f(y-B/200)*.8251046025]
+invp3=inverse(P3);invpro=inverse(PRO)
+def encode(space,x):
+    if space=='ProPhoto':return 16*x if x<=1/512 else x**(1/1.8)
+    return 12.92*x if x<=.0031308 else 1.055*x**(1/2.4)-.055
+# Source profile hashes frozen to actual prior CI download; not external certification.
+master=json.loads((Path(__file__).resolve().parents[2]/'hover-library/data/colors.json').read_text())
+assert master['master_sha256']=='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
+assert len(master['colors'])==len({r['ref'] for r in master['colors']})==13283
+audit={s:[] for s in ('sRGB','P3','ProPhoto','Lab')}
+for row in master['colors']:
+    target=row['lab']; x=lab_xyz(target)
+    di,dl=separation(target); base=de(target,dl)
+    record={'hlc':row['ref'],'row_id':row['id'],'Lab':{'de00':base,'cmyk16':di}}
+    audit['Lab'].append((base,False,0.,0.))
+    for s,lin in [('sRGB',srlinear(x)),('P3',mv(invp3,mv(D50_D65,x))),('ProPhoto',mv(invpro,x))]:
+        clipped=any(v< -1e-7 or v>1+1e-7 for v in lin)
+        rgb=[min(1.,max(0.,encode(s,min(1.,max(0.,v))))) for v in lin]
+        ink,pred,pcs=profile_direct(s,rgb)
+        err=de(target,pred); loss=de(target,pcs)
+        audit[s].append((err,clipped,loss,err-base))
+        record[s]={'de00':err,'cmyk16':ink,'clipped':clipped,'linear_rgb_unclipped':lin,'source_pcs_de00':loss}
+    print('FULL_GAMUT_ROW',json.dumps(record,separators=(',',':')),flush=True)
+for s,vals in audit.items():
+    e=sorted(v[0] for v in vals)
+    print('FULL_GAMUT_SUMMARY',json.dumps(dict(space=s,n=len(vals),mean=statistics.mean(e),median=statistics.median(e),p95=e[math.ceil(.95*len(e))-1],maximum=e[-1],clipped=sum(v[1] for v in vals),mean_source_loss=statistics.mean(v[2] for v in vals),worse_than_lab=sum(v[3]>.1 for v in vals),better_than_lab=sum(v[3]<-.1 for v in vals))),flush=True)
+print('PASS full nominal Lab path audit; 53132 separations, continuous RGB, profile-relative predictions only; independent CMM full audit pending',flush=True)
