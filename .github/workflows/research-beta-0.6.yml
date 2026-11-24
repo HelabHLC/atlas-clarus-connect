@@ -1,0 +1,30 @@
+name: ATLAS Clarus Data-Free Research Beta 0.6
+on:
+  pull_request:
+    paths:
+      - 'research/atlas-clarus-research-beta-0.6/**'
+      - '.github/workflows/research-beta-0.6.yml'
+  push:
+    paths:
+      - 'research/atlas-clarus-research-beta-0.6/**'
+      - '.github/workflows/research-beta-0.6.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-public-beta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install headless browser
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify real file URL, source links, local data imports and exports
+        env:
+          ATLAS_REQUIRE_FILE_URL: '1'
+        run: python research/atlas-clarus-research-beta-0.6/tests/test_browser.py
