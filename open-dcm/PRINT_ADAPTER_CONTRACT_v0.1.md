@@ -62,3 +62,34 @@ node --test open-dcm/print-adapter-contract.test.mjs
 Checks: safe status, 4C/ECG path separation, input immutability, malformed SHA/row, rejection of prior ICC/measurement claims, invalid path context and JSON roundtrip.
 
 **Release status:** Open DCM PR #127 remains a **draft**. No new public Research Beta feature, ICC engine integration, printer driver or IONOS deployment is claimed. Further work requires source-master verification, real ICC computation with an independent reference, recipient-specific RIP handoff validation, and actual proof measurement/acceptance when requested.
+
+## Experimental 4C calculation bridge — 24 November 2026
+
+The **existing browser-bundle LittleCMS worker** already supports the `reference-separation` operation. The private Draft PR now connects this operation to the print preparation record through `open-dcm/print-adapter-icc-4c.mjs`:
+
+- Requires a valid preparation-only record, a declared sRGB8/HLC identity and an uncalculated 4C path.
+- Rejects pre-existing calculated/approved values on **either** 4C or ECG to protect the parallel-source invariant.
+- Computes SHA-256 of actual user-loaded ICC bytes and requires the full hash and byte count to match the named catalogued CMYK output profile.
+- Requires an explicitly declared printing condition, substrate, rendering intent and BPC. The printing condition must agree with catalog metadata.
+- Invokes the real `reference-separation` operation through a newly created Worker and records the `SRGB_TO_DEVICE16` CMYK result with four unsigned 16-bit values, original ICC digest and engine.
+- Keeps all derived Lab and ΔE00 entries **null**, ECG **NOT_CALCULATED**, measured proof **NOT_MEASURED** and production approval **NOT_GRANTED**. The HLC-to-row agreement remains `DECLARED_REQUIRES_MASTER_LOOKUP`.
+- Optionally compares the forward separation to a second LittleCMS binding (Pillow/ImageCms, 8-bit). Mismatches fail closed. Such an agreement checks implementation interoperability, **not** independence of the colour algorithm and not a physical proof.
+- Does not transmit device instructions, alter the Browser Edition, perform an ICC round trip for this calculation or generate a printable PDF/X file.
+
+### Live regression evidence (GitHub Actions)
+
+The actual lcms-wasm worker was exercised in headless Chromium using the **operating-system Ghostscript default CMYK test ICC** (187,484 bytes, SHA-256 `8472fa1493a024b800b67dee9424835ec0c41ab79490200ae8ec4a689fd1b9a9`). The profile was provided by the test runner and is **not committed, packaged or qualified for a production press**.
+
+Three actual source RGB8 values produced:
+
+| Source sRGB8 | LittleCMS WASM device16 (C,M,Y,K) | Pillow/ImageCms CMYK8 | 8-bit per-channel difference |
+| --- | --- | --- | --- |
+| 232,104,42 | 2586,49870,65535,222 | 10,194,255,1 | 0,0,0,0 |
+| 0,55,157 | 65535,58616,7146,3978 | 255,228,28,15 | 0,0,0,0 |
+| 128,128,128 | 34423,29618,29626,6301 | 134,115,115,25 | 0,0,0,0 |
+
+8-bit comparison uses `round(device16 / 257)`. Pillow and the WebAssembly worker are different bindings/versions of LittleCMS; the agreement does not establish an algorithm-independent colour science reference.
+
+**Reproduce:** `node --test open-dcm/reference-record.test.mjs open-dcm/print-adapter-contract.test.mjs open-dcm/print-adapter-icc-4c.test.mjs`; install Playwright, Pillow, Chromium and a local Ghostscript test CMYK ICC, then run `python open-dcm/tests/real_icc_4c.py`.
+
+**Remaining release gates:** verify HLC row/source RGB against actual master; test with a locally supplied production-relevant ICC profile and independent reference; carry profile and substrate context into an actual RIP/printer-specific protocol; confirm channel order and constraints; measure physical proofs; obtain release approval. A Draft PR is not a deployed production feature.
