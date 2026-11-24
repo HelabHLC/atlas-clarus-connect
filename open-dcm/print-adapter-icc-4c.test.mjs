@@ -121,3 +121,12 @@ test('zero device values are not interpreted as null or proof',async()=>{
   assert.deepEqual(result.production_paths[0].device_values,[0,0,0,0]);
   assert.equal(result.production_paths[0].production_approval,'NOT_GRANTED');
 });
+
+test('rejects a forged ECG approval or stale device output in a parallel branch',async()=>{
+  const forged=JSON.parse(JSON.stringify(make()));
+  forged.production_paths[1].production_approval='GRANTED';
+  await assert.rejects(runMock({preparation:forged}),/Every path must start/);
+  const stale=JSON.parse(JSON.stringify(make()));
+  stale.production_paths[1].device_values=[1,2,3,4,5,6,7];
+  await assert.rejects(runMock({preparation:stale}),/Every path must start/);
+});
