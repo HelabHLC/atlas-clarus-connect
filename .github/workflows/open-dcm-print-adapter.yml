@@ -59,3 +59,5 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Compare actual 16-bit ICC separation with Pillow LittleCMS
         run: python open-dcm/tests/real_icc_4c.py
+      - name: Fetch original ECI PSO Coated v3 ICC and verify master-linked 4C separation
+        run: python open-dcm/tests/official_pso_coated_v3.py
