@@ -1,0 +1,63 @@
+name: Open DCM Print Adapter Contract v0.1
+on:
+  pull_request:
+    paths:
+      - 'open-dcm/**'
+      - '.github/workflows/open-dcm-print-adapter.yml'
+  push:
+    paths:
+      - 'open-dcm/**'
+      - '.github/workflows/open-dcm-print-adapter.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preparation-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate Open DCM reference and print handoff contracts
+        run: |
+          node --check open-dcm/print-adapter-contract.mjs
+          node --check open-dcm/print-adapter-icc-4c.mjs
+          node --test open-dcm/reference-record.test.mjs open-dcm/print-adapter-contract.test.mjs open-dcm/print-adapter-icc-4c.test.mjs
+      - name: Validate preparation-only example safety flags
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            import assert from "node:assert/strict";
+            const x=JSON.parse(fs.readFileSync("open-dcm/examples/print-adapter-row-10519.example.json","utf8"));
+            assert.equal(x.status,"PREPARATION_ONLY");
+            assert.equal(x.source.identity_status,"DECLARED_REQUIRES_MASTER_LOOKUP");
+            assert.equal(x.production_paths.length,2);
+            for(const p of x.production_paths){
+              assert.equal(p.calculation_status,"NOT_CALCULATED");
+              assert.equal(p.device_values,null);
+              assert.equal(p.measurement_status,"NOT_MEASURED");
+              assert.equal(p.production_approval,"NOT_GRANTED");
+            }
+          '
+
+  real-icc-4c:
+    name: Real LittleCMS 4C against Pillow/ImageCms
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install system ICC test profile and real browser
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ghostscript argyll
+          python -m pip install Pillow playwright
+          python -m playwright install --with-deps chromium
+      - name: Compare actual 16-bit ICC separation with Pillow LittleCMS
+        run: python open-dcm/tests/real_icc_4c.py
+      - name: Fetch original ECI PSO Coated v3 ICC and verify master-linked 4C separation
+        run: python open-dcm/tests/official_pso_coated_v3.py
