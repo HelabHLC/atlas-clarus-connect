@@ -52,7 +52,8 @@ labdbl=(1<<22)|(10<<16)|(3<<3)
 assert srgb and lab and profile
 ts=make(srgb,rgb8,lab,labdbl,1,0x0100)
 td=make(profile,cmyk16,lab,labdbl,1,0x0100)
-assert ts and td
+tl=make(lab,labdbl,profile,cmyk16,1,0x0100)
+assert ts and td and tl
 def convert(t,data,typ):
     inp=(typ*len(data))(*data); out=(C.c_double*3)()
     run(t,inp,out,1)
@@ -62,21 +63,44 @@ selection=json.loads(Path(__file__).with_name('v02-selection-100.json').read_tex
 rows=json.loads(Path(os.environ['ATLAS_WORKER_RESULTS_JSON']).read_text())['rows']
 assert len(rows)==len(selection)==100
 results=[]
+lab_rows=[]
 try:
     for r,s in zip(rows,selection):
         assert (r['row_id'],r['hlc'],r['rgb8'])==(s['id'],s['hlc'],s['rgb'])
         source=convert(ts,r['rgb8'],C.c_uint8)
         output=convert(td,r['cmyk16'],C.c_uint16)
-        result={'hlc':r['hlc'],'group':s['group'],'master_lab':s['lab'],'source_pcs_lab_d50':source,'predicted_pcs_lab_d50':output,
+        direct=(C.c_uint16*4)()
+        target=(C.c_double*3)(*s['lab'])
+        run(tl,target,direct,1)
+        direct_cmyk=list(direct)
+        direct_lab=convert(td,direct_cmyk,C.c_uint16)
+        baseline_error=de(s['lab'],output)
+        direct_error=de(s['lab'],direct_lab)
+        lab_rows.append({**r,'cmyk16':direct_cmyk,'input_lab_assumed_d50':s['lab']})
+        result={'direct_cmyk16':direct_cmyk,'direct_predicted_pcs_lab_d50':direct_lab,
+          'de00_direct_conditional_d50':direct_error,'improvement_conditional_d50':baseline_error-direct_error,
+          'hlc':r['hlc'],'group':s['group'],'master_lab':s['lab'],'source_pcs_lab_d50':source,'predicted_pcs_lab_d50':output,
           'de00_source_to_prediction':de(source,output),
           'de00_master_to_source_conditional_d50':de(s['lab'],source),
           'de00_master_to_prediction_conditional_d50':de(s['lab'],output)}
         results.append(result)
         print('ICC_PREDICTION',json.dumps(result),flush=True)
 finally:
-    delete(ts);delete(td)
+    delete(ts);delete(td);delete(tl)
     for p in (srgb,lab,profile):close(p)
 for key in ('de00_source_to_prediction','de00_master_to_source_conditional_d50','de00_master_to_prediction_conditional_d50'):
     vals=sorted(r[key] for r in results)
     print('ICC_PREDICTION_SUMMARY',json.dumps({'metric':key,'n':len(vals),'mean':statistics.mean(vals),'median':statistics.median(vals),'p95_nearest_rank':vals[94],'max':vals[-1]}),flush=True)
+for group in ['all']+sorted({r['group'] for r in results}):
+    subset=[r for r in results if group=='all' or r['group']==group]
+    changes=[r['improvement_conditional_d50'] for r in subset]
+    print('LAB_VS_RGB_SUMMARY',json.dumps({'group':group,'n':len(subset),
+      'rgb_mean':statistics.mean(r['de00_master_to_prediction_conditional_d50'] for r in subset),
+      'lab_mean':statistics.mean(r['de00_direct_conditional_d50'] for r in subset),
+      'lab_median':statistics.median(r['de00_direct_conditional_d50'] for r in subset),
+      'lab_max':max(r['de00_direct_conditional_d50'] for r in subset),
+      'improved_gt_0_1':sum(x>0.1 for x in changes),'worse_gt_0_1':sum(x< -0.1 for x in changes),
+      'within_0_1':sum(abs(x)<=0.1 for x in changes)}),flush=True)
+if os.environ.get('ATLAS_LAB_RESULTS_JSON'):
+    Path(os.environ['ATLAS_LAB_RESULTS_JSON']).write_text(json.dumps({'rows':lab_rows},indent=2))
 print('LIMIT: master comparisons conditional on independently confirmed D50/2-degree source; profile-relative predictions not absolute paper-white or measured proof; no production tolerance asserted.',flush=True)
