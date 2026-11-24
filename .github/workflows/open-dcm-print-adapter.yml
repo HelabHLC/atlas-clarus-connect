@@ -54,7 +54,7 @@ jobs:
       - name: Install system ICC test profile and real browser
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y ghostscript
+          sudo apt-get install -y ghostscript argyll
           python -m pip install Pillow playwright
           python -m playwright install --with-deps chromium
       - name: Compare actual 16-bit ICC separation with Pillow LittleCMS
