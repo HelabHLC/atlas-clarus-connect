@@ -48,6 +48,7 @@ for row_id,hlc,rgb in known:
     assert c['id']==row_id and c['ref']==hlc and c['rgb']==rgb, (row_id,c)
 expected=[list(ImageCms.applyTransform(Image.new('RGB',(1,1),tuple(rgb)),transform)
               .getpixel((0,0))) for _,_,rgb in known]
+worker_results=[]
 print('ICC source bytes=',len(raw),'sha256=',sha,
       'binding=',ImageCms.core.littlecms_version,flush=True)
 print('MASTER row/HLC/RGB crosscheck: PASS 3/3',flush=True)
@@ -135,6 +136,10 @@ try:
             assert c['production_approval']=='NOT_GRANTED'
             assert e['device_values'] is None and e['calculation_status']=='NOT_CALCULATED'
             assert outcome['status']=='ICC_4C_CALCULATED_NOT_PROOFED'
+            worker_results.append({'row_id':row_id,'hlc':hlc,'rgb8':list(rgb),
+                                   'cmyk16':c['device_values'],
+                                   'profile_sha256':sha,'rendering_intent':'Relative colorimetric',
+                                   'bpc':False})
             print('PASS ICC CMYK16',row_id,hlc,rgb,c['device_values'],
                   'Pillow CMYK8',exp,'8bit channel errors',
                   c['calculation_evidence']['second_binding']['absolute_channel_errors'],flush=True)
@@ -142,4 +147,6 @@ try:
         browser.close()
 finally:
     http.shutdown()
+if os.environ.get('ATLAS_WORKER_RESULTS_JSON'):
+    Path(os.environ['ATLAS_WORKER_RESULTS_JSON']).write_text(json.dumps({'profile_sha256':sha,'rows':worker_results},indent=2))
 print('PASS actual worker and Pillow binding; no printer control or physical proof',flush=True)
