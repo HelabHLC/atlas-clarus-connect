@@ -52,6 +52,7 @@ with tempfile.TemporaryDirectory(prefix='atlas-icc-eci-') as tmp:
     file=Path(tmp)/'PSOcoated_v3.icc'
     file.write_bytes(profile)
     env=dict(os.environ)
+    env.pop('ATLAS_EXTENDED_100',None)
     env.update({
         'ATLAS_TEST_CMYK_ICC':str(file),
         'ATLAS_EXPECT_PROFILE_SHA256':EXPECTED_SHA,
@@ -65,6 +66,10 @@ with tempfile.TemporaryDirectory(prefix='atlas-icc-eci-') as tmp:
     subprocess.run([sys.executable,str(independent)],env=env,check=True)
     rip=Path(__file__).with_name('rip_handoff.py')
     subprocess.run([sys.executable,str(rip)],env=env,check=True)
+    env['ATLAS_EXTENDED_100']='1'
+    for stage in (script,independent,rip,Path(__file__).with_name('v02_colour_prediction.py')):
+        subprocess.run([sys.executable,str(stage)],env=env,check=True)
+    print('PASS extended 100-colour validation',flush=True)
 
 print('PASS original ECI profile + 3 master rows + LittleCMS/Pillow + independent ArgyllCMS check.',flush=True)
 print('LIMIT: 8-bit software RIP only; 16-bit raster, production RIP and physical print proof NOT tested.',flush=True)
