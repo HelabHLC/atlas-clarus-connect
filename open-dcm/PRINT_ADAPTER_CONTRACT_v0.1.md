@@ -93,3 +93,28 @@ Three actual source RGB8 values produced:
 **Reproduce:** `node --test open-dcm/reference-record.test.mjs open-dcm/print-adapter-contract.test.mjs open-dcm/print-adapter-icc-4c.test.mjs`; install Playwright, Pillow, Chromium and a local Ghostscript test CMYK ICC, then run `python open-dcm/tests/real_icc_4c.py`.
 
 **Remaining release gates:** verify HLC row/source RGB against actual master; test with a locally supplied production-relevant ICC profile and independent reference; carry profile and substrate context into an actual RIP/printer-specific protocol; confirm channel order and constraints; measure physical proofs; obtain release approval. A Draft PR is not a deployed production feature.
+
+
+## Original ECI PSO Coated v3 and independent CMM evidence (24 November 2026)
+
+**PASS:** [GitHub Actions real PSO/Argyll run #45391807078](https://github.com/HelabHLC/atlas-clarus-connect/actions/runs/45391807078).
+
+**Original data provenance:** PSOcoated_v3.icc obtained transiently from the original [ECI ZIP](https://eci.org/lib/exe/pso-coated_v3.zip); output profile has exact size **2,195,228 bytes** and SHA-256 **c30ad2c01e8f93135ec7682c535e0a81bc2d177c301e196376c5f5838b5c8e86**. Both checks are mandatory. The original profile is never packaged, redistributed or committed. Profile condition: **FOGRA51; ISO 12647-2:2013 printing substrate 1, premium-coated paper, sheet-fed/heatset web offset**. Rendering intent **Relative colorimetric**, BPC **false**.
+
+**Master identity:** The browser loads the existing 13,283-row projection from hover-library/data/colors.json, with declared source master SHA-256 **8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4**. The new module print-adapter-master-identity.mjs checks exact row ID, HLC address and original RGB8, and rejects mismatches. This is a projection consistency check and does not re-hash the underlying private PKL.
+
+| ATLAS row | HLC address | Master RGB8 | Actual LittleCMS device CMYK16 (C/M/Y/K) | CMYK8 after rounding |
+| --- | --- | --- | --- | --- |
+| 1737 | H050_L060_C080 | 236/101/33 | 113/46557/65486/61 | 0/181/255/0 |
+| 10519 | H285_L025_C065 | 0/55/157 | 65535/54055/0/9 | 255/210/0/0 |
+| 9536 | H255_L045_C040 | 15/114/172 | 57301/29289/2629/5291 | 223/114/10/21 |
+
+**Comparator 1:** Pillow/ImageCms uses system LittleCMS (a separate software binding, not an independent CMM). Every one of the twelve 8-bit channel comparisons matched exactly.
+
+**Comparator 2:** ArgyllCMS xicclu evaluates the destination ICC B2A1 table as a **separate colour-management implementation**. Its source PCS Lab(D50) comes from an independently coded, D50-adapted sRGB matrix. The **frozen** acceptance tolerance in argyll_independent_reference.py is at most **3/255 integer units per CMYK channel**. All twelve tested channel comparisons had deviation **0 after rounding**, so the independent-CMM gate **passed**. Raw unrounded Argyll channel outputs and independent Lab inputs are preserved in the GitHub job log.
+
+**Reproduce:** Run open-dcm/tests/official_pso_coated_v3.py with Python, Pillow, Playwright/Chromium and ArgyllCMS xicclu. It downloads the official profile, strictly verifies SHA-256 and size, executes the real 4C worker and two comparisons, and deletes the transient ICC afterward. The CI workflow provisions dependencies.
+
+**Limits:** These are three real source references, one original profile, and one intent/BPC setting. No physically measured print, printer/RIP connection, PDF/X qualification, ECG/7CLR calculation, material simulation, tolerance decision or customer production approval is claimed.
+
+**Release boundary:** PR #127 stays DRAFT; main, IONOS, public Browser Edition, HLC master and Research Beta 0.6 stay unchanged.
