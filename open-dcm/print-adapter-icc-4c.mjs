@@ -46,6 +46,15 @@ export async function runPrintAdapter4C({
     new Set(preparation.production_paths.map(x=>x.path_id)).size===preparation.production_paths.length &&
     preparation.production_paths.every(x=>['4C','ECG'].includes(x.path_id)),
     'Invalid output path list');
+  check(preparation.production_paths.every(x=>
+    x.source_atlas_row_id===preparation.source.atlas_row_id &&
+    x.input_from_path===null &&
+    x.expected_device_space===(x.path_id==='4C'?'CMYK':'7CLR') &&
+    x.calculation_status==='NOT_CALCULATED' &&
+    x.device_values===null && x.predicted_lab===null && x.delta_e00===null &&
+    x.output_profile_sha256===null &&
+    x.measurement_status==='NOT_MEASURED' && x.production_approval==='NOT_GRANTED'),
+    'Every path must start uncalculated, unmeasured and without approval');
   const current=preparation.production_paths.find(x=>x.path_id==='4C');
   check(current && current.source_atlas_row_id===preparation.source.atlas_row_id &&
     current.input_from_path===null && current.expected_device_space==='CMYK' &&
