@@ -73,6 +73,7 @@ with tempfile.TemporaryDirectory(prefix='atlas-icc-eci-') as tmp:
     lab_env=dict(env,ATLAS_WORKER_RESULTS_JSON=env['ATLAS_LAB_RESULTS_JSON'])
     subprocess.run([sys.executable,str(rip)],env=lab_env,check=True)
     print('PASS extended 100-colour validation including conditional direct Lab RIP',flush=True)
+    subprocess.run([sys.executable,str(Path(__file__).with_name('wide_gamut_validation.py'))],env=env,check=True)
 
 print('PASS original ECI profile + 3 master rows + LittleCMS/Pillow + independent ArgyllCMS check.',flush=True)
 print('LIMIT: 8-bit software RIP only; 16-bit raster, production RIP and physical print proof NOT tested.',flush=True)
