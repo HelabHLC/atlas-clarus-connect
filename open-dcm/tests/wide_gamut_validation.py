@@ -6,6 +6,7 @@ https://www.w3.org/TR/2026/CRD-css-color-4-20261123/
 import ctypes as C, ctypes.util, itertools, json, math, os, statistics, subprocess, tempfile
 from pathlib import Path
 from PIL import Image
+import hashlib, io, urllib.request, zipfile
 def de(a,b):
     L1,a1,b1=a; L2,a2,b2=b
     c1,c2=math.hypot(a1,b1),math.hypot(a2,b2)
@@ -85,6 +86,35 @@ run=bind('cmsDoTransform',None,[ptr,ptr,ptr,ui])
 ld=(1<<22)|(10<<16)|(3<<3); cd=(6<<16)|(4<<3)|2
 a=make(lp,ld,dp,cd,1,0x100);b=make(dp,cd,lp,ld,1,0x100)
 assert a and b
+openmem=bind('cmsOpenProfileFromMem',ptr,[ptr,ui])
+src_profiles={}; src_buffers={}; direct_transforms={}; pcs_transforms={}
+rgbdbl=(1<<22)|(4<<16)|(3<<3)
+for space,url in [('P3','https://registry.color.org/rgb-registry/profiles/DisplayP3.zip'),('ProPhoto','https://registry.color.org/rgb-registry/profiles/ISO22028-2_ROMM-RGB.icc')]:
+    with urllib.request.urlopen(url,timeout=45) as response:
+        raw=response.read(4000001)
+    assert len(raw)<=4000000
+    if space=='P3':
+        with zipfile.ZipFile(io.BytesIO(raw)) as z:
+            names=[n for n in z.namelist() if Path(n).name.lower() in ('display p3.icc','displayp3.icc')]
+            assert len(names)==1,names
+            raw=z.read(names[0])
+    assert raw[16:20]==b'RGB ' and raw[36:40]==b'acsp'
+    print('SOURCE_ICC',json.dumps({'space':space,'url':url,'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw)}),flush=True)
+    buf=C.create_string_buffer(raw);src_buffers[space]=buf
+    src_profiles[space]=openmem(buf,len(raw))
+src_profiles['sRGB']=bind('cmsCreate_sRGBProfile',ptr,[])()
+for space,p in src_profiles.items():
+    assert p
+    direct_transforms[space]=make(p,rgbdbl,dp,cd,1,0x100)
+    pcs_transforms[space]=make(p,rgbdbl,lp,ld,1,0x100)
+    assert direct_transforms[space] and pcs_transforms[space]
+def profile_direct(space,rgb):
+    inp=(C.c_double*3)(*rgb); ink=(C.c_uint16*4)(); out=(C.c_double*3)(); pcs=(C.c_double*3)()
+    run(direct_transforms[space],inp,ink,1)
+    run(pcs_transforms[space],inp,pcs,1)
+    run(b,ink,out,1)
+    assert all(math.isfinite(x) for x in list(out)+list(pcs))
+    return list(ink),list(out),list(pcs)
 def separation(v):
     ink=(C.c_uint16*4)(); out=(C.c_double*3)()
     run(a,(C.c_double*3)(*v),ink,1);run(b,ink,out,1)
@@ -97,21 +127,25 @@ for space,rgb in cases:
     else: assert min(lin)<-.005 or max(lin)>1.005
     ci,cp=separation(clipped);di,dpred=separation(target)
     e1,e2=de(target,cp),de(target,dpred)
+    pi,pp,pcs=profile_direct(space,rgb)
+    e3=de(target,pp)
+    print('DIRECT_ICC_ROW',json.dumps(dict(space=space,rgb=rgb,source_pcs_de00=de(target,pcs),profile_cmyk16=pi,profile_de00=e3,explicit_lab_de00=e2,clipped_de00=e1,profile_vs_explicit_prediction_de00=de(pp,dpred))),flush=True)
     row=dict(space=space,rgb=rgb,target_lab=target,unclipped_linear_srgb=lin,clipping_de00=de(target,clipped),rgb_cmyk16=ci,direct_cmyk16=di,rgb_prediction=cp,direct_prediction=dpred,rgb_de00=e1,direct_de00=e2,improvement=e1-e2)
-    print('WIDE_GAMUT_ROW',json.dumps(row),flush=True);results.append(row);patches.extend([ci,di])
+    print('WIDE_GAMUT_ROW',json.dumps(row),flush=True);row.update(profile_de00=e3,source_pcs_de00=de(target,pcs));results.append(row);patches.extend([ci,di,pi])
 for space in ('P3','ProPhoto','sRGB'):
     rows=[r for r in results if r['space']==space]
+    print('DIRECT_ICC_SUMMARY',json.dumps(dict(space=space,n=len(rows),profile_mean=statistics.mean(r['profile_de00'] for r in rows),explicit_lab_mean=statistics.mean(r['direct_de00'] for r in rows),clipped_mean=statistics.mean(r['rgb_de00'] for r in rows),max_source_pcs_de00=max(r['source_pcs_de00'] for r in rows))),flush=True)
     print('WIDE_GAMUT_SUMMARY',json.dumps(dict(space=space,n=len(rows),rgb_mean=statistics.mean(r['rgb_de00'] for r in rows),direct_mean=statistics.mean(r['direct_de00'] for r in rows),improved=sum(r['improvement']>.1 for r in rows),worse=sum(r['improvement']<-.1 for r in rows))),flush=True)
-# Raster both paths, 100 patches, 6400 interior pixels each.
+# Raster both paths, 150 patches, 6400 interior pixels each.
 with tempfile.TemporaryDirectory() as tmp:
     ps=Path(tmp)/'wide.ps'; tif=Path(tmp)/'wide.tif'
-    lines=['%!PS-Adobe-3.0','<< /PageSize [1000 1000] >> setpagedevice']
+    lines=['%!PS-Adobe-3.0','<< /PageSize [1000 1500] >> setpagedevice']
     for i,ink in enumerate(patches):
-        lines.append(' '.join(f'{v/65535:.12f}' for v in ink)+f' setcmykcolor {i%10*100} {900-i//10*100} 100 100 rectfill')
+        lines.append(' '.join(f'{v/65535:.12f}' for v in ink)+f' setcmykcolor {i%10*100} {1400-i//10*100} 100 100 rectfill')
     ps.write_text('\n'.join(lines+['showpage'])+'\n')
     subprocess.run(['gs','-q','-dSAFER','-dBATCH','-dNOPAUSE','-sDEVICE=tiff32nc','-r72','-dUseFastColor=true',f'-sOutputFile={tif}',str(ps)],check=True,timeout=60)
     with Image.open(tif) as im:
-        assert im.mode=='CMYK' and im.size==(1000,1000)
+        assert im.mode=='CMYK' and im.size==(1000,1500)
         errors=[]
         for i,ink in enumerate(patches):
             x,y=i%10*100,i//10*100
