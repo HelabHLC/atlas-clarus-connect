@@ -23,7 +23,8 @@ jobs:
       - name: Validate Open DCM reference and print handoff contracts
         run: |
           node --check open-dcm/print-adapter-contract.mjs
-          node --test open-dcm/reference-record.test.mjs open-dcm/print-adapter-contract.test.mjs
+          node --check open-dcm/print-adapter-icc-4c.mjs
+          node --test open-dcm/reference-record.test.mjs open-dcm/print-adapter-contract.test.mjs open-dcm/print-adapter-icc-4c.test.mjs
       - name: Validate preparation-only example safety flags
         run: |
           node --input-type=module -e '
