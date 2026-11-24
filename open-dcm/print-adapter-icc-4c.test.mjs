@@ -99,7 +99,7 @@ test('wrong ICC catalog profile, source RGB or printing condition fail closed',a
   const bad=make();
   const modified={...bad,source:{...bad.source,colour_space:'Display-P3'}};
   await assert.rejects(runMock({preparation:modified}),/original sRGB/);
-  const wrong=make();wrong.production_paths[0].printing_condition='other';
+  const wrong=JSON.parse(JSON.stringify(make()));wrong.production_paths[0].printing_condition='other';
   await assert.rejects(runMock({preparation:wrong}),/read only|printing condition/i);
 });
 test('malformed worker values and false evidence never become output',async()=>{
