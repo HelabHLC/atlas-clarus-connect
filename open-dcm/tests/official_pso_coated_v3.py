@@ -70,6 +70,7 @@ with tempfile.TemporaryDirectory(prefix='atlas-icc-eci-') as tmp:
     env['ATLAS_LAB_RESULTS_JSON']=str(Path(tmp)/'direct-lab-results.json')
     for stage in (script,independent,rip,Path(__file__).with_name('v02_colour_prediction.py')):
         subprocess.run([sys.executable,str(stage)],env=env,check=True)
+    subprocess.run([sys.executable,str(Path(__file__).with_name('audit_argyll_lab.py'))],env=env,check=True)
     lab_env=dict(env,ATLAS_WORKER_RESULTS_JSON=env['ATLAS_LAB_RESULTS_JSON'])
     subprocess.run([sys.executable,str(rip)],env=lab_env,check=True)
     print('PASS extended 100-colour validation including conditional direct Lab RIP',flush=True)
