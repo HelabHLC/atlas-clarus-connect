@@ -67,9 +67,12 @@ with tempfile.TemporaryDirectory(prefix='atlas-icc-eci-') as tmp:
     rip=Path(__file__).with_name('rip_handoff.py')
     subprocess.run([sys.executable,str(rip)],env=env,check=True)
     env['ATLAS_EXTENDED_100']='1'
+    env['ATLAS_LAB_RESULTS_JSON']=str(Path(tmp)/'direct-lab-results.json')
     for stage in (script,independent,rip,Path(__file__).with_name('v02_colour_prediction.py')):
         subprocess.run([sys.executable,str(stage)],env=env,check=True)
-    print('PASS extended 100-colour validation',flush=True)
+    lab_env=dict(env,ATLAS_WORKER_RESULTS_JSON=env['ATLAS_LAB_RESULTS_JSON'])
+    subprocess.run([sys.executable,str(rip)],env=lab_env,check=True)
+    print('PASS extended 100-colour validation including conditional direct Lab RIP',flush=True)
 
 print('PASS original ECI profile + 3 master rows + LittleCMS/Pillow + independent ArgyllCMS check.',flush=True)
 print('LIMIT: 8-bit software RIP only; 16-bit raster, production RIP and physical print proof NOT tested.',flush=True)
