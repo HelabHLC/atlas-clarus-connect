@@ -10,6 +10,8 @@ const bytes=new Uint8Array(132).fill(7);
 const rgb=[232,104,42];
 const values=[0,25700,51400,65535];
 const normalized=values.map(v=>Number((v/65535).toFixed(8)));
+const masterDocument={master_sha256:M,colors:Array.from({length:13283},(_,id)=>({id,ref:'fixture',rgb:[0,0,0]}))};
+masterDocument.colors[100]={id:100,ref:'H050_L060_C075',rgb:[...rgb]};
 const make=()=>createPrintAdapterPreparation({
   colourRecord:createColourRecord({hlcAddress:'H050_L060_C075',sourceRgb:rgb}),
   masterSha256:M,atlasRowId:100,paths:['4C','ECG'],
@@ -47,7 +49,7 @@ async function runMock(overrides={},editWorker=x=>x){
     Object.defineProperty(globalThis,'crypto',{configurable:true,value:webcrypto});
     globalThis.Worker=FakeWorker;
     const result=await runPrintAdapter4C({
-      preparation:make(),catalog,profileId:'fixture',profileBytes:bytes,
+      preparation:make(),masterDocument,catalog,profileId:'fixture',profileBytes:bytes,
       workerUrl:'fixture-worker',
       ...overrides
     });
@@ -64,7 +66,7 @@ test('worker 4C output is attached, ECG stays untouched and no print approval is
   const {result,didTerminate,sha}=await runMock();
   assert.equal(didTerminate,true);
   assert.equal(result.status,'ICC_4C_CALCULATED_NOT_PROOFED');
-  assert.equal(result.source.identity_status,'DECLARED_REQUIRES_MASTER_LOOKUP');
+  assert.equal(result.source.identity_status,'MASTER_ROW_RGB_CROSSCHECK_PASS');
   const c=result.production_paths.find(p=>p.path_id==='4C');
   const e=result.production_paths.find(p=>p.path_id==='ECG');
   assert.equal(c.output_profile_sha256,sha);
@@ -72,7 +74,7 @@ test('worker 4C output is attached, ECG stays untouched and no print approval is
   assert.equal(c.device_value_encoding,'UINT16_CMYK');
   assert.deepEqual(c.channel_order,['C','M','Y','K']);
   assert.equal(c.calculation_evidence.second_binding.status,'NOT_PROVIDED');
-  assert.equal(c.calculation_evidence.source_identity_verified,false);
+  assert.equal(c.calculation_evidence.source_identity_verified,true);
   assert.equal(c.delta_e00,null);
   assert.equal(c.predicted_lab,null);
   assert.equal(c.measurement_status,'NOT_MEASURED');
@@ -129,4 +131,15 @@ test('rejects a forged ECG approval or stale device output in a parallel branch'
   const stale=JSON.parse(JSON.stringify(make()));
   stale.production_paths[1].device_values=[1,2,3,4,5,6,7];
   await assert.rejects(runMock({preparation:stale}),/Every path must start/);
+});
+
+test('real master crosscheck rejects false HLC address, master row and RGB context',async()=>{
+  const forged=JSON.parse(JSON.stringify(make()));
+  forged.source.hlc='H001_L001_C001';
+  await assert.rejects(runMock({preparation:forged}),/HLC row or original RGB/);
+  const wrong=JSON.parse(JSON.stringify(make()));
+  wrong.source.rgb8=[1,2,3];
+  await assert.rejects(runMock({preparation:wrong}),/HLC row or original RGB/);
+  const altered={...masterDocument,master_sha256:'a'.repeat(64)};
+  await assert.rejects(runMock({masterDocument:altered}),/Master metadata/);
 });
