@@ -1,0 +1,57 @@
+{
+  "format": "ATLAS_CLARUS_OPEN_DCM_PRINT_ADAPTER",
+  "version": "0.1.0",
+  "job_name": "DEMO ONLY: reference handoff for H285_L025_C065",
+  "status": "PREPARATION_ONLY",
+  "source": {
+    "system": "ATLAS Clarus",
+    "atlas_row_id": 10519,
+    "hlc": "H285_L025_C065",
+    "master_sha256": "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4",
+    "rgb8": [
+      0,
+      55,
+      157
+    ],
+    "colour_space": "sRGB",
+    "source_profile_id": null,
+    "identity_status": "DECLARED_REQUIRES_MASTER_LOOKUP"
+  },
+  "topology": "PARALLEL_FROM_SAME_FROZEN_REFERENCE",
+  "production_paths": [
+    {
+      "path_id": "4C",
+      "source_atlas_row_id": 10519,
+      "input_from_path": null,
+      "expected_device_space": "CMYK",
+      "output_profile_sha256": null,
+      "rendering_intent": null,
+      "black_point_compensation": null,
+      "printing_condition": "example condition only; not verified",
+      "substrate": "example substrate only; not verified",
+      "calculation_status": "NOT_CALCULATED",
+      "device_values": null,
+      "predicted_lab": null,
+      "delta_e00": null,
+      "measurement_status": "NOT_MEASURED",
+      "production_approval": "NOT_GRANTED"
+    },
+    {
+      "path_id": "ECG",
+      "source_atlas_row_id": 10519,
+      "input_from_path": null,
+      "expected_device_space": "7CLR",
+      "output_profile_sha256": null,
+      "rendering_intent": null,
+      "black_point_compensation": null,
+      "printing_condition": null,
+      "substrate": null,
+      "calculation_status": "NOT_CALCULATED",
+      "device_values": null,
+      "predicted_lab": null,
+      "delta_e00": null,
+      "measurement_status": "NOT_MEASURED",
+      "production_approval": "NOT_GRANTED"
+    }
+  ]
+}
