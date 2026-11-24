@@ -63,6 +63,8 @@ with tempfile.TemporaryDirectory(prefix='atlas-icc-eci-') as tmp:
     subprocess.run([sys.executable,str(script)],env=env,check=True)
     independent=Path(__file__).with_name('argyll_independent_reference.py')
     subprocess.run([sys.executable,str(independent)],env=env,check=True)
+    rip=Path(__file__).with_name('rip_handoff.py')
+    subprocess.run([sys.executable,str(rip)],env=env,check=True)
 
 print('PASS original ECI profile + 3 master rows + LittleCMS/Pillow + independent ArgyllCMS check.',flush=True)
-print('LIMIT: independent colour algorithm, RIP handoff and physical print proof NOT tested.',flush=True)
+print('LIMIT: 8-bit software RIP only; 16-bit raster, production RIP and physical print proof NOT tested.',flush=True)
