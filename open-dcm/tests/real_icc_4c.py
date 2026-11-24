@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Live ICC 4C separation test: actual lcms-wasm Worker vs system LittleCMS/Pillow.
+"""Real browser ICC 4C separation vs Pillow ImageCms (system LittleCMS).
 
-This is a second binding to the LittleCMS family, not independent colour science.
-The test profile is installed by the OS, NOT vendored or committed. No printer
-driver, RIP, production profile qualification, substrate simulation or proof.
+Reads an OS-installed or transient official ICC profile from a local file.
+NO ICC file is committed or redistributed. The two bindings use LittleCMS,
+so this is an interoperability test, NOT an independent ICC algorithm.
+Checks three real row/label/RGB identities against the checked-in browser
+projection of the frozen 13,283-row ATLAS master.
 """
 from pathlib import Path
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -20,22 +22,48 @@ from build_lcms import worker_source
 PROFILE=Path(os.environ.get('ATLAS_TEST_CMYK_ICC',
                            '/usr/share/color/icc/ghostscript/default_cmyk.icc'))
 if not PROFILE.is_file():
-    raise SystemExit('Real ICC regression requires the Ghostscript system CMYK profile')
+    raise SystemExit('Real ICC regression requires a locally supplied CMYK profile')
 raw=PROFILE.read_bytes()
 assert raw[12:16]==b'prtr' and raw[16:20]==b'CMYK'
 sha=hashlib.sha256(raw).hexdigest()
-profile_name='Ghostscript CMYK system profile (TEST ONLY)'
+expected_sha=os.environ.get('ATLAS_EXPECT_PROFILE_SHA256')
+if expected_sha and sha != expected_sha:
+    raise AssertionError('Wrong original ICC profile digest; test must fail closed')
+profile_name=os.environ.get('ATLAS_ICC_LABEL','Ghostscript CMYK system profile (TEST ONLY)')
 src=ImageCms.createProfile('sRGB')
 dst=ImageCms.getOpenProfile(str(PROFILE))
 transform=ImageCms.buildTransformFromOpenProfiles(
     src,dst,'RGB','CMYK',renderingIntent=1,flags=int(ImageCms.Flags.NOOPTIMIZE))
-samples=[(232,104,42),(0,55,157),(128,128,128)]
-expected=[list(ImageCms.applyTransform(Image.new('RGB',(1,1),rgb),transform).getpixel((0,0)))
-          for rgb in samples]
-print('Real ICC test fixture: bytes=',len(raw),'sha256=',sha, 'system lcms=',ImageCms.core.littlecms_version)
+
+master=json.loads((ROOT/'hover-library/data/colors.json').read_text())
+assert master['master_sha256']=='8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4'
+assert len(master['colors'])==13283
+known=[
+    (1737,'H050_L060_C080',[236,101,33]),
+    (10519,'H285_L025_C065',[0,55,157]),
+    (9536,'H255_L045_C040',[15,114,172])
+]
+for row_id,hlc,rgb in known:
+    c=master['colors'][row_id]
+    assert c['id']==row_id and c['ref']==hlc and c['rgb']==rgb, (row_id,c)
+expected=[list(ImageCms.applyTransform(Image.new('RGB',(1,1),tuple(rgb)),transform)
+              .getpixel((0,0))) for _,_,rgb in known]
+print('ICC source bytes=',len(raw),'sha256=',sha,
+      'binding=',ImageCms.core.littlecms_version,flush=True)
+print('MASTER row/HLC/RGB crosscheck: PASS 3/3',flush=True)
 
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self,*args):pass
+    def do_GET(self):
+        if self.path=='/__icc_test_profile__':
+            self.send_response(200)
+            self.send_header('Content-Type','application/vnd.iccprofile')
+            self.send_header('Content-Length',str(len(raw)))
+            self.send_header('Cache-Control','no-store')
+            self.end_headers()
+            self.wfile.write(raw)
+        else:
+            super().do_GET()
 
 http=ThreadingHTTPServer(('127.0.0.1',0),partial(Quiet,directory=str(ROOT)))
 Thread(target=http.serve_forever,daemon=True).start()
@@ -48,11 +76,13 @@ try:
         page.goto('http://127.0.0.1:'+str(http.server_port)+'/open-dcm/',
                   wait_until='load',timeout=30000)
         page.evaluate("""source => {
-          const s=document.createElement('script');s.id='atlas-print-worker-source';
-          s.type='application/json';s.textContent=JSON.stringify(source);
+          const s=document.createElement('script');
+          s.id='atlas-print-worker-source';
+          s.type='application/json';
+          s.textContent=JSON.stringify(source);
           document.body.appendChild(s);
         }""",worker_source())
-        for rgb,exp in zip(samples,expected):
+        for (row_id,hlc,rgb),exp in zip(known,expected):
             outcome=page.evaluate("""async args => {
               const [{createColourRecord},{createPrintAdapterPreparation},{runPrintAdapter4C}]=
                 await Promise.all([
@@ -60,21 +90,30 @@ try:
                   import('/open-dcm/print-adapter-contract.mjs'),
                   import('/open-dcm/print-adapter-icc-4c.mjs')
                 ]);
+              const masterDocument=await fetch('/hover-library/data/colors.json')
+                .then(r=>{if(!r.ok)throw Error('Master fetch failed');return r.json();});
+              const response=await fetch('/__icc_test_profile__');
+              if(!response.ok)throw Error('Original ICC loading failed');
+              const profileBytes=new Uint8Array(await response.arrayBuffer());
               const prepared=createPrintAdapterPreparation({
                 colourRecord:createColourRecord({
-                  hlcAddress:'H050_L060_C075',sourceRgb:args.rgb
+                  hlcAddress:args.hlc,sourceRgb:args.rgb
                 }),
-                masterSha256:'8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4',
-                atlasRowId:100,paths:['4C','ECG'],
-                contextByPath:{'4C':{substrate:'test-only substrate',printing_condition:args.condition}}
+                masterSha256:args.masterSha256,
+                atlasRowId:args.row_id,paths:['4C','ECG'],
+                contextByPath:{'4C':{
+                  substrate:'Premium coated paper — declared, not measured',
+                  printing_condition:args.condition
+                }}
               });
               const catalog={schema:'ATLAS_LIBRARY_ICC_CATALOG_V1',profiles:{
-                example:{device_class:'prtr',output_path:'4C',beta:false,
-                  sha256:args.sha,bytes:args.bytes.length,printing_condition:args.condition}
+                actual:{device_class:'prtr',output_path:'4C',beta:false,
+                  sha256:args.sha,bytes:profileBytes.length,
+                  printing_condition:args.condition}
               }};
               return await runPrintAdapter4C({
-                preparation:prepared,catalog,profileId:'example',
-                profileBytes:new Uint8Array(args.bytes),
+                preparation:prepared,masterDocument,catalog,profileId:'actual',
+                profileBytes,
                 intent:'Relative colorimetric',bpc:false,tolerance8:3,
                 secondBinding:{
                   binding:'Pillow ImageCms / system LittleCMS',
@@ -82,23 +121,25 @@ try:
                   deviceCmyk8:args.expected,intent:'Relative colorimetric',bpc:false
                 }
               });
-            }""",{"rgb":list(rgb),"expected":exp,"bytes":list(raw),"sha":sha,
+            }""",{"rgb":rgb,"hlc":hlc,"row_id":row_id,"expected":exp,
+                   "sha":sha,"masterSha256":master['master_sha256'],
                    "condition":profile_name})
             c=outcome['production_paths'][0]
             e=outcome['production_paths'][1]
             assert c['calculation_evidence']['second_binding']['status']=='PASS',c
+            assert c['calculation_evidence']['source_identity_verified'] is True
+            assert outcome['source']['identity_status']=='MASTER_ROW_RGB_CROSSCHECK_PASS'
             assert len(c['device_values'])==4 and all(0<=v<=65535 for v in c['device_values'])
             assert c['calculation_evidence']['profile_sha256']==sha
             assert c['predicted_lab'] is None and c['delta_e00'] is None
             assert c['production_approval']=='NOT_GRANTED'
             assert e['device_values'] is None and e['calculation_status']=='NOT_CALCULATED'
-            assert outcome['source']['identity_status']=='DECLARED_REQUIRES_MASTER_LOOKUP'
             assert outcome['status']=='ICC_4C_CALCULATED_NOT_PROOFED'
-            print('PASS actual LittleCMS CMYK16',rgb,c['device_values'],
-                  'Pillow CMYK8',exp,'diff',
-                  c['calculation_evidence']['second_binding']['absolute_channel_errors'])
+            print('PASS ICC CMYK16',row_id,hlc,rgb,c['device_values'],
+                  'Pillow CMYK8',exp,'8bit channel errors',
+                  c['calculation_evidence']['second_binding']['absolute_channel_errors'],flush=True)
         assert not errors,errors
         browser.close()
 finally:
     http.shutdown()
-print('PASS 4C ICC integration: real-worker calculations, matched secondary binding; no device handoff or physical proof')
+print('PASS actual worker and Pillow binding; no printer control or physical proof',flush=True)
