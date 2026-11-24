@@ -18,7 +18,7 @@ assert PROFILE.is_file() and RESULTS.is_file()
 exe=shutil.which('xicclu')
 if not exe: raise SystemExit('ARGYLL UNAVAILABLE: cannot claim independent CMM verification')
 rows=json.loads(RESULTS.read_text())['rows']
-assert len(rows)==3
+assert len(rows)==(100 if os.environ.get('ATLAS_EXTENDED_100')=='1' else 3)
 
 def srgb_to_lab_d50(rgb):
     if len(rgb)!=3 or any(not isinstance(x,int) or x<0 or x>255 for x in rgb):
