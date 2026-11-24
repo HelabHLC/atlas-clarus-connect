@@ -43,6 +43,13 @@ known=[
     (10519,'H285_L025_C065',[0,55,157]),
     (9536,'H255_L045_C040',[15,114,172])
 ]
+if os.environ.get('ATLAS_EXTENDED_100')=='1':
+    selection=json.loads(Path(__file__).with_name('v02-selection-100.json').read_text())
+    assert selection['master_sha256']==master['master_sha256']
+    assert len(selection['rows'])==100 and len({r['id'] for r in selection['rows']})==100
+    for r in selection['rows']:
+        assert master['colors'][r['id']]['lab']==r['lab']
+    known=[(r['id'],r['hlc'],r['rgb']) for r in selection['rows']]
 for row_id,hlc,rgb in known:
     c=master['colors'][row_id]
     assert c['id']==row_id and c['ref']==hlc and c['rgb']==rgb, (row_id,c)
@@ -51,7 +58,7 @@ expected=[list(ImageCms.applyTransform(Image.new('RGB',(1,1),tuple(rgb)),transfo
 worker_results=[]
 print('ICC source bytes=',len(raw),'sha256=',sha,
       'binding=',ImageCms.core.littlecms_version,flush=True)
-print('MASTER row/HLC/RGB crosscheck: PASS 3/3',flush=True)
+print('MASTER row/HLC/RGB crosscheck: PASS',len(known),'/',len(known),'',flush=True)
 
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self,*args):pass
