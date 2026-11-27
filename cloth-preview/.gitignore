@@ -1,0 +1,4 @@
+.openai/
+dist/
+assets/*
+!assets/README.md

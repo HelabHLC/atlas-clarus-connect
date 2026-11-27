@@ -1,0 +1,166 @@
+{
+  "schema": "atlas-cloth-model-presets-v1",
+  "source_url": "https://people.csail.mit.edu/klbouman/pw/projects/materialproperties/dataset.html",
+  "download_url": "https://people.csail.mit.edu/klbouman/pw/data/materialproperties/material_properties.zip",
+  "source_zip_sha256": "99021ff230ac8f08b87e111ff5d30fc4fc23303c10a1ffa1f1ac05eb934bc01d",
+  "workbook_sha256": "94f71fbd0dbd67b108f0472f73a5b1c048b2917d3403f7863c981faaa84575c1",
+  "citation": "Bouman, Xiao, Battaglia, Freeman. Estimating the Material Properties of Fabric from Video. ICCV 2013.",
+  "method": "Arithmetic mean within each fabric, then equal-weight mean across selected fabric IDs. No population-average claim.",
+  "limitations": [
+    "No identified satin weave. Silk label is a fibre/sample description.",
+    "No tensile curves or stretch measurements in this source. Stretch/shear compliances are chosen visual-model assumptions in m/N.",
+    "Strip EI (lbf in²) is not sheet bending rigidity. Strip width/test geometry are not established; no direct SI sheet conversion is used.",
+    "Bend compliance uses an uncalibrated inverse proxy index against the selected silk baseline.",
+    "Range is observed spread of fabric means, not a confidence interval. Directional information was not retained by the mean.",
+    "Web summary image reports a different area weight for fabric 4; downloaded xlsx values are used.",
+    "No validation against the user’s physical fabric or against CLO."
+  ],
+  "materials": [
+    {
+      "id": "silk",
+      "label": "Seide · leichte Referenzstoffe",
+      "fabric_ids": [
+        3,
+        4
+      ],
+      "sample_count": 4,
+      "fabric_count": 2,
+      "gsm": 78.22875258526936,
+      "thickness_mm": 0.14287499999999997,
+      "bending_strip_EI_lbf_in2": 0.00925,
+      "observed_gsm_range": [
+        66.9681276748178,
+        89.48937749572092
+      ],
+      "stretch_status": "ASSUMED_NOT_MEASURED",
+      "warp_compliance": 0.02,
+      "weft_compliance": 0.04,
+      "shear_compliance": 0.15,
+      "measurements": [
+        {
+          "fabric_id": 3,
+          "sample": "a",
+          "bending_lbf_in2": 0.007,
+          "thickness_in": 0.005,
+          "area_weight_oz_yd2": 1.9574263904034896,
+          "confidence_rating": 3.0
+        },
+        {
+          "fabric_id": 3,
+          "sample": "b",
+          "bending_lbf_in2": 0.008,
+          "thickness_in": 0.005,
+          "area_weight_oz_yd2": 1.992825862517843,
+          "confidence_rating": 3.0
+        },
+        {
+          "fabric_id": 4,
+          "sample": "a",
+          "bending_lbf_in2": 0.01,
+          "thickness_in": 0.006,
+          "area_weight_oz_yd2": 2.583798789647521,
+          "confidence_rating": 2.0
+        },
+        {
+          "fabric_id": 4,
+          "sample": "b",
+          "bending_lbf_in2": 0.012,
+          "thickness_in": 0.0065,
+          "area_weight_oz_yd2": 2.6949155381823258,
+          "confidence_rating": 2.0
+        }
+      ],
+      "bending_index_vs_silk": 1.0,
+      "bend_compliance": 0.03
+    },
+    {
+      "id": "cotton",
+      "label": "Baumwolle · Referenzstoffe",
+      "fabric_ids": [
+        5,
+        10
+      ],
+      "sample_count": 4,
+      "fabric_count": 2,
+      "gsm": 119.4056666208638,
+      "thickness_mm": 0.2032,
+      "bending_strip_EI_lbf_in2": 0.01625,
+      "observed_gsm_range": [
+        99.648116935385,
+        139.16321630634258
+      ],
+      "stretch_status": "ASSUMED_NOT_MEASURED",
+      "warp_compliance": 0.02,
+      "weft_compliance": 0.04,
+      "shear_compliance": 0.15,
+      "measurements": [
+        {
+          "fabric_id": 5,
+          "sample": "a",
+          "bending_lbf_in2": 0.01,
+          "thickness_in": 0.0075,
+          "area_weight_oz_yd2": 3.1194482930751595,
+          "confidence_rating": 1.0
+        },
+        {
+          "fabric_id": 5,
+          "sample": "b",
+          "bending_lbf_in2": 0.01,
+          "thickness_in": 0.0075,
+          "area_weight_oz_yd2": 2.7585000995509157,
+          "confidence_rating": 1.0
+        },
+        {
+          "fabric_id": 10,
+          "sample": "a",
+          "bending_lbf_in2": 0.02,
+          "thickness_in": 0.0085,
+          "area_weight_oz_yd2": 4.098869585552237,
+          "confidence_rating": 2.0
+        },
+        {
+          "fabric_id": 10,
+          "sample": "b",
+          "bending_lbf_in2": 0.025,
+          "thickness_in": 0.0085,
+          "area_weight_oz_yd2": 4.109957924263675,
+          "confidence_rating": 2.0
+        }
+      ],
+      "bending_index_vs_silk": 1.7567567567567568,
+      "bend_compliance": 0.017076923076923076
+    },
+    {
+      "id": "denim",
+      "label": "Denim · einzelner Referenzstoff",
+      "fabric_ids": [
+        13
+      ],
+      "sample_count": 1,
+      "fabric_count": 1,
+      "gsm": 296.6752904052201,
+      "thickness_mm": 0.6096,
+      "bending_strip_EI_lbf_in2": 0.025,
+      "observed_gsm_range": [
+        296.6752904052201,
+        296.6752904052201
+      ],
+      "stretch_status": "ASSUMED_NOT_MEASURED",
+      "warp_compliance": 0.02,
+      "weft_compliance": 0.04,
+      "shear_compliance": 0.15,
+      "measurements": [
+        {
+          "fabric_id": 13,
+          "sample": "a",
+          "bending_lbf_in2": 0.025,
+          "thickness_in": 0.024,
+          "area_weight_oz_yd2": 8.75,
+          "confidence_rating": 2.0
+        }
+      ],
+      "bending_index_vs_silk": 2.702702702702703,
+      "bend_compliance": 0.011099999999999999
+    }
+  ]
+}
