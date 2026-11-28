@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Reproduce the pinned FOGRA58 ICC roundtrip dataset.
+"""Reproduce the pinned FOGRA58 ICC roundtrip and verify Lab inputs against the master.
 
-This verifies software calculation consistency only. It does not establish
-physical printability or independently source the Lab values in the fixture.
+This verifies data lineage and software calculation consistency only. It does
+not establish physical printability or production approval.
 """
 from __future__ import annotations
 
@@ -22,6 +22,7 @@ EXPECTED_CSV_SHA256 = "cc0bd536bf500faebaac47e28ef37db8eb836d566b9d36c14b750467e
 MASTER_SHA256 = "8283ab91b10f89ac758d09ecf5fb4d6343536600a06dd468b1cc1ecf4ec747c4"
 EXPECTED_ROWS = 13283
 ROUNDING_TOLERANCE = 0.00001
+LAB_MASTER_TOLERANCE = 0.0000051
 
 
 def sha256(data: bytes) -> str:
@@ -115,6 +116,26 @@ def main() -> None:
     if len(master_refs) != EXPECTED_ROWS or set(references) != master_refs:
         raise ValueError("CSV references do not exactly cover the ATLAS master")
 
+    master_by_ref = {colour["ref"]: colour for colour in master["colors"]}
+    master_lab_mismatches = 0
+    maximum_master_lab_component_difference = 0.0
+    for row in rows:
+        reference = row["ATLAS_Referenz"]
+        source_lab = tuple(float(row[key]) for key in ("Lab_L", "Lab_a", "Lab_b"))
+        master_lab = tuple(float(value) for value in master_by_ref[reference]["lab"])
+        if len(master_lab) != 3 or any(not math.isfinite(value) for value in master_lab):
+            raise ValueError(f"Invalid Lab triplet in master for {reference}")
+        maximum_difference = max(abs(source - master_value) for source, master_value in zip(source_lab, master_lab))
+        maximum_master_lab_component_difference = max(maximum_master_lab_component_difference, maximum_difference)
+        if maximum_difference > LAB_MASTER_TOLERANCE:
+            master_lab_mismatches += 1
+    if master_lab_mismatches:
+        raise ValueError(
+            f"CSV Lab inputs do not match the freieFarbe-derived ATLAS master: "
+            f"{master_lab_mismatches} rows; max component difference="
+            f"{maximum_master_lab_component_difference:.8f}; tolerance={LAB_MASTER_TOLERANCE:.8f}"
+        )
+
     lab_profile = ImageCms.createProfile("LAB")
     rgb_profile = ImageCms.getOpenProfile(str(args.profile))
     source_lab: list[tuple[float, float, float]] = []
@@ -165,6 +186,9 @@ def main() -> None:
         "csv_sha256": EXPECTED_CSV_SHA256,
         "rgb_mismatches": rgb_mismatches,
         "lab_mismatches": lab_mismatches,
+        "master_lab_mismatches": master_lab_mismatches,
+        "maximum_master_lab_component_difference": round(maximum_master_lab_component_difference, 8),
+        "master_lab_source": "freieFarbe-derived ATLAS master",
         "delta_e00_mismatches": delta_e_mismatches,
         "maximum_delta_e00_difference": round(maximum_delta_e_difference, 8),
         "pillow": Image.__version__,
