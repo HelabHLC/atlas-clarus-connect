@@ -39,6 +39,15 @@ def main():
             worker=json.dumps((HERE/'byos-lab-worker.js').read_text()).replace('<','\\u003c')
             s=s[:end]+'<script id="rc36-lab-worker-source" type="application/json">'+worker+'</script><script>\n'+scripts+'\n</script>'+s[end:]
         path.write_text(s)
+    module=(HERE/'wide-gamut-integration.js').read_text()
+    (assets/'rc36-wide-gamut-integration.js').write_text(module)
+    index=a.out/'index.html'
+    html=index.read_text()
+    marker='<script id="rc36-lab-worker-source" type="application/json">'
+    if html.count(marker)!=1:raise ValueError('Missing unique BYOS bootstrap')
+    if '</script' in module.lower():raise ValueError('Unsafe inline module')
+    index.write_text(html.replace(marker,'<script>\n'+module+'\n</script>'+marker,1))
+    original.update(wide_gamut='LOCAL_PINNED_IMPORT_ONLY',wide_gamut_expected_count=20115,wide_gamut_data_bundled=False,wide_gamut_icc_gate='PENDING')
     original.update(version='0.2.0-rc36-public-byos-staging',status='BYOS_STAGING_ONLY',deployment_allowed=False,profile_bank_clearance='NOT_ESTABLISHED',local_output_profile_registry='STRUCTURAL_PREFLIGHT_ONLY',research_module='0.6.0-beta.2',research_handoff='STANDALONE_NO_SHARED_IDENTITY',icc_conversion='LAB_D50_CMYK16_STAGING_UNVERIFIED',physical_proof='NOT_MEASURED')
     (a.out/'BUNDLE_MANIFEST.json').write_text(json.dumps(original,indent=2)+'\n')
     paths=sorted(p for p in a.out.rglob('*') if p.is_file() and p.name!='SHA256SUMS.txt')
