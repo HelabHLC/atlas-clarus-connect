@@ -1,0 +1,32 @@
+name: RC36 BYOS staging integration
+on:
+  push:
+    branches: [integration/rc36]
+    paths: ['rc36/byos-*', 'rc36/prepare_byos_staging.py', 'rc36/test-byos.mjs', '.github/workflows/rc36-byos-staging.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Actual SHA-256 and local registry tests
+        run: node --test rc36/test-byos.mjs
+      - name: Build staging only, never upload runtime
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v0.2.0-brand-palette-0.1.7 --pattern 'ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip' --dir inputs
+          python3 rc36/prepare_candidate.py --base inputs/ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip --out candidate
+          python3 rc36/prepare_byos_staging.py --candidate candidate --out byos
+          (cd byos && sha256sum -c SHA256SUMS.txt)
+          node --check byos/assets/rc36-open-dcm-card.js
+          node --check byos/assets/rc36-byos-profile-registry.js
+          node --check byos/assets/rc36-byos-profile-ui.js
+          cmp byos/assets/atlas-data.js candidate/assets/atlas-data.js
+          cmp byos/research/index.html research/atlas-clarus-research-beta-0.6/index.html
