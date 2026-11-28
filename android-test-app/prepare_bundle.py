@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 from urllib.request import urlopen
 from build_colour_id_locale import localize
 
@@ -55,13 +56,34 @@ def colour_id_source():
 
 with tempfile.TemporaryDirectory(prefix='atlas-android-bundle-') as tmp:
     output = Path(tmp)
-    subprocess.run([sys.executable, str(ROOT / 'browser-bundle/build_bundle.py'),
-                    '--output-dir', str(output)], check=True, stdout=subprocess.DEVNULL)
-    archive = output / f'ATLAS_Clarus_Browser_Bundle_v{EXPECTED_BUNDLE_VERSION}.zip'
-    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
-    if digest != EXPECTED_ZIP_SHA256:
-        raise SystemExit(f'Bundle checksum changed: {digest}; review the payload and allocate a new Android version before updating the pin.')
+    pinned_archive = os.environ.get('ATLAS_ANDROID_BUNDLE_ARCHIVE')
+    if pinned_archive:
+        archive = Path(pinned_archive)
+        if not archive.is_file():
+            raise SystemExit(f'Pinned Android bundle archive does not exist: {archive}')
+        digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+        if digest != EXPECTED_ZIP_SHA256:
+            raise SystemExit(f'Pinned Android bundle checksum changed: {digest}')
+        with zipfile.ZipFile(archive) as bundle_zip:
+            if bundle_zip.testzip() is not None:
+                raise SystemExit('Pinned Android bundle archive is corrupt')
+            bundle_zip.extractall(output)
+    else:
+        subprocess.run([sys.executable, str(ROOT / 'browser-bundle/build_bundle.py'),
+                        '--output-dir', str(output)], check=True, stdout=subprocess.DEVNULL)
+        archive = output / f'ATLAS_Clarus_Browser_Bundle_v{EXPECTED_BUNDLE_VERSION}.zip'
+        if not archive.is_file():
+            raise SystemExit(f'Expected pinned Android bundle was not built: {archive.name}')
+        digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+        if digest != EXPECTED_ZIP_SHA256:
+            raise SystemExit(f'Bundle checksum changed: {digest}; review the payload and allocate a new Android version before updating the pin.')
+        with zipfile.ZipFile(archive) as bundle_zip:
+            if bundle_zip.testzip() is not None:
+                raise SystemExit('Built Android bundle archive is corrupt')
+            bundle_zip.extractall(output)
     source = output / 'atlas-clarus-browser-bundle'
+    if not source.is_dir():
+        raise SystemExit('Pinned Android archive is missing atlas-clarus-browser-bundle/')
     if TARGET.exists():
         shutil.rmtree(TARGET)
     shutil.copytree(source, TARGET)

@@ -6,6 +6,7 @@
   <meta name="color-scheme" content="dark">
   <title>ATLAS Clarus — Browser Bundle</title>
   <link rel="stylesheet" href="assets/app.css">
+  <link rel="stylesheet" href="assets/colour-reduction.css">
   <style>.library-toolbar{align-items:end}.library-toolbar label{display:grid;gap:6px}.library-toolbar label span{font-size:.66rem;letter-spacing:.09em;color:var(--muted)}.library-toolbar .search-field{flex:1}.library-toolbar .search-field input{width:100%}.connection-intro{max-width:850px;color:var(--muted);font-size:1rem;line-height:1.65}.workflow-card em{display:block;margin-top:14px;color:var(--accent);font-size:.66rem;letter-spacing:.08em;font-style:normal}.connection-title{display:flex;justify-content:space-between;align-items:start;gap:20px}.connection-status{border:1px solid #806c35;color:var(--warn);border-radius:999px;padding:8px 12px;font-size:.66rem;letter-spacing:.08em}.connection-explain{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}.connection-explain article{background:#0b1018;border:1px solid var(--line);border-radius:9px;padding:17px}.connection-explain span{color:var(--accent);font-size:.68rem;letter-spacing:.1em;font-weight:700}.connection-explain p{color:var(--muted);line-height:1.55}.flow-label{margin:25px 0 10px}@media(max-width:700px){.library-toolbar label,.library-toolbar .search-field{width:100%}.connection-explain{grid-template-columns:1fr}.connection-title{flex-direction:column}}</style>
   <style>.palette-toggle{margin-left:auto;padding:8px 12px;font-size:.7rem;letter-spacing:.08em}.palette-toggle b{display:inline-grid;place-items:center;min-width:21px;height:21px;margin-left:6px;border-radius:99px;background:var(--accent);color:#081006}.palette-drawer{position:fixed;z-index:50;top:0;right:0;width:min(500px,100vw);height:100vh;padding:26px;background:#0d131c;border-left:1px solid var(--line);box-shadow:-30px 0 70px #0009;transform:translateX(105%);transition:transform .25s ease;overflow:auto}.palette-drawer.open{transform:translateX(0)}.drawer-head{display:flex;justify-content:space-between;align-items:start}.drawer-head h2{margin:0}.drawer-head button{font-size:1.4rem;padding:4px 10px}.palette-drawer>p{color:var(--muted);line-height:1.55}.palette-manager{display:grid;gap:10px;padding:14px;background:#0b1018;border:1px solid var(--line);border-radius:10px}.palette-manager label{display:grid;gap:5px;color:var(--muted);font-size:.7rem;letter-spacing:.08em}.palette-manager input,.palette-manager select{width:100%;font:inherit;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px;border-radius:7px}.palette-manager-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.palette-manager-actions button{padding:8px 5px;font-size:.72rem}.drawer-palette-list{display:grid;gap:7px;margin:18px 0}.drawer-item{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);padding:8px;border-radius:8px}.drawer-item.dragging{opacity:.45}.drawer-item i{width:38px;height:38px;border-radius:6px}.drawer-item b,.drawer-item small{display:block}.drawer-item small{color:var(--muted)}.drawer-item-actions{display:flex;gap:4px}.drawer-item-actions button{padding:5px 8px}.drawer-exports{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}.export-status{min-height:36px;color:var(--accent);font-size:.78rem;line-height:1.45}.selection-actions{grid-template-columns:1fr 1fr}.selection-actions [data-add-palette]{grid-column:1/-1;background:var(--accent);color:#081006;font-weight:700}@media(max-width:900px){.offline{display:none}.palette-toggle{margin-left:auto}}@media(max-width:480px){.palette-manager-actions{grid-template-columns:1fr 1fr}.palette-drawer{padding:18px}.drawer-item-actions button{padding:5px 6px}}</style>
 </head>
@@ -13,7 +14,7 @@
   <header class="topbar">
     <a class="brand" href="#home"><span class="brand-mark"></span><span>ATLAS <b>CLARUS</b></span></a>
     <nav id="primary-nav" aria-label="Primary navigation">
-      <a href="#picker">Image Picker</a><a href="#library">Hover Library</a><a href="#wheel">Identity Wheel</a><a href="#print">Print handoff</a><a href="#appearance">Appearance</a><a href="#workflows">App connections</a><a href="#faq">FAQ</a><a href="#credits">Credits</a><a href="#about">About</a>
+      <a href="#picker">Image Picker</a><a href="#library">Hover Library</a><a href="#multi-gamut">Multi-Gamut</a><a href="#wheel">Identity Wheel</a><a href="#print">Print handoff</a><a href="#appearance">Appearance</a><a href="#workflows">App connections</a><a href="#colour-handoff">Colour Handoff</a><a href="#colour-projects">Colour Projects</a><a href="#faq">FAQ</a><a href="#credits">Credits</a><a href="#about">About</a>
     </nav>
     <button id="menu-toggle" class="menu-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Open navigation"><span></span><span></span><span></span></button><button id="palette-toggle" class="palette-toggle">PALETTE <b id="palette-count">0</b></button><span class="offline">OFFLINE · LOCAL</span>
   </header>
@@ -54,6 +55,20 @@
       <div class="library-layout"><div><div id="library-status" class="status"></div><div id="colour-grid" class="colour-grid"></div><div class="pager"><button id="prev-page">← Previous</button><span id="page-info"></span><button id="next-page">Next →</button></div></div><aside id="selection" class="selection"><p>Select a colour to inspect its frozen reference identity.</p></aside></div>
     </section>
 
+        <section id="multi-gamut" class="view">
+      <div class="section-head"><div><p class="eyebrow">MULTI-GAMUT DESIGNER · EXPERIMENTAL</p><h2>ICC Library Coverage</h2></div></div>
+      <p class="boundary">Import the verified TextileRGB/FOGRA58 roundtrip CSV locally. This is a colourimetric computation, not evidence of physical textile printability.</p>
+      <div class="toolbar library-toolbar">
+        <label>FOGRA58 CSV <input id="multi-gamut-file" type="file" accept=".csv,text/csv"></label>
+        <label>ΔE00 limit <input id="multi-gamut-threshold" type="number" value="1" min="0" max="100" step="0.1"></label>
+        <label>ATLAS reference <input id="multi-gamut-reference" type="search" placeholder="H050_L060_C075"></label>
+      </div>
+      <details><summary>Optional spectral reference layer (separate from ICC)</summary>
+        <p>Import a provenance-checked ATLAS_SPECTRAL_REFERENCE_V1 JSON dataset. No remission values are generated from RGB, Lab or ICC.</p>
+        <label>Spectral JSON <input id="multi-gamut-spectral-file" type="file" accept=".json,application/json"></label>
+        <p id="multi-gamut-spectral-status" role="status">No verified spectral dataset loaded.</p>
+      </details><p id="multi-gamut-status" role="status"></p><div id="multi-gamut-results" class="status"></div>
+    </section>
     <section id="wheel" class="view">
       <div class="section-head"><div><p class="eyebrow">UNDERSTAND</p><h2>Colour Identity Wheel</h2></div><div class="logic-badge">A′ v0.4 LOGIC · FROZEN</div></div>
       <p class="boundary">The wheel locates the selected reference. v0.5 diagnostic fields are descriptive only and do not alter A′ selection or ranking.</p>
@@ -174,7 +189,9 @@
         <article><h3>Colour boundary</h3><p>Reference identity is not physical colour certification. Screen simulations, exports and application values do not constitute a measured production result.</p></article>
       </div>
     </section>
-  </main>
+  <section id="colour-handoff" class="view"><div class="section-head"><div><p class="eyebrow">SOURCE · HISTORY</p><h2>Colour Handoff</h2></div><span class="gate warning">LOCAL PILOT</span></div><p class="lead">Transfer your active palette with original colour decisions and reference history.</p><p id="ch-status" role="status"></p><p id="ch-storage-warning" hidden></p><p id="ch-palette-info"></p><div class="connection-explain"><article><h3>Prepare</h3><label>Basis<select id="ch-basis"><option value="REFERENCE_VALUES_AS_NEW_INPUTS">Atlas references (as new inputs)</option><option value="RECORDED_ORIGINALS">Recorded originals</option></select></label><label>Start<input id="ch-start" type="number" min="1" value="1"></label><label>Count<input id="ch-count" type="number" min="1" max="250" value="1"></label><button id="ch-create">Use active palette</button></article><article><h3>Save or import</h3><label>Open decisions JSON<input id="ch-import" type="file" accept=".json,application/json"></label><button id="ch-save">Save decisions JSON</button><button id="ch-export">Export handoff ZIP</button><div id="ch-drop" tabindex="0">Drop one decisions JSON here</div></article><article><h3>Verify return</h3><label>Returned ASE and two JSON companions<input id="ch-return-files" type="file" multiple accept=".ase,.json"></label><label><input id="ch-srgb" type="checkbox"> Interpret returned RGB as sRGB</label><button id="ch-return">Verify return</button></article></div><p id="ch-summary"></p><div id="ch-cards"></div><div id="ch-pager" hidden><button id="ch-prev">Previous</button><span id="ch-page"></span><button id="ch-next">Next</button></div></section>
+<section id="colour-projects" class="view"><div class="section-head"><div><p class="eyebrow">COLOUR DECISIONS</p><h2>Colour Projects</h2></div><span class="gate warning">LOCAL PILOT</span></div><p id="cp-status" role="status"></p><p id="cp-storage-warning" hidden></p><p id="cp-backup-status"></p><div class="connection-explain"><article><h3>Projects</h3><label>Choose project<select id="cp-project-list"></select></label><label>New project name<input id="cp-new-name" maxlength="240"></label><button id="cp-new">Create project</button><label>Import project JSON<input id="cp-import" type="file" accept=".json"></label></article><article><h3>Project backup</h3><button id="cp-save">Save project JSON</button><button id="cp-package">Export project ZIP</button><button id="cp-passport">Export colour passport</button><div id="cp-drop" tabindex="0">Drop one project JSON here</div></article></div><div id="cp-workspace" hidden><p id="cp-project-info"></p><label>Project name<input id="cp-name" maxlength="240"></label><button id="cp-rename">Rename project</button><label>Project note<textarea id="cp-note"></textarea></label><button id="cp-note-save">Save note</button><h3>Colour sets</h3><label>Set name<input id="cp-set-name" maxlength="240"></label><button id="cp-from-handoff">Add from Colour Handoff</button><label>Import colour decisions JSON<input id="cp-add-json" type="file" accept=".json"></label><label>Colour set<select id="cp-set-list"></select></label><label>Update set from JSON<input id="cp-update-json" type="file" accept=".json"></label><div id="cp-cards"></div><div id="cp-pager"><button id="cp-prev">Previous</button><span id="cp-page"></span><button id="cp-next">Next</button></div><h3>Revision history</h3><ol id="cp-history-list"></ol></div></section>
+</main>
   <aside id="palette-drawer" class="palette-drawer" aria-label="ATLAS Clarus palettes"><div class="drawer-head"><div><p class="eyebrow">LOCAL PALETTE WORKSPACE</p><h2>My Palettes</h2></div><button id="palette-close" aria-label="Close palettes">×</button></div><p>The active palette is shared by Hover and Wheel. Export Clarus JSON as your portable backup; import it to restore the same references and recorded source RGB values. Multiple source colours can share one reference. ASE, GPL, CSS and Tokens transfer reference swatches; use Clarus JSON to retain the source records. Browser storage alone is not a backup.</p><div class="palette-manager"><label>ACTIVE PALETTE<select id="palette-select"></select></label><label>PALETTE NAME<input id="palette-name" maxlength="60" autocomplete="off"></label><div class="palette-manager-actions"><button id="palette-new">New</button><button id="palette-rename">Rename</button><button id="palette-duplicate">Duplicate</button><button id="palette-delete">Delete</button></div><button id="palette-import">Import Clarus JSON</button><input id="palette-import-file" type="file" accept=".json,application/json" hidden></div><div id="drawer-palette-list" class="drawer-palette-list"></div><div class="drawer-exports"><button data-palette-export="ase">Adobe / Affinity ASE</button><button data-palette-export="gpl">GIMP / Inkscape GPL</button><button data-palette-export="tokens">Figma Tokens</button><button data-palette-export="css">CSS</button><button data-palette-export="clarus">Export Clarus JSON · backup</button><button data-print-palette>Prepare palette for print</button></div><div id="export-status" class="export-status" aria-live="polite"></div><button id="drawer-clear">Clear active palette</button></aside>
   <footer><span>ATLAS Clarus Connect · HLC reference data © freieFarbe e.V.</span><b>EVERY COLOUR HAS AN ADDRESS.</b><span id="version">v0.2.0-rc1</span></footer>
   <script src="assets/atlas-data.js"></script>\n  <script src="assets/designer-layer-data.js"></script>\n  <script src="assets/designer-layer.js"></script>
@@ -192,6 +209,35 @@
   <script src="assets/reference-card.js"></script>
   <script src="assets/profiled-reference-card.js"></script>
   <script src="assets/print-ui.js"></script>
+  <script src="assets/multi-gamut-library.js"></script><script src="assets/spectral-binding.js"></script><script src="assets/multi-gamut-ui.js"></script><script src="assets/clarus-handoff.js"></script>
+  <script src="assets/colour-handoff.js"></script>
+  <script src="assets/colour-handoff-ui.js"></script>
+  <script src="assets/image-project-codecs.js"></script>
+  <script src="assets/image-projects.js"></script>
+  <script src="assets/image-projects-ui.js"></script>
+  <script src="assets/colour-projects.js"></script>
+  <script src="assets/colour-projects-ui.js"></script>
+  <script src="assets/colour-reduction.js"></script>
+  <script src="assets/colour-reduction-library.js"></script>
+  <script src="assets/colour-reduction-loupe.js"></script>
+  <script src="assets/colour-reduction-original.js"></script>
+  <script src="assets/colour-reduction-original-ui.js"></script>
+  <script src="assets/colour-reduction-reference-ui.js"></script>
+  <script src="assets/colour-reduction-region.js"></script>
+  <script src="assets/colour-reduction-region-ui.js"></script>
+  <script src="assets/colour-reduction-inspect.js"></script>
+  <script src="assets/colour-reduction-inspect-ui.js"></script>
+  <script src="assets/colour-reduction-corrections.js"></script>
+  <script src="assets/colour-reduction-correction-ui.js"></script>
+  <script src="assets/colour-reduction-scoped-cleanup.js"></script>
+  <script src="assets/reduction-job.js"></script>
+  <script src="assets/reduction-job-ui.js"></script>
+  <script src="assets/reduction-job-compare.js"></script>
+  <script src="assets/reduction-job-correction-ui.js"></script>
+  <script src="assets/colour-reduction-ui.js"></script>
+  <script src="assets/tool-exchange.js"></script>
+  <script src="assets/tool-exchange-ui.js"></script>
+  <script src="assets/recipe-exchange.js"></script>
   <script src="assets/app.js"></script>
 <script src="assets/atlas-offline-mixer.js"></script>
 </body>

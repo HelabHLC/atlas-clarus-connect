@@ -13,7 +13,6 @@ BUNDLE_SHA256 = '79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d
 FILES = (
     'android-test-app/app/build.gradle',
     'android-test-app/prepare_bundle.py',
-    'browser-bundle/build_bundle.py',
     '.github/workflows/android-test-app.yml',
     '.github/workflows/android-signed-beta.yml',
 )
@@ -29,13 +28,12 @@ def literal(source, name):
 
 
 def check_identity(files):
-    gradle, prepare, builder, debug, signed = (files[path] for path in FILES)
+    gradle, prepare, debug, signed = (files[path] for path in FILES)
     checks = {
         'versionCode (4 is already used)': re.findall(r'^\s*versionCode\s+(\d+)\s*$', gradle, re.M) == [str(VERSION_CODE)],
         'versionName': re.findall(r"^\s*versionName\s+'([^']+)'\s*$", gradle, re.M) == [VERSION_NAME],
         'Android bundle version': literal(prepare, 'EXPECTED_BUNDLE_VERSION') == BUNDLE_VERSION,
         'Android ZIP pin': literal(prepare, 'EXPECTED_ZIP_SHA256') == BUNDLE_SHA256,
-        'browser bundle version': literal(builder, 'VERSION') == BUNDLE_VERSION,
     }
     identity = f"package: name='com.atlasclarus.connect' versionCode='{VERSION_CODE}' versionName='{VERSION_NAME}'"
     for name, workflow in [('debug', debug), ('signed', signed)]:
@@ -72,13 +70,19 @@ class ReleaseIdentityTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'ZIP pin'):
             check_identity(self.files)
 
-    def test_reject_future_bundle_under_beta5(self):
-        self.files[FILES[2]] = self.files[FILES[2]].replace(BUNDLE_VERSION, '0.2.0-rc29')
-        with self.assertRaisesRegex(ValueError, 'browser bundle version'):
+    def test_rc35_development_builder_does_not_change_android_pin(self):
+        # The Android release is pinned by prepare_bundle.py and its ZIP digest,
+        # not by the independent development bundle builder.
+        self.assertEqual(literal(self.files[FILES[1]], 'EXPECTED_BUNDLE_VERSION'), BUNDLE_VERSION)
+        check_identity(self.files)
+
+    def test_reject_changed_android_bundle_version(self):
+        self.files[FILES[1]] = self.files[FILES[1]].replace(BUNDLE_VERSION, '0.2.0-rc35-multi-gamut-candidate')
+        with self.assertRaisesRegex(ValueError, 'Android bundle version'):
             check_identity(self.files)
 
     def test_reject_stale_workflow_identity_and_labels(self):
-        for path in FILES[3:]:
+        for path in FILES[2:]:
             with self.subTest(path=path):
                 changed = dict(self.files)
                 changed[path] = changed[path].replace(VERSION_NAME, '0.4.0-beta.4')

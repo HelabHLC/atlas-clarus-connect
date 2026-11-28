@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
 BUNDLE=ROOT/'browser-bundle'
-VERSION='0.2.0-rc28-source-provenance'
+VERSION='0.2.0-rc35-multi-gamut-candidate'
 temp_output=tempfile.TemporaryDirectory(prefix='atlas-print-bundle-')
 OUTPUT=Path(temp_output.name)
 ZIP=OUTPUT/f'ATLAS_Clarus_Browser_Bundle_v{VERSION}.zip'
@@ -47,8 +47,12 @@ subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPU
 first=digest(ZIP)
 subprocess.run(['python3',str(BUNDLE/'build_bundle.py'),'--output-dir',str(OUTPUT)],check=True)
 second=digest(ZIP)
+print(f'RC35 BUILD 1 SHA-256: {first}', flush=True)
+print(f'RC35 BUILD 2 SHA-256: {second}', flush=True)
 assert first==second, f'non-reproducible ZIP: {first} != {second}'
-assert first=='79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8', 'built bundle differs from pinned RC28 source-provenance candidate'
+# Keep the RC28 historical pin, but require reproducibility for this new candidate.
+RC28_PINNED='79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8'
+assert first!=RC28_PINNED, 'multi-gamut candidate unexpectedly identical to RC28'
 
 with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert archive.testzip() is None
@@ -62,7 +66,7 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
         prefix+'assets/palette-export.js',prefix+'assets/image-sampling.js',
         prefix+'assets/pkl-image-binding.js',
         prefix+'assets/print-handoff.js',prefix+'assets/print-ui.js',
-        prefix+'assets/reference-card.js'
+        prefix+'assets/reference-card.js',prefix+'assets/multi-gamut-library.js',prefix+'assets/spectral-binding.js',prefix+'assets/multi-gamut-ui.js'
     }
     assert required <= names
     sums=archive.read(prefix+'SHA256SUMS.txt').decode('utf-8').splitlines()
@@ -91,6 +95,9 @@ with zipfile.ZipFile(io.BytesIO(ZIP.read_bytes())) as archive:
     assert manifest['max_palettes']==50 and manifest['max_palette_colours']==64
     assert manifest['reproducible_zip'] is True
     html=archive.read(prefix+'index.html').decode('utf-8')
+    assert 'ATLAS_MULTI_GAMUT' in html and 'ATLAS_SPECTRAL_BINDING' in html
+    assert 'id="multi-gamut-reference"' in html and 'id="multi-gamut-spectral-file"' in html
+    assert 'assets/multi-gamut-ui.js' not in html
     parser=InlineScriptParser()
     parser.feed(html)
     assert parser.scripts, 'no inline JavaScript found'
