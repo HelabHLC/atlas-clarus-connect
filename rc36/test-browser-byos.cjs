@@ -85,10 +85,13 @@ const C=globalThis.ATLAS_IMAGE_CODECS;
   await popup.getByRole('textbox',{name:'Substrate'}).fill('CI test substrate; not measured');
   const native=JSON.parse(require('node:child_process').execFileSync('python3',['rc36/native-lab-reference.py',localProfile,...card.reference.master_lab.map(String)],{encoding:'utf8'}));
   assert.equal(native.profile_sha256,hash);
-  const diagnostics={profile_sha256:hash,target_lab:card.reference.master_lab,native_engine_version:native.native_engine_version,forward_bpc:false,return_bpc:false,flags:256,cases:[]};
+  const diagnostics={scope:'RELATIVE_ONLY_ABSOLUTE_BLOCKED',profile_sha256:hash,target_lab:card.reference.master_lab,native_engine_version:native.native_engine_version,forward_bpc:false,return_bpc:false,flags:256,cases:[]};
   const numericFailures=[];
   const compare=(intent)=>native.cases.find(x=>x.intent===intent);
-  for(const intent of ['Relative colorimetric','Absolute colorimetric']){
+  assert.deepEqual(await popup.getByRole('combobox',{name:'Rendering intent'}).locator('option').evaluateAll(options=>options.map(o=>o.value)),['Relative colorimetric']);
+  const rejected=await page.evaluate(async()=>{try{await window.ATLAS_RC36_LAB_CARD.calculate({},'Absolute colorimetric','paper');return false}catch(e){return /Only relative colorimetric/.test(e.message)}});
+  assert.equal(rejected,true,'absolute intent must be blocked by application API');
+  for(const intent of ['Relative colorimetric']){
     await popup.getByRole('combobox',{name:'Rendering intent'}).selectOption(intent);
     await popup.getByRole('button',{name:'Calculate locally'}).click();
     await popup.getByRole('button',{name:'Calculated JSON'}).waitFor();
@@ -116,7 +119,7 @@ const C=globalThis.ATLAS_IMAGE_CODECS;
   await page.locator('#rc36-byos-panel button').click();
   assert.equal(await page.evaluate(()=>window.ATLAS_RC36_BYOS.selected()),null);
   assert.deepEqual(numericFailures,[],'Browser/native numeric release criteria unchanged');
-  console.log('PASS: actual Chromium local profile -> frozen HLC Lab -> CMYK16 -> Lab -> calculated card JSON; both intents match native reference');
+  console.log('PASS: actual Chromium local profile -> frozen HLC Lab -> CMYK16 -> Lab -> calculated card JSON; relative intent matches native reference; absolute blocked');
   await popup.close();
   fs.writeFileSync('evidence/open-dcm-card-result.json',JSON.stringify({status:'PASS',schema:card.schema,reference:card.reference.hlc_address,source_records:card.sources.length,actual_reimported_palette:true,actual_popup:true,json_download:true,pdf_generated:true,unchanged_palette:true,mobile_width:390,icc_calculated:false,physical_proof_measured:false},null,2));
   console.log('PASS: actual Open DCM card from reimported palette, both source records, JSON, HTML, A4 PDF, no state mutation');
