@@ -1,0 +1,63 @@
+name: RC36.2 isolated IONOS test installer
+on:
+  push:
+    branches: [integration/rc36]
+    paths: ['wordpress-rc36-test/**', '.github/workflows/rc36-ionos-test.yml']
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild verified candidate from public archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v0.2.0-brand-palette-0.1.7 --pattern 'ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip' --dir inputs
+          mkdir -p evidence
+          python3 rc36/prepare_candidate.py --base inputs/ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip --out candidate | tee evidence/candidate.json
+          python3 wordpress-rc36-test/build_installer.py --candidate candidate --out installer
+          (cd installer && sha256sum -c *.sha256)
+      - name: Verify PHP and every packaged runtime file
+        run: |
+          if ! php -m | grep -qi '^zip$'; then sudo apt-get update -qq && sudo apt-get install -y php-zip; fi
+          unzip -q installer/ATLAS_Clarus_RC36.2_IONOS_Test_Installer.zip -d wordpress-rc36-test/plugin
+          php -l wordpress-rc36-test/plugin/atlas-clarus-rc36-test/atlas-clarus-rc36-test.php
+          php wordpress-rc36-test/test-router.php
+      - name: Local HTTP route and rollback checks (WordPress test doubles)
+        run: |
+          php -S 127.0.0.1:8765 wordpress-rc36-test/test-router.php > evidence/router.log 2>&1 &
+          echo $! > evidence/router.pid
+          for i in {1..20}; do curl -fsS http://127.0.0.1:8765/production-sentinel >/dev/null && break; sleep 1; done
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8765/atlas-clarus-rc36-test/)" = 404
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H 'X-Test-Enabled: yes' http://127.0.0.1:8765/atlas-clarus-rc36-test/)" = 404
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H 'X-Test-Admin: yes' http://127.0.0.1:8765/atlas-clarus-rc36-test/)" = 404
+          curl -fsS -D evidence/route-headers.txt -o /dev/null -H 'X-Test-Admin: yes' -H 'X-Test-Enabled: yes' http://127.0.0.1:8765/atlas-clarus-rc36-test/
+          grep -qi 'Cache-Control: private, no-store' evidence/route-headers.txt
+          grep -qi 'X-Robots-Tag: noindex' evidence/route-headers.txt
+          curl -fsS -H 'X-Test-Admin: yes' -H 'X-Test-Enabled: yes' http://127.0.0.1:8765/atlas-clarus-rc36-test/BUNDLE_MANIFEST.json > evidence/staging-manifest.json
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H 'X-Test-Admin: yes' -H 'X-Test-Enabled: yes' http://127.0.0.1:8765/atlas-clarus-rc36-test/absent)" = 404
+          curl -fsS http://127.0.0.1:8765/production-sentinel | grep 'production untouched'
+          echo 'PASS: disabled/anonymous denied, admin enabled, asset served, no-store, noindex, production fallthrough'
+      - name: Chromium storage isolation and existing RC36.2 checks
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+          node wordpress-rc36-test/test-storage.cjs | tee evidence/storage.txt
+          # Exercise the actual staged runtime, not only the unmodified candidate.
+          mv candidate candidate-original
+          unzip -q installer/rc36-2-test.zip -d candidate
+          node rc36/test-browser.cjs
+      - name: Keep installer and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc36-2-ionos-test-installer
+          path: |
+            installer/ATLAS_Clarus_RC36.2_IONOS_Test_Installer.zip
+            installer/ATLAS_Clarus_RC36.2_IONOS_Test_Installer.zip.sha256
+            installer/build-report.json
+            evidence/
+          if-no-files-found: warn
