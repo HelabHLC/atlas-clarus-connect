@@ -10,9 +10,10 @@ const C=globalThis.ATLAS_IMAGE_CODECS;
  try{
   const context=await browser.newContext({viewport:{width:1440,height:1100},acceptDownloads:true});
   await context.route(/^https?:/,r=>{network.push(r.request().url());return r.abort()});
-  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
+  const page=await context.newPage();page.on('pageerror',e=>{errors.push(e.message);console.error('BROWSER PAGE ERROR:',e.message)});
   const target=pathToFileURL(path.resolve('candidate/index.html')).href;
-  await page.goto(target+'#picker');await page.locator('#rc36-file-space').waitFor();
+  await page.goto(target+'#picker');
+  try{await page.locator('#rc36-file-space').waitFor({timeout:10000})}catch(e){console.error('Picker bootstrap:',await page.evaluate(()=>({ready:document.readyState,source:!!window.ATLAS_RC36_SOURCE,registry:!!window.ATLAS_RC36_BYOS,card:!!window.ATLAS_RC36_CARD,lab:!!window.ATLAS_RC36_LAB_CARD})));throw e}
   const png=Buffer.from(C.png(2,1,Uint8Array.from([61,123,25,255,60,123,25,255])));
   async function pick(choice,fx){
    await page.evaluate(()=>location.hash='picker');
@@ -87,7 +88,8 @@ const C=globalThis.ATLAS_IMAGE_CODECS;
     await popup.getByRole('combobox',{name:'Rendering intent'}).selectOption(intent);
     await popup.getByRole('button',{name:'Calculate locally'}).click();
     await popup.getByRole('button',{name:'Calculated JSON'}).waitFor();
-    await popup.waitForFunction(()=>!Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='Calculated JSON').disabled,{},{timeout:40000});
+    await popup.waitForFunction(()=>!Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='Calculated JSON').disabled||document.querySelector('pre[role=status]')?.textContent.startsWith('Calculation blocked:'),{},{timeout:40000});
+    assert.equal(await popup.getByRole('button',{name:'Calculated JSON'}).isEnabled(),true,await popup.locator('pre[role=status]').innerText());
     const [calculatedDownload]=await Promise.all([page.waitForEvent('download'),popup.getByRole('button',{name:'Calculated JSON'}).click()]);
     const calculated=JSON.parse(fs.readFileSync(await calculatedDownload.path(),'utf8')),expected=compare(intent);
     assert.deepEqual(calculated.reference,card.reference);
