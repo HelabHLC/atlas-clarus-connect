@@ -2,13 +2,12 @@
 (function(root){
 'use strict';
 const ensure=(v,m)=>{if(!v)throw Error(m)};
-const intents={'Relative colorimetric':1,'Absolute colorimetric':3};
+const intents={'Relative colorimetric':1};
 const LAB_DBL=0x4a0018;
 async function roundtrip(job){
   const {lab,profile,intent,bpc}=job;
   ensure(Array.isArray(lab)&&lab.length===3&&lab.every(Number.isFinite)&&lab[0]>=0&&lab[0]<=100&&lab.slice(1).every(v=>v>=-128&&v<=127),'Expected D50 Lab');
-  ensure(Object.hasOwn(intents,intent)&&typeof bpc==='boolean','Choose supported intent and BPC');
-  ensure(!(intent==='Absolute colorimetric'&&bpc),'Absolute path requires BPC off');
+  ensure(Object.hasOwn(intents,intent)&&bpc===false,'Only relative colorimetric with BPC off is enabled');
   ensure(profile instanceof Uint8Array&&profile.length>=132&&profile.length<=16777216,'Invalid profile size');
   const d=new DataView(profile.buffer,profile.byteOffset,profile.byteLength),sig=o=>String.fromCharCode(...profile.subarray(o,o+4));
   ensure(d.getUint32(0)===profile.length&&sig(36)==='acsp'&&sig(12)==='prtr'&&sig(16)==='CMYK','CMYK output ICC required');
