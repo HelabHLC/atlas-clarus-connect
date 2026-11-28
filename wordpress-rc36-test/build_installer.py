@@ -18,7 +18,7 @@ def main():
     m=json.loads(files['BUNDLE_MANIFEST.json'])
     if m['status']!='RC36_2_TEST_ONLY' or m['master_rows']!=13283 or m['deployment_allowed'] is not False:raise ValueError('Unexpected candidate')
     storage=(HERE/'storage-isolation.js').read_text()
-    for n in ('index.html','startup/index.html','multi/index.html','START_HERE.html'):
+    for n in ('index.html','startup/index.html','multi/index.html'):
         s=files[n].decode();match=re.search(r'<head(?:\s[^>]*)?>',s,re.I)
         if not match:raise ValueError('Missing actual document head '+n)
         i=match.end();files[n]=(s[:i]+'<script>\n'+storage+'\n</script>'+s[i:]).encode()
