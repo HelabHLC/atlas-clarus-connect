@@ -28,7 +28,7 @@ def main():
         return replace_once(s,'<dt>ICC output profile</dt><dd>Not selected</dd>','<dt>ICC output profile</dt><dd>\'+esc(d.output.iccProfile?d.output.iccProfile.name+\' · SHA-256: \'+d.output.iccProfile.sha256+\' · structural preflight only\':\'Not selected\')+\'</dd>','card profile rendering')
     for path in [assets/'rc36-open-dcm-card.js',a.out/'index.html']:
         s=bind(path.read_text())
-        s=replace_once(s,'target.document.close();','target.document.close();if(root.ATLAS_RC36_LAB_CARD)root.ATLAS_RC36_LAB_CARD.mount(target,d,download);','local Lab card mount')
+        s=replace_once(s,'target.document.write(html(d));target.document.close();','target.document.write(html(d));target.document.close();if(root.ATLAS_RC36_LAB_CARD)root.ATLAS_RC36_LAB_CARD.mount(target,d,download);','local Lab card mount')
         if path.name=='index.html':
             end=s.index('</head>')
             scripts='\n'.join((HERE/n).read_text() for n in ['byos-profile-registry.js','byos-profile-ui.js','byos-lab-card.js'])
