@@ -27,3 +27,12 @@ test('no substrate: fail closed before worker',async()=>{
  context.ATLAS_RC36_BYOS={selected:()=>({deviceSpace:'CMYK'})};
  await assert.rejects(context.ATLAS_RC36_LAB_CARD.calculate({},'Relative colorimetric',''),/substrate/);
 });
+
+test('absolute and other intents are blocked before profile lookup or worker',async()=>{
+ context.ATLAS_RC36_BYOS={selected:()=>{throw Error('Profile lookup must not run')}};
+ for(const intent of ['Absolute colorimetric','Perceptual','Saturation',null])await assert.rejects(context.ATLAS_RC36_LAB_CARD.calculate({},intent,'paper'),/Only relative colorimetric/);
+});
+test('worker rejects absolute and BPC on before profile validation or engine',async()=>{
+ const w=vm.createContext({});vm.runInContext(readFileSync(new URL('./byos-lab-worker.js',import.meta.url),'utf8'),w);
+ for(const [intent,bpc] of [['Absolute colorimetric',false],['Relative colorimetric',true]])await assert.rejects(w.ATLAS_RC36_LAB_ROUNDTRIP({lab:[50,0,0],intent,bpc}),/Only relative colorimetric/);
+});
