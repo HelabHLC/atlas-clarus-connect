@@ -37,7 +37,12 @@ def main():
         s=files[name].decode()
         if name!='assets/app.js':s=patch_export(s,name)
         if name!='assets/palette-export.js':s=patch_app(s,name)
-        if name=='index.html':s=replace_once(s,'</head>','<script>\n'+source+'\n</script>\n</head>',name)
+        if name=='index.html':
+            # The second closing head belongs to an embedded HTML export template.
+            # Inject immediately before the first actual document head closure.
+            end=s.index('</head>')
+            if s.lower().index('<body')<end:raise ValueError('Unexpected document head boundary')
+            s=s[:end]+'<script>\n'+source+'\n</script>\n'+s[end:]
         files[name]=s.encode()
     m=json.loads(files['BUNDLE_MANIFEST.json']);m['version']='0.2.0-rc36.1-provenance-candidate';m['status']='RC36_1_TEST_ONLY';m['deployment_allowed']=False;m['source_metadata_extension']='atlas-rc36-file-space/1.0';m['baseline_archive_sha256']=SHA
     files['BUNDLE_MANIFEST.json']=(json.dumps(m,indent=2)+'\n').encode()
