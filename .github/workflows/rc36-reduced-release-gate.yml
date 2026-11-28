@@ -1,0 +1,51 @@
+name: RC36.3 reduced release gate
+on:
+  push:
+    branches: [integration/rc36-wide-gamut-intake]
+    paths: ['rc36/**', '.github/workflows/rc36-reduced-release-gate.yml']
+permissions:
+  contents: read
+jobs:
+  gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Rebuild isolated candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          gh release download v0.2.0-brand-palette-0.1.7 --pattern 'ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip' --dir inputs
+          python3 rc36/prepare_candidate.py --base inputs/ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip --out baseline | tee evidence/baseline.json
+          python3 rc36/prepare_byos_staging.py --candidate baseline --out candidate
+          (cd candidate && sha256sum -c SHA256SUMS.txt --quiet)
+          cmp baseline/assets/atlas-data.js candidate/assets/atlas-data.js
+      - name: Scan actual payloads including decompressed catalogues
+        run: python3 rc36/audit_reduced_release.py candidate --report evidence/reduced-inventory.json
+      - name: Verify fail-closed relative-only scope
+        run: node --test rc36/test-byos.mjs rc36/test-byos-lab-card.mjs
+      - name: Install independent comparator and Chromium
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y liblcms2-2 ghostscript
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+      - name: Actual picker, source persistence, card, strict relative ICC comparison
+        run: |
+          export ATLAS_TEST_CMYK="$(find /usr/share/color/icc -name default_cmyk.icc -print -quit)"
+          test -n "$ATLAS_TEST_CMYK"
+          node rc36/test-browser-byos.cjs
+      - name: Integrated wide-gamut browser test with generated data only
+        run: node rc36/test-wide-gamut-browser.cjs
+      - name: Retain evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc36-3-reduced-release-evidence
+          path: evidence/*.json
+          if-no-files-found: warn
