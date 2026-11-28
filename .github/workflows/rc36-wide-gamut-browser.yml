@@ -1,0 +1,54 @@
+name: RC36.3 integrated BYOS browser gate
+on:
+  push:
+    branches: [integration/rc36-wide-gamut-intake]
+    paths: ['rc36/**', '.github/workflows/rc36-wide-gamut-browser.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Rebuild pinned public baseline and integrated staging candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p evidence
+          gh release download v0.2.0-brand-palette-0.1.7 --pattern 'ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip' --dir inputs
+          python3 rc36/prepare_candidate.py --base inputs/ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip --out baseline | tee evidence/baseline.json
+          python3 rc36/prepare_byos_staging.py --candidate baseline --out candidate
+          (cd candidate && sha256sum -c SHA256SUMS.txt --quiet)
+          cmp baseline/assets/atlas-data.js candidate/assets/atlas-data.js
+          cmp research/atlas-clarus-research-beta-0.6/index.html candidate/research/index.html
+          node --check candidate/assets/rc36-wide-gamut-integration.js
+          python3 - <<'PY'
+          import json, pathlib
+          p=pathlib.Path('candidate')
+          m=json.loads((p/'BUNDLE_MANIFEST.json').read_text())
+          assert m['deployment_allowed'] is False
+          assert m['wide_gamut_data_bundled'] is False
+          assert m['wide_gamut_expected_count']==20115
+          assert m['master_rows']==13283
+          assert not any(x.name in {'master_original.json','master_address_index.json','synthetic_reference_library.json','spectral_candidates.json'} for x in p.rglob('*'))
+          print('PASS: master unchanged, no private reference files; staging only')
+          PY
+      - name: Registry and CIEDE2000 regression
+        run: node --test rc36/test-byos.mjs rc36/test-byos-lab-card.mjs
+      - name: Install Chromium
+        run: |
+          npm ci --prefix browser-bundle/tests --ignore-scripts
+          browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+      - name: Integrated browser test (generated inputs only)
+        run: node rc36/test-wide-gamut-browser.cjs
+      - name: Retain evidence only; never upload runtime, fixture or private data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc36-3-browser-evidence
+          path: evidence/*.json
+          if-no-files-found: warn
