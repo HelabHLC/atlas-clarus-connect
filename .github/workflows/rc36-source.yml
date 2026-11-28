@@ -26,6 +26,12 @@ jobs:
           node rc36/test-source.mjs candidate | tee evidence/source-tests.txt
       - name: Existing brand palette core regression
         run: node previews/logo-brand-palette/test-core.cjs candidate evidence
+      - name: Install locked Playwright dependencies
+        run: npm ci --prefix browser-bundle/tests --ignore-scripts
+      - name: Install Chromium
+        run: browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
+      - name: Actual offline browser interaction
+        run: node rc36/test-browser.cjs
       - name: Keep candidate and evidence (not a release)
         if: always()
         uses: actions/upload-artifact@v4
