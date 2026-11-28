@@ -30,6 +30,19 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
+      - name: Checkout reviewed historical RC28 source separately
+        uses: actions/checkout@v4
+        with:
+          ref: 13c29f4647c081d1b59cf1cdaff33d503b70d2ca
+          path: historical-rc28
+          persist-credentials: false
+      - name: Build and pin the Android beta.5 RC28 bundle
+        run: |
+          python historical-rc28/browser-bundle/build_bundle.py --output-dir "$RUNNER_TEMP/atlas-android-rc28"
+          archive="$RUNNER_TEMP/atlas-android-rc28/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc28-source-provenance.zip"
+          test -f "$archive"
+          echo "79a7b9a3df20d0ba6e2620b1d16d39316cce5d2c8534b622d7260fe896da12d8  $archive" | sha256sum -c -
+          echo "ATLAS_ANDROID_BUNDLE_ARCHIVE=$archive" >> "$GITHUB_ENV"
       - name: Validate pinned offline bundle
         run: python3 browser-bundle/tests/validate_bundle.py
       - name: Check Android export adapter
