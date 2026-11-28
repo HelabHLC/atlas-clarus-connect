@@ -1,0 +1,110 @@
+<?php
+/**
+ * Plugin Name: ATLAS Clarus RC36.2 – Isolated Test
+ * Description: Administrator-only staging runtime; no changes to the production Browser Edition.
+ * Version: 0.1.0-beta1
+ * Requires at least: 6.0
+ * Requires PHP: 7.4
+ * Author: ATLAS Clarus
+ */
+if (!defined('ABSPATH')) exit;
+final class Atlas_Clarus_RC36_Test {
+    const ROUTE = 'atlas-clarus-rc36-test';
+    const OPTION = 'atlas_clarus_rc36_test_active_sha256';
+    const SHA = '@BUNDLE_SHA@';
+    const SIZE = @BUNDLE_SIZE@;
+    const FILES = @BUNDLE_FILES@;
+    public static function bundle() { return __DIR__.'/runtime/rc36-2-test.zip'; }
+    public static function boot() {
+        add_action('parse_request',[__CLASS__,'serve'],0);
+        add_action('admin_menu',[__CLASS__,'menu']);
+        add_action('admin_post_atlas_rc36_test_enable',[__CLASS__,'enable']);
+        add_action('admin_post_atlas_rc36_test_disable',[__CLASS__,'disable']);
+    }
+    public static function active() { return hash_equals(self::SHA,(string)get_option(self::OPTION,'')); }
+    public static function verify() {
+        if (!class_exists('ZipArchive')) throw new RuntimeException('PHP ZipArchive missing.');
+        $p=self::bundle();
+        if (!is_file($p) || filesize($p)!==self::SIZE || !hash_equals(self::SHA,hash_file('sha256',$p))) throw new RuntimeException('Runtime ZIP fingerprint mismatch.');
+        $z=new ZipArchive();
+        if ($z->open($p)!==true) throw new RuntimeException('ZIP unavailable.');
+        try {
+            $raw=$z->getFromName('SHA256SUMS.txt');
+            if ($raw===false) throw new RuntimeException('Missing checksum list.');
+            $listed=[];
+            foreach (explode("\n",trim($raw)) as $line) {
+                if (!preg_match('/^([a-f0-9]{64})  ([A-Za-z0-9_.\/-]+)$/D',$line,$m) || !self::valid_path($m[2]) || isset($listed[$m[2]])) throw new RuntimeException('Invalid checksum entry.');
+                $listed[$m[2]]=$m[1];
+            }
+            if (count($listed)!==self::FILES || $z->numFiles!==self::FILES+1) throw new RuntimeException('File count mismatch.');
+            $seen=[];
+            for($i=0;$i<$z->numFiles;$i++){
+                $n=$z->getNameIndex($i);
+                if (!self::valid_path($n)||isset($seen[$n])) throw new RuntimeException('Invalid archive path.');
+                $seen[$n]=true;
+                if ($n==='SHA256SUMS.txt') continue;
+                if (!isset($listed[$n])) throw new RuntimeException('Unlisted asset.');
+                $stream=$z->getStream($n);
+                if (!$stream) throw new RuntimeException('Unreadable asset.');
+                $ctx=hash_init('sha256');hash_update_stream($ctx,$stream);fclose($stream);
+                if (!hash_equals($listed[$n],hash_final($ctx))) throw new RuntimeException('Asset hash mismatch: '.$n);
+            }
+            $m=json_decode($z->getFromName('BUNDLE_MANIFEST.json'),true);
+            if (!is_array($m)||($m['status']??'')!=='RC36_2_IONOS_ADMIN_TEST'||($m['master_rows']??0)!==13283||($m['deployment_allowed']??true)!==false) throw new RuntimeException('Wrong staging manifest.');
+        } finally { $z->close(); }
+        return true;
+    }
+    public static function valid_path($n) {
+        return is_string($n)&&preg_match('/^[A-Za-z0-9_.\/-]+$/D',$n)&&$n[0]!=='/'&&!in_array('..',explode('/',$n),true)&&!in_array('.',explode('/',$n),true)&&strpos($n,'//')===false&&!preg_match('/\.(php[0-9]*|phtml|phar|cgi|pl|htaccess)$/i',$n);
+    }
+    public static function menu() { add_management_page('ATLAS Clarus RC36.2 Test','ATLAS Clarus RC36.2 Test','manage_options','atlas-clarus-rc36-test',[__CLASS__,'admin']); }
+    public static function admin() {
+        if(!current_user_can('manage_options')) return;
+        echo '<div class="wrap"><h1>ATLAS Clarus RC36.2 – separater Test</h1><p>Nur Administratoren. Die öffentliche Browser Edition bleibt unverändert. Browser-Speicher ist getrennt; keine Produktionspaletten werden migriert.</p><p>Status: '.(self::active()?'Aktiv':'Inaktiv').'</p>';
+        foreach(['enable'=>'Runtime prüfen und Test aktivieren','disable'=>'Test abschalten / Rückfall'] as $action=>$label){
+            echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="atlas_rc36_test_'.$action.'">';
+            wp_nonce_field('atlas_rc36_test_'.$action);
+            submit_button($label);echo '</form>';
+        }
+        if(self::active())echo '<p><a target="_blank" rel="noopener" href="'.esc_url(home_url('/'.self::ROUTE.'/')).'">RC36.2 Test öffnen</a></p>';
+        echo '</div>';
+    }
+    public static function enable() {
+        if(!current_user_can('manage_options')) wp_die('Forbidden','',['response'=>403]);
+        check_admin_referer('atlas_rc36_test_enable');
+        try { self::verify();update_option(self::OPTION,self::SHA,false); }
+        catch(Throwable $e){wp_die(esc_html($e->getMessage()),'RC36 test verification failed',['response'=>500]);}
+        wp_safe_redirect(admin_url('tools.php?page=atlas-clarus-rc36-test'));exit;
+    }
+    public static function disable() {
+        if(!current_user_can('manage_options')) wp_die('Forbidden','',['response'=>403]);
+        check_admin_referer('atlas_rc36_test_disable');
+        delete_option(self::OPTION);wp_safe_redirect(admin_url('tools.php?page=atlas-clarus-rc36-test'));exit;
+    }
+    public static function serve($wp) {
+        $request=trim((string)$wp->request,'/');
+        if($request!==self::ROUTE&&strpos($request,self::ROUTE.'/')!==0)return;
+        if(!defined('DONOTCACHEPAGE'))define('DONOTCACHEPAGE',true);
+        nocache_headers();header('Cache-Control: private, no-store, max-age=0');header('X-Robots-Tag: noindex, nofollow, noarchive');header('X-Content-Type-Options: nosniff');
+        if(!self::active()||!current_user_can('manage_options')){status_header(404);exit;}
+        if(!in_array($_SERVER['REQUEST_METHOD']??'GET',['GET','HEAD'],true)){status_header(405);exit;}
+        if($request===self::ROUTE){
+            $urlPath=wp_parse_url($_SERVER['REQUEST_URI']??'',PHP_URL_PATH);
+            if(substr($urlPath,-1)!=='/'){wp_safe_redirect(home_url('/'.self::ROUTE.'/'));exit;}
+            $asset='index.html';
+        }else{$asset=substr($request,strlen(self::ROUTE)+1);}
+        if(!self::valid_path($asset)){status_header(404);exit;}
+        $z=new ZipArchive();
+        if(!is_file(self::bundle())||filesize(self::bundle())!==self::SIZE||$z->open(self::bundle())!==true){status_header(503);exit;}
+        $stat=$z->statName($asset);
+        if($stat===false){$z->close();status_header(404);exit;}
+        $stream=$z->getStream($asset);
+        if(!$stream){$z->close();status_header(404);exit;}
+        $ext=strtolower(pathinfo($asset,PATHINFO_EXTENSION));
+        $types=['html'=>'text/html; charset=utf-8','js'=>'application/javascript; charset=utf-8','css'=>'text/css; charset=utf-8','json'=>'application/json; charset=utf-8','png'=>'image/png','jpg'=>'image/jpeg','jpeg'=>'image/jpeg','webp'=>'image/webp','svg'=>'image/svg+xml','gif'=>'image/gif','wasm'=>'application/wasm','woff'=>'font/woff','woff2'=>'font/woff2','ttf'=>'font/ttf','txt'=>'text/plain; charset=utf-8','csv'=>'text/csv; charset=utf-8','md'=>'text/plain; charset=utf-8','pdf'=>'application/pdf','gz'=>'application/gzip','zip'=>'application/zip'];
+        status_header(200);header('Content-Type: '.($types[$ext]??'application/octet-stream'));header('Content-Length: '.$stat['size']);
+        if(($_SERVER['REQUEST_METHOD']??'GET')!=='HEAD')fpassthru($stream);
+        fclose($stream);$z->close();exit;
+    }
+}
+Atlas_Clarus_RC36_Test::boot();
