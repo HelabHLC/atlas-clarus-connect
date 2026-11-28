@@ -30,7 +30,11 @@ def main():
         s=bind(path.read_text())
         s=replace_once(s,'target.document.write(html(d));target.document.close();','target.document.write(html(d));target.document.close();if(root.ATLAS_RC36_LAB_CARD)root.ATLAS_RC36_LAB_CARD.mount(target,d,download);','local Lab card mount')
         if path.name=='index.html':
-            end=s.index('</head>')
+            # The existing inline Open DCM card contains its own </head> string.
+            # Insert before the exact RC36 source script, never inside that template.
+            marker='<script>\n'+(HERE/'rgb-source-space.js').read_text()
+            if s.count(marker)!=1: raise ValueError('Expected one RC36 source script anchor')
+            end=s.index(marker)
             scripts='\n'.join((HERE/n).read_text() for n in ['byos-profile-registry.js','byos-profile-ui.js','byos-lab-card.js'])
             worker=json.dumps((HERE/'byos-lab-worker.js').read_text()).replace('<','\\u003c')
             s=s[:end]+'<script id="rc36-lab-worker-source" type="application/json">'+worker+'</script><script>\n'+scripts+'\n</script>'+s[end:]
