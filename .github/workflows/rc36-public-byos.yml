@@ -1,0 +1,38 @@
+name: RC36 Public BYOS inventory
+on:
+  push:
+    branches: [integration/rc36]
+    paths: ['rc36/audit_public_byos.py', 'rc36/prepare_candidate.py', '.github/workflows/rc36-public-byos.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inventory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test inventory scanner
+        run: python3 rc36/audit_public_byos.py --self-test
+      - name: Build existing candidate from pinned public baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v0.2.0-brand-palette-0.1.7 --pattern 'ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip' --dir inputs
+          mkdir -p evidence
+          python3 rc36/prepare_candidate.py --base inputs/ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip --out candidate > evidence/candidate.json
+      - name: Inventory public-candidate contents (report only)
+        run: |
+          set +e
+          python3 rc36/audit_public_byos.py candidate > evidence/byos-inventory.json
+          status=$?
+          set -e
+          if [ "$status" -ne 0 ] && [ "$status" -ne 2 ]; then exit "$status"; fi
+          python3 -m json.tool evidence/byos-inventory.json > /dev/null
+          echo "Inventory exit $status; neither outcome authorizes deployment."
+      - name: Keep evidence only, never candidate or profile bytes
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc36-public-byos-inventory
+          path: evidence/
+          if-no-files-found: error
