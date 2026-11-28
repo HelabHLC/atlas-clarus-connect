@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-28",
+  "status": "REAL_DATA_MODULE_PASS",
+  "source_commit": "2e5f80621f1d6fa6c272b1d2a03597d31880504a",
+  "source_path": "rc36/wide-gamut-integration.js",
+  "source_git_blob": "478d74a9d3bb94eb4659a5bd915c853b11ba395d",
+  "source_blob_verified": true,
+  "engine": "Node.js v22.16.0",
+  "archive_crc": "PASS",
+  "pinned_input_sha256": "ALL_THREE_MATCH",
+  "reference_count": 20115,
+  "original_master_count": 13283,
+  "synthetic_count": 6832,
+  "hlc_queries_passed": 20115,
+  "full_key_queries_passed": 20115,
+  "open_dcm_records_checked": 20115,
+  "checks": [
+    "HLC and full-key lookup agree",
+    "36 spectral reflectance values match input",
+    "Lab target matches JSON number representation (signed zero normalized)",
+    "original master row ID or null for synthetic",
+    "JSON roundtrip preserves record",
+    "production approval false",
+    "ICC not calculated",
+    "bad SHA-256 rejected"
+  ],
+  "sid4_collision_groups": 9,
+  "full_key_collision_groups": 0,
+  "generated_fixture_browser_gate": {
+    "run": 46166727056,
+    "status": "PASS"
+  },
+  "actual_data_browser_ui": {
+    "status": "NOT_RUN",
+    "reason": "Chromium 144 local file navigation net::ERR_BLOCKED_BY_ADMINISTRATOR; no policy bypass attempted"
+  },
+  "baseline_download": {
+    "status": "BLOCKED",
+    "reason": "local GitHub host resolution failed"
+  },
+  "licence_review": "OPEN_FOR_ALL_INHERITED_DATA_PRODUCTS",
+  "public_deployment": "NOT_RUN",
+  "deployment_authorized_by_evidence": false,
+  "private_data_uploaded": false
+}
