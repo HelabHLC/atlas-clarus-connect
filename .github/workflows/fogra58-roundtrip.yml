@@ -1,0 +1,35 @@
+name: FOGRA58 TextileRGB roundtrip consistency
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/fogra58-roundtrip.yml'
+      - 'browser-bundle/tests/fixtures/fogra58-roundtrip.csv.gz.b64'
+      - 'browser-bundle/tests/validate_fogra58_roundtrip.py'
+      - 'hover-library/data/colors.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  roundtrip-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install pinned colour-management dependency
+        run: python -m pip install --disable-pip-version-check Pillow==13.0.0
+      - name: Download official final FOGRA58 profile
+        run: |
+          curl --fail --location --silent --show-error \
+            'https://fogra.org/fileadmin/files/1_forschen/Digitaldruck/13.006_Textile-RGB/TextileRGB_FOGRA58.icc' \
+            --output "$RUNNER_TEMP/TextileRGB_FOGRA58.icc"
+      - name: Recompute all 13,283 ICC roundtrips
+        run: |
+          python browser-bundle/tests/validate_fogra58_roundtrip.py \
+            --fixture browser-bundle/tests/fixtures/fogra58-roundtrip.csv.gz.b64 \
+            --profile "$RUNNER_TEMP/TextileRGB_FOGRA58.icc" \
+            --master hover-library/data/colors.json
