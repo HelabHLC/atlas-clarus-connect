@@ -22,6 +22,7 @@ function run(job){
   });
 }
 async function calculate(record,intent,substrate){
+  if(intent!=='Relative colorimetric')throw Error('Only relative colorimetric is enabled in the reduced RC36.3 candidate');
   const selected=root.ATLAS_RC36_BYOS.selected();
   if(!selected||selected.deviceSpace!=='CMYK')throw Error('Select a local CMYK output profile first');
   if(typeof substrate!=='string'||!substrate.trim())throw Error('Enter the actual intended substrate');
@@ -36,8 +37,8 @@ async function calculate(record,intent,substrate){
   return result;
 }
 function mount(target,record,download){
-  const doc=target.document,box=doc.createElement('section'),title=doc.createElement('h2');title.textContent='Local ICC calculation · Test / keine Druckfreigabe';box.append(title);
-  const intent=doc.createElement('select');intent.setAttribute('aria-label','Rendering intent');for(const s of ['Relative colorimetric','Absolute colorimetric']){const o=doc.createElement('option');o.value=s;o.textContent=s;intent.append(o)}box.append(intent);
+  const doc=target.document,box=doc.createElement('section'),title=doc.createElement('h2');title.textContent='Local ICC calculation · relative only · Test / keine Druckfreigabe';box.append(title);
+  const intent=doc.createElement('select');intent.setAttribute('aria-label','Rendering intent');for(const s of ['Relative colorimetric']){const o=doc.createElement('option');o.value=s;o.textContent=s;intent.append(o)}box.append(intent);
   const material=doc.createElement('input');material.placeholder='Material / substrate';material.setAttribute('aria-label','Substrate');box.append(material);
   const button=doc.createElement('button');button.textContent='Calculate locally';box.append(button);
   const status=doc.createElement('pre');status.style.whiteSpace='pre-wrap';status.setAttribute('role','status');box.append(status);
