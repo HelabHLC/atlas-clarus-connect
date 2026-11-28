@@ -14,7 +14,7 @@ try:
         forward=l.cmsCreateTransform(lab,fmt,out,dev,intent,0x100);reverse=l.cmsCreateTransform(out,dev,lab,fmt,intent,0x100)
         assert forward and reverse
         try:
-            for values in [(50.,0.,0.),(60.,48.,57.),(45.,74.715,6.537)]:
+            for values in ([tuple(map(float,sys.argv[2:5]))] if len(sys.argv)==5 else [(50.,0.,0.),(60.,48.,57.),(45.,74.715,6.537)]):
                 inp=(c.c_double*3)(*values);v=(c.c_uint16*4)();back=(c.c_double*3)()
                 l.cmsDoTransform(forward,inp,v,1);l.cmsDoTransform(reverse,v,back,1)
                 result['cases'].append(dict(lab=values,intent=label,device=list(v),returned=list(back)))
