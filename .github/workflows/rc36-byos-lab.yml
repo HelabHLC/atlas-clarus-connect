@@ -1,0 +1,40 @@
+name: RC36 direct Lab D50 ICC validation
+on:
+  push:
+    branches: [integration/rc36]
+    paths: ['rc36/byos-lab-worker.js','rc36/test-byos-lab.mjs','rc36/native-lab-reference.py','.github/workflows/rc36-byos-lab.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install local reference engine and test profile
+        run: sudo apt-get update -qq && sudo apt-get install -y liblcms2-2 ghostscript
+      - name: Verify and extract exact vendored runtime
+        run: |
+          python3 - <<'PY'
+          import base64,hashlib,io,json,tarfile
+          from pathlib import Path
+          p=Path('browser-bundle/vendor/lcms-wasm')
+          m=json.loads((p/'PROVENANCE.json').read_text())
+          a=base64.b64decode((p/'lcms-wasm-1.0.5.tgz.base64').read_text())
+          assert hashlib.sha256(a).hexdigest()==m['archive_sha256']
+          d=Path('lcms-test');d.mkdir()
+          with tarfile.open(fileobj=io.BytesIO(a),mode='r:gz') as z:
+              for src,dest,key in [('package/dist/lcms.js','lcms.mjs','runtime_sha256'),('package/dist/lcms.wasm','lcms.wasm','wasm_sha256')]:
+                  b=z.extractfile(src).read();assert hashlib.sha256(b).hexdigest()==m[key];(d/dest).write_bytes(b)
+          PY
+      - name: Compare Lab to CMYK16 to Lab without sRGB
+        run: |
+          profile=$(find /usr/share/color/icc -name default_cmyk.icc -print -quit)
+          test -n "$profile"
+          python3 rc36/native-lab-reference.py "$profile" > lcms-test/native.json
+          cat lcms-test/native.json
+          node rc36/test-byos-lab.mjs "$PWD/lcms-test/lcms.mjs" "$PWD/lcms-test/lcms.wasm" "$profile" lcms-test/native.json
