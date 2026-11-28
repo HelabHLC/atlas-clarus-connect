@@ -17,7 +17,7 @@ def main():
         raise ValueError('Expected RC36.2 test candidate')
     shutil.copytree(a.candidate,a.out)
     assets=a.out/'assets'
-    for n in ['byos-profile-registry.js','byos-profile-ui.js']:
+    for n in ['byos-profile-registry.js','byos-profile-ui.js','byos-lab-card.js','byos-lab-worker.js']:
         shutil.copyfile(HERE/n,assets/('rc36-'+n))
     research=HERE.parent/'research'/'atlas-clarus-research-beta-0.6'
     dest=a.out/'research';dest.mkdir()
@@ -28,12 +28,14 @@ def main():
         return replace_once(s,'<dt>ICC output profile</dt><dd>Not selected</dd>','<dt>ICC output profile</dt><dd>\'+esc(d.output.iccProfile?d.output.iccProfile.name+\' · SHA-256: \'+d.output.iccProfile.sha256+\' · structural preflight only\':\'Not selected\')+\'</dd>','card profile rendering')
     for path in [assets/'rc36-open-dcm-card.js',a.out/'index.html']:
         s=bind(path.read_text())
+        s=replace_once(s,'target.document.close();','target.document.close();if(root.ATLAS_RC36_LAB_CARD)root.ATLAS_RC36_LAB_CARD.mount(target,d,download);','local Lab card mount')
         if path.name=='index.html':
             end=s.index('</head>')
-            scripts='\n'.join((HERE/n).read_text() for n in ['byos-profile-registry.js','byos-profile-ui.js'])
-            s=s[:end]+'<script>\n'+scripts+'\n</script>'+s[end:]
+            scripts='\n'.join((HERE/n).read_text() for n in ['byos-profile-registry.js','byos-profile-ui.js','byos-lab-card.js'])
+            worker=json.dumps((HERE/'byos-lab-worker.js').read_text()).replace('<','\\u003c')
+            s=s[:end]+'<script id="rc36-lab-worker-source" type="application/json">'+worker+'</script><script>\n'+scripts+'\n</script>'+s[end:]
         path.write_text(s)
-    original.update(version='0.2.0-rc36-public-byos-staging',status='BYOS_STAGING_ONLY',deployment_allowed=False,profile_bank_clearance='NOT_ESTABLISHED',local_output_profile_registry='STRUCTURAL_PREFLIGHT_ONLY',research_module='0.6.0-beta.2',research_handoff='STANDALONE_NO_SHARED_IDENTITY',icc_conversion='NOT_INTEGRATED')
+    original.update(version='0.2.0-rc36-public-byos-staging',status='BYOS_STAGING_ONLY',deployment_allowed=False,profile_bank_clearance='NOT_ESTABLISHED',local_output_profile_registry='STRUCTURAL_PREFLIGHT_ONLY',research_module='0.6.0-beta.2',research_handoff='STANDALONE_NO_SHARED_IDENTITY',icc_conversion='LAB_D50_CMYK16_STAGING_UNVERIFIED',physical_proof='NOT_MEASURED')
     (a.out/'BUNDLE_MANIFEST.json').write_text(json.dumps(original,indent=2)+'\n')
     paths=sorted(p for p in a.out.rglob('*') if p.is_file() and p.name!='SHA256SUMS.txt')
     (a.out/'SHA256SUMS.txt').write_text(''.join(sha(p.read_bytes())+'  '+p.relative_to(a.out).as_posix()+'\n' for p in paths))
