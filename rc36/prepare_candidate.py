@@ -19,6 +19,10 @@ def patch_app(s,name):
     s=replace_once(s,'pickerImage=null;pickerPixels=null;pickerDraw=null;pickerImageMeta=null;select(selected);','pickerImage=null;pickerPixels=null;pickerDraw=null;pickerImageMeta=null;window.ATLAS_RC36_SOURCE.reset();select(selected);',name)
     s=replace_once(s,'createSourceAssignment(sample,point,pickerImageMeta,best,MASTER)','createSourceAssignment(sample,point,pickerImageMeta,best,MASTER,window.ATLAS_RC36_SOURCE.capture(pickerImageMeta))',name)
     s=replace_once(s,'Y${r.sampling.centre[1]}`;', 'Y${r.sampling.centre[1]}${window.ATLAS_RC36_SOURCE.describe(r)}`;',name)
+    s=replace_once(s,'<button data-reference-card>Create reference card</button>','<button data-reference-card>Create reference card</button><button data-rc36-card>Open DCM Colour Reference Card</button>',name)
+    s=replace_once(s,"document.querySelectorAll('[data-reference-card]').forEach(b=>b.onclick=()=>referenceCardWorkspace?.open(c));","document.querySelectorAll('[data-reference-card]').forEach(b=>b.onclick=()=>referenceCardWorkspace?.open(c));document.querySelectorAll('[data-rc36-card]').forEach(b=>b.onclick=()=>openDcmCard(c));",name)
+    s=replace_once(s,"  function currentPalette(){","  function openDcmCard(c){try{window.ATLAS_RC36_CARD.open({entry:c,colors,master:MASTER,palette:currentPalette()},download)}catch(err){paletteStatus('Open DCM card blocked: '+err.message,true)}}\n  function currentPalette(){",name)
+    s=replace_once(s,"row.querySelector('span').onclick=()=>{select(c);location.hash='wheel'};","row.querySelector('span').onclick=()=>{select(c);location.hash='wheel'};const dcm=document.createElement('button');dcm.dataset.rc36PaletteCard='';dcm.textContent='Open DCM Card';dcm.onclick=()=>openDcmCard(c);row.append(dcm);",name)
     return s
 def main():
     p=argparse.ArgumentParser();p.add_argument('--base',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args()
@@ -33,6 +37,12 @@ def main():
     if len(actual)!=328 or listed!=actual:raise ValueError('Baseline file mismatch')
     source=(HERE/'rgb-source-space.js').read_text()+'\n'+(HERE/'file-space.js').read_text()
     files['assets/rc36-file-space.js']=source.encode()
+    # Bundle only the reviewed ESM contract exports, in an isolated closure.
+    contract=(HERE/'reference-record.mjs').read_text()
+    if contract.count('export const ')!=1 or contract.count('export function ')!=2:raise ValueError('Unexpected DCM contract exports')
+    card='(function(){\n'+contract.replace('export const ','const ').replace('export function ','function ')+'\n'+(HERE/'open-dcm-card.js').read_text()+'\n})();'
+    files['assets/rc36-open-dcm-card.js']=card.encode()
+    source+='\n'+card
     for name in ['assets/palette-export.js','assets/app.js','index.html']:
         s=files[name].decode()
         if name!='assets/app.js':s=patch_export(s,name)
@@ -44,7 +54,7 @@ def main():
             if s.lower().index('<body')<end:raise ValueError('Unexpected document head boundary')
             s=s[:end]+'<script>\n'+source+'\n</script>\n'+s[end:]
         files[name]=s.encode()
-    m=json.loads(files['BUNDLE_MANIFEST.json']);m['version']='0.2.0-rc36.1-provenance-candidate';m['status']='RC36_1_TEST_ONLY';m['deployment_allowed']=False;m['source_metadata_extension']='atlas-rc36-file-space/1.0';m['baseline_archive_sha256']=SHA
+    m=json.loads(files['BUNDLE_MANIFEST.json']);m['version']='0.2.0-rc36.2-open-dcm-card-candidate';m['status']='RC36_2_TEST_ONLY';m['deployment_allowed']=False;m['source_metadata_extension']='atlas-rc36-file-space/1.0';m['baseline_archive_sha256']=SHA;m['open_dcm_card_schema']='atlas-clarus-open-dcm-card/0.1';m['open_dcm_card_output']='NOT_CALCULATED'
     files['BUNDLE_MANIFEST.json']=(json.dumps(m,indent=2)+'\n').encode()
     files['SHA256SUMS.txt']=''.join(sha(b)+'  '+n+'\n' for n,b in sorted(files.items()) if n!='SHA256SUMS.txt').encode()
     if a.out.exists():raise ValueError('Use a new candidate output directory')
