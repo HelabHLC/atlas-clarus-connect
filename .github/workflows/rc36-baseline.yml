@@ -1,0 +1,90 @@
+name: RC36 baseline reproducibility
+on:
+  push:
+    branches: [integration/rc36]
+    paths:
+      - '.github/workflows/rc36-baseline.yml'
+      - 'docs/RC36_BASELINE_EVIDENCE_2026-11-28.json'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download immutable public release inputs and original outputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p inputs original evidence
+          gh release download v0.2.0-rc34.11-colour-origin --pattern 'ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.11-colour-origin.zip' --pattern 'ATLAS_Clarus_RC34.11_Small_Installer.zip' --dir inputs
+          gh release download v0.2.0-brand-palette-0.1.7 --pattern 'ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip' --pattern 'ATLAS_Clarus_Browser_Test_0.1.7_IONOS_Installer.zip' --dir original
+          sha256sum inputs/*.zip original/*.zip | tee evidence/downloaded-sha256.txt
+          printf '%s\n' \
+            '6158babb2a0271b71658c989c79f08ad690c5b782b2c0565e33c849a6c0d6bfb  inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.11-colour-origin.zip' \
+            '8316f5501d1a68e884dcd9366e24687cca30def66097f36a92f093dcde44b06b  inputs/ATLAS_Clarus_RC34.11_Small_Installer.zip' \
+            'e1a6df95fe2f19e3fee5909e929035af427635bd26d9e2912e51abc0cab15544  original/ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip' \
+            'be3ecd224bf431df1da654e6b54a4b0533f0d47602314c2deadc6a883c74b0d8  original/ATLAS_Clarus_Browser_Test_0.1.7_IONOS_Installer.zip' | sha256sum -c -
+      - name: Rebuild without publishing
+        run: |
+          python3 --version | tee evidence/environment.txt
+          python3 -c 'import zlib; print(zlib.ZLIB_VERSION, zlib.ZLIB_RUNTIME_VERSION)' | tee -a evidence/environment.txt
+          python3 releases/brand-palette-017/build_public.py --base inputs/ATLAS_Clarus_Browser_Bundle_v0.2.0-rc34.11-colour-origin.zip --installer inputs/ATLAS_Clarus_RC34.11_Small_Installer.zip --out build
+          sha256sum build/*.zip | tee evidence/rebuilt-sha256.txt
+      - name: Rehash all original files and compare rebuilt payloads
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, zipfile
+          from pathlib import Path, PurePosixPath
+          def digest(b): return hashlib.sha256(b).hexdigest()
+          def read_zip(p):
+              with zipfile.ZipFile(p) as z:
+                  assert z.testzip() is None, p
+                  names = [x.filename for x in z.infolist() if not x.is_dir()]
+                  assert len(names) == len(set(names)), p
+                  assert all(not PurePosixPath(n).is_absolute() and '..' not in PurePosixPath(n).parts for n in names)
+                  return {n: z.read(n) for n in names}
+          frozen = json.loads(Path('docs/RC36_BASELINE_EVIDENCE_2026-11-28.json').read_text())
+          prefix = 'atlas-clarus-browser-bundle/'
+          report = {'archives': {}, 'runtime': {}, 'scope': 'Archive bytes and listed IONOS hashes; no live file rehash or browser acceptance claimed'}
+          failures = []
+          for original in sorted(Path('original').glob('*.zip')):
+              rebuilt = Path('build') / original.name
+              a, b = read_zip(original), read_zip(rebuilt)
+              diff = sorted(k for k in a.keys() | b.keys() if a.get(k) != b.get(k))
+              same = digest(original.read_bytes()) == digest(rebuilt.read_bytes())
+              report['archives'][original.name] = {'original_sha256': digest(original.read_bytes()), 'rebuilt_sha256': digest(rebuilt.read_bytes()), 'byte_identical': same, 'original_files': len(a), 'rebuilt_files': len(b), 'payload_differences': diff}
+              if not same or diff: failures.append(original.name + ': reproduction mismatch')
+              if prefix + 'SHA256SUMS.txt' in a:
+                  listed = {}
+                  for line in a[prefix+'SHA256SUMS.txt'].decode().splitlines():
+                      h, n = line.split('  ', 1)
+                      assert n not in listed
+                      listed[n] = h
+                  actual = {k.removeprefix(prefix):digest(v) for k,v in a.items() if k != prefix+'SHA256SUMS.txt'}
+                  mismatches = sorted(k for k in listed.keys() | actual.keys() if listed.get(k) != actual.get(k))
+                  live = frozen['listed_sha256']
+                  live_diffs = sorted(k for k in actual.keys() | live.keys() if actual.get(k) != live.get(k))
+                  manifest = json.loads(a[prefix+'BUNDLE_MANIFEST.json'])
+                  report['runtime'] = {'files_rehashed':len(actual),'internal_checksum_mismatches':mismatches,'frozen_ionos_list_differences':live_diffs,'master_rows_manifest':manifest['master_rows'],'master_sha256_manifest':manifest['master_sha256'],'manifest_matches_frozen':manifest==frozen['manifest']}
+                  if mismatches or live_diffs or len(actual)!=328 or manifest!=frozen['manifest'] or manifest['master_rows']!=13283: failures.append('runtime evidence mismatch')
+          if len(report['archives'])!=2 or not report['runtime']: failures.append('missing expected archives or runtime')
+          report['failures']=failures
+          Path('evidence/reproduction.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          if failures: raise SystemExit(1)
+          PY
+      - name: Baseline release core checks
+        run: |
+          unzip -q build/ATLAS_Clarus_Browser_Edition_Test_0.1.7_DE_EN.zip -d build/runtime
+          unzip -q build/ATLAS_Clarus_Browser_Test_0.1.7_IONOS_Installer.zip -d build/plugin
+          php -l build/plugin/atlas-clarus-browser-edition/atlas-clarus-browser-edition.php
+          node previews/logo-brand-palette/test-core.cjs build/runtime/atlas-clarus-browser-bundle evidence
+      - name: Preserve verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc36-baseline-evidence
+          path: evidence/
+          if-no-files-found: warn
