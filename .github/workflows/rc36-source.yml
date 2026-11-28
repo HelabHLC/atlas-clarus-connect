@@ -1,4 +1,4 @@
-name: RC36.1 source provenance candidate
+name: RC36.2 Open DCM reference card
 on:
   push:
     branches: [integration/rc36]
@@ -30,13 +30,13 @@ jobs:
         run: npm ci --prefix browser-bundle/tests --ignore-scripts
       - name: Install Chromium
         run: browser-bundle/tests/node_modules/.bin/playwright install --with-deps chromium
-      - name: Actual offline browser interaction
+      - name: Actual browser provenance and Open DCM card PDF
         run: node rc36/test-browser.cjs
       - name: Keep candidate and evidence (not a release)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rc36-1-candidate
+          name: rc36-2-candidate
           path: |
             candidate/
             evidence/
